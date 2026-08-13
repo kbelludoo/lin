@@ -1,4 +1,4 @@
-@AIL:L1c:0.2
+@LIA:L1c:0.2
 ^schema_once ^lossy=true ^ops=strip_tests+sigil_ops+named_only+const_table
 ~G{?=if #=for ^=ret :else}
 !safeCompare(a,b){A=String(a);B=String(b);n=A.length;r=0;?(n!=B.length){B=A;r=1}#(i=0;i<n;i++){r|=(A.charCodeAt(i)^B.charCodeAt(i))}^r==0}

@@ -1,9 +1,9 @@
-@DICEL:AIL_COMPILER_SPEC:1.0.0
+@DICEL:LIA_COMPILER_SPEC:1.0.0
 
-^lang="AIL"
+^lang="LIA"
 ^ir="AIL_AST"
-^semantics="AIL_SEMANTIC_CORE.dicel"
-^surface="AIL_V2 + optional type_annotations"
+^semantics="LIA_SEMANTIC_CORE.dicel"
+^surface="LIA + optional type_annotations"
 ^status="COMPILER_SPEC"
 ^targets=[js,ts,go]
 
@@ -20,7 +20,7 @@
 
 @LEX {
   tokens: [HEADER, SIGIL, IDENT, NUMBER, STRING, OP, PUNCT, WS]
-  sigils: ["!","?","#","^",":","=ex","$K","$S","~G","@AIL"]
+  sigils: ["!","?","#","^",":","=ex","$K","$S","~G","@LIA"]
   reject: ["op:","call:member:","GAP:","?;"]
 }
 
@@ -33,7 +33,7 @@
 
 @TYPECHECK {
   input: AIL_AST
-  rules: "AIL_SEMANTIC_CORE@TYPE_RULES"
+  rules: "LIA_SEMANTIC_CORE@TYPE_RULES"
   output: AIL_AST_typed | TypeError[]
   mode_default: "infer_Any_when_unannotated"
   mode_strict: "annotations_required_on_exports"
@@ -62,28 +62,28 @@
 }
 
 @VERIFY {
-  method: "compile AIL -> JS; run holdout; compare to source oracle"
+  method: "compile LIA -> JS; run holdout; compare to source oracle"
   pass: "behavior_eq==1.0"
   gate: "no emit if typecheck errors in strict"
 }
 
 @CLI {
-  parse: "ail parse <file.ail>"
-  check: "ail check <file.ail> [--strict]"
-  emit: "ail emit <file.ail> --target js|ts|go --out <path>"
-  roundtrip: "ail roundtrip <file.ail> --holdout <json>"
+  parse: "LIA parse <file.lia>"
+  check: "LIA check <file.lia> [--strict]"
+  emit: "LIA emit <file.lia> --target js|ts|go --out <path>"
+  roundtrip: "LIA roundtrip <file.lia> --holdout <json>"
 }
 
 @FILE_LAYOUT {
-  spec_semantics: "src/p9-reasoning/AIL_SEMANTIC_CORE.dicel"
-  spec_surface: "src/p9-reasoning/AIL_CODE_LANG_SPEC.dicel"
-  spec_compiler: "src/p9-reasoning/AIL_COMPILER_SPEC.dicel"
-  declare: "DICEL.ail.dicel"
+  spec_semantics: "src/p9-reasoning/LIA_SEMANTIC_CORE.dicel"
+  spec_surface: "src/p9-reasoning/LIA_CODE_LANG_SPEC.dicel"
+  spec_compiler: "src/p9-reasoning/LIA_COMPILER_SPEC.dicel"
+  declare: "DICEL.lia.dicel"
   impl_future: "scripts/pipeline/lib/ail_{lex,parse,typecheck,emit}.mjs"
 }
 
 @MILESTONES {
-  M1: "DONE parse+desugar AIL_V2 safeCompare to AST/JS"
+  M1: "DONE parse+desugar LIA safeCompare to AST/JS"
   M2: "typecheck infer mode green on gold set"
   M3: "DONE emit JS behavior_eq=1.0 vs p101c-safeCompare holdout"
   M4: "strict typed exports + TS emit"

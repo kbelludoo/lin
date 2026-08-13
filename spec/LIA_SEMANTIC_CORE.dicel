@@ -1,14 +1,14 @@
-@DICEL:AIL.SEMANTIC_CORE:1.0.0
+@DICEL:LIA.SEMANTIC_CORE:1.0.0
 
-^name="AIL"
-^alias="DICEL-AIL"
+^name="LIA"
+^alias="DICEL-LIA"
 ^role="compilable_ai_native_code_language"
-^surface="AIL_V2_sigil_text"
+^surface="LIA_sigil_text"
 ^ir="AIL_AST"
 ^status="SPEC_FOR_COMPILER"
 ^lossy_surface=false
 ^roundtrip="AIL_text <-> AIL_AST <-> target"
-^parent="AIL_CODE_LANG_SPEC.dicel"
+^parent="LIA_CODE_LANG_SPEC.dicel"
 
 @GOAL {
   compact: "sigil_surface_token_economy"
@@ -18,7 +18,7 @@
 }
 
 @LAYERS {
-  L_surface: "AIL_V2 text (! ? # ^ $K =ex)"
+  L_surface: "LIA text (! ? # ^ $K =ex)"
   L_ast: "typed AIL_AST (this file)"
   L_target: "JS|TS|Go|Wasm"
   rule: "parser(surface)->AST; typecheck(AST); emit(AST)->target"

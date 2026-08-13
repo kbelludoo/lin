@@ -1,4 +1,4 @@
-@AIL:L1c:0.2
+@LIA:L1c:0.2
 ^schema_once ^lossy=true ^ops=strip_tests+sigil_ops+named_only+const_table
 ~G{?=if #=for ^=ret :else}
 $K{b=1 kb=1024 mb=1048576 gb=1073741824 tb=1099511627776 pb=1125899906842624}

@@ -1,17 +1,17 @@
-@DICEL:AIL_CODE_LANG_SPEC:0.3.0
+@DICEL:LIA_CODE_LANG_SPEC:0.3.0
 
-^name="AIL"
+^name="LIA"
 ^alias="DICEL-L1c"
 ^role="DEFAULT_Dicel_for_AI_working_IR"
 ^replacement_of="verbose_PROJECT.dicel_L0_LLM_surface"
-^canonical_profile="DICEL.ail.dicel"
+^canonical_profile="DICEL.lia.dicel"
 ^sibling_of="DICE-L PROJECT.dicel L0_archive_only"
 ^parent_plan="DICEL_CONTEXT_COMPRESSION_PLAN.dicel"
 ^parent_profile="DICEL_CONTEXT_PROFILE_SPEC.dicel"
 ^status="REPLACES_DICEL_LLM_SURFACE+COMPILER_BOUND"
 ^lossy=false
-^semantics="AIL_SEMANTIC_CORE.dicel"
-^compiler="AIL_COMPILER_SPEC.dicel"
+^semantics="LIA_SEMANTIC_CORE.dicel"
+^compiler="LIA_COMPILER_SPEC.dicel"
 ^consumer="agent_prompts!intel_A/B!COMMS!default_compact_code!compiler"
 ^roundtrip="AIL_text <-> AIL_AST <-> target"
 ^emitter="scripts/pipeline/lib/ail_emitter.mjs"
@@ -33,7 +33,7 @@
 }
 
 @SIGILS {
-  header: "@AIL:L1c:<semver>"
+  header: "@LIA:L1c:<semver>"
   fn: "!"
   if: "?"
   else: ":"
@@ -74,7 +74,7 @@
     note: "aggressive_intern $S0..$S15 + @call"
     risk: "models_may_mistranslate_$S refs"
     measured: "9/10; API_tokens_worse_than_SOURCE; fail=Q8"
-  AIL_V2:
+  LIA:
     note: "sigils+const_table+named_only; keep readable idents"
     preferred: true
     reason: "measured_10/10_tie_SOURCE; code_-32.8%; api_-7.1%; vs_DICE_L0_code_-58.6%"
@@ -84,18 +84,18 @@
 @EXAMPLE_SAFE_COMPARE {
   SOURCE_JS: "if(lenA!==strB.length){strB=strA;result=1} for(...){result|=(strA.charCodeAt(i)^strB.charCodeAt(i))} return result===0"
   DICE_L0: "if(op:!==(lenA,member:strB.length)){expr=op:=(strB,strA);expr=op:=(result,1)};... return=op:===(result,0)"
-  AIL_V2: "!safeCompare(a,b){A=String(a);B=String(b);n=A.length;r=0;?(n!=B.length){B=A;r=1};#(i=0;i<n;i++){r|=A.charCodeAt(i)^B.charCodeAt(i)};^r==0}"
+  LIA: "!safeCompare(a,b){A=String(a);B=String(b);n=A.length;r=0;?(n!=B.length){B=A;r=1};#(i=0;i<n;i++){r|=A.charCodeAt(i)^B.charCodeAt(i)};^r==0}"
 }
 
 @EXAMPLE_BYTES_PARSE {
   SOURCE_JS: "return Math.floor(map[unit]*floatValue)"
   DICE_L0: "return=call:member:Math.floor(op:*(member:map.[unit],floatValue))"
-  AIL_V2: "^Math.floor($K[u]*f)"
+  LIA: "^Math.floor($K[u]*f)"
 }
 
 @MAP_FROM_L0 {
   input: "PROJECT.dicel (canonical)"
-  pipeline: "strip_tests -> drop_anonymous -> schema_once -> short_envelope -> optional_intern -> emit @AIL"
+  pipeline: "strip_tests -> drop_anonymous -> schema_once -> short_envelope -> optional_intern -> emit @LIA"
   samples:
     - "experiments/p101c-safe-compare/.dicel-rewriter/PROJECT.dicel"
     - "experiments/p101d-bytes/.dicel-rewriter/PROJECT.dicel"
@@ -121,8 +121,8 @@
 }
 
 @AS_DICEL {
-  declare: "DICEL.ail.dicel"
+  declare: "DICEL.lia.dicel"
   verify: "INTEL_AIL_AS_DICEL_RESULT.dicel"
-  default_arm: "DICEL_DEFAULT=AIL_V2"
-  note: "agents/models see AIL_V2; L0 remains reconstructible archive"
+  default_arm: "DICEL_DEFAULT=LIA"
+  note: "agents/models see LIA; L0 remains reconstructible archive"
 }

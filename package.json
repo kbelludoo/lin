@@ -1,20 +1,22 @@
 {
-  "name": "ail-lang",
+  "name": "lia-lang",
   "version": "0.2.0",
-  "description": "AIL — AI-native compact code language (sigil IR). Emit from JS, compile back, verify behavior.",
+  "description": "LIA — AI-native compact code language (sigil IR; formerly AIL). Emit from JS, compile back, verify behavior.",
   "type": "module",
   "private": false,
   "bin": {
+    "lia": "./bin/lia.mjs",
     "ail": "./bin/ail.mjs"
   },
   "scripts": {
-    "emit": "node bin/ail.mjs emit",
-    "compile": "node bin/ail.mjs compile",
-    "check": "node bin/ail.mjs check",
+    "emit": "node bin/lia.mjs emit",
+    "compile": "node bin/lia.mjs compile",
+    "check": "node bin/lia.mjs check",
     "test": "node tests/roundtrip.test.mjs",
-    "example:safe": "node bin/ail.mjs compile examples/safe-compare.ail -o examples/safe-compare.compiled.js"
+    "self-repair": "node scripts/self_repair.mjs --smoke",
+    "example:safe": "node bin/lia.mjs compile examples/safe-compare.lia -o examples/safe-compare.compiled.js"
   },
-  "keywords": ["ail", "ai-native", "ir", "compiler", "compact-code"],
+  "keywords": ["lia", "ail", "ai-native", "ir", "compiler", "compact-code"],
   "license": "MIT",
   "engines": {
     "node": ">=18"

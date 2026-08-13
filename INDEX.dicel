@@ -1,21 +1,43 @@
-@AIL:REPO:1.0.0
+@LIA:REPO:1.1.0
 
-^name="ail-lang"
-^path="C:/Users/k/Documents/ail"
-^role="canonical_AIL_language_repository"
-^from="dicel-unified AIL_V2 extraction"
+^name="lia-lang"
+^path="C:/Users/k/Documents/lia"
+^role="canonical_LIA_language_repository"
+^formerly="ail / ail-lang"
+^from="dicel-unified AIL_V2 extraction → rename LIA"
+^rule=AIs_MUST_use_LIA_for_code_in_all_CLIs
 
 @LAYOUT {
   spec: "language + semantics + compiler contracts (.dicel)"
   src: "emitter + compiler (JS)"
-  bin: "ail CLI"
-  examples: "safe-compare.ail bytes.ail"
+  bin: "lia CLI (ail alias)"
+  examples: "safe-compare.lia bytes.lia"
   tests: "roundtrip behavior_eq"
+  scripts: "self_repair MVP + bench_400k"
+  agents: "AGENTS.md + spec/LIA_AGENT_RULE.dicel"
+  rename: "LIA_RENAME.dicel"
+}
+
+@LEGEND {
+  line: "!fn ?if #for ^ret :else $K=consts =ex=exports ~G=grammar"
+}
+
+@HEADERS {
+  emit_default: "@LIA:L1c:0.2"
+  dual_read: "@LIA + legacy @AIL"
 }
 
 @COMMANDS {
   test: "npm test"
-  emit: "node bin/ail.mjs emit <js>"
-  compile: "node bin/ail.mjs compile <ail>"
-  check: "node bin/ail.mjs check <ail>"
+  emit: "node bin/lia.mjs emit <js>"
+  compile: "node bin/lia.mjs compile <lia>"
+  check: "node bin/lia.mjs check <lia>"
+  self_repair: "node scripts/self_repair.mjs --smoke"
+}
+
+@SELF_REPAIR {
+  spec: "spec/LIA_SELF_REPAIR.dicel"
+  prior_art: "spec/LIA_SELF_REPAIR_PRIOR_ART.dicel"
+  script: "scripts/self_repair.mjs"
+  report: "INTEL_LIA_SELF_REPAIR_MVP.dicel"
 }

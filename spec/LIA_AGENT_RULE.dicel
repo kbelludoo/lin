@@ -1,0 +1,30 @@
+@LIA:LIA_AGENT_RULE:1.0.0
+
+^rule=AIs_MUST_use_LIA_for_code_in_all_CLIs
+^repo_path="C:/Users/k/Documents/lia"
+^scope="cursor!claude!codex!gemini!hermes!opencode!antigravity!9router!all_CLIs"
+^status="ENFORCED"
+
+@WHEN {
+  LIA: "code_payloads_to_models!prompts!intel!roundtrip!compact_IR"
+  Dicel: "policies!conselho!inter_ai_protocol!contracts!audit"
+}
+
+@LEGEND {
+  line: "!fn ?if #for ^ret :else $K=consts =ex=exports ~G=grammar"
+  enough: true
+  evidence: "dicel-unified/INTEL_AIL_BLIND_UNDERSTAND.dicel"
+  note: "1_line_grammar_beats_blind_on_exact_outputs; blind_still_understands_structure"
+}
+
+@POINT {
+  start: "INDEX.dicel!LIA.dicel!spec/"
+  emit: "node bin/lia.mjs emit <js>"
+  compile: "node bin/lia.mjs compile <LIA>"
+  check: "node bin/lia.mjs check <LIA>"
+}
+
+@FORBID {
+  verbose_L0_as_LLM_surface: true
+  plain_prose_code_to_models: true
+}

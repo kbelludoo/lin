@@ -1,13 +1,13 @@
-@DICEL:DICEL.ail:1.0.0
+@DICEL:DICEL.lia:1.0.0
 
-^role="AIL_as_Dicel_compilable_lingua"
-^surface="AIL_V2"
-^semantics="AIL_SEMANTIC_CORE.dicel"
-^compiler="AIL_COMPILER_SPEC.dicel"
+^role="LIA_as_Dicel_compilable_lingua"
+^surface="LIA"
+^semantics="LIA_SEMANTIC_CORE.dicel"
+^compiler="LIA_COMPILER_SPEC.dicel"
 ^status="DECLARED"
 
 @DECLARE {
-  dicel_for_ai: "AIL"
+  dicel_for_ai: "LIA"
   human_verbose_L0: "archive_only_PROJECT.dicel"
   compilable: true
   requires_semantics: true
@@ -15,7 +15,7 @@
 
 @CONTRACT {
   every_compilable_unit:
-    - parses_to_AIL_AST
+    - parses_to_LIA_AST
     - passes_WELLFORMED
     - typecheck_infer_or_strict
     - emits_to_at_least_js

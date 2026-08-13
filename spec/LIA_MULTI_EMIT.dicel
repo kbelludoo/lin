@@ -1,0 +1,44 @@
+@LIA:MULTI_EMIT:1.0.0
+
+^lang="LIA"
+^status="ACTIVE"
+^canonical_compile="LIA_multi_emit"
+^dicel_compile="legacy_archive_only"
+^targets=[js,ts,py,go,rust]
+^cli="lia compile <file.lia> --target js|ts|py|go|rust"
+^repo_preferred="C:/Users/k/Documents/lia"
+^repo_current="C:/Users/k/Documents/lia"
+^rename_status="DONE_folder_is_lia"
+
+@PIPELINE {
+  step[:1]=parse_LIA_surface
+  step[:2]=body_ast
+  step[:3]=emit_target
+  step[:4]=golden_behavior_check
+}
+
+@EMIT {
+  js: "src/emit_js.mjs via compiler.mjs (done)"
+  ts: "src/emit_ts.mjs typed exports"
+  py: "src/emit_py.mjs snake_case + while-for"
+  go: "src/emit_go.mjs interface{} + fmt.Sprint"
+  rust: "src/emit_rust.mjs MVP stub; skip rustc if absent"
+}
+
+@RUNTIME_STUB {
+  rule: "Buffer|crypto|timingSafeEqual → stub/panic on non-js targets"
+  keep: "safeCompare portable across targets"
+}
+
+@GOLDEN {
+  source: "examples/safe-compare.lia"
+  script: "scripts/golden_multi_emit.mjs"
+  require_run: [js,ts,py]
+  optional_run: [go,rust]
+}
+
+@LEGACY {
+  ail_cli: "bin/ail.mjs → bin/lia.mjs"
+  ail_headers: "@AIL accepted as dual-read"
+  dicel_L0: "not required for new compile work"
+}

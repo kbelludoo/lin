@@ -1,19 +1,22 @@
 /**
- * AIL_V2 emitter — default compact Dicel-for-AI IR.
- * Spec: DICEL.ail.dicel + src/p9-reasoning/AIL_CODE_LANG_SPEC.dicel
+ * LIA emitter (ex-AIL) — default compact Dicel-for-AI IR.
+ * Spec: LIA.dicel + LIA_CODE_LANG_SPEC.dicel
  *
  * Paths:
- *   source JS/TS-ish → AIL_V2 (preferred compact path)
- *   PROJECT.dicel L0 → AIL_V2 (named_only, strip_tests, L0-op desugar)
+ *   source JS/TS-ish → LIA (preferred compact path)
+ *   PROJECT.dicel L0 → LIA (named_only, strip_tests, L0-op desugar)
  *
  * Lossy. Does not overwrite L0 archive.
+ * Headers: emit @LIA; compiler dual-reads @AIL/@LIA.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const AIL_VERSION = '0.2';
-export const AIL_HEADER = `@AIL:L1c:${AIL_VERSION}`;
+export const LIA_VERSION = '0.2';
+export const LIA_HEADER = `@LIA:L1c:${LIA_VERSION}`;
+export const AIL_VERSION = LIA_VERSION; // backcompat alias
+export const AIL_HEADER = LIA_HEADER; // backcompat alias (value is @LIA)
 
 const DEFAULT_OPS = 'strip_tests+sigil_ops+named_only+const_table';
 const GRAMMAR = '~G{?=if #=for ^=ret :else}';
@@ -487,7 +490,7 @@ function detectBytesMap(source) {
 }
 
 /**
- * Emit AIL_V2 from JS source (default compact path).
+ * Emit LIA from JS source (default compact path).
  */
 export function emitAilFromSource(source, opts = {}) {
   const fns = extractJsFunctions(source).filter((f) => {
@@ -496,7 +499,7 @@ export function emitAilFromSource(source, opts = {}) {
     return !isTestishBody([f.body]);
   });
   const lines = [
-    AIL_HEADER,
+    LIA_HEADER,
     `^schema_once ^lossy=true ^ops=${opts.ops || DEFAULT_OPS}`,
     GRAMMAR,
   ];
@@ -519,7 +522,7 @@ export function emitAilFromSource(source, opts = {}) {
 }
 
 /**
- * Emit AIL_V2 from PROJECT.dicel L0 text.
+ * Emit LIA from PROJECT.dicel L0 text.
  */
 export function emitAilFromProject(dicelText, opts = {}) {
   const all = parseProjectFns(dicelText);
@@ -529,7 +532,7 @@ export function emitAilFromProject(dicelText, opts = {}) {
     return true;
   });
   const lines = [
-    AIL_HEADER,
+    LIA_HEADER,
     `^schema_once ^lossy=true ^ops=${opts.ops || DEFAULT_OPS}`,
     GRAMMAR,
   ];
@@ -542,7 +545,7 @@ export function emitAilFromProject(dicelText, opts = {}) {
     let body = parts.join(';');
     if (opts.shortenLocals !== false) body = shortenLocals(body);
     if (k) body = body.replace(/\bmap\[/g, '$K[').replace(/\bmap\./g, '$K.');
-    // drop L0 holes "?" / "?;" but keep AIL if-sigil "?("
+    // drop L0 holes "?" / "?;" but keep LIA if-sigil "?("
     body = body
       .replace(/;\?(?!\()/g, ';')
       .replace(/^\?(?!\()/g, '')
@@ -558,7 +561,7 @@ export function emitAilFromProject(dicelText, opts = {}) {
 }
 
 /**
- * Auto-detect input kind and emit AIL_V2.
+ * Auto-detect input kind and Emit LIA.
  */
 export function emitAil(input, opts = {}) {
   const text = String(input || '');
@@ -568,13 +571,18 @@ export function emitAil(input, opts = {}) {
   return emitAilFromSource(text, opts);
 }
 
-export function emitAilFile(inPath, outPath = null, opts = {}) {
+export function emitLiaFile(inPath, outPath = null, opts = {}) {
   const abs = path.resolve(inPath);
   const text = fs.readFileSync(abs, 'utf8');
-  const ail = emitAil(text, opts);
-  const dest = outPath || path.join(path.dirname(abs), 'AIL.dicel');
-  fs.writeFileSync(dest, ail, 'utf8');
-  return { outPath: dest, chars: ail.length, tokens_est: estTokens(ail), ail };
+  const lia = emitAil(text, opts);
+  const dest = outPath || path.join(path.dirname(abs), 'LIA.dicel');
+  fs.writeFileSync(dest, lia, 'utf8');
+  return { outPath: dest, chars: lia.length, tokens_est: estTokens(lia), ail: lia, lia };
+}
+
+/** @deprecated use emitLiaFile */
+export function emitAilFile(inPath, outPath = null, opts = {}) {
+  return emitLiaFile(inPath, outPath, opts);
 }
 
 function isMain() {
@@ -590,9 +598,9 @@ function isMain() {
 if (isMain()) {
   const inPath = process.argv[2];
   if (!inPath) {
-    console.error('Usage: node ail_emitter.mjs <source.js|PROJECT.dicel> [out.AIL.dicel]');
+    console.error('Usage: node lia_emitter.mjs <source.js|PROJECT.dicel> [out.LIA.dicel]');
     process.exit(2);
   }
-  const r = emitAilFile(inPath, process.argv[3] || null);
+  const r = emitLiaFile(inPath, process.argv[3] || null);
   console.log(JSON.stringify({ out: r.outPath, chars: r.chars, tokens_est: r.tokens_est }, null, 2));
 }

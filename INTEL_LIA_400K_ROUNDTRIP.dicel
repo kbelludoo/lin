@@ -1,0 +1,107 @@
+@DICEL:AIL_400K_ROUNDTRIP:1.0.0
+
+^rule="semantic_hash_exact_like_P200"
+^same_content=true
+^no_padding=true
+^soft_match=false
+^behavior_eq_required=1.0
+^status="PARTIAL"
+^repo_url="https://github.com/microsoft/TypeScript"
+^clone_path="C:/Users/k/Documents/LIA-bench/clone-400k/TypeScript"
+^source_root="C:/Users/k/Documents/LIA-bench/clone-400k/TypeScript/src"
+^measured_loc=453359
+^files_total=709
+^files_ok=1
+^files_skip=0
+^fns_extracted=5217
+^fns_attempted=120
+^fns_pass=75
+^fns_fail=5
+^fns_skip=40
+^pass_rate=0.625
+^largest_connected_pass=0
+^holdout_n=8
+^protocol="source->AIL_V2->compile_JS->holdout_sha256"
+^emitter="C:/Users/k/Documents/LIA/src/emitter.mjs"
+^compiler="C:/Users/k/Documents/LIA/src/compiler.mjs"
+^generated_at="2026-08-13T03:26:12.209Z"
+
+@RULE_CONFIRM {
+  exact_output_equality: true
+  sha256_of_output_vector: true
+  soft_match_forbidden: true
+  like: "INTEL_AIL_ROUNDTRIP_VERIFY / P200 semantic_hash"
+}
+
+@INVENTORY {
+  loc: 453359
+  files: 709
+  named_functions_extracted: 5217
+  note: "LOC = lines in .js/.ts/.tsx/.jsx under source_root (skip node_modules/.git/tests/fixtures)"
+}
+
+@COUNTS {
+  files_ok: 1
+  files_skip: 0
+  fns_pass: 75
+  fns_fail: 5
+  fns_skip: 40
+}
+
+@HASH_SAMPLE_PASS {
+  { fn:"addDeclarationToSymbol", file:"compiler/binder.ts", original_hash:"df8b4b464fdc8142b2dad6c8a0312954489e2f27e64f10114139a934df17ba5d", compiled_hash:"df8b4b464fdc8142b2dad6c8a0312954489e2f27e64f10114139a934df17ba5d", eq:true }
+  { fn:"jsdocTreatAsExported", file:"compiler/binder.ts", original_hash:"8f756db13088f06518bf325d0d73288870947b9f198d68d5005b6b106d260e99", compiled_hash:"8f756db13088f06518bf325d0d73288870947b9f198d68d5005b6b106d260e99", eq:true }
+  { fn:"bindEachChild", file:"compiler/binder.ts", original_hash:"f2448f2b6934d250927b1dafe9118043ce2ec99d28ca560feadbeaa8de8c44f5", compiled_hash:"f2448f2b6934d250927b1dafe9118043ce2ec99d28ca560feadbeaa8de8c44f5", eq:true }
+  { fn:"hasNarrowableArgument", file:"compiler/binder.ts", original_hash:"73dc383fa0a59ea0597e4c73f645503171641b3b37254a9f2330c583391838e8", compiled_hash:"73dc383fa0a59ea0597e4c73f645503171641b3b37254a9f2330c583391838e8", eq:true }
+  { fn:"isNarrowingTypeofOperands", file:"compiler/binder.ts", original_hash:"c158593a202ccd4cba5ff5e978e8b4f71073e049441febe4015e672793998074", compiled_hash:"c158593a202ccd4cba5ff5e978e8b4f71073e049441febe4015e672793998074", eq:true }
+  { fn:"createBranchLabel", file:"compiler/binder.ts", original_hash:"3939ae7affa7714cee9566cd130288f4ad41f84952b5e1cabcd943775fb0d883", compiled_hash:"3939ae7affa7714cee9566cd130288f4ad41f84952b5e1cabcd943775fb0d883", eq:true }
+  { fn:"createLoopLabel", file:"compiler/binder.ts", original_hash:"3939ae7affa7714cee9566cd130288f4ad41f84952b5e1cabcd943775fb0d883", compiled_hash:"3939ae7affa7714cee9566cd130288f4ad41f84952b5e1cabcd943775fb0d883", eq:true }
+  { fn:"createFlowSwitchClause", file:"compiler/binder.ts", original_hash:"af0f6b48df27fb40f7d5b7cea0951effeb47ba149e6ed4ef569622860322376c", compiled_hash:"af0f6b48df27fb40f7d5b7cea0951effeb47ba149e6ed4ef569622860322376c", eq:true }
+  { fn:"createFlowMutation", file:"compiler/binder.ts", original_hash:"af0f6b48df27fb40f7d5b7cea0951effeb47ba149e6ed4ef569622860322376c", compiled_hash:"af0f6b48df27fb40f7d5b7cea0951effeb47ba149e6ed4ef569622860322376c", eq:true }
+  { fn:"createFlowCall", file:"compiler/binder.ts", original_hash:"af0f6b48df27fb40f7d5b7cea0951effeb47ba149e6ed4ef569622860322376c", compiled_hash:"af0f6b48df27fb40f7d5b7cea0951effeb47ba149e6ed4ef569622860322376c", eq:true }
+  { fn:"isLogicalExpression", file:"compiler/binder.ts", original_hash:"3f565d0e3df0bcf182a4c75ef2c0fd7c84e075f1c7865f8f16ca576d6fe1e7b6", compiled_hash:"3f565d0e3df0bcf182a4c75ef2c0fd7c84e075f1c7865f8f16ca576d6fe1e7b6", eq:true }
+  { fn:"isLogicalAssignmentExpression", file:"compiler/binder.ts", original_hash:"72d568a046e2815fd63a94cba17fc43a032b4d2f98f4e60aa6bff30cb162abf0", compiled_hash:"72d568a046e2815fd63a94cba17fc43a032b4d2f98f4e60aa6bff30cb162abf0", eq:true }
+}
+
+@HASH_SAMPLE_FAIL {
+  { fn:"maybeBindExpressionFlowIfCall", file:"compiler/binder.ts", reason:"comp_load:Unexpected token '='", original_hash:"", compiled_hash:"" }
+  { fn:"bindDestructuringAssignmentFlow", file:"compiler/binder.ts", reason:"hash_mismatch", original_hash:"512a7d3797a347764beba8f03aeca0e30c459b0ff70bea63d661eacfb670784c", compiled_hash:"36b53ea8ae0b8457ad7cff3689a655fabbadf7126ae00ba361244334bbc0fe50" }
+  { fn:"bindInitializer", file:"compiler/binder.ts", reason:"hash_mismatch", original_hash:"dc99126e5a4a9573a77d95370687190a45395c4ffec42b9460f8330ae80f8f8f", compiled_hash:"f7164093650e1aaeb8e4900a2c1ea995582390a8eedd32f927442554178f0e89" }
+  { fn:"checkStrictModeFunctionDeclaration", file:"compiler/binder.ts", reason:"comp_load:Unexpected token '='", original_hash:"", compiled_hash:"" }
+  { fn:"bindPotentiallyNewExpandoMemberToNamespace", file:"compiler/binder.ts", reason:"comp_load:Unexpected token ':'", original_hash:"", compiled_hash:"" }
+}
+
+@BLOCKERS {
+  { reason:"orig_load:Unexpected token ')'", n:12 }
+  { reason:"ts_residue", n:8 }
+  { reason:"orig_load:Unexpected token ';'", n:4 }
+  { reason:"orig_load:Unexpected token ','", n:3 }
+  { reason:"destructure_params", n:2 }
+  { reason:"comp_load:Unexpected token '='", n:2 }
+  { reason:"hash_mismatch", n:2 }
+  { reason:"generics_params", n:2 }
+  { reason:"emit_empty", n:2 }
+  { reason:"orig_load:Unexpected token '!'", n:2 }
+  { reason:"orig_load:Unexpected token '|'", n:1 }
+  { reason:"async", n:1 }
+  { reason:"orig_load:Unexpected identifier 'module'", n:1 }
+  { reason:"orig_load:Unexpected token '==='", n:1 }
+  { reason:"rest_params", n:1 }
+  { reason:"comp_load:Unexpected token ':'", n:1 }
+}
+
+@LODASH_SECONDARY {
+  path: "C:/Users/k/Documents/LIA-bench/clone-400k/lodash"
+  loc: 56490
+  fns_pass: 67
+  fns_fail: 18
+  fns_skip: 35
+  note: "classic JS requireable control corpus"
+}
+
+@VERDICT {
+  semantic_hash_rule_in_place: true
+  loc_target_met: true
+  connected_set_pass: 0
+  honest_note: "TypeScript/src is ~400k LOC but not Node-requireable as a package; bench verifies extractable classic function() declarations via isolated holdout. Arrow/class/async/TS-heavy and free-ref fns are skipped or fail compile. Lodash secondary provides classic JS control. Exact sha256 holdout only — no soft match."
+}
