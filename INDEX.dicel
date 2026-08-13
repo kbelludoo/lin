@@ -1,0 +1,21 @@
+@AIL:REPO:1.0.0
+
+^name="ail-lang"
+^path="C:/Users/k/Documents/ail"
+^role="canonical_AIL_language_repository"
+^from="dicel-unified AIL_V2 extraction"
+
+@LAYOUT {
+  spec: "language + semantics + compiler contracts (.dicel)"
+  src: "emitter + compiler (JS)"
+  bin: "ail CLI"
+  examples: "safe-compare.ail bytes.ail"
+  tests: "roundtrip behavior_eq"
+}
+
+@COMMANDS {
+  test: "npm test"
+  emit: "node bin/ail.mjs emit <js>"
+  compile: "node bin/ail.mjs compile <ail>"
+  check: "node bin/ail.mjs check <ail>"
+}
