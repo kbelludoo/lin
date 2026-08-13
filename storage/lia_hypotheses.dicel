@@ -1,0 +1,29 @@
+@DICEL:lia_hypotheses:0.2.0
+^status=ACTIVE
+^note="transferable Hypothesis records from learn loop"
+^fix_target=compiler_not_lia
+
+@ENTRIES {
+  @H001 {
+    from_trauma: [CLOSURE, HOLDING_GAP]
+    claim: "preserve free-var / closure bindings when extracting public API fns to LIA AST+emit"
+    measure: "lodash public-API suite pass count; must rise from 1/14 without soft_match"
+    transfer: "any monolith with cross-fn free refs (lodash-shaped)"
+    forbid: "mutate fixture LIA; weaken behavior_eq"
+    status: OPEN
+  }
+  @H002 {
+    from_trauma: [ARROW_EXTRACT_OVERREAD, ASI_SEMICOLON_FREE]
+    claim: "arrow newline-bound + ASI before controls generalizes beyond dayjs utils"
+    measure: "clone-lia transfer on other semicolon-free arrow-heavy libs"
+    transfer: "underscore modules / dayjs plugins"
+    status: APPLIED_PARTIAL
+    evidence: "INTEL_CLONE_LIA_dayjs absFloor+isUndefined PASS"
+  }
+}
+
+@E{t="2026-08-13T04:08:09.614Z" id=H_CLONE_dayjs_msqzzq8d from=[RUNTIME_HELPER] claim="raise exact-hash pass on clone surface without soft_match" transfer=same_class_repos status=OPEN}
+
+@E{t="2026-08-13T04:15:55.045Z" id=H_CLONE_LIN_underscore_msr09pd1 from=[SEMANTICS_GAP|RUNTIME_HELPER] claim="raise exact-hash pass on clone-lin surface" transfer=same_class status=OPEN}
+
+@E{t="2026-08-13T04:16:45.341Z" id=H_CLONE_LIN_underscore_msr0as65 from=[SEMANTICS_GAP|RUNTIME_HELPER] claim="raise exact-hash pass on clone-lin surface" transfer=same_class status=OPEN}

@@ -1,22 +1,29 @@
 {
-  "name": "lia-lang",
-  "version": "0.2.0",
-  "description": "LIA — AI-native compact code language (sigil IR; formerly AIL). Emit from JS, compile back, verify behavior.",
+  "name": "lin-lang",
+  "version": "0.4.0",
+  "description": "LIN — lingua ia nativa. Compact AI-native code language. Compile to js|ts|py|go|rust.",
   "type": "module",
   "private": false,
   "bin": {
+    "lin": "./bin/lin.mjs",
     "lia": "./bin/lia.mjs",
     "ail": "./bin/ail.mjs"
   },
   "scripts": {
-    "emit": "node bin/lia.mjs emit",
-    "compile": "node bin/lia.mjs compile",
-    "check": "node bin/lia.mjs check",
+    "emit": "node bin/lin.mjs emit",
+    "compile": "node bin/lin.mjs compile",
+    "check": "node bin/lin.mjs check",
     "test": "node tests/roundtrip.test.mjs",
+    "test:multi": "node scripts/golden_multi_emit.mjs",
     "self-repair": "node scripts/self_repair.mjs --smoke",
-    "example:safe": "node bin/lia.mjs compile examples/safe-compare.lia -o examples/safe-compare.compiled.js"
+    "improve": "node scripts/evolve_loop.mjs improve",
+    "evolve": "node scripts/evolve_loop.mjs evolve",
+    "autonomy": "node scripts/evolve_loop.mjs status",
+    "clone-lin": "node bin/lin.mjs clone-lin",
+    "clone-lia": "node bin/lin.mjs clone-lin",
+    "example:safe": "node bin/lin.mjs compile examples/safe-compare.lia --target js -o examples/safe-compare.compiled.js"
   },
-  "keywords": ["lia", "ail", "ai-native", "ir", "compiler", "compact-code"],
+  "keywords": ["lin", "lia", "ail", "ai-native", "ir", "compiler", "multi-emit"],
   "license": "MIT",
   "engines": {
     "node": ">=18"

@@ -1,0 +1,80 @@
+@DICEL:LIN_CLONE_LIN_LOOP:1.0.0
+^lang="LIN"
+^aka="lingua_ia_nativa"
+^repo="C:/Users/k/Documents/lia"
+^lab="C:/Users/k/Documents/dicel-unified"
+^status="ACTIVE"
+^supersedes="LIA_CLONE_LIA_LOOP.dicel"
+^parent="LIA_AUTONOMY.dicel"
+^learn="AIL_LEARN_LOOP.dicel"
+^oracle="semantic_hash_exact_like_P200"
+^no_soft_match=true
+^no_padding=true
+^fix_target="compiler_outside_nucleus"
+^immutable_core="verifier!semantic_hash!behavior_eq_gate!LIN_gate_ge_Dicel!semantic_invariants"
+
+@GOAL {
+  pipeline: "clone→oracle→rewrite_LIN→compile→hash→IMPROVE_LIN_FROM_CLONE→publish_or_learn→cleanup"
+  publish_name: "clone-lin | clone-lin-<name>"
+  results: "INTEL_CLONE_LIN_*.dicel in lin/lia repo + comparison in published repo"
+  continuous: "--cycles N (default high) | --stop-file path | Ctrl+C"
+}
+
+@STAGES {
+  S1_CLONE {
+    action: "git_clone famous_repo_with_tests → os.tmpdir/lin_clone_*"
+    queue_rotate: [dayjs, underscore, ms, left-pad-level, lodash_subset]
+  }
+  S2_ORACLE {
+    action: "exact sha256 String(outputs); soft_match FORBIDDEN"
+    like: "P200"
+  }
+  S3_REWRITE {
+    action: "emit API surface → .lin|.lia (WRITE=LIN; dual-read @LIN|@LIA|@AIL)"
+  }
+  S4_COMPILE_VERIFY {
+    pass_iff: "behavior_eq==1.0 AND hash_match"
+  }
+  S5_IMPROVE_LIN_FROM_CLONE {
+    mandatory: true
+    when: "ALWAYS after rewrite+verify (pass OR fail)"
+    action: "read full rewrite+comparison+failures; mine emit/docs/trauma→rules/examples"
+    allow: "candidates/ + Hypothesis + peripheral emitter fixes"
+    forbid: "mutate_nucleus; edit_LIN_to_appease_emitter; soft_match"
+    ledger: "kind=improve_lin_from_clone harvest=..."
+  }
+  S6_PASS_PUBLISH {
+    action: "gh push clone-lin-<name>; INTEL with clone_lin_url"
+  }
+  S7_FAIL_LEARN {
+    action: "Hypothesis+trauma; FIX compiler outside nucleus; loop"
+  }
+  S8_CLEANUP {
+    action: "ALWAYS rm temp original clone; verify path_absent"
+  }
+}
+
+@CLI {
+  run: "lin clone-lin [--cycles N] [--stop-file path] [--source url] [--name slug]"
+  alias: "lia clone-lin | npm run clone-lin"
+  script: "scripts/clone_lin_loop.mjs"
+  stop: "Ctrl+C OR create stop-file OR --cycles exhausted"
+}
+
+@ARTIFACTS {
+  intel: "INTEL_CLONE_LIN_<name>.dicel"
+  storage: "storage/lia_{ledger,trauma,hypotheses}.dicel"
+  candidates: "candidates/CLONE_*"
+  publish: "github.com/<user>/clone-lin-<name>"
+}
+
+@HONESTY {
+  prior_gaps: ["CLOSURE", "template_literal", "TS holdout 36.6%"]
+  forbid: "fake_green; claim_full_suite without exact hash"
+}
+
+@NINEROUTER {
+  ^R_9R: "failover_on_timeout_or_empty; try_next_model; never_block_on_one"
+  note: "any_9router_self_repair_or_LLM_patch_MUST_use_multi_model_failover"
+  never_log: "NINEROUTER_KEY"
+}

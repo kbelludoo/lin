@@ -1,22 +1,24 @@
 /**
- * LIA emitter (ex-AIL) — default compact Dicel-for-AI IR.
- * Spec: LIA.dicel + LIA_CODE_LANG_SPEC.dicel
+ * LIN emitter (ex-LIA/AIL) — lingua ia nativa compact IR.
+ * Spec: LIN_CLONE_LIN_LOOP + LIA_CODE_LANG_SPEC (transition)
  *
  * Paths:
- *   source JS/TS-ish → LIA (preferred compact path)
- *   PROJECT.dicel L0 → LIA (named_only, strip_tests, L0-op desugar)
+ *   source JS/TS-ish → LIN (preferred compact path)
+ *   PROJECT.dicel L0 → LIN (named_only, strip_tests, L0-op desugar)
  *
  * Lossy. Does not overwrite L0 archive.
- * Headers: emit @LIA; compiler dual-reads @AIL/@LIA.
+ * Headers: emit @LIN; compiler dual-reads @LIN/@LIA/@AIL.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const LIA_VERSION = '0.2';
-export const LIA_HEADER = `@LIA:L1c:${LIA_VERSION}`;
-export const AIL_VERSION = LIA_VERSION; // backcompat alias
-export const AIL_HEADER = LIA_HEADER; // backcompat alias (value is @LIA)
+export const LIN_VERSION = '0.2';
+export const LIN_HEADER = `@LIN:L1c:${LIN_VERSION}`;
+export const LIA_VERSION = LIN_VERSION; // transition alias
+export const LIA_HEADER = LIN_HEADER; // transition: value is @LIN
+export const AIL_VERSION = LIN_VERSION;
+export const AIL_HEADER = LIN_HEADER;
 
 const DEFAULT_OPS = 'strip_tests+sigil_ops+named_only+const_table';
 const GRAMMAR = '~G{?=if #=for ^=ret :else}';
@@ -432,6 +434,8 @@ function applySourceSigils(jsBody) {
   // strip comments before compaction (otherwise // eats the rest of the AIL/JS line)
   s = s.replace(/\/\*[\s\S]*?\*\//g, '');
   s = s.replace(/(^|[^:])\/\/.*$/gm, '$1');
+  // ASI: insert ; before control/decl at line starts (semicolon-free sources like dayjs)
+  s = s.replace(/\n\s*(?=if\b|for\b|return\b|const\b|let\b|var\b|else\b)/g, ';\n');
   s = s.replace(/\s+/g, ' ').trim();
   s = s.replace(/\breturn\s+/g, '^');
   s = s.replace(/\belse\s+if\s*\(/g, ':(');
@@ -450,35 +454,94 @@ function applySourceSigils(jsBody) {
   return s;
 }
 
-/** Extract top-level named functions from JS source. */
+function splitParams(raw) {
+  return String(raw || '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean);
+}
+
+function extractBraceBody(text, openBraceIdx) {
+  let depth = 1;
+  let i = openBraceIdx + 1;
+  for (; i < text.length; i++) {
+    const c = text[i];
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) break;
+    }
+  }
+  return { body: text.slice(openBraceIdx + 1, i), end: i };
+}
+
+/** Extract expression after `=>` until ; , newline, or unbalanced closer. */
+function extractArrowExpr(text, start) {
+  let i = start;
+  let depthParen = 0;
+  let depthBrace = 0;
+  let depthBracket = 0;
+  while (i < text.length) {
+    const c = text[i];
+    if ((c === '\n' || c === '\r') && depthParen === 0 && depthBrace === 0 && depthBracket === 0) break;
+    if (c === '(') depthParen++;
+    else if (c === ')') {
+      if (depthParen === 0) break;
+      depthParen--;
+    } else if (c === '{') depthBrace++;
+    else if (c === '}') {
+      if (depthBrace === 0) break;
+      depthBrace--;
+    } else if (c === '[') depthBracket++;
+    else if (c === ']') {
+      if (depthBracket === 0) break;
+      depthBracket--;
+    } else if ((c === ';' || c === ',') && depthParen === 0 && depthBrace === 0 && depthBracket === 0) {
+      break;
+    }
+    i++;
+  }
+  return { expr: text.slice(start, i).trim(), end: i };
+}
+
+/** Extract top-level named functions from JS source (classic + arrow const/let/var). */
 export function extractJsFunctions(source) {
   const text = String(source || '');
   const fns = [];
-  const patterns = [
+  const push = (name, params, body) => {
+    if (!name || fns.some((f) => f.name === name)) return;
+    fns.push({ name, params, body });
+  };
+
+  const classic = [
     /function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
     /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
   ];
-  for (const re of patterns) {
+  for (const re of classic) {
     let m;
     while ((m = re.exec(text)) !== null) {
-      const name = m[1];
-      const params = m[2]
-        .split(',')
-        .map((p) => p.trim())
-        .filter(Boolean);
-      const start = m.index + m[0].length;
-      let depth = 1;
-      let i = start;
-      for (; i < text.length; i++) {
-        const c = text[i];
-        if (c === '{') depth++;
-        else if (c === '}') {
-          depth--;
-          if (depth === 0) break;
-        }
-      }
-      const body = text.slice(start, i);
-      if (!fns.some((f) => f.name === name)) fns.push({ name, params, body });
+      const open = m.index + m[0].length - 1;
+      const { body } = extractBraceBody(text, open);
+      push(m[1], splitParams(m[2]), body);
+    }
+  }
+
+  // const name = (a,b) => { ... }  |  const name = (a,b) => expr  |  const name = a => expr
+  const arrowRe =
+    /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:(\([^)]*\))|([A-Za-z_$][\w$]*))\s*=>\s*/g;
+  let am;
+  while ((am = arrowRe.exec(text)) !== null) {
+    const name = am[1];
+    const params = splitParams((am[2] || am[3] || '').replace(/^\(|\)$/g, ''));
+    let i = am.index + am[0].length;
+    while (i < text.length && /\s/.test(text[i])) i++;
+    if (text[i] === '{') {
+      const { body } = extractBraceBody(text, i);
+      push(name, params, body);
+    } else {
+      const { expr } = extractArrowExpr(text, i);
+      // normalize expression-body arrows to return stmt for LIA emit
+      push(name, params, `return ${expr}`);
     }
   }
   return fns;
@@ -499,7 +562,7 @@ export function emitAilFromSource(source, opts = {}) {
     return !isTestishBody([f.body]);
   });
   const lines = [
-    LIA_HEADER,
+    LIN_HEADER,
     `^schema_once ^lossy=true ^ops=${opts.ops || DEFAULT_OPS}`,
     GRAMMAR,
   ];
@@ -532,7 +595,7 @@ export function emitAilFromProject(dicelText, opts = {}) {
     return true;
   });
   const lines = [
-    LIA_HEADER,
+    LIN_HEADER,
     `^schema_once ^lossy=true ^ops=${opts.ops || DEFAULT_OPS}`,
     GRAMMAR,
   ];

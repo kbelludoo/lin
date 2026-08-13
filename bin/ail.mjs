@@ -1,3 +1,3 @@
 #!/usr/bin/env node
-/** Legacy `ail` CLI → forwards to `lia` (same argv). */
-import './lia.mjs';
+/** Legacy `ail` CLI → forwards to `lin` (same argv). */
+import './lin.mjs';

@@ -1,0 +1,31 @@
+@DICEL:lia_knowledge:0.2.0
+^status=ACTIVE
+^honesty=[OBSERVED,INFERRED,UNKNOWN]
+
+@ENTRIES {
+  @K001 {
+    honesty: OBSERVED
+    fact: "TS/src 453359 LOC holdout exact 183/500 (36.6%); lodash isolated 246/400 (61.5%)"
+    source: "INTEL_AIL_SIZE_DISK_BENCHMARK.dicel"
+  }
+  @K002 {
+    honesty: OBSERVED
+    fact: "lodash node test/test PASS on original; public-API toString→LIA 1/14 — NOT full suite green"
+    source: "INTEL_AIL_400K_ROUNDTRIP.dicel"
+  }
+  @K003 {
+    honesty: INFERRED
+    fact: "dominant failure class for monolith rewrite = CLOSURE / free-ref holding gap"
+    source: "trauma E001+E002"
+  }
+  @K004 {
+    honesty: OBSERVED
+    fact: "clone-lia dayjs utils: absFloor+isUndefined exact-hash PASS after arrow+ASI emitter fixes; 4/6 skipped (templates/closures)"
+    source: "INTEL_CLONE_LIA_dayjs.dicel"
+  }
+  @K005 {
+    honesty: OBSERVED
+    fact: "Math.* must not classify as host_or_module_ref; only non-builtin Capitals (e.g. C.M)"
+    source: "clone_lia_oracle unsupported()"
+  }
+}

@@ -184,7 +184,7 @@ function rewriteElseBare(s) {
 }
 
 /**
- * Parse LIA program into structured parts. Accepts @LIA and legacy @AIL headers.
+ * Parse LIN/LIA program. Dual-reads @LIN + legacy @LIA/@AIL headers.
  */
 export function parseLia(liaText) {
   const lines = String(liaText || '')
@@ -193,7 +193,9 @@ export function parseLia(liaText) {
     .filter(Boolean);
   const meta = { header: null, consts: null, exports: [], fns: [] };
   for (const line of lines) {
-    if (line.startsWith('@LIA:') || line.startsWith('@AIL:')) meta.header = line;
+    if (line.startsWith('@LIN:') || line.startsWith('@LIA:') || line.startsWith('@AIL:')) {
+      meta.header = line;
+    }
     else if (line.startsWith('^')) continue;
     else if (line.startsWith('~G')) continue;
     else if (line.startsWith('$K')) meta.consts = parseConstTable(line);

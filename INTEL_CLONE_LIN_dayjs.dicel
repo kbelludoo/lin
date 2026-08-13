@@ -1,0 +1,23 @@
+@DICEL:INTEL_CLONE_LIN:1.0.0
+^slug="dayjs"
+^lang="LIN"
+^rule="semantic_hash_exact_like_P200"
+^no_soft_match=true
+^status="PARTIAL_PASS"
+^source="https://github.com/iamkun/dayjs.git"
+^clone_lin_url="https://github.com/kbelludoo/clone-lin-dayjs"
+^clone_lin_local="C:/Users/k/Documents/lia/.clone_lin_publish/clone-lin-dayjs"
+^temp_cleaned=true
+^pass=2 ^fail=0 ^skip=4
+^behavior_eq_required=1.0
+
+@COMPARISON {
+  pass_names: ["absFloor","isUndefined"]
+  fail_names: []
+  learn: "none"
+  improve_lin: "emit_peripheral:template_literal×2|emit_peripheral:CLOSURE×2|positive_transfer:ok×2"
+}
+
+@NOTE_PT {
+  clone-lin-dayjs: p=2 f=0 s=4; improve=emit_peripheral:template_literal×2|emit_peripheral:CLOSURE×2|positive_transfer:ok×2
+}

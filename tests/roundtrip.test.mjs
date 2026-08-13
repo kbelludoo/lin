@@ -4,16 +4,17 @@ import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { compileLiaToJs, parseLia } from '../src/compiler.mjs';
-import { LIA_HEADER } from '../src/emitter.mjs';
+import { LIN_HEADER, LIA_HEADER } from '../src/emitter.mjs';
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const lia = fs.readFileSync(path.join(root, 'examples', 'safe-compare.lia'), 'utf8');
+const src = fs.readFileSync(path.join(root, 'examples', 'safe-compare.lia'), 'utf8');
 
-assert.ok(lia.startsWith('@LIA:'), 'example must use @LIA header');
-assert.equal(LIA_HEADER, '@LIA:L1c:0.2');
+assert.ok(src.startsWith('@LIN:'), 'example must use @LIN header');
+assert.equal(LIN_HEADER, '@LIN:L1c:0.2');
+assert.equal(LIA_HEADER, LIN_HEADER);
 
-const { js, program } = compileLiaToJs(lia, { exportMode: 'single' });
+const { js, program } = compileLiaToJs(src, { exportMode: 'single' });
 assert.equal(program.fns[0].name, 'safeCompare');
 
 const tmp = path.join(root, 'examples', '.tmp_safe.cjs');
@@ -25,15 +26,16 @@ assert.equal(fn('a', 'b'), false);
 assert.equal(fn('prefix', 'pre'), false);
 assert.equal(fn('', ''), true);
 
-// Dual-read legacy @AIL header
-const legacy = lia.replace('@LIA:', '@AIL:');
-const legacyProg = parseLia(legacy);
-assert.equal(legacyProg.header, '@AIL:L1c:0.2');
-const { js: jsLegacy } = compileLiaToJs(legacy, { exportMode: 'single' });
-fs.writeFileSync(tmp, jsLegacy, 'utf8');
-delete require.cache[require.resolve(tmp)];
-const fn2 = require(tmp);
-assert.equal(fn2('ab', 'ab'), true);
+// Dual-read legacy @LIA and @AIL
+for (const [tag, hdr] of [['@LIA:', '@LIA:L1c:0.2'], ['@AIL:', '@AIL:L1c:0.2']]) {
+  const legacy = src.replace('@LIN:', tag);
+  const prog = parseLia(legacy);
+  assert.equal(prog.header, hdr);
+  const { js: jsL } = compileLiaToJs(legacy, { exportMode: 'single' });
+  fs.writeFileSync(tmp, jsL, 'utf8');
+  delete require.cache[require.resolve(tmp)];
+  assert.equal(require(tmp)('ab', 'ab'), true);
+}
 
 fs.unlinkSync(tmp);
-console.log('ok roundtrip safe-compare (+ legacy @AIL dual-read)');
+console.log('ok roundtrip safe-compare (+ @LIN/@LIA/@AIL dual-read)');

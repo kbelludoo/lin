@@ -1,6 +1,13 @@
 node_modules/
 examples/.tmp_*
+.bench_400k_tmp/
+.bench_size_tmp/
+.clone_lia_publish/
+.clone_lin_publish/
+.clone_lin_stop
 *.log
 .DS_Store
 .env
 .env.*
+
+examples/.multi_emit_out/
