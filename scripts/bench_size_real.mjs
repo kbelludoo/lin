@@ -526,7 +526,7 @@ function writeReports(data) {
     `  ail_disk_bytes: ${art.ts.ail_disk}`,
     `  compiled_chars: ${art.ts.compiled_chars}`,
     `  compiled_disk_bytes: ${art.ts.compiled_disk}`,
-    `    `  source_chars_of_pass_subset: ${art.ts.ail_chars}`,
+    `  source_chars_of_pass_subset: ${art.ts.ail_chars}`,
     `  ratio_ail_over_compiled_pass: ${Number(ailSrcRatio.toFixed(4))}`,
     `  ratio_disk_ail_over_disk_ts_tree: ${Number(diskRatio.toFixed(6))}`,
     `  dicel_l0: "not_generated_in_this_bench"`,

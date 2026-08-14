@@ -12,6 +12,13 @@ const require = createRequire(import.meta.url);
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const MAX_DET = 6;
 const MAX_LLM = 2;
+const REQUEST_TIMEOUT_MS = Number(process.env.NINEROUTER_TIMEOUT_MS || 45000);
+const NINE_MODELS = (
+  process.env.NINEROUTER_MODELS ||
+  process.env.NINEROUTER_MODEL ||
+  'kgw/kilo-auto/free,cf/@cf/meta/llama-3.2-3b-instruct,kr/deepseek-3.2,auto'
+).split(',').map((s) => s.trim()).filter(Boolean);
+/** ^R_9R: failover_on_timeout_or_empty; try_next_model; never_block_on_one */
 const DEFAULT_HOLDOUT = [
   ['foo', 'foo'], ['foo', 'bar'], ['hello world', 'hello world'],
   ['hello world', 'not hello world'], ['prefix', 'pre'], ['pre', 'prefix'],
@@ -169,28 +176,53 @@ async function optionalNineRouterPatch(ail, verifyFail, memory) {
   if (!base) return { ail, used: false, reason: 'NINEROUTER_URL_absent' };
   const key = process.env.NINEROUTER_KEY || '';
   const url = `${base.replace(/\/$/, '')}/v1/chat/completions`;
-  const body = {
-    model: process.env.NINEROUTER_MODEL || 'kgw/kilo-auto/free',
-    temperature: 0.2,
-    messages: [
-      { role: 'system', content: 'AIL repair. Never change hash/verifier. JSON only: {"patches":[{"op":"replace","old":"...","new":"...","reason":"..."}],"reflection":"..."}' },
-      { role: 'user', content: JSON.stringify({ ail, fail: { stage: verifyFail.stage, error: verifyFail.error, behavior_eq: verifyFail.behavior_eq, hash_match: verifyFail.hash_match }, memory: memory.slice(-4) }) },
-    ],
-  };
+  const messages = [
+    { role: 'system', content: 'AIL repair. Never change hash/verifier. JSON only: {"patches":[{"op":"replace","old":"...","new":"...","reason":"..."}],"reflection":"..."}' },
+    { role: 'user', content: JSON.stringify({ ail, fail: { stage: verifyFail.stage, error: verifyFail.error, behavior_eq: verifyFail.behavior_eq, hash_match: verifyFail.hash_match }, memory: memory.slice(-4) }) },
+  ];
   const headers = { 'content-type': 'application/json' };
   if (key) headers.authorization = `Bearer ${key}`;
-  let respText;
-  try {
-    const res = await fetch(url, { method: 'POST', headers, body: JSON.stringify(body) });
-    respText = await res.text();
-    if (!res.ok) {
-      memory.push({ kind: 'llm', note: `http_${res.status}`, key_masked: maskSecret(key) });
-      return { ail, used: true, reason: `http_${res.status}` };
+
+  let respText = '';
+  let usedModel = null;
+  const errors = [];
+  for (const model of NINE_MODELS) {
+    const ac = new AbortController();
+    const timer = setTimeout(() => ac.abort(), REQUEST_TIMEOUT_MS);
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ model, temperature: 0.2, messages }),
+        signal: ac.signal,
+      });
+      respText = await res.text();
+      if (!res.ok) {
+        const retryable = res.status === 408 || res.status === 429 || res.status >= 500;
+        errors.push(`${model}:http_${res.status}`);
+        memory.push({ kind: 'llm', note: `http_${res.status}`, model, key_masked: maskSecret(key) });
+        if (!retryable) break;
+        continue;
+      }
+      if (!String(respText || '').trim()) {
+        errors.push(`${model}:empty`);
+        memory.push({ kind: 'llm', note: 'empty_body', model });
+        continue;
+      }
+      usedModel = model;
+      break;
+    } catch (e) {
+      const note = e?.name === 'AbortError' ? 'timeout' : String(e.message || e);
+      errors.push(`${model}:${note}`);
+      memory.push({ kind: 'llm', note, model, key_masked: maskSecret(key) });
+    } finally {
+      clearTimeout(timer);
     }
-  } catch (e) {
-    memory.push({ kind: 'llm', note: String(e.message || e), key_masked: maskSecret(key) });
-    return { ail, used: true, reason: 'fetch_fail' };
   }
+  if (!usedModel) {
+    return { ail, used: true, reason: errors.join('|') || 'all_models_failed' };
+  }
+
   let parsed;
   try {
     const outer = JSON.parse(respText);
@@ -198,7 +230,7 @@ async function optionalNineRouterPatch(ail, verifyFail, memory) {
     const m = String(content).match(/\{[\s\S]*\}/);
     parsed = JSON.parse(m ? m[0] : content);
   } catch {
-    memory.push({ kind: 'llm', note: 'unstructured_reject' });
+    memory.push({ kind: 'llm', note: 'unstructured_reject', model: usedModel });
     return { ail, used: true, reason: 'unstructured' };
   }
   let next = ail;
@@ -206,7 +238,8 @@ async function optionalNineRouterPatch(ail, verifyFail, memory) {
     if (p?.op === 'replace' && p.old && typeof p.new === 'string' && next.includes(p.old)) next = next.replace(p.old, p.new);
   }
   if (parsed.reflection) memory.push({ kind: 'reflexion', note: String(parsed.reflection).slice(0, 240) });
-  return { ail: next, used: true, reason: next === ail ? 'no_effect' : 'patched' };
+  memory.push({ kind: 'llm', note: `ok:${usedModel}` });
+  return { ail: next, used: true, reason: next === ail ? 'no_effect' : `patched:${usedModel}` };
 }
 
 export async function selfRepair(ailText, oracle, opts = {}) {

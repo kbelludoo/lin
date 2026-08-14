@@ -1,4 +1,4 @@
-@LIA:MULTI_EMIT:1.0.0
+@LIA:MULTI_EMIT:1.1.0
 
 ^lang="LIA"
 ^status="ACTIVE"
@@ -6,9 +6,9 @@
 ^dicel_compile="legacy_archive_only"
 ^targets=[js,ts,py,go,rust]
 ^cli="lia compile <file.lia> --target js|ts|py|go|rust"
-^repo_preferred="C:/Users/k/Documents/lia"
-^repo_current="C:/Users/k/Documents/lia"
-^rename_status="DONE_folder_is_lia"
+^repo="C:/Users/k/Documents/lia"
+^toolchain="ALWAYS_INSTALL_MISSING"
+^ensure="scripts/ensure_toolchains.mjs"
 
 @PIPELINE {
   step[:1]=parse_LIA_surface
@@ -22,7 +22,7 @@
   ts: "src/emit_ts.mjs typed exports"
   py: "src/emit_py.mjs snake_case + while-for"
   go: "src/emit_go.mjs interface{} + fmt.Sprint"
-  rust: "src/emit_rust.mjs MVP stub; skip rustc if absent"
+  rust: "src/emit_rust.mjs MVP; ALWAYS_INSTALL rustc; SKIP only if install failed after retry"
 }
 
 @RUNTIME_STUB {
@@ -33,8 +33,9 @@
 @GOLDEN {
   source: "examples/safe-compare.lia"
   script: "scripts/golden_multi_emit.mjs"
-  require_run: [js,ts,py]
-  optional_run: [go,rust]
+  start: "ensure_toolchains ALWAYS_INSTALL_MISSING"
+  require_run: [js,ts,py,go,rust]
+  skip_run: "only_if_install_failed_after_retry"
 }
 
 @LEGACY {

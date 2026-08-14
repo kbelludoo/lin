@@ -1,6 +1,8 @@
 # LIA — AI-Native compact code language
 
-Língua densa para código e agentes (antes **AIL**). Menos tokens que JS/Dicel verboso; compilável de volta para JS com equivalência semântica.
+Língua densa para código e agentes. **Único caminho ativo de compile**: LIA → JS / TS / Python / Go / Rust.
+
+Dicel L0 = legado/arquivo apenas; novos trabalhos **não** dependem de Dicel para emitir.
 
 ## Sigilos
 
@@ -14,46 +16,31 @@ Língua densa para código e agentes (antes **AIL**). Menos tokens que JS/Dicel 
 | `$K{k=v}` | const table |
 | `=ex{a,b}` | exports |
 
-## Exemplo
-
-```text
-@LIA:L1c:0.2
-~G{?=if #=for ^=ret :else}
-!safeCompare(a,b){A=String(a);B=String(b);n=A.length;r=0;?(n!=B.length){B=A;r=1}#(i=0;i<n;i++){r|=(A.charCodeAt(i)^B.charCodeAt(i))}^r==0}
-=ex{safeCompare}
-```
-
-Headers: emit default `@LIA`; compiler aceita `@LIA` e legado `@AIL`.
-
 ## CLI
 
 ```bash
 npm test
-npm run self-repair
-node bin/lia.mjs emit path/to/file.js -o out.lia
-node bin/lia.mjs compile examples/safe-compare.lia -o out.js
-node bin/lia.mjs check examples/safe-compare.lia
-# alias: node bin/ail.mjs …
+npm run test:multi
+node bin/lia.mjs compile examples/safe-compare.lia --target js
+node bin/lia.mjs compile examples/safe-compare.lia --target ts -o out.ts
+node bin/lia.mjs compile examples/safe-compare.lia --target py
+node bin/lia.mjs compile examples/safe-compare.lia --target go
+node bin/lia.mjs compile examples/safe-compare.lia --target rust
 ```
 
-## Self-repair (MVP)
-
-Detect compile/holdout fail → deterministic fixers (F1–F5) → optional 9router patch if `NINEROUTER_URL` → accept only when `behavior_eq==1.0` and exact semantic hash. Spec: `spec/LIA_SELF_REPAIR.dicel`.
+Alias legado: `bin/ail.mjs` → mesmo CLI.
 
 ## Layout
 
 ```
-spec/          # LIA.dicel, semantics, compiler, self-repair specs
-src/           # emitter.mjs, compiler.mjs
-bin/lia.mjs    # CLI (ail alias)
-scripts/       # self_repair.mjs, bench_400k.mjs
-examples/      # safe-compare.lia, bytes.lia
-tests/         # roundtrip
+spec/          # LIA_MULTI_EMIT + semantics/compiler
+src/           # emitter, compiler, emit_{js,ts,py,go,rust}, multi_emit
+bin/lia.mjs    # CLI canônico
+examples/      # safe-compare.lia
+scripts/       # golden_multi_emit.mjs
 ```
 
-## Origem
-
-Extraída do lab `dicel-unified` (perfil AIL_V2 / DICEL-L1c). Renomeada AIL→LIA; ver `LIA_RENAME.dicel`.
+Repo: `C:/Users/k/Documents/lia` (ex-`ail`).
 
 ## Licença
 

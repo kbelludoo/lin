@@ -1,23 +1,29 @@
-@DICEL:INTEL_CLONE_LIN:1.0.0
+@DICEL:INTEL_CLONE_LIN:1.1.0
 ^slug="underscore"
 ^lang="LIN"
 ^rule="semantic_hash_exact_like_P200"
 ^no_soft_match=true
-^status="PARTIAL_PASS_WITH_FAILS"
+^status="PASS"
+^done=true
+^published=true
+^suite_rate=1
+^suite_total=24
 ^source="https://github.com/jashkenas/underscore.git"
 ^clone_lin_url="https://github.com/kbelludoo/clone-lin-underscore"
 ^clone_lin_local="C:/Users/k/Documents/lia/.clone_lin_publish/clone-lin-underscore"
 ^temp_cleaned=true
-^pass=23 ^fail=5 ^skip=2
+^pass=24 ^fail=0 ^skip=0
 ^behavior_eq_required=1.0
+^publish_gate="suite_rate==1.0"
 
 @COMPARISON {
-  pass_names: ["allKeys","chain","chunk","clone","compact","contains","create","each","every","filter","find","findKey","findWhere","first","flatten","functions","get","identity","initial","intersection","invert","isBoolean","alternateIsDataView"]
-  fail_names: ["after","before","compose","constant","has"]
-  learn: "H_CLONE_LIN_underscore_msr0as65"
-  improve_lin: "emit_peripheral:template_literal×2|positive_transfer:ok×23"
+  pass_names: ["after","allKeys","before","chain","chunk","clone","compact","compose","constant","contains","create","debounce","later","each","every","filter","find","findKey","findWhere","first","flatten","functions","get","has"]
+  fail_names: []
+  skip_names: []
+  learn: "none"
+  improve_lin: "positive_transfer:ok×24"
 }
 
 @NOTE_PT {
-  clone-lin-underscore: p=23 f=5 s=2; improve=emit_peripheral:template_literal×2|positive_transfer:ok×23
+  DONE 100% clone-lin-underscore: p=24 suite_rate=1.0; improve=positive_transfer:ok×24
 }

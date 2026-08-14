@@ -121,25 +121,38 @@ export function improveLinFromClone(root, storageDir, candDir, results, slug) {
 
 export function writeIntel(root, report) {
   const p = path.join(root, `INTEL_CLONE_LIN_${report.slug}.dicel`);
+  const rate = report.suite_rate != null ? report.suite_rate : 0;
   fs.writeFileSync(
     p,
     [
-      '@DICEL:INTEL_CLONE_LIN:1.0.0',
+      '@DICEL:INTEL_CLONE_LIN:1.2.0',
       `^slug="${report.slug}"`,
       '^lang="LIN"',
       '^rule="semantic_hash_exact_like_P200"',
       '^no_soft_match=true',
       `^status="${report.status}"`,
+      `^done=${report.done === true}`,
+      `^published=${report.published === true}`,
+      `^suite_rate=${rate}`,
+      `^suite_total=${report.suite_total || (report.pass + report.fail + report.skip)}`,
       `^source="${report.source}"`,
       `^clone_lin_url="${report.clone_lin_url || ''}"`,
       `^clone_lin_local="${(report.clone_lin_local || '').replace(/\\/g, '/')}"`,
       `^temp_cleaned=${report.temp_cleaned}`,
       `^pass=${report.pass} ^fail=${report.fail} ^skip=${report.skip}`,
       '^behavior_eq_required=1.0',
+      '^publish_gate="suite_rate==1.0_JS"',
+      `^multi="${(report.multi_line || '').replace(/"/g, "'")}"`,
+      `^learn_lang="${report.learn_lang || 'none'}"`,
+      '',
+      '@MULTI_TARGET {',
+      `  ${(report.multi_line || 'pending')}`,
+      '}',
       '',
       '@COMPARISON {',
-      `  pass_names: [${report.pass_names.map((n) => `"${n}"`).join(',')}]`,
-      `  fail_names: [${report.fail_names.map((n) => `"${n}"`).join(',')}]`,
+      `  pass_names: [${(report.pass_names || []).map((n) => `"${n}"`).join(',')}]`,
+      `  fail_names: [${(report.fail_names || []).map((n) => `"${n}"`).join(',')}]`,
+      `  skip_names: [${(report.skip_names || []).map((n) => `"${n}"`).join(',')}]`,
       `  learn: "${report.learn || 'none'}"`,
       `  improve_lin: "${report.improve_lin || 'none'}"`,
       '}',
@@ -158,28 +171,26 @@ export function buildPublishDir(root, slug, results, meta) {
   const dir = path.join(root, '.clone_lin_publish', `clone-lin-${slug}`);
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(path.join(dir, 'lin'), { recursive: true });
-  fs.mkdirSync(path.join(dir, 'compiled'), { recursive: true });
-  for (const r of results.filter((x) => x.status === 'pass')) {
+  const passes = results.filter((x) => x.status === 'pass');
+  for (const r of passes) {
     const text = (r.lia || '').replace(/^@LIA:/, '@LIN:').replace(/^@AIL:/, '@LIN:');
     fs.writeFileSync(path.join(dir, 'lin', `${r.name}.lin`), text, 'utf8');
-    fs.writeFileSync(path.join(dir, 'compiled', `${r.name}.cjs`), r.js, 'utf8');
   }
-  fs.writeFileSync(
-    path.join(dir, 'COMPARISON.dicel'),
-    [
-      '@DICEL:CLONE_LIN_COMPARISON:1.0.0',
-      `^slug="${slug}"`,
-      '^rule="semantic_hash_exact_like_P200"',
-      `^pass=${meta.pass} ^fail=${meta.fail} ^skip=${meta.skip}`,
-      `^improve_lin="${meta.improve_lin || ''}"`,
-      `^intel="INTEL_CLONE_LIN_${slug}.dicel"`,
-      '',
-    ].join('\n'),
-    'utf8',
-  );
+  const mt = meta.multi_summary
+    ? Object.entries(meta.multi_summary).map(([t, s]) => `${t}:P${s.PASS}/S${s.SKIP}/F${s.FAIL}`).join(' ')
+    : 'js_gate';
+  const fns = passes.map((r) => r.name).join('!');
   fs.writeFileSync(
     path.join(dir, 'README.md'),
-    `# clone-lin-${slug}\n\nLIN rewrite. Source: ${meta.source}\nP/F/S: ${meta.pass}/${meta.fail}/${meta.skip}\n`,
+    [
+      '@RULEL:CLONE_LIN:1.0.0',
+      `~R{.m=meta .c=compile .f=forbid .p=path}`,
+      `.m{repo=clone-lin-${slug} source="${meta.source}" truth=LIN+RULEL_only intel="lia/INTEL_CLONE_LIN_${slug}.dicel"}`,
+      '.c{cmd="lin compile lin/<fn>.lin --target js|ts|py|go|rust -o out" restore="compile_back_to_original_behavior"}',
+      '.f{host_lang_in_repo .cjs .js .ts .py .go .rs compiled/}',
+      `.p{lin="lin/*.lin" readme=README.md fns="${fns}" multi="${mt}"}`,
+      '',
+    ].join('\n'),
     'utf8',
   );
   return dir;

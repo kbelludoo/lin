@@ -5,7 +5,8 @@
  * @typedef {{type:'expr', expr:string}} ExprStmt
  * @typedef {{type:'if', cond:string, then:Stmt[], elseIf:{cond:string,body:Stmt[]}[], else:Stmt[]|null}} IfStmt
  * @typedef {{type:'for', init:string, cond:string, step:string, body:Stmt[]}} ForStmt
- * @typedef {AssignStmt|ReturnStmt|ExprStmt|IfStmt|ForStmt} Stmt
+ * @typedef {{type:'while', cond:string, body:Stmt[]}} WhileStmt
+ * @typedef {AssignStmt|ReturnStmt|ExprStmt|IfStmt|ForStmt|WhileStmt} Stmt
  */
 
 export const TARGETS = ['js', 'ts', 'py', 'go', 'rust'];
@@ -31,26 +32,49 @@ export function rewriteExpr(expr, target) {
     return s;
   }
   if (target === 'py') {
+    s = s.replace(/&&/g, ' and ').replace(/\|\|/g, ' or ');
+    s = s.replace(/!(?!=)/g, 'not ');
+    s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
+    s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisNaN\s*\(/g, '_lia_isnan(');
+    s = s.replace(/===/g, '==').replace(/!==/g, '!=');
     s = s.replace(/\bString\(([^)]+)\)/g, 'str($1)');
     s = s.replace(/\bNumber\(([^)]+)\)/g, 'float($1)');
     s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, 'len($1)');
+    s = s.replace(/([A-Za-z_][\w]*)\.trim\s*\(\s*\)/g, '$1.strip()');
     s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, 'ord($1[$2])');
     s = s.replace(/\btrue\b/g, 'True').replace(/\bfalse\b/g, 'False');
     s = s.replace(/\bnull\b/g, 'None').replace(/\bundefined\b/g, 'None');
     return s;
   }
   if (target === 'go') {
+    s = s.replace(/!(?!=)([A-Za-z_][\w]*)/g, '_lia_falsy($1)');
+    s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
+    s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
+    s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisNaN\s*\(/g, '_lia_isnan(');
+    s = s.replace(/===/g, '==').replace(/!==/g, '!=');
     s = s.replace(/\bString\(([^)]+)\)/g, 'fmt.Sprint($1)');
     s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, 'len($1)');
+    s = s.replace(/([A-Za-z_][\w]*)\.trim\s*\(\s*\)/g, 'strings.TrimSpace(fmt.Sprint($1))');
     s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, 'int($1[$2])');
     s = s.replace(/\btrue\b/g, 'true').replace(/\bfalse\b/g, 'false');
     s = s.replace(/\bnull\b|\bundefined\b/g, 'nil');
     return s;
   }
   if (target === 'rust') {
+    s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
+    s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof(&$1)');
+    s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisNaN\s*\(/g, '_lia_isnan(');
+    s = s.replace(/===/g, '==').replace(/!==/g, '!=');
     s = s.replace(/\bString\(([^)]+)\)/g, '$1.to_string()');
-    s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, '$1.len()');
-    s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, '$1.as_bytes()[$2] as i32');
+    s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, '$1.len() as i32');
+    s = s.replace(/([A-Za-z_][\w]*)\.trim\s*\(\s*\)/g, '$1.trim()');
+    s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, '$1.as_bytes()[$2 as usize] as i32');
     s = s.replace(/\btrue\b/g, 'true').replace(/\bfalse\b/g, 'false');
     s = s.replace(/\bnull\b|\bundefined\b/g, 'None');
     return s;
@@ -60,7 +84,7 @@ export function rewriteExpr(expr, target) {
 
 export function defaultOutPath(inPath, target) {
   const ext = { js: '.js', ts: '.ts', py: '.py', go: '.go', rust: '.rs' }[target] || `.${target}`;
-  const base = String(inPath).replace(/\.(lia|ail)$/i, '');
+  const base = String(inPath).replace(/\.(lia|ail|lin)$/i, '');
   return `${base}.compiled${ext}`;
 }
 

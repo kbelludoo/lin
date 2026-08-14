@@ -9,5 +9,8 @@ examples/.tmp_*
 .DS_Store
 .env
 .env.*
+.clone_lin_*.err
+.clone_lin_*.json
+.clone_lin_queue_state.json
 
 examples/.multi_emit_out/

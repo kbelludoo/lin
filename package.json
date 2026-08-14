@@ -15,17 +15,38 @@
     "check": "node bin/lin.mjs check",
     "test": "node tests/roundtrip.test.mjs",
     "test:multi": "node scripts/golden_multi_emit.mjs",
+    "ensure-toolchains": "node scripts/ensure_toolchains.mjs",
     "self-repair": "node scripts/self_repair.mjs --smoke",
     "improve": "node scripts/evolve_loop.mjs improve",
     "evolve": "node scripts/evolve_loop.mjs evolve",
-    "autonomy": "node scripts/evolve_loop.mjs status",
+    "autonomy": "node scripts/autonomy_run.mjs",
+    "autonomy-status": "node scripts/evolve_loop.mjs status",
     "clone-lin": "node bin/lin.mjs clone-lin",
     "clone-lia": "node bin/lin.mjs clone-lin",
     "example:safe": "node bin/lin.mjs compile examples/safe-compare.lia --target js -o examples/safe-compare.compiled.js"
   },
-  "keywords": ["lin", "lia", "ail", "ai-native", "ir", "compiler", "multi-emit"],
+  "keywords": [
+    "lin",
+    "lia",
+    "ail",
+    "ai-native",
+    "ir",
+    "compiler",
+    "multi-emit"
+  ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kbelludoo/lin.git"
+  },
+  "homepage": "https://github.com/kbelludoo/lin",
+  "bugs": {
+    "url": "https://github.com/kbelludoo/lin/issues"
+  },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2"
   }
 }

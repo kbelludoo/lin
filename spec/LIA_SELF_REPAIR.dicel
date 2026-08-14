@@ -1,11 +1,12 @@
-@DICEL:LIA_SELF_REPAIR:1.0.0
+@DICEL:LIA_SELF_REPAIR:1.1.0
 
 ^lang="LIA"
 ^repo="C:/Users/k/Documents/lia"
 ^status="MVP"
 ^parent="LIA_COMPILER_SPEC.dicel"
 ^oracle="behavior_eq==1.0 exact semantic_hash"
-^immutable_core=["verifier","semantic_hash","behavior_eq_gate"]
+^immutable_core=["verifier","semantic_hash","behavior_eq_gate","LIA_gate_ge_Dicel","core_language_semantics_invariants"]
+^note="@FORBID{mutate_lia_nucleus}"
 
 @WHY_GAP {
   AIL_extracted_first_as: "lingua + emit + compile + holdout oracle"
@@ -36,11 +37,15 @@
   patch_schema: "{op,path,old,new,reason}"
   adopt: "retry_with_verifier_feedback + structured_patch + reflexion_memory"
   max_attempts: 2
+  ^R_9R: "failover_on_timeout_or_empty; try_next_model; never_block_on_one"
+  models: "NINEROUTER_MODELS|DEFAULTS rotate on empty|429|5xx|timeout|abort"
 }
 
 @IMMUTABLE {
-  forbid_mutate: ["semantic_hash_algo","behavior_eq_threshold","verifier_core"]
-  accept_writes: ["candidate_ail","ledger_report","repair_memory"]
+  forbid_mutate: ["semantic_hash_algo","behavior_eq_threshold","verifier_core","LIA_gate_ge_Dicel","core_language_semantics_invariants"]
+  accept_writes: ["candidate_ail","ledger_report","repair_memory","emit_helpers_outside_core","scripts_without_redefining_verifier"]
+  @FORBID{mutate_lia_nucleus}
+  compiler_patch: "OUTSIDE_nucleus OR candidates+promote; NEVER_redefine_verifier|hash|behavior_eq|LIA_gate"
 }
 
 @CLI {

@@ -9,6 +9,10 @@ import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { compileLiaToTargetFile } from '../src/multi_emit.mjs';
 import { compileLiaToJs } from '../src/compiler.mjs';
+import { ensureToolchains, hasCmd } from './ensure_toolchains.mjs';
+
+const toolchain = ensureToolchains();
+console.error(`[golden_multi_emit] toolchain=${JSON.stringify({ present: toolchain.present, installed: toolchain.installed, failed: toolchain.failed.map((f) => f.tool) })}`);
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -18,10 +22,6 @@ fs.mkdirSync(outDir, { recursive: true });
 
 const report = [];
 
-function hasCmd(cmd) {
-  const r = spawnSync(cmd, ['--version'], { encoding: 'utf8', shell: true });
-  return r.status === 0 || (r.stdout || r.stderr || '').length > 0;
-}
 
 function checkPairs(fn) {
   assert.equal(fn('ab', 'ab'), true);
@@ -87,7 +87,11 @@ print("ok py safe-compare")
 {
   const r = compileLiaToTargetFile(src, path.join(outDir, 'safe_compare.go'), { target: 'go' });
   if (!hasCmd('go')) {
-    report.push({ target: 'go', emit: 'ok', run: 'SKIP', detail: 'go toolchain absent' });
+    const f = toolchain.failed.find((x) => x.tool === 'go');
+    report.push({
+      target: 'go', emit: 'ok', run: 'SKIP',
+      detail: f ? `install_failed_after_retry cmd=${f.cmd_for_user}` : 'go absent after ensure',
+    });
   } else {
     const gr = spawnSync('go', ['run', r.outPath], { encoding: 'utf8', cwd: outDir });
     if (gr.status !== 0) {
@@ -101,14 +105,18 @@ print("ok py safe-compare")
 // --- Rust ---
 {
   const r = compileLiaToTargetFile(src, path.join(outDir, 'safe_compare.rs'), { target: 'rust' });
-  const rustc = spawnSync('rustc', ['--version'], { encoding: 'utf8', shell: true });
-  if (rustc.status !== 0 && !(rustc.stdout || '').includes('rustc')) {
-    report.push({ target: 'rust', emit: 'ok_stub', run: 'SKIP', detail: 'rustc absent; MVP emit kept' });
+  if (!hasCmd('rustc')) {
+    const f = toolchain.failed.find((x) => x.tool === 'rustc');
+    report.push({
+      target: 'rust', emit: 'ok_stub', run: 'SKIP',
+      detail: f ? `install_failed_after_retry cmd=${f.cmd_for_user}` : 'rustc absent after ensure; emit kept',
+    });
   } else {
     const bin = path.join(outDir, 'safe_compare_rs.exe');
-    const rr = spawnSync('rustc', [r.outPath, '-o', bin], { encoding: 'utf8' });
-    if (rr.status !== 0) {
-      report.push({ target: 'rust', emit: 'ok_stub', run: 'FAIL', detail: (rr.stderr || '').slice(0, 500) });
+    const rr = spawnSync('rustc', [r.outPath, '-o', bin], { encoding: 'utf8', env: process.env });
+    const rustErr = `${rr.stderr || ''}${rr.stdout || ''}`;
+    if (rr.status !== 0 && /error(\[|:)/.test(rustErr)) {
+      report.push({ target: 'rust', emit: 'ok_stub', run: 'FAIL', detail: rustErr.slice(0, 500) });
     } else {
       const run = spawnSync(bin, [], { encoding: 'utf8' });
       report.push({

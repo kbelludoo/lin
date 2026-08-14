@@ -1,6 +1,6 @@
 @DICEL:AIL_SELF_REPAIR_MVP:1.0.0
 
-^repo="C:/Users/k/Documents/LIA"
+^repo="C:/Users/k/Documents/ail"
 ^status="PASS"
 ^smoke="true"
 ^behavior_eq=1
@@ -35,14 +35,14 @@
   deterministic_first: "Roslyn CodeFix"
   structured_patch: "Outlines/Guidance schema"
   reflexion_memory: "failed repair notes"
-  detail: "spec/AIL_SELF_REPAIR_PRIOR_ART.dicel"
+  detail: "spec/LIA_SELF_REPAIR_PRIOR_ART.dicel"
 }
 
 @FILES {
-  spec: "spec/AIL_SELF_REPAIR.dicel"
-  prior_art: "spec/AIL_SELF_REPAIR_PRIOR_ART.dicel"
+  spec: "spec/LIA_SELF_REPAIR.dicel"
+  prior_art: "spec/LIA_SELF_REPAIR_PRIOR_ART.dicel"
   script: "scripts/self_repair.mjs"
-  report: "INTEL_AIL_SELF_REPAIR_MVP.dicel"
+  report: "INTEL_LIA_SELF_REPAIR_MVP.dicel"
 }
 
 @VERDICT_PT {

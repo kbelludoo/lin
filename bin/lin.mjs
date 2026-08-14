@@ -25,6 +25,9 @@ Commands:
   clone-lia ...                                 alias → clone-lin
   improve                                       auto-improve (self-repair → ledger)
   evolve                                        auto-evolve epoch (candidates_only)
+  autonomy [--cycles N]                         FULL pipeline until clone-lin 100%
+       --clone-cycles N  cap clone retries (default 0=until queue_complete)
+       --skip-clone      improve+evolve only
   autonomy-status                               memory + gates snapshot
   version
 
@@ -117,6 +120,16 @@ if (cmd === 'check') {
     ),
   );
   process.exit(0);
+}
+
+if (cmd === 'autonomy') {
+  const { spawnSync } = await import('node:child_process');
+  const r = spawnSync(process.execPath, [path.join(__dirname, '..', 'scripts', 'autonomy_run.mjs'), ...rest], {
+    cwd: path.join(__dirname, '..'),
+    encoding: 'utf8',
+    stdio: 'inherit',
+  });
+  process.exit(r.status ?? 1);
 }
 
 if (cmd === 'improve' || cmd === 'evolve' || cmd === 'autonomy-status' || cmd === 'status') {

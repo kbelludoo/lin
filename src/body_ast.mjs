@@ -53,6 +53,9 @@ export function parseStmts(body) {
       let elseStmts = null;
       while (true) {
         j = skipWs(s, j);
+        if (s[j] === ';') {
+          j = skipWs(s, j + 1);
+        }
         if (s.startsWith(':(', j)) {
           const op = j + 1;
           const cp = findMatching(s, op, '(', ')');
@@ -73,6 +76,19 @@ export function parseStmts(body) {
       }
       out.push({ type: 'if', cond, then: thenB.stmts, elseIf, else: elseStmts });
       i = j;
+      continue;
+    }
+
+    if (s.startsWith('while', i) && /^\s*\(/.test(s.slice(i + 5))) {
+      const open = s.indexOf('(', i);
+      const close = findMatching(s, open, '(', ')');
+      if (close < 0) throw new Error('LIA_AST_WHILE_PAREN');
+      const cond = s.slice(open + 1, close);
+      let j = skipWs(s, close + 1);
+      if (s[j] !== '{') throw new Error('LIA_AST_WHILE_BRACE');
+      const b = parseBlockBody(s, j);
+      out.push({ type: 'while', cond, body: b.stmts });
+      i = b.end;
       continue;
     }
 
@@ -126,7 +142,7 @@ export function parseStmts(body) {
     }
     const chunk = s.slice(i, j).trim();
     if (chunk) {
-      const am = chunk.match(/^([A-Za-z_$][\w$]*)\s*([+\-*/%&|^]?=)\s*([\s\S]+)$/);
+      const am = chunk.match(/^([A-Za-z_$][\w$]*)\s*(<<=|>>=|[+\-*/%&|^]=|=)\s*([\s\S]+)$/);
       if (am) out.push({ type: 'assign', id: am[1], op: am[2], expr: am[3].trim() });
       else out.push({ type: 'expr', expr: chunk });
     }
@@ -140,9 +156,11 @@ export function collectAssignedIds(stmts) {
   const walk = (list) => {
     for (const st of list || []) {
       if (st.type === 'assign') ids.add(st.id);
-      if (st.type === 'for') {
-        const im = st.init.match(/^([A-Za-z_$][\w$]*)\s*=/);
-        if (im) ids.add(im[1]);
+      if (st.type === 'for' || st.type === 'while') {
+        if (st.type === 'for') {
+          const im = st.init.match(/^([A-Za-z_$][\w$]*)\s*=/);
+          if (im) ids.add(im[1]);
+        }
         walk(st.body);
       }
       if (st.type === 'if') {

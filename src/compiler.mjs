@@ -46,6 +46,7 @@ function stripTypeAnn(params) {
 
 function compileReturnSigils(s) {
   // LIA: ^expr = return; keep bitwise XOR a^b intact
+  // nextOk includes unary + - ! so ^-x / ^!x / ^+x become return
   let out = '';
   let i = 0;
   while (i < s.length) {
@@ -58,7 +59,7 @@ function compileReturnSigils(s) {
     const prev = out.length ? out[out.length - 1] : '';
     const next = s[i + 1] || '';
     const prevOk = !prev || /[;{}\n,]/.test(prev);
-    const nextOk = /[A-Za-z_$0-9(\[]/.test(next);
+    const nextOk = /[A-Za-z_$0-9(\[\-+!'"`{]/.test(next);
     if (prevOk && nextOk) {
       out += 'return ';
       i++;
@@ -77,12 +78,13 @@ function compileBody(body) {
   s = rewriteElseBare(s);
   s = rewriteSigilBlocks(s, '#', 'for');
   s = compileReturnSigils(s);
-  // LIA ==/!= → JS ===/!== (safe for our string/number golds)
-  s = s.replace(/!==/g, '!==');
-  s = s.replace(/!=/g, '!==');
-  s = s.replace(/===/g, '===');
-  s = s.replace(/(^|[^=!<>])==(?!=)/g, '$1===');
+  s = s.replace(/([^;{}(\[,:?])while\s*\(/g, '$1;while(');
+  // protect existing ===/!== then expand LIN ==/!=
+  s = s.replace(/!==/g, '\u0000NE\u0000').replace(/===/g, '\u0000EQ\u0000');
+  s = s.replace(/==/g, '===').replace(/!=/g, '!==');
+  s = s.replace(/\u0000NE\u0000/g, '!==').replace(/\u0000EQ\u0000/g, '===');
   s = s.replace(/;+/g, ';');
+  s = s.replace(/;else\b/g, 'else');
   if (s && !/[;{}]\s*$/.test(s)) s += ';';
   return s;
 }

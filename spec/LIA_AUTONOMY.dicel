@@ -80,8 +80,11 @@
 }
 
 @CLI {
-  improve: "lia improve --from fail.json"
-  evolve: "lia evolve --queue <q>"
-  status: "lia autonomy-status"
+  autonomy: "lin autonomy [--cycles N] [--clone-cycles N]  # toolchains+improve+evolve+clone-lin+expose INTEL"
+  improve: "lin improve"
+  evolve: "lin evolve"
+  clone_lin: "lin clone-lin"
+  status: "lin autonomy-status"
   vs_dicel: "lia vs-dicel --bench <path>"
+  expose: "INTEL_LIN_AUTONOMY_RUN.dicel"
 }

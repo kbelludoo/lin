@@ -33,6 +33,10 @@ function emitStmts(stmts, indent) {
       );
       lines.push(...emitStmts(st.body, indent + 1));
       lines.push(`${pad}}`);
+    } else if (st.type === 'while') {
+      lines.push(`${pad}while (${rewriteExpr(st.cond, 'ts')}) {`);
+      lines.push(...emitStmts(st.body, indent + 1));
+      lines.push(`${pad}}`);
     }
   }
   return lines;

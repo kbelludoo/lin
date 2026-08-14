@@ -56,7 +56,8 @@ export function estTokens(s) {
 
 function isTestishBody(stmts) {
   const body = (stmts || []).join(';');
-  return /\b(describe|it|assert|bench|strictEqual)\b/.test(body);
+  // require call/member form so comments like "ditch it" are not tests
+  return /\b(describe|it|bench)\s*\(|\b(assert|strictEqual)\s*[.(]/.test(body);
 }
 
 /** Parse ~Fn records from PROJECT.dicel text. */
@@ -386,6 +387,7 @@ function shortenLocals(body) {
 
 function braceSingleStmtControls(s) {
   // ?(cond)stmt; → ?(cond){stmt};  (same for # and :)
+  // Depth-aware: do not stop at `{` inside exprs like ^(((__c)=>{...})(x))
   const apply = (sigilChar) => {
     let out = '';
     let i = 0;
@@ -395,7 +397,6 @@ function braceSingleStmtControls(s) {
         out += s.slice(i);
         break;
       }
-      // skip if already part of ?: ternary weirdness — only at stmt positions
       out += s.slice(i, idx);
       const open = idx + 1; // '('
       const matched = matchCallArgs(s, open);
@@ -411,9 +412,27 @@ function braceSingleStmtControls(s) {
         i = j;
         continue;
       }
-      // collect single stmt until ; or end or }
       let k = j;
-      while (k < s.length && s[k] !== ';' && s[k] !== '}' && s[k] !== '{') k++;
+      let depth = 0;
+      while (k < s.length) {
+        const ch = s[k];
+        if (ch === "'" || ch === '"' || ch === '`') {
+          const q = ch;
+          k++;
+          while (k < s.length) {
+            if (s[k] === '\\') { k += 2; continue; }
+            if (s[k] === q) { k++; break; }
+            k++;
+          }
+          continue;
+        }
+        if (ch === '(' || ch === '{' || ch === '[') depth++;
+        else if (ch === ')' || ch === '}' || ch === ']') {
+          if (depth === 0) break;
+          depth--;
+        } else if (ch === ';' && depth === 0) break;
+        k++;
+      }
       const stmt = s.slice(j, k).trim();
       out += `${sigilChar}(${matched.args}){${stmt}}`;
       i = k;
@@ -429,28 +448,341 @@ function braceSingleStmtControls(s) {
   return s;
 }
 
+/**
+ * Peripheral: desugar `a${x}b` → ("a"+x+"b") so LIN emit never sees backticks.
+ * Does not touch verifier / semantic_hash / behavior_eq nucleus.
+ */
+export function desugarTemplateLiterals(src) {
+  const s = String(src || '');
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'" || c === '"') {
+      const q = c;
+      out += c;
+      i++;
+      while (i < s.length) {
+        if (s[i] === '\\') {
+          out += s[i] + (s[i + 1] || '');
+          i += 2;
+          continue;
+        }
+        out += s[i];
+        if (s[i] === q) {
+          i++;
+          break;
+        }
+        i++;
+      }
+      continue;
+    }
+    if (c !== '`') {
+      out += c;
+      i++;
+      continue;
+    }
+    // template literal
+    i++;
+    const parts = [];
+    let lit = '';
+    while (i < s.length) {
+      if (s[i] === '\\' && i + 1 < s.length) {
+        lit += s[i] + s[i + 1];
+        i += 2;
+        continue;
+      }
+      if (s[i] === '`') {
+        i++;
+        break;
+      }
+      if (s[i] === '$' && s[i + 1] === '{') {
+        parts.push(JSON.stringify(lit));
+        lit = '';
+        i += 2;
+        let depth = 1;
+        let expr = '';
+        while (i < s.length && depth > 0) {
+          if (s[i] === '{') depth++;
+          else if (s[i] === '}') {
+            depth--;
+            if (depth === 0) {
+              i++;
+              break;
+            }
+          }
+          if (depth > 0) expr += s[i];
+          i++;
+        }
+        parts.push(`(${desugarTemplateLiterals(expr)})`);
+        continue;
+      }
+      lit += s[i];
+      i++;
+    }
+    parts.push(JSON.stringify(lit));
+    const joined = parts.filter((p) => p !== '""').join('+') || '""';
+    out += `(${joined})`;
+  }
+  return out;
+}
+
+/**
+ * Peripheral: desugar cond?a:b → ((__c)=>{if(__c)return(a);return(b);})(cond)
+ * so ternary `?(` never collides with LIN if-sigil `?(`.
+ */
+export function desugarTernaries(src) {
+  let s = String(src || '');
+  for (let pass = 0; pass < 64; pass++) {
+    const next = desugarOneTernary(s);
+    if (next === s) break;
+    s = next;
+  }
+  return s;
+}
+
+function desugarOneTernary(s) {
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'" || c === '"' || c === '`') {
+      const q = c;
+      i++;
+      while (i < s.length) {
+        if (s[i] === '\\') { i += 2; continue; }
+        if (s[i] === q) { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (c !== '?') { i++; continue; }
+    // skip ?? and ?.
+    if (s[i + 1] === '?' || s[i + 1] === '.') { i += 2; continue; }
+    // find start of condition: walk left over expr
+    let condEnd = i;
+    let condStart = i - 1;
+    let depth = 0;
+    while (condStart >= 0) {
+      const ch = s[condStart];
+      if (ch === ')' || ch === '}' || ch === ']') depth++;
+      else if (ch === '(' || ch === '{' || ch === '[') {
+        if (depth === 0) break;
+        depth--;
+      } else if (depth === 0 && /[;{},]/.test(ch)) break;
+      else if (depth === 0 && /\s/.test(ch)) {
+        // keep `return|throw|yield` OUTSIDE ternary so
+        // `return cond?a:b` → `return IIFE(cond)` (not IIFE(return cond))
+        const before = s.slice(0, condStart + 1).replace(/\s+$/u, '');
+        if (/\b(return|throw|yield)$/u.test(before)) break;
+      }
+      condStart--;
+    }
+    condStart++;
+    while (condStart < condEnd && /\s/.test(s[condStart])) condStart++;
+    // find colon at depth 0
+    let j = i + 1;
+    depth = 0;
+    let colon = -1;
+    while (j < s.length) {
+      const ch = s[j];
+      if (ch === "'" || ch === '"' || ch === '`') {
+        const q = ch;
+        j++;
+        while (j < s.length) {
+          if (s[j] === '\\') { j += 2; continue; }
+          if (s[j] === q) { j++; break; }
+          j++;
+        }
+        continue;
+      }
+      if (ch === '(' || ch === '{' || ch === '[') depth++;
+      else if (ch === ')' || ch === '}' || ch === ']') {
+        if (depth === 0) break;
+        depth--;
+      } else if (ch === '?' && depth === 0) {
+        // nested ternary — skip this ? for now (process inner later via outer loop... actually process rightmost)
+        // let outer loop handle; for nested, find matching : for THIS ?
+      } else if (ch === ':' && depth === 0) {
+        colon = j;
+        break;
+      }
+      j++;
+    }
+    if (colon < 0) { i++; continue; }
+    // else branch until ; , ) } ] or end at depth 0
+    let k = colon + 1;
+    depth = 0;
+    while (k < s.length) {
+      const ch = s[k];
+      if (ch === "'" || ch === '"' || ch === '`') {
+        const q = ch;
+        k++;
+        while (k < s.length) {
+          if (s[k] === '\\') { k += 2; continue; }
+          if (s[k] === q) { k++; break; }
+          k++;
+        }
+        continue;
+      }
+      if (ch === '(' || ch === '{' || ch === '[') depth++;
+      else if (ch === ')' || ch === '}' || ch === ']') {
+        if (depth === 0) break;
+        depth--;
+      } else if (depth === 0 && /[;,]/.test(ch)) break;
+      k++;
+    }
+    const cond = s.slice(condStart, condEnd).trim();
+    const thenP = s.slice(i + 1, colon).trim();
+    const elseP = s.slice(colon + 1, k).trim();
+    if (!cond || !thenP || !elseP) { i++; continue; }
+    // avoid rewriting already-desugared or LIN if-sigils (?(...){)
+    if (/^[\s]*\(/.test(thenP) && s[colon + 1] === undefined) { i++; continue; }
+    const repl = `(((__c)=>{if(__c)return(${thenP});return(${elseP});})(${cond}))`;
+    return s.slice(0, condStart) + repl + s.slice(k);
+  }
+  return s;
+}
+
+function protectRegexLiterals(s) {
+  const held = [];
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'" || c === '"' || c === '`') {
+      const q = c;
+      out += c;
+      i++;
+      while (i < s.length) {
+        if (s[i] === '\\') { out += s[i] + (s[i + 1] || ''); i += 2; continue; }
+        out += s[i];
+        if (s[i] === q) { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (c === '/') {
+      const prev = out.replace(/\s+$/, '');
+      const prevCh = prev[prev.length - 1] || '';
+      const canBeRegex = !prevCh || /[=(:,;!?{[&|^~+\-*%<>]/.test(prevCh)
+        || /\b(return|throw|case|in|of)$/.test(prev);
+      if (canBeRegex && prevCh !== '/') {
+        let j = i + 1;
+        let closed = false;
+        while (j < s.length) {
+          if (s[j] === '\\') { j += 2; continue; }
+          if (s[j] === '\n') break;
+          if (s[j] === '/') { j++; closed = true; break; }
+          if (s[j] === '[') {
+            j++;
+            while (j < s.length && s[j] !== ']') {
+              if (s[j] === '\\') j += 2;
+              else j++;
+            }
+            j++;
+            continue;
+          }
+          j++;
+        }
+        if (closed) {
+          while (j < s.length && /[a-z]/i.test(s[j])) j++;
+          const tok = `\u0000RX${held.length}\u0000`;
+          held.push(s.slice(i, j));
+          out += tok;
+          i = j;
+          continue;
+        }
+      }
+    }
+    out += c;
+    i++;
+  }
+  return { text: out, held };
+}
+
+function restoreHeld(s, held) {
+  let out = s;
+  for (let i = 0; i < held.length; i++) {
+    out = out.split(`\u0000RX${i}\u0000`).join(held[i]);
+  }
+  return out;
+}
+
+/** Peripheral: hold '...' / "..." so space/punct compaction cannot mutate string meaning. */
+function protectQuotedStrings(s) {
+  let out = '';
+  const held = [];
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'" || c === '"') {
+      let j = i + 1;
+      while (j < s.length) {
+        if (s[j] === '\\') { j += 2; continue; }
+        if (s[j] === c) { j++; break; }
+        j++;
+      }
+      const tok = `\u0000ST${held.length}\u0000`;
+      held.push(s.slice(i, j));
+      out += tok;
+      i = j;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return { text: out, held };
+}
+
+function restoreQuoted(s, held) {
+  let out = s;
+  for (let i = 0; i < held.length; i++) {
+    out = out.split(`\u0000ST${i}\u0000`).join(held[i]);
+  }
+  return out;
+}
+
 function applySourceSigils(jsBody) {
   let s = String(jsBody || '');
   // strip comments before compaction (otherwise // eats the rest of the AIL/JS line)
   s = s.replace(/\/\*[\s\S]*?\*\//g, '');
   s = s.replace(/(^|[^:])\/\/.*$/gm, '$1');
+  // peripheral: templates → concat before sigil compaction
+  s = desugarTemplateLiterals(s);
+  const qs = protectQuotedStrings(s);
+  s = qs.text;
   // ASI: insert ; before control/decl at line starts (semicolon-free sources like dayjs)
-  s = s.replace(/\n\s*(?=if\b|for\b|return\b|const\b|let\b|var\b|else\b)/g, ';\n');
+  s = s.replace(/\n\s*(?=if\b|for\b|while\b|return\b|const\b|let\b|var\b|else\b)/g, ';\n');
+  s = s.replace(/\n\s*(?=[A-Za-z_$][\w$]*\s*[=(])/g, ';\n');
+  const rx = protectRegexLiterals(s);
+  s = rx.text;
   s = s.replace(/\s+/g, ' ').trim();
+  // peripheral: ternaries before if→?( so `c?(x):(y)` never becomes if-sigil
+  s = desugarTernaries(s);
   s = s.replace(/\breturn\s+/g, '^');
   s = s.replace(/\belse\s+if\s*\(/g, ':(');
   s = s.replace(/\bif\s*\(/g, '?(');
   s = s.replace(/\bfor\s*\(/g, '#(');
+  // drop decl-only (`var memo;`) before stripping keywords (avoids bare `memo;`)
+  s = s.replace(/\b(?:var|let|const)\s+[A-Za-z_$][\w$]*\s*;/g, '');
   s = s.replace(/\bvar\s+/g, '');
   s = s.replace(/\blet\s+/g, '');
   s = s.replace(/\bconst\s+/g, '');
+  // destructure assign after const-strip: {a,b=x}=y → ({a,b=x}=y)
+  s = s.replace(
+    /(^|[;{])\s*(\{[^{}]*\}|\[[^[\]]*\])\s*=\s*([^;]+)/g,
+    '$1($2=$3)',
+  );
   s = braceSingleStmtControls(s);
   s = s.replace(/\belse\s*\{/g, ':{');
   s = s.replace(/\s*([{};,?=|&<>!+\-*/%^])\s*/g, '$1');
+  s = s.replace(/([^;{}(\[,:?])while\(/g, '$1;while(');
+  s = restoreHeld(s, rx.held);
   s = s.replace(/;+/g, ';');
   s = s.replace(/;\}/g, '}');
   s = s.replace(/\{;/g, '{');
   s = s.replace(/===/g, '==').replace(/!==/g, '!=');
+  s = restoreQuoted(s, qs.held);
   return s;
 }
 
@@ -464,8 +796,40 @@ function splitParams(raw) {
 function extractBraceBody(text, openBraceIdx) {
   let depth = 1;
   let i = openBraceIdx + 1;
+  let quote = null;
+  let inRe = false;
+  let inClass = false;
   for (; i < text.length; i++) {
     const c = text[i];
+    if (inRe) {
+      if (c === '\\') { i++; continue; }
+      if (c === '[' && !inClass) inClass = true;
+      else if (c === ']' && inClass) inClass = false;
+      else if (c === '/' && !inClass) inRe = false;
+      continue;
+    }
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (quote === '`' && c === '$' && text[i + 1] === '{') {
+        i += 2;
+        const inner = extractBraceBody(text, i - 1);
+        i = inner.end;
+        continue;
+      }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
+    if (c === '/') {
+      const next = text[i + 1];
+      if (next === '/' || next === '*') continue;
+      const before = text.slice(Math.max(0, i - 24), i).trimEnd();
+      const last = before[before.length - 1];
+      if (!last || /[({[=,:;!&|?+~\-*%^<>]/.test(last) || /\b(return|throw)$/.test(before)) {
+        inRe = true;
+        continue;
+      }
+    }
     if (c === '{') depth++;
     else if (c === '}') {
       depth--;
@@ -510,19 +874,26 @@ export function extractJsFunctions(source) {
   const fns = [];
   const push = (name, params, body) => {
     if (!name || fns.some((f) => f.name === name)) return;
+    const pjoin = (params || []).join(',');
+    if (/\.\.\./.test(pjoin) || /[{[]/.test(pjoin)) return;
+    if (/\bfunction\s+/.test(body)) return;
     fns.push({ name, params, body });
   };
 
   const classic = [
     /function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
     /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
+    /(?:module\.)?exports(?:\.([A-Za-z_$][\w$]*))?\s*=\s*function(?:\s+([A-Za-z_$][\w$]*))?\s*\(([^)]*)\)\s*\{/g,
   ];
   for (const re of classic) {
     let m;
     while ((m = re.exec(text)) !== null) {
       const open = m.index + m[0].length - 1;
       const { body } = extractBraceBody(text, open);
-      push(m[1], splitParams(m[2]), body);
+      const isExports = re.source.includes('exports');
+      const name = isExports ? (m[1] || m[2] || 'defaultExport') : m[1];
+      const paramsRaw = isExports ? m[3] : m[2];
+      push(name, splitParams(paramsRaw), body);
     }
   }
 
