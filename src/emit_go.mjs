@@ -3,57 +3,69 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes } from './emit_shared.mjs';
 
-function emitStmts(stmts, indent) {
+function emitStmts(stmts, indent, types) {
   const pad = '\t'.repeat(indent);
   const lines = [];
   for (const st of stmts) {
     if (st.type === 'assign') {
-      const rhs = rewriteExpr(st.expr, 'go');
-      if (st.op === '=') lines.push(`${pad}${st.id} = ${rhs}`);
-      else if (st.op === '|=') lines.push(`${pad}${st.id} |= ${rhs}`);
-      else if (st.op === '+=') lines.push(`${pad}${st.id} += ${rhs}`);
-      else lines.push(`${pad}${st.id} = ${st.id} ${st.op[0]} (${rhs})`);
+      lines.push(assignOpLine(st.id, st.op, st.expr, 'go', pad, types));
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'go')}`);
     } else if (st.type === 'expr') {
-      lines.push(`${pad}${rewriteExpr(st.expr, 'go')}`);
+      if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break`);
+      else lines.push(`${pad}${rewriteExpr(st.expr, 'go')}`);
     } else if (st.type === 'if') {
-      lines.push(`${pad}if ${rewriteExpr(st.cond, 'go')} {`);
-      lines.push(...emitStmts(st.then, indent + 1));
+      lines.push(`${pad}if ${emitCond(st.cond, 'go')} {`);
+      lines.push(...emitStmts(st.then, indent + 1, types));
       for (const e of st.elseIf || []) {
-        lines.push(`${pad}} else if ${rewriteExpr(e.cond, 'go')} {`);
-        lines.push(...emitStmts(e.body, indent + 1));
+        lines.push(`${pad}} else if ${emitCond(e.cond, 'go')} {`);
+        lines.push(...emitStmts(e.body, indent + 1, types));
       }
       if (st.else) {
         lines.push(`${pad}} else {`);
-        lines.push(...emitStmts(st.else, indent + 1));
+        lines.push(...emitStmts(st.else, indent + 1, types));
       }
       lines.push(`${pad}}`);
     } else if (st.type === 'for') {
       lines.push(
-        `${pad}for ${rewriteExpr(st.init, 'go')}; ${rewriteExpr(st.cond, 'go')}; ${rewriteExpr(st.step, 'go')} {`,
+        `${pad}for ${rewriteExpr(st.init, 'go')}; ${emitCond(st.cond, 'go')}; ${rewriteExpr(st.step, 'go')} {`,
       );
-      lines.push(...emitStmts(st.body, indent + 1));
+      lines.push(...emitStmts(st.body, indent + 1, types));
       lines.push(`${pad}}`);
     } else if (st.type === 'while') {
-      lines.push(`${pad}for ${rewriteExpr(st.cond, 'go')} {`);
-      lines.push(...emitStmts(st.body, indent + 1));
-      lines.push(`${pad}}`);
+      const inc = splitPrefixIncCond(st.cond);
+      if (inc) {
+        lines.push(`${pad}for {`);
+        lines.push(`${pad}\t${inc.id}++`);
+        lines.push(`${pad}\tif !(${inc.id} ${inc.op} _lia_num(${rewriteExpr(inc.rhs, 'go')})) { break }`);
+        lines.push(...emitStmts(st.body, indent + 1, types));
+        lines.push(`${pad}}`);
+      } else if (String(st.cond).trim() === 'true') {
+        lines.push(`${pad}for {`);
+        lines.push(...emitStmts(st.body, indent + 1, types));
+        lines.push(`${pad}}`);
+      } else {
+        lines.push(`${pad}for ${emitCond(st.cond, 'go')} {`);
+        lines.push(...emitStmts(st.body, indent + 1, types));
+        lines.push(`${pad}}`);
+      }
     }
   }
   return lines;
 }
 
-function goType(id) {
-  // Uppercase / buf* → string; loop/accum counters → int
-  if (/^[A-Z]/.test(id) || /^(ba|bb|buf)/.test(id)) return 'string';
-  return 'int';
+function goType(id, types, body) {
+  if (types && types.has(id)) return types.get(id);
+  const b = String(body || '');
+  if (new RegExp(`\\b${id}\\b\\s*=\\s*[-+]?\\d+`).test(b)) return 'int';
+  if (new RegExp(`\\b${id}\\b\\s*(\\|\\^|\\+\\=|\\-\\=)`).test(b)) return 'int';
+  return isNumishId(id) ? 'int' : 'string';
 }
 
-function goDeclLocals(locals) {
-  return locals.map((id) => `\tvar ${id} ${goType(id)}`);
+function goDeclLocals(locals, types, body) {
+  return locals.map((id) => `\tvar ${id} ${goType(id, types, body)}`);
 }
 
 export function emitGo(liaText, opts = {}) {
@@ -77,17 +89,13 @@ export function emitGo(liaText, opts = {}) {
     }
     const stmts = parseStmts(fn.body);
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
-    // string vars that get String() first
-    const bodyLines = [...goDeclLocals(locals), ...emitStmts(stmts, 1)];
-    // fix: first assign to string locals should use := if we used var — keep var + =
-    parts.push(`func ${fn.name}(${paramList}) bool {\n${bodyLines.join('\n')}\n}`);
+    const inferredTypes = inferTypes(stmts);
+    const cacheStub = /\bcache\b/.test(fn.body) ? ['\tcache := make([]string, 64)'] : [];
+    const bodyLines = [...cacheStub, ...goDeclLocals(locals.filter((id) => id !== 'cache'), inferredTypes, fn.body), ...emitStmts(stmts, 1, inferredTypes)];
+    const retType = /==|!=|<=|>=|<|>|is_|empty|startsWith|endsWith|contains|typeof/.test(fn.name + fn.body) ? 'bool' : 'interface{}';
+    parts.push(`func ${fn.name}(${paramList}) ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
-  const bodySoFar = parts.join('\n');
-  const imports = [];
-  if (opts.withMain !== false || /fmt\./.test(bodySoFar)) imports.push('"fmt"');
-  if (/strings\./.test(bodySoFar)) imports.push('"strings"');
-  if (imports.length) parts.splice(2, 0, `import (${imports.map((x) => `\n\t${x}`).join('')}\n)`);
-  parts.splice(parts.length > 3 ? 4 : 3, 0, `
+  const helpers = `
 func _lia_typeof(x interface{}) string {
 	switch x.(type) {
 	case nil:
@@ -108,7 +116,76 @@ func _lia_falsy(x interface{}) bool {
 	if x == nil || x == false || x == 0 || x == "" { return true }
 	return false
 }
-`);
+func _lia_len(x interface{}) int {
+	switch v := x.(type) {
+	case string:
+		return len(v)
+	default:
+		return 0
+	}
+}
+func _lia_num(x interface{}) int {
+	switch v := x.(type) {
+	case int:
+		return v
+	case int64:
+		return int(v)
+	case float64:
+		return int(v)
+	default:
+		return 0
+	}
+}
+func _lia_obj(_ ...interface{}) interface{} { return nil }
+func _lia_str(x interface{}) string {
+	switch v := x.(type) {
+	case string:
+		return v
+	case nil:
+		return ""
+	case bool:
+		if v {
+			return "true"
+		}
+		return "false"
+	case int:
+		return _lia_itoa(v)
+	case int64:
+		return _lia_itoa(int(v))
+	case float64:
+		return _lia_itoa(int(v))
+	default:
+		return ""
+	}
+}
+func _lia_itoa(n int) string {
+	if n == 0 {
+		return "0"
+	}
+	neg := n < 0
+	if neg {
+		n = -n
+	}
+	var b [32]byte
+	i := len(b)
+	for n > 0 {
+		i--
+		b[i] = byte('0' + n%10)
+		n /= 10
+	}
+	if neg {
+		i--
+		b[i] = '-'
+	}
+	return string(b[i:])
+}
+`;
+  parts.splice(parts.length > 2 ? 3 : 2, 0, helpers);
+  const bodySoFar = parts.join('\n');
+  const imports = [];
+  if (/fmt\./.test(bodySoFar) || /fmt\./.test(helpers) || opts.withMain !== false) imports.push('"fmt"');
+  if (/strings\./.test(bodySoFar)) imports.push('"strings"');
+  if (imports.length) parts.splice(2, 0, `import (${imports.map((x) => `\n\t${x}`).join('')}\n)`);
   if (opts.withMain !== false) {
     const primary = prog.exports[0] || prog.fns[0]?.name || 'safeCompare';
     parts.push(`

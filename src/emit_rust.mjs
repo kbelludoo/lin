@@ -3,36 +3,29 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes } from './emit_shared.mjs';
 
-function emitStmts(stmts, indent) {
+function emitStmts(stmts, indent, types) {
   const pad = '    '.repeat(indent);
   const lines = [];
   for (const st of stmts) {
     if (st.type === 'assign') {
-      const rhs = rewriteExpr(st.expr, 'rust');
-      if (st.op === '=') {
-        const clone = /^[A-Za-z_][\w]*$/.test(rhs.trim()) && rustType(st.id) === 'String'
-          ? `${rhs}.clone()`
-          : rhs;
-        lines.push(`${pad}${st.id} = ${clone};`);
-      } else if (st.op === '|=') lines.push(`${pad}${st.id} |= ${rhs};`);
-      else if (st.op === '+=') lines.push(`${pad}${st.id} += ${rhs};`);
-      else lines.push(`${pad}${st.id} = ${st.id} ${st.op[0]} (${rhs});`);
+      lines.push(assignOpLine(st.id, st.op, st.expr, 'rust', pad, types));
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'rust')};`);
     } else if (st.type === 'expr') {
-      lines.push(`${pad}${rewriteExpr(st.expr, 'rust')};`);
+      if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break;`);
+      else lines.push(`${pad}${rewriteExpr(st.expr, 'rust')};`);
     } else if (st.type === 'if') {
-      lines.push(`${pad}if ${rewriteExpr(st.cond, 'rust')} {`);
-      lines.push(...emitStmts(st.then, indent + 1));
+      lines.push(`${pad}if ${emitCond(st.cond, 'rust')} {`);
+      lines.push(...emitStmts(st.then, indent + 1, types));
       for (const e of st.elseIf || []) {
-        lines.push(`${pad}} else if ${rewriteExpr(e.cond, 'rust')} {`);
-        lines.push(...emitStmts(e.body, indent + 1));
+        lines.push(`${pad}} else if ${emitCond(e.cond, 'rust')} {`);
+        lines.push(...emitStmts(e.body, indent + 1, types));
       }
       if (st.else) {
         lines.push(`${pad}} else {`);
-        lines.push(...emitStmts(st.else, indent + 1));
+        lines.push(...emitStmts(st.else, indent + 1, types));
       }
       lines.push(`${pad}}`);
     } else if (st.type === 'for') {
@@ -43,7 +36,7 @@ function emitStmts(stmts, indent) {
         const cm = st.cond.match(/^([A-Za-z_][\w]*)\s*<\s*(.+)$/);
         if (cm && cm[1] === init[1]) {
           lines.push(`${pad}for ${init[1]} in ${rewriteExpr(init[2], 'rust')}..${rewriteExpr(cm[2], 'rust')} {`);
-          lines.push(...emitStmts(st.body, indent + 1));
+          lines.push(...emitStmts(st.body, indent + 1, types));
           lines.push(`${pad}}`);
           continue;
         }
@@ -51,26 +44,48 @@ function emitStmts(stmts, indent) {
       lines.push(`${pad}// LIA_EMIT_RUST: fallback C-for as loop`);
       if (init) lines.push(`${pad}let mut ${init[1]} = ${rewriteExpr(init[2], 'rust')};`);
       lines.push(`${pad}while ${rewriteExpr(st.cond, 'rust')} {`);
-      lines.push(...emitStmts(st.body, indent + 1));
+      lines.push(...emitStmts(st.body, indent + 1, types));
       if (stepInc) lines.push(`${pad}    ${stepInc[1]} += 1;`);
       else lines.push(`${pad}    ${rewriteExpr(st.step, 'rust')};`);
       lines.push(`${pad}}`);
     } else if (st.type === 'while') {
-      lines.push(`${pad}while ${rewriteExpr(st.cond, 'rust')} {`);
-      lines.push(...emitStmts(st.body, indent + 1));
-      lines.push(`${pad}}`);
+      const inc = splitPrefixIncCond(st.cond);
+      if (inc) {
+        lines.push(`${pad}loop {`);
+        lines.push(`${pad}    ${inc.id} += 1;`);
+        lines.push(`${pad}    if !(${inc.id} ${inc.op} ${rewriteExpr(inc.rhs, 'rust')}) { break; }`);
+        lines.push(...emitStmts(st.body, indent + 1, types));
+        lines.push(`${pad}}`);
+      } else if (String(st.cond).trim() === 'true') {
+        lines.push(`${pad}loop {`);
+        lines.push(...emitStmts(st.body, indent + 1, types));
+        lines.push(`${pad}}`);
+      } else {
+        lines.push(`${pad}while ${emitCond(st.cond, 'rust')} {`);
+        lines.push(...emitStmts(st.body, indent + 1, types));
+        lines.push(`${pad}}`);
+      }
     }
   }
   return lines;
 }
 
-function rustType(id) {
-  if (/^[A-Z]/.test(id) || /^(ba|bb|buf)/.test(id)) return 'String';
+function rustType(id, inferred) {
+  if (inferred && inferred.has(id)) {
+    const t = inferred.get(id);
+    if (t === 'string' || t === 'String') return 'String';
+    if (t === 'int' || t === 'i32') return 'i32';
+    if (t === 'bool') return 'bool';
+    return t;
+  }
+  if (isNumishId(id)) return 'i32';
+  if (isStringishId(id)) return 'String';
   return 'i32';
 }
 
-function rustLocals(locals) {
-  return locals.map((id) => `    let mut ${id}: ${rustType(id)};`);
+function rustLocals(locals, stmts) {
+  const inferred = inferTypes(stmts);
+  return locals.map((id) => `    let mut ${id}: ${rustType(id, inferred)};`);
 }
 
 export function emitRust(liaText, opts = {}) {
@@ -81,6 +96,7 @@ export function emitRust(liaText, opts = {}) {
     'fn _lia_typeof<T>(_x: &T) -> &\'static str { "object" }',
     'fn _lia_isfinite<T>(_x: T) -> bool { true }',
     'fn _lia_isnan<T>(_x: T) -> bool { false }',
+    'fn _lia_obj() -> String { String::new() }',
   ];
   for (const fn of prog.fns) {
     const name = snakeCase(fn.name);
@@ -88,7 +104,10 @@ export function emitRust(liaText, opts = {}) {
       .split(',')
       .map((p) => p.trim())
       .filter(Boolean);
-    const paramList = params.map((p) => `${p}: impl ToString`).join(', ');
+    const paramList = params.map((p) => {
+      if (isNumishId(p)) return `mut ${p}: i32`;
+      return `mut ${p}: impl ToString`;
+    }).join(', ');
     if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
       parts.push(
         `pub fn ${name}(${paramList}) -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
@@ -115,10 +134,15 @@ export function emitRust(liaText, opts = {}) {
     };
     collectFor(bodyStmts);
     const bodyLocals = collectAssignedIds(bodyStmts).filter(
-      (id) => !params.includes(id) && !forVars.has(id),
+      (id) => !params.includes(id) && !forVars.has(id) && id !== 'cache',
     );
-    const bodyLines = [...rustLocals(bodyLocals), ...emitStmts(bodyStmts, 1)];
-    parts.push(`pub fn ${name}(${paramList}) -> bool {\n${bodyLines.join('\n')}\n}`);
+    const inferredTypes = inferTypes(bodyStmts);
+    const cacheStub = /\bcache\b/.test(fn.body) ? ['    let cache: Vec<String> = vec![String::new(); 64];'] : [];
+    const bodyLines = [...cacheStub, ...rustLocals(bodyLocals, bodyStmts), ...emitStmts(bodyStmts, 1, inferredTypes)];
+    const retType = /==|!=|<=|>=|<|>|is_|empty|startsWith|endsWith|contains|typeof/.test(fn.name + fn.body)
+      ? 'bool'
+      : 'i32';
+    parts.push(`pub fn ${name}(${paramList}) -> ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   if (opts.withMain !== false) {
     const primary = snakeCase(prog.exports[0] || prog.fns[0]?.name || 'safeCompare');
