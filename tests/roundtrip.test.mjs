@@ -54,4 +54,29 @@ assert.equal(add5(10), 15);
 assert.equal(add5(3), 8);
 fs.unlinkSync(closureTmp);
 
-console.log('ok roundtrip safe-compare (+ @LIN/@LIA/@AIL dual-read) + closure capture');
+// Effect inference smoke: each fn gets expected effect annotation.
+const effectLia = `${LIN_HEADER}
+^schema_once ^lossy=true ^ops=test
+~G{?=if #=for ^=ret :else}
+!pureAdd(a,b){^a+b}
+!nativeLen(s){^String(s).length}
+!throwIfNeg(x){?(x<0){throw new Error('neg')};^x}
+=ex{pureAdd,nativeLen,throwIfNeg}`;
+const effectResult = compileLiaToJs(effectLia, { exportMode: 'multiple' });
+const effects = Object.fromEntries(effectResult.program.fns.map((f) => [f.name, f.effect]));
+assert.equal(effects.pureAdd, 'Pure');
+assert.equal(effects.nativeLen, 'Native');
+assert.equal(effects.throwIfNeg, 'Throw');
+assert.ok(effectResult.js.includes('/* effect:Pure */'));
+assert.ok(effectResult.js.includes('/* effect:Native */'));
+
+// Sandbox smoke: Native fn blocked when only Pure allowed.
+const sandboxResult = compileLiaToJs(effectLia, { exportMode: 'multiple', sandbox: ['Pure'] });
+const sandboxTmp = path.join(root, 'tests', '.tmp_sandbox.cjs');
+fs.writeFileSync(sandboxTmp, sandboxResult.js, 'utf8');
+const sandboxMod = require(sandboxTmp);
+assert.equal(sandboxMod.pureAdd(2, 3), 5);
+assert.throws(() => sandboxMod.nativeLen('x'), /LIN_SANDBOX.*Native/);
+fs.unlinkSync(sandboxTmp);
+
+console.log('ok roundtrip safe-compare (+ @LIN/@LIA/@AIL dual-read) + closure capture + effects + sandbox');

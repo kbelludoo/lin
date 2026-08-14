@@ -284,6 +284,62 @@ function collectAssignedIds(body) {
   return [...ids];
 }
 
+const NATIVE_BUILTINS = /\b(String|Number|Math|Buffer|Array|Object|Error|JSON|console|process|require|globalThis|window|document|fetch|setTimeout|setInterval|crypto)\b/;
+
+function inferEffect(fn, allFns) {
+  const body = String(fn.body || '');
+  const params = new Set((fn.params || '').split(',').map((p) => p.replace(/:[\w\[\]|,]+$/g, '').trim()).filter(Boolean));
+  const locals = new Set(collectAssignedIds(body));
+  for (const p of params) locals.add(p);
+  const effects = new Set();
+
+  if (/\bthrow\b/.test(body)) effects.add('Throw');
+  if (NATIVE_BUILTINS.test(body)) effects.add('Native');
+
+  // assignments to identifiers that are also referenced in other fns -> likely global Write
+  const allOtherRefs = (allFns || [])
+    .filter((g) => g.name !== fn.name)
+    .map((g) => String(g.body || ''))
+    .join('\n');
+  const assignRe = /(?:^|[;{},])\s*([A-Za-z_$][\w$]*)\s*=(?!=)/g;
+  let am;
+  while ((am = assignRe.exec(body)) !== null) {
+    const id = am[1];
+    if (['return', 'if', 'for', 'else', 'function', 'var', 'let', 'const'].includes(id)) continue;
+    if (!locals.has(id)) {
+      effects.add('Write');
+    } else if (new RegExp(`\\b${id}\\b`).test(allOtherRefs)) {
+      effects.add('Write');
+    }
+  }
+
+  // references to non-local / non-param identifiers -> Read (if not a builtin)
+  const idRe = /\b([A-Za-z_$][\w$]*)\b/g;
+  const builtinSet = new Set(['String', 'Number', 'Math', 'Buffer', 'Array', 'Object', 'Error', 'JSON', 'console', 'process', 'require', 'globalThis', 'window', 'document', 'fetch', 'setTimeout', 'setInterval', 'crypto', 'true', 'false', 'null', 'undefined']);
+  let rm;
+  while ((rm = idRe.exec(body)) !== null) {
+    const id = rm[1];
+    if (!params.has(id) && !locals.has(id) && !builtinSet.has(id)) {
+      effects.add('Read');
+    }
+  }
+
+  // calls to other fns in the program: propagate their effects (simple join)
+  for (const other of allFns || []) {
+    if (other.name === fn.name) continue;
+    const callRe = new RegExp(`\\b${other.name}\\s*\\(`);
+    if (callRe.test(body) && other.effect) {
+      for (const e of other.effect.split(/\|/)) effects.add(e);
+    }
+  }
+
+  if (effects.has('Write')) return 'Write';
+  if (effects.has('Throw')) return 'Throw';
+  if (effects.has('Native')) return 'Native';
+  if (effects.has('Read')) return 'Read';
+  return 'Pure';
+}
+
 /**
  * Compile LIA text → JS module source.
  */
@@ -299,13 +355,14 @@ export function compileLiaToJs(liaText, opts = {}) {
     parts.push(`var $K={${obj}};`);
   }
   for (const fn of prog.fns) {
+    fn.effect = inferEffect(fn, prog.fns);
     const body = compileBody(fn.body);
     const locals = collectAssignedIds(body).filter((id) => {
       const params = new Set(fn.params.split(',').map((p) => p.trim()).filter(Boolean));
       return !params.has(id);
     });
     const decl = locals.length ? `var ${locals.join(',')};` : '';
-    parts.push(`function ${fn.name}(${fn.params}){${decl}${body}}`);
+    parts.push(`/* effect:${fn.effect} */function ${fn.name}(${fn.params}){${decl}${body}}`);
   }
   if (opts.epilogue) {
     parts.push(String(opts.epilogue).trim());
@@ -319,7 +376,45 @@ export function compileLiaToJs(liaText, opts = {}) {
       parts.push(`module.exports={${ex.join(',')}};`);
     }
   }
-  return { js: parts.join('\n'), program: prog };
+
+  let js = parts.join('\n');
+  if (opts.sandbox) {
+    js = wrapSandbox(js, prog, opts.sandbox);
+  }
+  return { js, program: prog };
+}
+
+function wrapSandbox(js, prog, sandboxSpec) {
+  const allowed = Array.isArray(sandboxSpec) ? sandboxSpec : ['Pure', 'Read'];
+  const unsafe = {};
+  for (const fn of prog.fns) {
+    const fx = fn.effect || 'Pure';
+    if (!allowed.includes(fx)) unsafe[fn.name] = fx;
+  }
+  const unsafeNames = Object.keys(unsafe);
+  if (!unsafeNames.length) return js;
+  const guard = `
+/* sandbox guard */
+(function(){
+  const _orig = module.exports;
+  const _allowed = ${JSON.stringify(allowed)};
+  const _unsafe = ${JSON.stringify(unsafe)};
+  const _wrap = typeof _orig === 'function'
+    ? function(){ throw new Error('LIN_SANDBOX: exported function is ' + Object.values(_unsafe)[0] + ', allowed=' + _allowed.join('|')); }
+    : {};
+  if (typeof _orig === 'object' && _orig) {
+    for (const k of Object.keys(_orig)) {
+      if (_unsafe[k]) {
+        _wrap[k] = function(){ throw new Error('LIN_SANDBOX: ' + k + ' has effect ' + _unsafe[k] + ', allowed=' + _allowed.join('|')); };
+      } else {
+        _wrap[k] = _orig[k];
+      }
+    }
+  }
+  module.exports = _wrap;
+})();
+`;
+  return js + guard;
 }
 
 /** @deprecated use compileLiaToJs */
