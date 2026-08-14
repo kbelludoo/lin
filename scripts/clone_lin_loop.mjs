@@ -14,8 +14,9 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  extractFromFile, oracleFromFn, verifyFnAgainstOracle, walkLang,
+  extractFromFile, linRelFromSrc, oracleFromFn, verifyFnAgainstOracle, walkLang,
 } from './clone_lin_oracle.mjs';
+import { emitAilFromSource } from '../src/emitter.mjs';
 import {
   appendStorage, buildPublishDir, improveLinFromClone, learnFromFails,
   publishGh, runCmd, writeIntel,
@@ -49,15 +50,19 @@ function resolveQueue(refresh) {
 
 function parseArgs(argv) {
   const o = {
-    source: null, name: null, lang: null, maxFns: 24, dryPublish: false, shallow: true,
+    source: null, name: null, lang: null, maxFns: 0, dryPublish: false, shallow: true,
     prefer: null, cycles: 0, stopFile: null, queueIndex: null, repeat: false, refreshStars: false,
+    bootstrap: false,
   };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--source') o.source = argv[++i];
     else if (a === '--name') o.name = argv[++i];
     else if (a === '--lang') o.lang = argv[++i];
-    else if (a === '--max-fns') o.maxFns = Number(argv[++i]) || 24;
+    else if (a === '--max-fns') {
+      const n = Number(argv[++i]);
+      o.maxFns = Number.isFinite(n) ? n : 0;
+    }
     else if (a === '--dry-publish') o.dryPublish = true;
     else if (a === '--prefer') o.prefer = argv[++i];
     else if (a === '--no-shallow') o.shallow = false;
@@ -66,6 +71,7 @@ function parseArgs(argv) {
     else if (a === '--queue-index') o.queueIndex = Number(argv[++i]);
     else if (a === '--repeat') o.repeat = true;
     else if (a === '--refresh-stars') o.refreshStars = true;
+    else if (a === '--bootstrap') o.bootstrap = true;
   }
   return o;
 }
@@ -107,19 +113,66 @@ function cloneSource(source, dest, shallow) {
   return { ok: true, mode: 'git_clone', dest };
 }
 
-function preferFilter(files, prefer) {
+/** Prefer is sort-only — never drop the rest of the source tree. */
+function preferSort(files, prefer) {
   if (!prefer) return files;
   const pref = prefer.replace(/\\/g, '/').toLowerCase();
-  const hit = files.filter((f) => f.replace(/\\/g, '/').toLowerCase().includes(pref));
-  return hit.length ? hit : files;
+  return [...files].sort((a, b) => {
+    const ah = a.replace(/\\/g, '/').toLowerCase().includes(pref) ? 0 : 1;
+    const bh = b.replace(/\\/g, '/').toLowerCase().includes(pref) ? 0 : 1;
+    return ah - bh;
+  });
 }
 
-/** 100% gate: every declared fn must pass exact hash; skips count against rate. */
+function emitFileLin(text) {
+  try {
+    const lia = emitAilFromSource(text, { shortenLocals: false });
+    if (!lia || !/![A-Za-z_]/.test(lia)) return { ok: false, reason: 'emit_empty' };
+    return { ok: true, lia: lia.replace(/^@LIA:/, '@LIN:').replace(/^@AIL:/, '@LIN:') };
+  } catch (e) {
+    return { ok: false, reason: String(e.message || e).slice(0, 160) };
+  }
+}
+
+/** 100% gate: JS suite + ALL emit targets; skips count against rate. */
 function suiteStats(pass, fail, skip) {
   const total = pass + fail + skip;
   const suite_rate = total > 0 ? pass / total : 0;
   const full = total > 0 && fail === 0 && skip === 0 && pass === total;
   return { total, suite_rate, full };
+}
+
+function tokEst(bytes) {
+  return Math.ceil(Number(bytes || 0) / 4);
+}
+
+function multiAllFull(summary) {
+  const need = ['js', 'ts', 'py', 'go', 'rust', 'c', 'java'];
+  if (!summary) return false;
+  for (const t of need) {
+    const s = summary[t];
+    if (!s || !(s.PASS > 0) || s.FAIL !== 0 || s.SKIP !== 0) return false;
+  }
+  return true;
+}
+
+function sizeBlock(srcB, linB, emitBytes) {
+  const src = Number(srcB || 0);
+  const lin = Number(linB || 0);
+  const emit = emitBytes || {};
+  const ratios = { lin_src: src > 0 ? Number((lin / src).toFixed(4)) : 0 };
+  const tokens = {
+    estimator: 'chars/4',
+    tokenizer_real: false,
+    src: tokEst(src),
+    lin: tokEst(lin),
+    dicel_l0: 'absent_same_slice',
+  };
+  for (const [t, b] of Object.entries(emit)) {
+    ratios[`emit_${t}_src`] = src > 0 ? Number((b / src).toFixed(4)) : 0;
+    tokens[`emit_${t}`] = tokEst(b);
+  }
+  return { src_bytes: src, lin_bytes: lin, emit_bytes: emit, ratios, tokens };
 }
 
 function runOneCycle(args, target) {
@@ -134,59 +187,139 @@ function runOneCycle(args, target) {
   try {
     const cloned = cloneSource(target.source, path.join(tempRoot, 'src'), args.shallow);
     if (!cloned.ok) throw new Error(`clone_failed:${cloned.error}`);
-    const files = preferFilter(walkLang(cloned.dest, target.lang || 'javascript'), target.prefer || args.prefer);
+    const files = preferSort(walkLang(cloned.dest, target.lang || 'javascript'), args.prefer || target.prefer);
+    const cap = args.maxFns > 0 ? args.maxFns : Infinity;
     const results = [];
     let seen = 0;
+    let source_tree_bytes = 0;
+    const file_units = [];
     for (const f of files) {
-      if (seen >= args.maxFns) break;
-      const { fns } = extractFromFile(f);
+      const srcRel = path.relative(cloned.dest, f).replace(/\\/g, '/');
+      const linRel = linRelFromSrc(srcRel);
+      let srcBytes = 0;
+      try { srcBytes = fs.statSync(f).size; } catch { srcBytes = 0; }
+      source_tree_bytes += srcBytes;
+      let extracted;
+      try {
+        extracted = extractFromFile(f);
+      } catch (e) {
+        report.fail++;
+        report.fail_names.push(`${srcRel}:extract_throw`);
+        results.push({
+          status: 'fail', stage: 'extract', reason: String(e.message || e).slice(0, 160),
+          name: srcRel, srcRel, linRel,
+        });
+        file_units.push({ srcRel, linRel, status: 'fail', reason: 'extract_throw', bytes: srcBytes });
+        continue;
+      }
+      const { fns, text } = extracted;
+      if (!fns.length) {
+        report.fail++;
+        report.fail_names.push(`${srcRel}:extract_empty`);
+        results.push({
+          status: 'fail', stage: 'extract', reason: 'extract_empty',
+          name: srcRel, srcRel, linRel,
+        });
+        file_units.push({ srcRel, linRel, status: 'fail', reason: 'extract_empty', bytes: srcBytes });
+        continue;
+      }
+      const fileEmit = emitFileLin(text);
+      const fileLia = fileEmit.ok ? fileEmit.lia : null;
+      if (!fileEmit.ok) {
+        report.fail++;
+        report.fail_names.push(`${srcRel}:${fileEmit.reason}`);
+        results.push({
+          status: 'fail', stage: 'emit', reason: fileEmit.reason,
+          name: srcRel, srcRel, linRel,
+        });
+      }
       for (const fn of fns) {
-        if (seen >= args.maxFns) break;
+        if (seen >= cap) break;
         seen++;
         const oracle = oracleFromFn(fn);
         if (oracle.status !== 'ok') {
           report.skip++;
-          report.skip_names.push(`${fn.name}:${oracle.reason}`);
-          results.push({ status: 'skip', name: fn.name, reason: oracle.reason });
+          report.skip_names.push(`${srcRel}:${fn.name}:${oracle.reason}`);
+          results.push({
+            status: 'skip', name: fn.name, reason: oracle.reason, srcRel, linRel, fileLia,
+          });
           continue;
         }
         const v = verifyFnAgainstOracle(oracle);
+        v.srcRel = srcRel;
+        v.linRel = linRel;
+        v.fileLia = fileLia;
         results.push(v);
         if (v.status === 'pass') {
           report.pass++;
-          report.pass_names.push(v.name);
+          report.pass_names.push(`${srcRel}:${v.name}`);
         } else if (v.status === 'fail') {
           report.fail++;
-          report.fail_names.push(v.name);
+          report.fail_names.push(`${srcRel}:${v.name}`);
           report.fail_detail = report.fail_detail || [];
-          report.fail_detail.push(`${v.name}:${v.stage}:${String(v.reason || 'holdout_mismatch').slice(0, 80)}`);
+          report.fail_detail.push(`${srcRel}:${v.name}:${v.stage}:${String(v.reason || 'holdout_mismatch').slice(0, 80)}`);
         } else {
           report.skip++;
-          report.skip_names.push(`${v.name}:${v.reason || 'skip'}`);
+          report.skip_names.push(`${srcRel}:${v.name}:${v.reason || 'skip'}`);
         }
       }
+      file_units.push({
+        srcRel, linRel, status: 'walked', fns: fns.length, bytes: srcBytes,
+        lin_bytes: fileLia ? Buffer.byteLength(fileLia, 'utf8') : 0,
+      });
     }
+    const linSeen = new Set();
+    let lin_tree_bytes = 0;
+    for (const r of results) {
+      const key = r.linRel || r.name;
+      if (linSeen.has(key)) continue;
+      linSeen.add(key);
+      const t = r.fileLia || r.lia || '';
+      lin_tree_bytes += Buffer.byteLength(t, 'utf8');
+    }
+    report.source_tree_bytes = source_tree_bytes;
+    report.lin_tree_bytes = lin_tree_bytes;
+    report.source_files = files.length;
+    report.lin_files = linSeen.size;
+    report.size_ratio = source_tree_bytes > 0
+      ? Number((lin_tree_bytes / source_tree_bytes).toFixed(4))
+      : 0;
+    report.full_tree = !(args.maxFns > 0);
+    report.file_units = file_units.length;
 
     const stats = suiteStats(report.pass, report.fail, report.skip);
     report.suite_total = stats.total;
     report.suite_rate = Number(stats.suite_rate.toFixed(4));
 
     const fails = results.filter((r) => r.status === 'fail');
-    if (fails.length) report.learn = learnFromFails(STORAGE, fails, slug).hypothesis;
+    if (args.bootstrap && fails.length) {
+      report.learn = learnFromFails(STORAGE, fails, slug).hypothesis;
+    }
 
-    const multi = verifyMultiTargets(ROOT, STORAGE, CAND, results, slug);
+    const multi = verifyMultiTargets(ROOT, args.bootstrap ? STORAGE : null, CAND, results, slug);
     report.multi = multi.summary;
     report.multi_line = Object.entries(multi.summary)
       .map(([t, s]) => `${t}:P${s.PASS}/S${s.SKIP}/F${s.FAIL}`).join(' ');
     report.learn_lang = multi.learn?.hypothesis || 'none';
 
-    // S5 IMPROVE_LIN_FROM_CLONE (mandatory every attempt)
-    report.improve_lin = improveLinFromClone(ROOT, STORAGE, CAND, results, slug).summary;
+    const emit_bytes = {};
+    for (const [t, s] of Object.entries(multi.summary || {})) {
+      emit_bytes[t] = s.bytes || 0;
+    }
+    report.emit_bytes = emit_bytes;
+    report.size = sizeBlock(report.source_tree_bytes, report.lin_tree_bytes, emit_bytes);
+    report.all_lang_full = multiAllFull(multi.summary);
+    report.js_full = stats.full;
 
-    // S6: build publish dir + gh push ONLY at suite_rate==1.0 (never on PARTIAL)
+    const canPublish = stats.full && report.all_lang_full;
+
+    report.improve_lin = args.bootstrap
+      ? improveLinFromClone(ROOT, STORAGE, CAND, results, slug).summary
+      : 'loop_mode_no_improve';
+
     report.clone_lin_local = '';
     report.clone_lin_url = '';
-    if (stats.full) {
+    if (canPublish) {
       const pubDir = buildPublishDir(ROOT, slug, results, {
         source: target.source, pass: report.pass, fail: report.fail, skip: report.skip,
         improve_lin: report.improve_lin, suite_rate: report.suite_rate,
@@ -201,32 +334,33 @@ function runOneCycle(args, target) {
         report.status = 'PASS';
         report.done = true;
         report.published = true;
-        report.note_pt = `DONE 100% clone-lin-${slug}: p=${report.pass} suite_rate=1.0 JS; multi=${report.multi_line}; improve=${report.improve_lin}`;
+        report.note_pt = `DONE all-lang 1.0 clone-lin-${slug}: p=${report.pass} multi=${report.multi_line}; size lin/src=${report.size.ratios.lin_src}; tok src=${report.size.tokens.src} lin=${report.size.tokens.lin}`;
       } else {
         report.status = 'PASS_PUBLISH_FAIL';
         report.done = false;
         report.published = false;
-        report.note_pt = `100% local mas publish gh falhou: ${(pub.error || '').slice(0, 120)}. Local=${pub.local}`;
+        report.note_pt = `all-lang 1.0 local mas publish gh falhou: ${(pub.error || '').slice(0, 120)}. Local=${pub.local}`;
       }
     } else if (report.pass > 0) {
-      // PARTIAL: INTEL+learn only — NO publish dir, NO gh, NOT done
       report.status = report.fail === 0 ? 'PARTIAL_PASS' : 'PARTIAL_PASS_WITH_FAILS';
       report.done = false;
       report.published = false;
-      report.note_pt = `PARTIAL (nao publish): p=${report.pass} f=${report.fail} s=${report.skip} suite_rate=${report.suite_rate}; multi=${report.multi_line}; stay+retry; improve=${report.improve_lin}`;
+      report.note_pt = `PARTIAL INTEL only (no gh): js_full=${stats.full} all_lang=${report.all_lang_full} p=${report.pass} f=${report.fail} s=${report.skip} rate=${report.suite_rate}; multi=${report.multi_line}; lin/src=${report.size.ratios.lin_src}`;
     } else {
       report.status = 'FAIL_LEARN';
       report.done = false;
       report.published = false;
-      report.note_pt = `FAIL_LEARN (nao publish): p=0 f=${report.fail} s=${report.skip} suite_rate=${report.suite_rate}; multi=${report.multi_line}; stay+retry; improve=${report.improve_lin}`;
+      report.note_pt = `FAIL_LEARN INTEL only: p=0 f=${report.fail} s=${report.skip} rate=${report.suite_rate}; multi=${report.multi_line}`;
     }
     try { fs.rmSync(multi.workDir, { recursive: true, force: true }); } catch { /* ignore */ }
 
-    appendStorage(
-      STORAGE,
-      'lia_ledger.dicel',
-      `kind=clone_lin status=${report.status} slug=${slug} pass=${report.pass} fail=${report.fail} skip=${report.skip} suite_rate=${report.suite_rate} done=${report.done} published=${report.published}`,
-    );
+    if (args.bootstrap) {
+      appendStorage(
+        STORAGE,
+        'lia_ledger.dicel',
+        `kind=clone_lin status=${report.status} slug=${slug} pass=${report.pass} fail=${report.fail} skip=${report.skip} suite_rate=${report.suite_rate} done=${report.done} published=${report.published}`,
+      );
+    }
   } finally {
     try { fs.rmSync(tempRoot, { recursive: true, force: true }); } catch { /* ignore */ }
     report.temp_cleaned = !fs.existsSync(tempRoot);
@@ -258,7 +392,7 @@ function main() {
     ? { name: args.name || slugFromSource(args.source), source: args.source, prefer: args.prefer, lang: args.lang }
     : null;
 
-  console.error(`[clone-lin] gate=suite_rate==1.0 sticky=true wrap=${args.repeat ? 'repeat' : 'exit_when_queue_done'}`);
+  console.error(`[clone-lin] gate=all_targets_1.0 (js ts py go rust java c) sticky=true wrap=${args.repeat ? 'repeat' : 'exit_when_queue_done'} max_fns=${args.maxFns > 0 ? args.maxFns : 'all'}`);
   console.error(`[clone-lin] queue=${QUEUE.map((q) => `${q.name}:${q.lang || 'js'}`).join('→')}`);
 
   for (let c = 0; ; c++) {
