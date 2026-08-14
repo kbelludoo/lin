@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { compileLiaToJs, parseLia } from '../src/compiler.mjs';
 import { LIN_HEADER, LIA_HEADER } from '../src/emitter.mjs';
+import { parseRulel, validateComms } from '../src/rulel_parser.mjs';
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -79,4 +80,14 @@ assert.equal(sandboxMod.pureAdd(2, 3), 5);
 assert.throws(() => sandboxMod.nativeLen('x'), /LIN_SANDBOX.*Native/);
 fs.unlinkSync(sandboxTmp);
 
-console.log('ok roundtrip safe-compare (+ @LIN/@LIA/@AIL dual-read) + closure capture + effects + sandbox');
+// RULEL parser smoke
+const rulelText = fs.readFileSync(path.join(root, 'spec', 'COMMS_PROTOCOL.rulel'), 'utf8');
+const rulelParsed = parseRulel(rulelText);
+assert.equal(rulelParsed.header.id, 'COMMS_PROTOCOL');
+assert.equal(rulelParsed.header.semver, '1.4.0');
+assert.ok(rulelParsed.blocks.m);
+assert.ok(rulelParsed.blocks.r);
+const rulelValidation = validateComms(rulelParsed);
+assert.equal(rulelValidation.ok, true);
+
+console.log('ok roundtrip safe-compare (+ @LIN/@LIA/@AIL dual-read) + closure capture + effects + sandbox + rulel');

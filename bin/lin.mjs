@@ -10,6 +10,7 @@ import { emitAil, emitAilFile, estTokens, LIN_HEADER } from '../src/emitter.mjs'
 import { parseLia } from '../src/compiler.mjs';
 import { compileLiaToTargetFile, TARGETS } from '../src/multi_emit.mjs';
 import { compileLiaFile } from '../src/compiler.mjs';
+import { parseRulel, validateComms } from '../src/rulel_parser.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,6 +30,7 @@ Commands:
        --clone-cycles N  cap clone retries (default 0=until queue_complete)
        --skip-clone      improve+evolve only
   autonomy-status                               memory + gates snapshot
+  rulel-check <file.rulel>                      parse + validate RULEL/COMMS file
   version
 
 Policy: WRITE=LIN; on_error=FIX_COMPILER_OUTSIDE_NUCLEUS; LIN_ge_Dicel; RULEL=rules
@@ -151,6 +153,16 @@ if (cmd === 'clone-lin' || cmd === 'clone_lin' || cmd === 'clone-lia' || cmd ===
     stdio: 'inherit',
   });
   process.exit(r.status ?? 1);
+}
+
+if (cmd === 'rulel-check') {
+  const file = rest[0];
+  if (!file) usage();
+  const text = fs.readFileSync(file, 'utf8');
+  const parsed = parseRulel(text);
+  const validation = validateComms(parsed);
+  console.log(JSON.stringify({ parsed, validation }, null, 2));
+  process.exit(validation.ok ? 0 : 1);
 }
 
 usage();
