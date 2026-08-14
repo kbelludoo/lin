@@ -38,4 +38,20 @@ for (const [tag, hdr] of [['@LIA:', '@LIA:L1c:0.2'], ['@AIL:', '@AIL:L1c:0.2']])
 }
 
 fs.unlinkSync(tmp);
-console.log('ok roundtrip safe-compare (+ @LIN/@LIA/@AIL dual-read)');
+
+// Closure roundtrip: nested function must capture outer variable.
+const closureLia = `${LIN_HEADER}
+^schema_once ^lossy=true ^ops=test
+~G{?=if #=for ^=ret :else}
+!makeAdd(n){add=~(x){^n+x};^add}
+=ex{makeAdd}`;
+const { js: closureJs } = compileLiaToJs(closureLia, { exportMode: 'single' });
+const closureTmp = path.join(root, 'tests', '.tmp_closure.cjs');
+fs.writeFileSync(closureTmp, closureJs, 'utf8');
+const add5 = require(closureTmp)(5);
+assert.equal(typeof add5, 'function');
+assert.equal(add5(10), 15);
+assert.equal(add5(3), 8);
+fs.unlinkSync(closureTmp);
+
+console.log('ok roundtrip safe-compare (+ @LIN/@LIA/@AIL dual-read) + closure capture');

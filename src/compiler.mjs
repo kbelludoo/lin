@@ -71,8 +71,54 @@ function compileReturnSigils(s) {
   return out;
 }
 
+function rewriteClosures(s) {
+  // LIN closure syntax: ~(params){body} -> function(params){body}
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const idx = s.indexOf('~(', i);
+    if (idx < 0) {
+      out += s.slice(i);
+      break;
+    }
+    // skip ~G grammar marker
+    if (s[idx + 1] === 'G') {
+      out += s.slice(i, idx + 2);
+      i = idx + 2;
+      continue;
+    }
+    out += s.slice(i, idx);
+    const openParen = idx + 1;
+    const closeParen = findMatching(s, openParen, '(', ')');
+    if (closeParen < 0) {
+      out += '~(';
+      i = idx + 2;
+      continue;
+    }
+    const params = s.slice(openParen + 1, closeParen);
+    let j = closeParen + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
+    if (s[j] !== '{') {
+      out += `function(${params})`;
+      i = closeParen + 1;
+      continue;
+    }
+    const closeBrace = findMatching(s, j, '{', '}');
+    if (closeBrace < 0) {
+      out += '~(';
+      i = idx + 2;
+      continue;
+    }
+    const inner = compileBody(s.slice(j + 1, closeBrace));
+    out += `function(${params}){${inner}}`;
+    i = closeBrace + 1;
+  }
+  return out;
+}
+
 function compileBody(body) {
   let s = String(body || '');
+  s = rewriteClosures(s);
   s = rewriteSigilBlocks(s, '?', 'if');
   s = rewriteElseIf(s);
   s = rewriteElseBare(s);
@@ -81,7 +127,8 @@ function compileBody(body) {
   s = s.replace(/([^;{}(\[,:?])while\s*\(/g, '$1;while(');
   // protect existing ===/!== then expand LIN ==/!=
   s = s.replace(/!==/g, '\u0000NE\u0000').replace(/===/g, '\u0000EQ\u0000');
-  s = s.replace(/==/g, '===').replace(/!=/g, '!==');
+  s = s.replace(/==(?![\s]*(?:null|undefined)\b)/g, '===');
+  s = s.replace(/!=(?![\s]*(?:null|undefined)\b)/g, '!==');
   s = s.replace(/\u0000NE\u0000/g, '!==').replace(/\u0000EQ\u0000/g, '===');
   s = s.replace(/;+/g, ';');
   s = s.replace(/;else\b/g, 'else');

@@ -742,11 +742,193 @@ function restoreQuoted(s, held) {
   return out;
 }
 
+function scanArrowExpr(s, start) {
+  // s starts after '=>'. Returns the expression text and the index where it ends.
+  let i = start;
+  while (i < s.length && /\s/.test(s[i])) i++;
+  let depthParen = 0;
+  let depthBrace = 0;
+  let depthBracket = 0;
+  let inTemplate = false;
+  let quote = null;
+  const exprStart = i;
+  while (i < s.length) {
+    const c = s[i];
+    if (quote) {
+      if (c === '\\') { i += 2; continue; }
+      if (c === quote) { quote = null; }
+      i++;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') {
+      if (c === '`') inTemplate = true;
+      quote = c;
+      i++;
+      continue;
+    }
+    if (c === '$' && s[i + 1] === '{' && inTemplate) {
+      i += 2;
+      depthBrace++;
+      continue;
+    }
+    if (c === '(') { depthParen++; i++; continue; }
+    if (c === ')') {
+      if (depthParen === 0 && depthBrace === 0 && depthBracket === 0) break;
+      depthParen--;
+      i++;
+      continue;
+    }
+    if (c === '{') {
+      if (depthBrace === 0 && depthParen === 0 && depthBracket === 0) break; // block handled elsewhere
+      depthBrace++;
+      i++;
+      continue;
+    }
+    if (c === '}') {
+      if (depthBrace === 0) break;
+      depthBrace--;
+      i++;
+      continue;
+    }
+    if (c === '[') { depthBracket++; i++; continue; }
+    if (c === ']') {
+      if (depthBracket === 0 && depthParen === 0 && depthBrace === 0) break;
+      depthBracket--;
+      i++;
+      continue;
+    }
+    if ((c === ';' || c === ',' || c === '?' || c === ':') && depthParen === 0 && depthBrace === 0 && depthBracket === 0) break;
+    i++;
+  }
+  return { expr: s.slice(exprStart, i).trim(), end: i };
+}
+
+function desugarClosures(src) {
+  // Convert anonymous function expressions and arrow functions inside a body
+  // to LIN closure syntax ~(params){body} so they remain lexical closures.
+  let s = String(src || '');
+  // protect strings so we do not rewrite inside literals
+  const qs = protectQuotedStrings(s);
+  s = qs.text;
+
+  // const/let/var x = function(p){...}  ->  x=~(p){...}
+  // also: x = async function(p){...}
+  s = s.replace(
+    /(^|[;=,({\[]\s*)\b(var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
+    (_m, before, _decl, name, params) => `${before}${name}=~(${params}){`,
+  );
+
+  // bare assignment / return / argument: = function(p){ -> = ~(p){
+  s = s.replace(
+    /([=,:;({\[]\s*)(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
+    (_m, before, params) => `${before}~(${params}){`,
+  );
+
+  // arrow block: (p)=>{...}  and p=>{...}
+  s = s.replace(
+    /([=,:;({\[]\s*)(?:async\s*)?\(([^)]*)\)\s*=>\s*\{/g,
+    (_m, before, params) => `${before}~(${params}){`,
+  );
+  s = s.replace(
+    /([=,:;({\[]\s*)(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>\s*\{/g,
+    (_m, before, param) => `${before}~(${param}){`,
+  );
+
+  function rewriteArrows(pattern, isParens) {
+    for (let pass = 0; pass < 32; pass++) {
+      let out = '';
+      let i = 0;
+      let changed = false;
+      while (i < s.length) {
+        pattern.lastIndex = i;
+        const m = pattern.exec(s);
+        if (!m) {
+          out += s.slice(i);
+          break;
+        }
+        out += s.slice(i, m.index);
+        const before = m[1];
+        const paramPart = m[2];
+        const arrowOffset = m.index + m[0].length;
+        const scanned = scanArrowExpr(s, arrowOffset);
+        out += `${before}~(${paramPart}){^${scanned.expr}}`;
+        i = scanned.end;
+        changed = true;
+      }
+      s = out;
+      if (!changed) break;
+    }
+  }
+
+  // arrow expression body with balanced parens/brackets/braces/strings.
+  rewriteArrows(/([=,:;({\[]\s*)(?:async\s*)?\(([^)]*)\)\s*=>/g, true);
+  rewriteArrows(/([=,:;({\[]\s*)(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/g, false);
+
+  return restoreQuoted(s, qs.held);
+}
+
+function protectClosuresForSigils(s) {
+  // Replace closure bodies with placeholders so later ASI/space compaction
+  // does not break multi-line arrow expressions that were folded into closures.
+  const held = [];
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const idx = s.indexOf('~(', i);
+    if (idx < 0) {
+      out += s.slice(i);
+      break;
+    }
+    out += s.slice(i, idx);
+    const openParen = idx + 1;
+    const closeParen = findMatching(s, openParen, '(', ')');
+    if (closeParen < 0) {
+      out += '~(';
+      i = idx + 2;
+      continue;
+    }
+    let j = closeParen + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
+    if (s[j] !== '{') {
+      out += s.slice(idx, j);
+      i = j;
+      continue;
+    }
+    const closeBrace = findMatching(s, j, '{', '}');
+    if (closeBrace < 0) {
+      out += '~(';
+      i = idx + 2;
+      continue;
+    }
+    const tok = `\u0000CL${held.length}\u0000`;
+    // normalize closure body to a single line to keep parseLia line-based parser happy,
+    // but do NOT add ASI semicolons (they would break multi-line expressions).
+    const bodyNorm = s.slice(j + 1, closeBrace).replace(/\s+/g, ' ').trim();
+    held.push(`{${bodyNorm}}`);
+    out += s.slice(idx, j) + tok;
+    i = closeBrace + 1;
+  }
+  return { text: out, held };
+}
+
+function restoreClosuresForSigils(s, held) {
+  let out = s;
+  for (let i = 0; i < held.length; i++) {
+    out = out.split(`\u0000CL${i}\u0000`).join(held[i]);
+  }
+  return out;
+}
+
 function applySourceSigils(jsBody) {
   let s = String(jsBody || '');
   // strip comments before compaction (otherwise // eats the rest of the AIL/JS line)
   s = s.replace(/\/\*[\s\S]*?\*\//g, '');
   s = s.replace(/(^|[^:])\/\/.*$/gm, '$1');
+  // preserve closures before stripping var/let/const and other sigils
+  s = desugarClosures(s);
+  // protect closure bodies from ASI insertion and whitespace compaction
+  const protectedClosures = protectClosuresForSigils(s);
+  s = protectedClosures.text;
   // peripheral: templates → concat before sigil compaction
   s = desugarTemplateLiterals(s);
   const qs = protectQuotedStrings(s);
@@ -783,6 +965,7 @@ function applySourceSigils(jsBody) {
   s = s.replace(/\{;/g, '{');
   s = s.replace(/===/g, '==').replace(/!==/g, '!=');
   s = restoreQuoted(s, qs.held);
+  s = restoreClosuresForSigils(s, protectedClosures.held);
   return s;
 }
 
@@ -868,32 +1051,51 @@ function extractArrowExpr(text, start) {
   return { expr: text.slice(start, i).trim(), end: i };
 }
 
+function fnInterval(text, startIdx) {
+  // startIdx points at the opening '{' of the function body
+  const { body, end } = extractBraceBody(text, startIdx);
+  return { body, start: startIdx, end };
+}
+
+function intervalsOverlap(a, b) {
+  return a.start < b.end && b.start < a.end;
+}
+
 /** Extract top-level named functions from JS source (classic + arrow const/let/var). */
 export function extractJsFunctions(source) {
   const text = String(source || '');
   const fns = [];
-  const push = (name, params, body) => {
+  const push = (name, params, body, extra = {}) => {
     if (!name || fns.some((f) => f.name === name)) return;
     const pjoin = (params || []).join(',');
-    if (/\.\.\./.test(pjoin) || /[{[]/.test(pjoin)) return;
-    if (/\bfunction\s+/.test(body)) return;
-    fns.push({ name, params, body });
+    if (/[{[]/.test(pjoin)) return;
+    fns.push({ name, params, body, async: !!extra.async });
   };
 
+  const candidates = [];
+
   const classic = [
-    /function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
-    /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
-    /(?:module\.)?exports(?:\.([A-Za-z_$][\w$]*))?\s*=\s*function(?:\s+([A-Za-z_$][\w$]*))?\s*\(([^)]*)\)\s*\{/g,
+    /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
+    /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
+    /(?:module\.)?exports(?:\.([A-Za-z_$][\w$]*))?\s*=\s*(?:async\s+)?function(?:\s+([A-Za-z_$][\w$]*))?\s*\(([^)]*)\)\s*\{/g,
   ];
   for (const re of classic) {
     let m;
     while ((m = re.exec(text)) !== null) {
       const open = m.index + m[0].length - 1;
-      const { body } = extractBraceBody(text, open);
+      const iv = fnInterval(text, open);
       const isExports = re.source.includes('exports');
       const name = isExports ? (m[1] || m[2] || 'defaultExport') : m[1];
       const paramsRaw = isExports ? m[3] : m[2];
-      push(name, splitParams(paramsRaw), body);
+      const async = /\basync\s+function\b/.test(m[0]);
+      candidates.push({
+        name,
+        params: splitParams(paramsRaw),
+        body: iv.body,
+        async,
+        start: m.index,
+        end: iv.end + 1,
+      });
     }
   }
 
@@ -906,15 +1108,43 @@ export function extractJsFunctions(source) {
     const params = splitParams((am[2] || am[3] || '').replace(/^\(|\)$/g, ''));
     let i = am.index + am[0].length;
     while (i < text.length && /\s/.test(text[i])) i++;
+    let body;
+    let end;
     if (text[i] === '{') {
-      const { body } = extractBraceBody(text, i);
-      push(name, params, body);
+      const iv = fnInterval(text, i);
+      body = iv.body;
+      end = iv.end + 1;
     } else {
-      const { expr } = extractArrowExpr(text, i);
-      // normalize expression-body arrows to return stmt for LIA emit
-      push(name, params, `return ${expr}`);
+      const expr = extractArrowExpr(text, i);
+      body = `return ${expr.expr}`;
+      end = expr.end;
     }
+    const async = /=\s*async\s*/.test(am[0]);
+    candidates.push({
+      name,
+      params,
+      body,
+      async,
+      start: am.index,
+      end,
+    });
   }
+
+  // Keep only candidates that are not nested inside another candidate's full span.
+  for (let i = 0; i < candidates.length; i++) {
+    const c = candidates[i];
+    let nested = false;
+    for (let j = 0; j < candidates.length; j++) {
+      if (i === j) continue;
+      const other = candidates[j];
+      if (c.start > other.start && c.end < other.end) {
+        nested = true;
+        break;
+      }
+    }
+    if (!nested) push(c.name, c.params, c.body, { async: c.async });
+  }
+
   return fns;
 }
 
