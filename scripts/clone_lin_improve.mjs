@@ -5,6 +5,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
+import { stripStubPassScores } from '../src/emit_shared.mjs';
+import { formatStubIntel, honestNucleusMulti, hasStubPassScore } from './clone_lin_full_repo_gate.mjs';
 
 export function runCmd(cmd, args, opts = {}) {
   const r = spawnSync(cmd, args, {
@@ -124,47 +126,54 @@ export function writeIntel(root, report) {
   const rate = report.suite_rate != null ? report.suite_rate : 0;
   const cov = report.coverage || {};
   const q = (s) => String(s || '').replace(/"/g, "'");
-  fs.writeFileSync(
-    p,
-    [
-      '@RULEL:INTEL_CLONE_LIN:1.3.0',
-      '~R{.m=meta .g=gate .c=compare}',
-      `.m{slug=${report.slug} lang=LIN status=${report.status} done=${report.done === true} published=${report.published === true} source="${q(report.source)}" url="${q(report.clone_lin_url)}"}`,
-      `.g{publish=full_repo_100_hash_eq skip_eq_fail=true behavior_eq=1.0 suite_rate=${rate} pass=${report.pass} fail=${report.fail} skip=${report.skip} files_ok=${cov.files_ok || 0} files_total=${cov.files_total || 0}}`,
-      `.c{pass="${q((report.pass_names || []).join('!'))}" fail="${q((report.fail_names || []).join('!'))}" multi="${q(report.multi_line)}" learn=${report.learn || 'none'} improve=${q(report.improve_lin)} note="${q(report.note_pt)}"}`,
-      '',
-    ].join('\n'),
-    'utf8',
-  );
+  const multi = honestNucleusMulti(report.multi || report.multi_line);
+  const stub = formatStubIntel();
+  const note = stripStubPassScores(q(report.note_pt));
+  const body = [
+    '@RULEL:INTEL_CLONE_LIN:1.4.0',
+    '~R{.m=meta .g=gate .c=compare}',
+      `.m{slug=${report.slug} lang=LIN status=${report.status} done=${report.done === true} published=${report.published === true} source="${q(report.source)}" url="${q(report.clone_lin_url)}" nucleus=ts!js!py!go!rust!c!java prefer_emit=ts}`,
+    `.g{publish=full_repo_100_hash_eq skip_eq_fail=true behavior_eq=1.0 suite_rate=${rate} pass=${report.pass} fail=${report.fail} skip=${report.skip} files_ok=${cov.files_ok || 0} files_total=${cov.files_total || 0} stub_not_suite=true c_skip=ok_iff_gcc_absent_after_retry}`,
+    `.c{pass="${q((report.pass_names || []).join('!'))}" fail="${q((report.fail_names || []).join('!'))}" multi="${q(multi)}" stub="${q(stub)}" learn=${report.learn || 'none'} improve=${q(report.improve_lin)} note="${note}"}`,
+    '',
+  ].join('\n');
+  const multiField = (body.match(/multi="([^"]*)"/) || [])[1] || '';
+  if (hasStubPassScore(multiField) || hasStubPassScore(body)) {
+    throw new Error('INTEL_FALSE_RESULT: stub lang recorded as PASS');
+  }
+  fs.writeFileSync(p, body, 'utf8');
   return p;
 }
 
 export function buildPublishDir(root, slug, results, meta) {
   const dir = path.join(root, '.clone_lin_publish', `clone-lin-${slug}`);
+  const persistentDir = path.join(root, 'clones_lin', slug);
   fs.rmSync(dir, { recursive: true, force: true });
   fs.mkdirSync(path.join(dir, 'lin'), { recursive: true });
+  fs.mkdirSync(persistentDir, { recursive: true });
+
   const passes = results.filter((x) => x.status === 'pass');
   for (const r of passes) {
     const text = (r.lia || '').replace(/^@LIA:/, '@LIN:').replace(/^@AIL:/, '@LIN:');
-    fs.writeFileSync(path.join(dir, 'lin', `${r.name}.lin`), text, 'utf8');
+    const safeName = String(r.name).replace(/[^a-zA-Z0-9._-]/g, '_');
+    fs.writeFileSync(path.join(dir, 'lin', `${safeName}.lin`), text, 'utf8');
+    fs.writeFileSync(path.join(persistentDir, `${safeName}.lin`), text, 'utf8');
   }
-  const mt = meta.multi_summary
-    ? Object.entries(meta.multi_summary).map(([t, s]) => `${t}:P${s.PASS}/S${s.SKIP}/F${s.FAIL}`).join(' ')
-    : 'js_gate';
+  const mt = meta.multi_summary ? honestNucleusMulti(meta.multi_summary) : 'prefer_ts';
+  const stub = formatStubIntel();
   const fns = passes.map((r) => r.name).join('!');
-  fs.writeFileSync(
-    path.join(dir, 'README.md'),
-    [
-      '@RULEL:CLONE_LIN:1.0.0',
-      `~R{.m=meta .c=compile .f=forbid .p=path}`,
-      `.m{repo=clone-lin-${slug} source="${meta.source}" truth=LIN+RULEL_only intel="lia/INTEL_CLONE_LIN_${slug}.rulel"}`,
-      '.c{cmd="lin compile lin/<fn>.lin --target js|ts|py|go|rust -o out" restore="compile_back_to_original_behavior"}',
-      '.f{host_lang_in_repo .cjs .js .ts .py .go .rs compiled/}',
-      `.p{lin="lin/*.lin" readme=README.md fns="${fns}" multi="${mt}"}`,
-      '',
-    ].join('\n'),
-    'utf8',
-  );
+  const readmeContent = [
+    '@RULEL:CLONE_LIN:1.1.0',
+    `~R{.m=meta .c=compile .f=forbid .p=path}`,
+    `.m{repo=clone-lin-${slug} source="${meta.source}" truth=LIN+RULEL_only intel="lia/INTEL_CLONE_LIN_${slug}.rulel" nucleus=ts!js!py!go!rust!c!java prefer_emit=ts}`,
+    '.c{cmd="lin compile lin/<fn>.lin --target ts|js|py|go|rust|c|java -o out" restore="compile_back_to_original_behavior"}',
+    '.f{host_lang_in_repo .cjs .js .ts .py .go .rs compiled/}',
+    `.p{lin="lin/*.lin" readme=README.md fns="${fns}" multi="${mt}" stub="${stub}"}`,
+    '',
+  ].join('\n');
+
+  fs.writeFileSync(path.join(dir, 'README.md'), readmeContent, 'utf8');
+  fs.writeFileSync(path.join(persistentDir, 'README.md'), readmeContent, 'utf8');
   return dir;
 }
 

@@ -23,10 +23,10 @@ import {
   publishGh, runCmd, writeIntel,
 } from './clone_lin_improve.mjs';
 import { ensureToolchains } from './ensure_toolchains.mjs';
-import { copyMultiIntoPublish, verifyMultiTargets } from './clone_lin_multi.mjs';
+import { copyMultiIntoPublish, verifyMultiTargets, formatNucleusMulti, formatStubIntel, REAL_TARGETS } from './clone_lin_multi.mjs';
 import { loadYearStarQueue, buildYearStarQueue } from './fetch_star_queue.mjs';
 import {
-  canPublishFullRepo, fileCoverage, isTypeOnlyModule, missedExtracts, normalizeSkipToFail,
+  canPublishFullRepo, fileCoverage, isTypeOnlyModule, missedExtracts, normalizeSkipToFail, multiAllFull,
 } from './clone_lin_full_repo_gate.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -154,21 +154,6 @@ function suiteStats(pass, fail, skip) {
 
 function tokEst(bytes) {
   return Math.ceil(Number(bytes || 0) / 4);
-}
-
-function multiAllFull(summary) {
-  const required = ['js', 'ts', 'py', 'go', 'rust'];
-  const optional = ['c', 'java'];
-  if (!summary) return false;
-  for (const t of required) {
-    const s = summary[t];
-    if (!s || !(s.PASS > 0) || s.FAIL !== 0 || s.SKIP !== 0) return false;
-  }
-  for (const t of optional) {
-    const s = summary[t];
-    if (!s || s.FAIL > 0) return false;
-  }
-  return true;
 }
 
 function sizeBlock(srcB, linB, emitBytes) {
@@ -323,13 +308,13 @@ function runOneCycle(args, target) {
 
     const multi = verifyMultiTargets(ROOT, args.bootstrap ? STORAGE : null, CAND, results, slug);
     report.multi = multi.summary;
-    report.multi_line = Object.entries(multi.summary)
-      .map(([t, s]) => `${t}:P${s.PASS}/S${s.SKIP}/F${s.FAIL}`).join(' ');
+    report.multi_line = formatNucleusMulti(multi.summary);
+    report.stub_line = formatStubIntel();
     report.learn_lang = multi.learn?.hypothesis || 'none';
 
     const emit_bytes = {};
-    for (const [t, s] of Object.entries(multi.summary || {})) {
-      emit_bytes[t] = s.bytes || 0;
+    for (const t of REAL_TARGETS) {
+      emit_bytes[t] = multi.summary?.[t]?.bytes || 0;
     }
     report.emit_bytes = emit_bytes;
     report.size = sizeBlock(report.source_tree_bytes, report.lin_tree_bytes, emit_bytes);
@@ -366,7 +351,7 @@ function runOneCycle(args, target) {
         report.status = 'PASS';
         report.done = true;
         report.published = true;
-        report.note_pt = `DONE all-lang 1.0 clone-lin-${slug}: p=${report.pass} multi=${report.multi_line}; size lin/src=${report.size.ratios.lin_src}; tok src=${report.size.tokens.src} lin=${report.size.tokens.lin}`;
+        report.note_pt = `DONE real-nucleus 7-lang clone-lin-${slug}: p=${report.pass} multi=${report.multi_line}; stub=${report.stub_line}; size lin/src=${report.size.ratios.lin_src}; tok src=${report.size.tokens.src} lin=${report.size.tokens.lin}`;
       } else {
         report.status = 'PASS_PUBLISH_FAIL';
         report.done = false;

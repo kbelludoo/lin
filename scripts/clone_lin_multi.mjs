@@ -1,6 +1,7 @@
 /**
- * Multi-target emit+run for clone-lin (js,ts,py,go,rust,java,c).
- * Gate: ALL targets must PASS (skip counts against). Size bytes per emit.
+ * Multi-target emit+run for clone-lin nucleus (js,ts,py,go,rust,java,c).
+ * Gate: required langs PASS (skip≡fail); C SKIP ok iff gcc absent after retry.
+ * Stub langs may still emit but MUST NOT count as PASS / suite_rate.
  * Learn on new-lang FAIL → trauma/hypothesis/candidates; never nucleus.
  */
 import fs from 'node:fs';
@@ -8,13 +9,18 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { compileLia } from '../src/multi_emit.mjs';
-import { TARGETS } from '../src/emit_shared.mjs';
+import { TARGETS, REAL_TARGETS, STUB_TARGETS, formatNucleusMulti, formatStubIntel, honestNucleusMulti } from '../src/emit_shared.mjs';
 import { appendStorage } from './clone_lin_improve.mjs';
 import { ensureToolchains, hasCmd as hasToolchainCmd } from './ensure_toolchains.mjs';
 
-export { TARGETS };
+export { TARGETS, REAL_TARGETS, STUB_TARGETS, formatNucleusMulti, formatStubIntel, honestNucleusMulti };
 
-const EXT = { js: '.cjs', ts: '.ts', py: '.py', go: '.go', rust: '.rs', c: '.c', java: '.java' };
+const EXT = {
+  js: '.cjs', ts: '.ts', py: '.py', go: '.go', rust: '.rs', c: '.c', java: '.java',
+  cs: '.cs', lua: '.lua', elixir: '.ex', crystal: '.cr', kotlin: '.kt', hcl: '.tf',
+  julia: '.jl', scala: '.scala', haskell: '.hs', prolog: '.pl',
+  zig: '.zig', nim: '.nim', asm: '.asm',
+};
 
 export function hasCmd(cmd) {
   return hasToolchainCmd(cmd);
@@ -41,7 +47,6 @@ function writeWork(dir, name, target, code) {
 
 function runTsSyntax(file) {
   const r = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
-  // .ts may fail node --check; strip types lightly then check
   if (r.status === 0) return { ok: true, detail: 'node --check' };
   let code = fs.readFileSync(file, 'utf8')
     .replace(/^export /gm, '')
@@ -56,6 +61,9 @@ function runTsSyntax(file) {
 }
 
 function runTarget(target, file) {
+  if (STUB_TARGETS.includes(target)) {
+    return { run: 'STUB', detail: 'experimental_emit_not_toolchain_validated' };
+  }
   if (target === 'js') {
     const c = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
     return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || 'node --check').slice(0, 160) };
@@ -89,13 +97,22 @@ function runTarget(target, file) {
     const c = spawnSync('javac', [file], { encoding: 'utf8' });
     return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || c.stdout || 'javac').slice(0, 200) };
   }
-  if (!hasCmd('rustc')) return { run: 'SKIP', detail: 'rustc_absent' };
-  const bin = path.join(path.dirname(file), `${path.basename(file, '.rs')}_bin`);
-  const c = spawnSync('rustc', ['--crate-type', 'lib', '--cap-lints', 'allow', file, '-o', bin], { encoding: 'utf8' });
-  return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || c.stdout || 'rustc').slice(0, 200) };
+  if (target === 'rust') {
+    if (!hasCmd('rustc')) return { run: 'SKIP', detail: 'rustc_absent' };
+    const bin = path.join(path.dirname(file), `${path.basename(file, '.rs')}_bin`);
+    const c = spawnSync('rustc', ['--crate-type', 'lib', '--cap-lints', 'allow', file, '-o', bin], { encoding: 'utf8' });
+    return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || c.stdout || 'rustc').slice(0, 200) };
+  }
+  return { run: 'STUB', detail: 'experimental_emit_not_toolchain_validated' };
 }
 
 export function emitOneTarget(lia, name, target, workDir) {
+  if (STUB_TARGETS.includes(target)) {
+    return {
+      target, name, status: 'STUB', emit: 'stub', run: 'STUB',
+      reason: 'experimental_emit_not_toolchain_validated', file: null, code: '',
+    };
+  }
   let code;
   try {
     const r = compileLia(lia, {
@@ -112,7 +129,7 @@ export function emitOneTarget(lia, name, target, workDir) {
   }
   const file = writeWork(workDir, name, target, code);
   const ran = runTarget(target, file);
-  const status = ran.run === 'FAIL' ? 'FAIL' : ran.run === 'SKIP' ? 'SKIP' : 'PASS';
+  const status = ran.run === 'FAIL' ? 'FAIL' : ran.run === 'SKIP' ? 'SKIP' : ran.run === 'STUB' ? 'STUB' : 'PASS';
   return {
     target, name, status, emit: 'ok', run: ran.run, reason: ran.detail, file, code,
   };
@@ -163,10 +180,10 @@ export function learnNewLang(storageDir, candDir, slug, fails) {
 export function verifyMultiTargets(root, storageDir, candDir, jsResults, slug) {
   ensureToolchains({ quiet: true });
   const workDir = fs.mkdtempSync(path.join(os.tmpdir(), `lin_multi_${slug}_`));
-  const others = TARGETS.filter((t) => t !== 'js');
+  const others = REAL_TARGETS.filter((t) => t !== 'js');
   const perFn = [];
   const summary = {};
-  for (const t of TARGETS) summary[t] = { PASS: 0, SKIP: 0, FAIL: 0, bytes: 0 };
+  for (const t of REAL_TARGETS) summary[t] = { PASS: 0, SKIP: 0, FAIL: 0, bytes: 0 };
 
   const passes = jsResults.filter((r) => r.status === 'pass' && (r.lia || r.fileLia));
   const fileGroups = new Map();
@@ -202,7 +219,7 @@ export function verifyMultiTargets(root, storageDir, candDir, jsResults, slug) {
 
   const fails = perFn.filter((x) => x.status === 'FAIL');
   const learn = fails.length ? learnNewLang(storageDir, candDir, slug, fails) : { hypothesis: null };
-  return { workDir, perFn, summary, learn, targets: TARGETS };
+  return { workDir, perFn, summary, learn, targets: REAL_TARGETS, stub: STUB_TARGETS };
 }
 
 /** Host-lang dumps stay in lia INTEL / verify workDir — never in clone-lin-* gh repo. */

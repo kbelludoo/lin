@@ -622,7 +622,7 @@ export function walkLang(root, lang) {
     go: /\.go$/i,
     rust: /\.rs$/i,
   }[String(lang || 'javascript').toLowerCase()] || /\.(js|mjs|cjs|ts)$/i;
-  const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|vendor|docs?|\.husky|target|__pycache__|perf|benchmarks?)([\\/]|$)/i;
+  const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|e2e|vendor|docs?|\.husky|target|__pycache__|perf|benchmarks?|_next)([\\/]|$)/i;
   const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$|\.config\.(js|ts|mjs|cjs)$|\.conf\.(js|ts|mjs|cjs)$|^karma\.|^rollup\.|[\.-]min\.(js|mjs|cjs)$/i;
   const SKIP_BUNDLE = /^(underscore|lodash)(-esm|-umd)?\.(js|mjs|cjs)$/i;
   const out = [];

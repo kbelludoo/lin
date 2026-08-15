@@ -1,9 +1,25 @@
 @LIN:L1c:0.2
 ^schema_once ^lossy=true ^ops=clone_full_repo_gate
 ~G{?=if #=for ^=ret :else}
+!defaultEmitTarget(){^'ts'}
+!realNucleusLangs(){^(['ts','js','py','go','rust','c','java'])}
+!compileOrder(){^(['ts','js','py','go','rust','c','java'])}
+!gateRequiredLangs(){^(['ts','js','py','go','rust','java'])}
+!stubEmitLangs(){^(['cs','lua','elixir','crystal','kotlin','hcl','julia','scala','haskell','prolog','zig','nim','asm'])}
+!formatStubIntel(){stubs=stubEmitLangs();names='';#(i=0;i<stubs.length;i++){?(i>0){names=names+','};names=names+stubs[i]};^('EXPERIMENTAL_NOT_PASS '+names+' no_toolchain_no_oracle')}
+!honestNucleusMulti(summary){langs=realNucleusLangs();out='';#(i=0;i<langs.length;i++){t=langs[i];s=(summary&&summary[t])||{PASS:0,SKIP:0,FAIL:0};?(i>0){out=out+' '};out=out+t+':P'+(s.PASS||0)+'/S'+(s.SKIP||0)+'/F'+(s.FAIL||0)};^out}
+!hasStubPassScore(text){s=String(text||'');stubs=stubEmitLangs();#(i=0;i<stubs.length;i++){?(s.indexOf(stubs[i]+':P')>=0){^true}};^false}
+!refuseStubBenchmark(target){t=String(target||'');stubs=stubEmitLangs();#(i=0;i<stubs.length;i++){?(stubs[i]==t){^true}};^false}
+!futurePickBestLang(_bench){^({status:'NOT_RUN',prefer_until_bench:'ts',refuse_stub:true,require_behavior_eq:1,note:'FUTURE compile all real nucleus then measure; ts is default not winner'})}
 !normalizeSkipToFail(results){out=results||[];#(i=0;i<out.length;i++){r=out[i];?(r&&r.status=='skip'){r.status='fail';r.stage=r.stage||'gate';r.reason='skip_eq_fail:'+(r.reason||'skip')}};pass_names=[];fail_names=[];pass=0;fail=0;#(j=0;j<out.length;j++){r=out[j];label=r.srcRel?(r.srcRel+':'+r.name):String(r.name||'unit');?(r.status=='pass'){pass=pass+1;pass_names.push(label)}:{fail=fail+1;fail_names.push(label+':'+(r.reason||r.stage||'fail'))}};^({pass:pass,fail:fail,skip:0,pass_names:pass_names,fail_names:fail_names,skip_names:[]})}
 !fileCoverage(results){by={};list=results||[];#(i=0;i<list.length;i++){r=list[i];key=r.srcRel||r.name||'unknown';?(by[key]==null){by[key]={pass:0,fail:0}};slot=by[key];?(r.status=='pass'){slot.pass=slot.pass+1}:{slot.fail=slot.fail+1}};files_ok=0;keys=Object.keys(by);files_total=keys.length;#(k=0;k<keys.length;k++){slot=by[keys[k]];?(slot.fail==0&&slot.pass>0){files_ok=files_ok+1}};rate=0;?(files_total>0){rate=files_ok/files_total};^({files_total:files_total,files_ok:files_ok,rate:Number(rate.toFixed(4)),full:files_total>0&&files_ok==files_total})}
-!missedExtracts(text,fns){have={};list=fns||[];#(i=0;i<list.length;i++){have[list[i].name]=1};missed=[];src=String(text||'');needle='function ';idx=src.indexOf(needle);#(w=0;w<src.length&&idx>=0;w=w+1){start=idx+needle.length;name='';#(k=start;k<src.length&&/[A-Za-z0-9_$]/.test(src.charAt(k));k=k+1){name=name+src.charAt(k)};ch=src.charAt(k);?(name&&ch=='('&&!have[name]){missed.push({name:name,reason:'extract_missed'});have[name]=1};idx=src.indexOf(needle,idx+1);?(idx<0){w=src.length}};^missed}
+!braceDepthBefore(s,idx){depth=0;quote='';#(i=0;i<idx;i++){c=s.charAt(i);?(quote==''){?(c=='"'||c=="'"||c=='`'){quote=c}:{?(c=='{'){depth=depth+1}:{?(c=='}'){depth=depth-1}}}}:{?(c=='\\' ){i=i+1}:{?(c==quote){quote=''}}}};^depth}
+!closeParenAfter(s,i){d=0;#(k=i;k<s.length;k++){?(s.charAt(k)=='('){d=d+1}:{?(s.charAt(k)==')'){d=d-1;?(d==0){^k+1}}}};^i}
+!skipWs(s,i){#(k=i;k<s.length&&/\s/.test(s.charAt(k));k++){i=k+1};^i}
+!skipTsType(s,i){#(k=i;k<s.length;k++){?(s.charAt(k)=='{'||s.charAt(k)==';'){^k}};^i}
+!isOverloadOrNestedFn(src,name){s=String(src||'');needle='function '+String(name||'')+'(';idx=s.indexOf(needle);#(w=0;w<s.length&&idx>=0;w=w+1){?(braceDepthBefore(s,idx)==0){i=skipWs(s,closeParenAfter(s,idx+needle.length-1));?(s.charAt(i)==':'){i=skipWs(s,skipTsType(s,i))};?(s.charAt(i)=='{'){^false}};idx=s.indexOf(needle,idx+1)};^true}
+!missedExtracts(text,fns){have={};list=fns||[];#(i=0;i<list.length;i++){have[list[i].name]=1};missed=[];src=String(text||'');needle='function ';idx=src.indexOf(needle);#(w=0;w<src.length&&idx>=0;w=w+1){start=idx+needle.length;name='';#(k=start;k<src.length&&/[A-Za-z0-9_$]/.test(src.charAt(k));k=k+1){name=name+src.charAt(k)};ch=src.charAt(k);?(name&&ch=='('&&!have[name]){?(isOverloadOrNestedFn(src,name)){have[name]=1}:{missed.push({name:name,reason:'extract_missed'});have[name]=1}};idx=src.indexOf(needle,idx+1);?(idx<0){w=src.length}};^missed}
 !canPublishFullRepo(g){^!!(g&&g.jsFull&&g.allLangFull&&g.filesFull&&g.skip==0&&g.fail==0&&g.pass>0)}
 !isTypeOnlyModule(text){s=String(text||'');?(s.indexOf('function')>=0){^false};?(s.indexOf('class ')>=0){^false};^true}
-=ex{normalizeSkipToFail,fileCoverage,missedExtracts,canPublishFullRepo,isTypeOnlyModule}
+!multiAllFull(summary){?(summary==null){^false};req=gateRequiredLangs();#(i=0;i<req.length;i++){t=req[i];s=summary[t];?(s==null){^false};?(!(s.PASS>0)){^false};?(s.FAIL>0){^false};?(s.SKIP>0){^false}};c=summary.c;?(c==null){^false};?(c.FAIL>0){^false};?(c.PASS==0&&c.SKIP==0){^false};^true}
+=ex{defaultEmitTarget,realNucleusLangs,compileOrder,gateRequiredLangs,stubEmitLangs,formatStubIntel,honestNucleusMulti,hasStubPassScore,refuseStubBenchmark,futurePickBestLang,normalizeSkipToFail,fileCoverage,isOverloadOrNestedFn,missedExtracts,canPublishFullRepo,isTypeOnlyModule,multiAllFull}

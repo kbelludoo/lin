@@ -1,6 +1,7 @@
 /**
- * ALWAYS_INSTALL_MISSING for LIN multi-emit (js/ts/py/go/rust).
- * SKIP only after honest install+retry fail. Never logs secrets.
+ * ALWAYS_INSTALL_MISSING for LIN real nucleus (js/ts/py/go/rust/c/java).
+ * C SKIP only after honest gcc install+retry fail. Never logs secrets.
+ * Stub langs are experimental and are not installed here.
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -14,6 +15,19 @@ const WIN = process.platform === 'win32';
 function whichEnvPath() {
   const extra = [];
   const home = os.homedir();
+  extra.push(path.join(home, 'scoop', 'shims'));
+  extra.push(path.join(home, 'scoop', 'apps', 'gcc', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'elixir', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'erlang', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'crystal', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'lua', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'kotlin', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'dotnet-sdk', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'julia', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'scala', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'zig', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'nim', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'nasm', 'current'));
   extra.push(path.join(home, '.cargo', 'bin'));
   extra.push(path.join(home, 'go', 'bin'));
   extra.push(path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Python', 'Python312'));

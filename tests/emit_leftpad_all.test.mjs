@@ -12,7 +12,10 @@ const lin = `@LIN:L1c:0.2
 =ex{leftPad}`;
 
 const work = fs.mkdtempSync(path.join(os.tmpdir(), 'lin_leftpad_'));
-const targets = ['js', 'ts', 'py', 'go', 'rust', 'c', 'java'];
+const def = compileLia(lin, { exportMode: 'single', withMain: false, package: 'clonefn', className: 'LeftPad' });
+assert.equal(def.target, 'ts', 'compileLia without --target must emit ts');
+
+const targets = ['ts', 'js', 'py', 'go', 'rust', 'c', 'java'];
 const rows = {};
 for (const t of targets) {
   const emitted = compileLia(lin, {
@@ -23,7 +26,11 @@ for (const t of targets) {
   rows[t] = row;
   console.log(t, row.status, (row.reason || '').slice(0, 160));
 }
-for (const t of ['js', 'ts', 'py', 'go', 'rust']) {
+for (const t of ['ts', 'js', 'py', 'go', 'rust', 'java']) {
   assert.equal(rows[t].status, 'PASS', `${t}: ${rows[t].reason}`);
+}
+assert.notEqual(rows.c.status, 'FAIL', `c: ${rows.c.reason}`);
+if (rows.c.status === 'SKIP') {
+  assert.match(String(rows.c.reason || ''), /gcc_absent/, 'c SKIP only if gcc missing after retry');
 }
 console.log('ok emit_leftpad_all');

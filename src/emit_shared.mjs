@@ -12,7 +12,54 @@
 
 import { rewriteHostExpr, rewriteIifeTernary, rewriteTernaries, foldPlus, collapseHostChains } from './emit_rewrite.mjs';
 
-export const TARGETS = ['js', 'ts', 'py', 'go', 'rust', 'c', 'java'];
+/** Matches src/clone_lin_full_repo_gate.lin defaultEmitTarget — prefer TS until a real bench exists. */
+export const DEFAULT_EMIT_TARGET = 'ts';
+
+export const TARGETS = [
+  'ts', 'js', 'py', 'go', 'rust', 'c', 'java',
+  'cs', 'lua', 'elixir', 'crystal', 'kotlin', 'hcl',
+  'julia', 'scala', 'haskell', 'prolog',
+  'zig', 'nim', 'asm',
+];
+
+/** Real nucleus: compile + toolchain check. Stub langs may emit but are not suite_rate. */
+export const REAL_TARGETS = ['ts', 'js', 'py', 'go', 'rust', 'c', 'java'];
+export const STUB_TARGETS = TARGETS.filter((t) => !REAL_TARGETS.includes(t));
+export const GATE_REQUIRED = ['ts', 'js', 'py', 'go', 'rust', 'java'];
+
+export function formatNucleusMulti(summary) {
+  return REAL_TARGETS.map((t) => {
+    const s = summary?.[t] || { PASS: 0, SKIP: 0, FAIL: 0 };
+    return `${t}:P${s.PASS || 0}/S${s.SKIP || 0}/F${s.FAIL || 0}`;
+  }).join(' ');
+}
+
+/** Never a Px/S0/F0 score — stub langs are not suite_rate. */
+export function formatStubIntel() {
+  return `EXPERIMENTAL_NOT_PASS ${STUB_TARGETS.join(',')} no_toolchain_no_oracle`;
+}
+
+const STUB_PASS_RE = /\b(?:cs|lua|elixir|crystal|kotlin|hcl|julia|scala|haskell|prolog|zig|nim|asm):P\d+\/S\d+\/F\d+\s*/g;
+
+export function stripStubPassScores(text) {
+  return String(text || '').replace(STUB_PASS_RE, '');
+}
+
+/** INTEL multi= from real nucleus only. Ignores stub keys and stray asm:P15 tokens. */
+export function honestNucleusMulti(summaryOrLine) {
+  if (summaryOrLine && typeof summaryOrLine === 'object' && !Array.isArray(summaryOrLine)) {
+    const only = {};
+    for (const t of REAL_TARGETS) only[t] = summaryOrLine[t] || { PASS: 0, SKIP: 0, FAIL: 0 };
+    return formatNucleusMulti(only);
+  }
+  const summary = {};
+  for (const tok of String(summaryOrLine || '').split(/\s+/)) {
+    const m = tok.match(/^([a-z]+):P(\d+)\/S(\d+)\/F(\d+)$/);
+    if (!m || !REAL_TARGETS.includes(m[1])) continue;
+    summary[m[1]] = { PASS: Number(m[2]), SKIP: Number(m[3]), FAIL: Number(m[4]) };
+  }
+  return formatNucleusMulti(summary);
+}
 
 export function snakeCase(name) {
   return String(name)
@@ -22,7 +69,7 @@ export function snakeCase(name) {
 }
 
 /** `_` is a blank/keyword on Rust/Java; keep a real binding for coerce + body. */
-const RESERVED_EMIT_ID = /^(type|fn|let|mut|impl|pub|struct|enum|match|use|mod|crate|self|Self|super|where|async|await|dyn|move|ref|box|func|interface|select|chan|defer|go|map|package|range|var|const|fallthrough|default|case|switch|break|continue|return|if|else|for|import|clone|as|in|loop|trait|unsafe|extern|static|true|false|new|try|catch|throw|this|null|class|public|private|protected|void|int|long|boolean|byte|char|short|float|double|abstract|final|native|synchronized|throws|extends|implements|instanceof|assert|volatile|transient|do|while|yield|typeof|override|virtual|init|main)$/;
+const RESERVED_EMIT_ID = /^(type|fn|let|mut|impl|pub|struct|enum|match|use|mod|crate|self|Self|super|where|async|await|dyn|move|ref|box|func|interface|select|chan|defer|go|map|package|range|var|const|fallthrough|default|case|switch|break|continue|return|if|else|for|import|clone|as|in|loop|trait|unsafe|extern|static|true|false|new|try|catch|throw|this|null|class|public|private|protected|void|int|long|boolean|byte|char|short|float|double|abstract|final|native|synchronized|throws|extends|implements|instanceof|assert|volatile|transient|do|while|yield|typeof|override|virtual|init|main|bool|string|error|rune|uint|uintptr|any|comparable|make|len|cap|append|copy|delete|panic|recover|close|complex|real|imag|print|println|iota|nil|int8|int16|int32|int64|uint8|uint16|uint32|uint64|float32|float64|complex64|complex128|and|del|elif|except|finally|from|global|is|lambda|nonlocal|not|or|pass|raise|with|None|True|False|def|elif)$/;
 
 export function safeEmitId(id) {
   const s = String(id || '');

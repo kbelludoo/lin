@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase, parseParamList, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, parseParamList, collectFreeHostIds, emitFreeHostDecls, safeEmitId } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -129,8 +129,11 @@ export function emitPy(liaText, opts = {}) {
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`${k} = ${v}`);
   }
   const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, snakeCase(f.name)]));
+  const usedPy = new Set();
   for (const fn of prog.fns) {
-    const name = snakeCase(fn.name);
+    let name = safeEmitId(snakeCase(fn.name));
+    while (usedPy.has(name)) name = `${name}_u`;
+    usedPy.add(name);
     const { names: params, sigPy } = parseParamList(fn.params);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(`def ${name}(*_args, **_kwargs):\n    raise NotImplementedError("LIA_EMIT_PY: JS-runtime-only (${fn.name})")`);

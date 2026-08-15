@@ -1586,8 +1586,10 @@ export function extractJsFunctions(source) {
         break;
       }
     }
-    if (nested && braceDepthAt(text, c.start) === 0) nested = false;
-    if (!nested) push(c.name, c.params, c.body, { async: c.async });
+    const slice = text.slice(c.start, Math.min(text.length, c.start + 64));
+    const isFnDecl = /^(?:export\s+)?(?:async\s+)?function\s/.test(slice);
+    if (nested && !isFnDecl) continue;
+    push(c.name, c.params, c.body, { async: c.async });
   }
 
   return fns;

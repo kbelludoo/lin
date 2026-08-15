@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, safeEmitId } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -88,10 +88,14 @@ export function emitC(liaText, opts = {}) {
     '',
   ];
   const fileHosty = opts.stubRuntime !== false;
+  const usedC = new Set();
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
+    let cName = safeEmitId(fn.name);
+    while (usedC.has(cName)) cName = `${cName}U`;
+    usedC.add(cName);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
-      parts.push(`long long ${fn.name}(void) { return 0; /* JS-runtime-only */ }`);
+      parts.push(`long long ${cName}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
     }
     const stmts = tryParseStmts(fn.body);

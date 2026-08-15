@@ -1,5 +1,5 @@
-@RULEL:INTEL_CLONE_LIN:1.3.0
+@RULEL:INTEL_CLONE_LIN:1.4.0
 ~R{.m=meta .g=gate .c=compare}
-.m{slug=dedent lang=LIN status=PASS done=true published=true source="https://github.com/dmnd/dedent.git" url=""}
-.g{publish=full_repo_100_hash_eq skip_eq_fail=true behavior_eq=1.0 suite_rate=1 pass=7 fail=0 skip=0 files_ok=4 files_total=4}
-.c{pass=".eslintrc.js:type_only!macro.js:prevalMacros!macro.js:asTag!macro.js:asFunction!src/dedent.ts:createDedent!src/dedent.ts:alignValue!src/types.ts:type_only" fail="" multi="js:P5/S0/F0 ts:P5/S0/F0 py:P5/S0/F0 go:P5/S0/F0 rust:P5/S0/F0 c:P0/S5/F0 java:P5/S0/F0" learn=none improve=loop_mode_no_improve note="DONE all-lang 1.0 clone-lin-dedent: p=7 multi=js:P5/S0/F0 ts:P5/S0/F0 py:P5/S0/F0 go:P5/S0/F0 rust:P5/S0/F0 c:P0/S5/F0 java:P5/S0/F0; size lin/src=0.3384; tok src=2383 lin=807"}
+.m{slug=dedent lang=LIN status=PASS done=true published=true source="https://github.com/dmnd/dedent.git" url="" nucleus=js!ts!py!go!rust!c!java}
+.g{publish=full_repo_100_hash_eq skip_eq_fail=true behavior_eq=1.0 suite_rate=1 pass=7 fail=0 skip=0 files_ok=4 files_total=4 stub_not_suite=true c_skip=ok_iff_gcc_absent_after_retry}
+.c{pass="src/dedent.ts:createDedent!src/dedent.ts:alignValue!.eslintrc.js:type_only!macro.js:prevalMacros!macro.js:asTag!macro.js:asFunction!src/types.ts:type_only" fail="" multi="js:P5/S0/F0 ts:P5/S0/F0 py:P5/S0/F0 go:P5/S0/F0 rust:P5/S0/F0 c:P5/S0/F0 java:P5/S0/F0" stub="EXPERIMENTAL_NOT_PASS cs,lua,elixir,crystal,kotlin,hcl,julia,scala,haskell,prolog,zig,nim,asm no_toolchain_no_oracle" learn=none improve=loop_mode_no_improve note="DONE real-nucleus 7-lang clone-lin-dedent: p=7 multi=js:P5/S0/F0 ts:P5/S0/F0 py:P5/S0/F0 go:P5/S0/F0 rust:P5/S0/F0 c:P5/S0/F0 java:P5/S0/F0 ; size lin/src=0.3431; tok src=2383 lin=818"}
