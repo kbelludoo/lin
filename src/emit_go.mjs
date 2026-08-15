@@ -60,7 +60,7 @@ function goType(id, types, body) {
   if (types && types.has(id)) return types.get(id);
   const b = String(body || '');
   if (new RegExp(`\\b${id}\\b\\s*=\\s*[-+]?\\d+`).test(b)) return 'int';
-  if (new RegExp(`\\b${id}\\b\\s*(\\|\\^|\\+\\=|\\-\\=)`).test(b)) return 'int';
+  if (new RegExp(`\\b${id}\\b\\s*(\\|=|\\^=|-=)`).test(b)) return 'int';
   return isNumishId(id) ? 'int' : 'string';
 }
 
@@ -92,7 +92,9 @@ export function emitGo(liaText, opts = {}) {
     const inferredTypes = inferTypes(stmts);
     const cacheStub = /\bcache\b/.test(fn.body) ? ['\tcache := make([]string, 64)'] : [];
     const bodyLines = [...cacheStub, ...goDeclLocals(locals.filter((id) => id !== 'cache'), inferredTypes, fn.body), ...emitStmts(stmts, 1, inferredTypes)];
-    const retType = /==|!=|<=|>=|<|>|is_|empty|startsWith|endsWith|contains|typeof/.test(fn.name + fn.body) ? 'bool' : 'interface{}';
+    const retType = /is_|empty|startsWith|endsWith|contains|typeof|^safeCompare$/i.test(fn.name)
+      ? 'bool'
+      : 'interface{}';
     parts.push(`func ${fn.name}(${paramList}) ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   const helpers = `
@@ -137,6 +139,11 @@ func _lia_num(x interface{}) int {
 	}
 }
 func _lia_obj(_ ...interface{}) interface{} { return nil }
+func _lia_or(a interface{}, b interface{}) interface{} {
+	if _lia_falsy(a) { return b }
+	return a
+}
+func _lia_cat(a interface{}, b interface{}) string { return _lia_str(a) + _lia_str(b) }
 func _lia_str(x interface{}) string {
 	switch v := x.(type) {
 	case string:

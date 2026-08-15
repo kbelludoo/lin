@@ -11,8 +11,18 @@ export const AIL_COMPILER_VERSION = LIA_COMPILER_VERSION; // backcompat
 
 function findMatching(s, openIdx, openCh, closeCh) {
   let depth = 0;
+  let quote = null;
   for (let i = openIdx; i < s.length; i++) {
     const c = s[i];
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'") {
+      quote = c;
+      continue;
+    }
     if (c === openCh) depth++;
     else if (c === closeCh) {
       depth--;
@@ -157,8 +167,9 @@ function rewriteSigilBlocks(s, sigil, keyword) {
     const head = s.slice(openParen + 1, closeParen);
     let j = closeParen + 1;
     if (s[j] !== '{') {
-      out += `${keyword}(${head})`;
-      i = closeParen + 1;
+      // ?(x):y is JS ternary, not LIN if. Only ?(cond){body} is if/for.
+      out += token;
+      i = idx + token.length;
       continue;
     }
     const closeBrace = findMatching(s, j, '{', '}');

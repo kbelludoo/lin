@@ -60,7 +60,7 @@ export function isStringishId(id) {
 function asBoolCond(rewritten, target) {
   const t = String(rewritten || '').trim();
   if (!t) return t;
-  if (/true|false|is_empty|==|!=|<=|>=|<|>/.test(t)) return t;
+  if (/true|false|is_empty|_lia_empty|_lia_falsy|==|!=|<=|>=|<|>/.test(t)) return t;
   if (target === 'go' || target === 'c' || target === 'java' || target === 'rust') return `(${t}) != 0`;
   return t;
 }
@@ -187,7 +187,12 @@ export function rewriteExpr(expr, target) {
   if (target === 'go') {
     s = s.replace(/_lia_falsy\(([A-Za-z_][\w]*)\)&&\1!=0/g, '_lia_falsy($1)');
     s = s.replace(/!(?!=)([A-Za-z_][\w]*)/g, '_lia_falsy($1)');
+    s = s.replace(/''/g, '""');
     s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
+    s = s.replace(
+      /([A-Za-z_][\w]*|"(?:\\.|[^"\\])*")\s*\|\|\s*([A-Za-z_][\w]*|"(?:\\.|[^"\\])*")/g,
+      '_lia_or($1,$2)',
+    );
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
     s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
@@ -203,6 +208,8 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/\b([A-Za-z_][\w]*)\s*&\s*/g, '_lia_num($1) & ');
     s = s.replace(/\bnull\b|\bundefined\b/g, 'nil');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*(<=|>=|<|>|==|!=)\s*(-?\d+)/g, '_lia_num($1) $2 $3');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s*(<=|>=|<|>)\s*([A-Za-z_][\w]*)\b/g, '_lia_num($1) $2 _lia_num($3)');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s*==\s*("(?:\\.|[^"\\])*")/g, '_lia_str($1)==$2');
     let prevGo;
     do {
       prevGo = s;
@@ -214,7 +221,7 @@ export function rewriteExpr(expr, target) {
     return s;
   }
   if (target === 'java') {
-    s = s.replace(/!([A-Za-z_][\w]*)\s*&&\s*\1\s*!=\s*0/g, '($1 == null || $1.isEmpty())');
+    s = s.replace(/!([A-Za-z_][\w]*)\s*&&\s*\1\s*!==?\s*0/g, '_lia_empty($1)');
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
     s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
@@ -222,14 +229,19 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/===/g, '==').replace(/!==/g, '!=');
     s = s.replace(/\bnull\b|\bundefined\b/g, 'null');
     s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
+    s = s.replace(
+      /([A-Za-z_][\w]*)\s*\|\|\s*("(?:\\.|[^"\\])*")/g,
+      '(_lia_empty($1) ? $2 : $1)',
+    );
     s = s.replace(/\bString\(([^)]+)\)/g, 'String.valueOf($1)');
     s = s.replace(/([A-Za-z_][\w]*)\.length\b(?!\s*\()/g, '$1.length()');
-    s = s.replace(/\bparseInt\s*\(\s*([A-Za-z_][\w]*)\s*,\s*10\s*\)/g, 'Long.parseLong($1)');
+    s = s.replace(/\bparseInt\s*\(\s*([A-Za-z_$][\w]*)\s*,\s*10\s*\)/g, 'Long.parseLong($1)');
+    s = s.replace(/\bcache\[([^\]]+)\]/g, 'cache[(int)($1)]');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*!=\s*0\b/g, (_, id) => (
-      isNumishId(id) ? `${id} != 0` : `(${id} == null || ${id}.isEmpty())`
+      isNumishId(id) ? `${id} != 0` : `_lia_empty(${id})`
     ));
     s = s.replace(/\b([A-Za-z_][\w]*)\s*==\s*0\b/g, (_, id) => (
-      isNumishId(id) ? `${id} == 0` : `(${id} == null || ${id}.isEmpty())`
+      isNumishId(id) ? `${id} == 0` : `_lia_empty(${id})`
     ));
     return s;
   }
@@ -262,6 +274,10 @@ export function rewriteExpr(expr, target) {
   }
   if (target === 'rust') {
     s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
+    s = s.replace(
+      /([A-Za-z_][\w]*)\s*\|\|\s*("(?:\\.|[^"\\])*"|[A-Za-z_][\w]*)/g,
+      'if $1.is_empty() { $2.to_string() } else { $1.clone() }',
+    );
     s = s.replace(/\.is_empty\(\)\s*&&\s*[A-Za-z_][\w]*\s*!=\s*0/g, '.is_empty()');
     s = s.replace(/!(?!=)([A-Za-z_][\w]*)/g, '$1.is_empty()');
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof(&$1)');

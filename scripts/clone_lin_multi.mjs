@@ -130,19 +130,16 @@ export function learnNewLang(storageDir, candDir, slug, fails) {
     );
   }
   fs.mkdirSync(candDir, { recursive: true });
-  const candPath = path.join(candDir, `CLONE_LANG_${slug}_${Date.now().toString(36)}.dicel`);
+  const candPath = path.join(candDir, `CLONE_LANG_${slug}_${Date.now().toString(36)}.rulel`);
+  const q = (s) => String(s || '').replace(/"/g, "'").slice(0, 120);
   fs.writeFileSync(
     candPath,
     [
-      '@DICEL:LIN_CANDIDATE:1.0.0',
-      `^from_clone="clone-lin-${slug}"`,
-      '^stage="LEARN_NEW_LANG"',
-      '^forbid_nucleus=true',
-      '',
-      '@HARVEST {',
-      ...fails.slice(0, 12).map((f) => `  emit_fail{target="${f.target}" fn="${f.name}" emit="${f.emit}" run="${f.run}" reason="${String(f.reason || '').replace(/"/g, "'").slice(0, 120)}" nucleus=false}`),
-      '  proposal{fix="emit_ts|emit_py|emit_go|emit_rust|emit_c|emit_shared peripheral; retry; no one-file hardcode"}',
-      '}',
+      '@RULEL:LIN_CANDIDATE:1.0.0',
+      '~R{.m=meta .h=harvest .f=forbid}',
+      `.m{from_clone=clone-lin-${slug} stage=LEARN_NEW_LANG}`,
+      '.f{mutate_nucleus=true}',
+      `.h{${fails.slice(0, 8).map((f) => `fail{target=${f.target} fn=${f.name} emit=${f.emit} run=${f.run} reason="${q(f.reason)}"}`).join(' ')} fix=emit_peripheral}`,
       '',
     ].join('\n'),
     'utf8',

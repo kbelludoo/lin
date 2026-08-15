@@ -97,6 +97,10 @@ export function emitRust(liaText, opts = {}) {
     'fn _lia_isfinite<T>(_x: T) -> bool { true }',
     'fn _lia_isnan<T>(_x: T) -> bool { false }',
     'fn _lia_obj() -> String { String::new() }',
+    'fn _lia_cache_get(cache: &[String], i: i32) -> String {',
+    '    let u = if i < 0 { 0 } else { i as usize };',
+    '    if u < cache.len() { cache[u].clone() } else { String::new() }',
+    '}',
   ];
   for (const fn of prog.fns) {
     const name = snakeCase(fn.name);
@@ -106,8 +110,11 @@ export function emitRust(liaText, opts = {}) {
       .filter(Boolean);
     const paramList = params.map((p) => {
       if (isNumishId(p)) return `mut ${p}: i32`;
-      return `mut ${p}: impl ToString`;
+      return `${p}: impl ToString`;
     }).join(', ');
+    const coerce = params
+      .filter((p) => !isNumishId(p))
+      .map((p) => `    let mut ${p} = ${p}.to_string();`);
     if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
       parts.push(
         `pub fn ${name}(${paramList}) -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
@@ -137,11 +144,15 @@ export function emitRust(liaText, opts = {}) {
       (id) => !params.includes(id) && !forVars.has(id) && id !== 'cache',
     );
     const inferredTypes = inferTypes(bodyStmts);
-    const cacheStub = /\bcache\b/.test(fn.body) ? ['    let cache: Vec<String> = vec![String::new(); 64];'] : [];
-    const bodyLines = [...cacheStub, ...rustLocals(bodyLocals, bodyStmts), ...emitStmts(bodyStmts, 1, inferredTypes)];
-    const retType = /==|!=|<=|>=|<|>|is_|empty|startsWith|endsWith|contains|typeof/.test(fn.name + fn.body)
-      ? 'bool'
-      : 'i32';
+    const cacheStub = /\bcache\b/.test(fn.body)
+      ? ['    let mut cache: Vec<String> = vec![String::new(); 64];']
+      : [];
+    const bodyLines = [...coerce, ...cacheStub, ...rustLocals(bodyLocals, bodyStmts), ...emitStmts(bodyStmts, 1, inferredTypes)];
+    const retType = /leftPad|pad|join|trim|to_string|ToString|fmt/i.test(fn.name)
+      ? 'String'
+      : /is_|empty|startsWith|endsWith|contains|typeof|^safeCompare$/i.test(fn.name)
+        ? 'bool'
+        : 'i32';
     parts.push(`pub fn ${name}(${paramList}) -> ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   if (opts.withMain !== false) {

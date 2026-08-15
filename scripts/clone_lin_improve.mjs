@@ -42,7 +42,7 @@ export function learnFromFails(storageDir, fails, slug) {
   appendStorage(
     storageDir,
     'lia_hypotheses.dicel',
-    `id=${hyp} from=[${classes.join('|')}] claim="raise exact-hash pass on clone-lin surface" transfer=same_class status=OPEN`,
+    `id=${hyp} from=[${classes.join('|')}] claim="raise exact-hash pass on full clone-lin source tree" transfer=same_class status=OPEN`,
   );
   appendStorage(
     storageDir,
@@ -120,46 +120,18 @@ export function improveLinFromClone(root, storageDir, candDir, results, slug) {
 }
 
 export function writeIntel(root, report) {
-  const p = path.join(root, `INTEL_CLONE_LIN_${report.slug}.dicel`);
+  const p = path.join(root, `INTEL_CLONE_LIN_${report.slug}.rulel`);
   const rate = report.suite_rate != null ? report.suite_rate : 0;
+  const cov = report.coverage || {};
+  const q = (s) => String(s || '').replace(/"/g, "'");
   fs.writeFileSync(
     p,
     [
-      '@DICEL:INTEL_CLONE_LIN:1.2.0',
-      `^slug="${report.slug}"`,
-      '^lang="LIN"',
-      '^rule="semantic_hash_exact_like_P200"',
-      '^no_soft_match=true',
-      `^status="${report.status}"`,
-      `^done=${report.done === true}`,
-      `^published=${report.published === true}`,
-      `^suite_rate=${rate}`,
-      `^suite_total=${report.suite_total || (report.pass + report.fail + report.skip)}`,
-      `^source="${report.source}"`,
-      `^clone_lin_url="${report.clone_lin_url || ''}"`,
-      `^clone_lin_local="${(report.clone_lin_local || '').replace(/\\/g, '/')}"`,
-      `^temp_cleaned=${report.temp_cleaned}`,
-      `^pass=${report.pass} ^fail=${report.fail} ^skip=${report.skip}`,
-      '^behavior_eq_required=1.0',
-      '^publish_gate="suite_rate==1.0_JS"',
-      `^multi="${(report.multi_line || '').replace(/"/g, "'")}"`,
-      `^learn_lang="${report.learn_lang || 'none'}"`,
-      '',
-      '@MULTI_TARGET {',
-      `  ${(report.multi_line || 'pending')}`,
-      '}',
-      '',
-      '@COMPARISON {',
-      `  pass_names: [${(report.pass_names || []).map((n) => `"${n}"`).join(',')}]`,
-      `  fail_names: [${(report.fail_names || []).map((n) => `"${n}"`).join(',')}]`,
-      `  skip_names: [${(report.skip_names || []).map((n) => `"${n}"`).join(',')}]`,
-      `  learn: "${report.learn || 'none'}"`,
-      `  improve_lin: "${report.improve_lin || 'none'}"`,
-      '}',
-      '',
-      '@NOTE_PT {',
-      `  ${report.note_pt}`,
-      '}',
+      '@RULEL:INTEL_CLONE_LIN:1.3.0',
+      '~R{.m=meta .g=gate .c=compare}',
+      `.m{slug=${report.slug} lang=LIN status=${report.status} done=${report.done === true} published=${report.published === true} source="${q(report.source)}" url="${q(report.clone_lin_url)}"}`,
+      `.g{publish=full_repo_100_hash_eq skip_eq_fail=true behavior_eq=1.0 suite_rate=${rate} pass=${report.pass} fail=${report.fail} skip=${report.skip} files_ok=${cov.files_ok || 0} files_total=${cov.files_total || 0}}`,
+      `.c{pass="${q((report.pass_names || []).join('!'))}" fail="${q((report.fail_names || []).join('!'))}" multi="${q(report.multi_line)}" learn=${report.learn || 'none'} improve=${q(report.improve_lin)} note="${q(report.note_pt)}"}`,
       '',
     ].join('\n'),
     'utf8',
@@ -185,7 +157,7 @@ export function buildPublishDir(root, slug, results, meta) {
     [
       '@RULEL:CLONE_LIN:1.0.0',
       `~R{.m=meta .c=compile .f=forbid .p=path}`,
-      `.m{repo=clone-lin-${slug} source="${meta.source}" truth=LIN+RULEL_only intel="lia/INTEL_CLONE_LIN_${slug}.dicel"}`,
+      `.m{repo=clone-lin-${slug} source="${meta.source}" truth=LIN+RULEL_only intel="lia/INTEL_CLONE_LIN_${slug}.rulel"}`,
       '.c{cmd="lin compile lin/<fn>.lin --target js|ts|py|go|rust -o out" restore="compile_back_to_original_behavior"}',
       '.f{host_lang_in_repo .cjs .js .ts .py .go .rs compiled/}',
       `.p{lin="lin/*.lin" readme=README.md fns="${fns}" multi="${mt}"}`,

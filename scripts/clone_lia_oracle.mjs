@@ -18,6 +18,13 @@ export function hashOutputs(outputs) {
   return crypto.createHash('sha256').update(JSON.stringify(outputs.map((x) => String(x)))).digest('hex');
 }
 
+/** Map cloned source relpath → published `lin/.../*.lin` (no host ext). */
+export function linRelFromSrc(srcRel) {
+  const n = String(srcRel || '').replace(/\\/g, '/').replace(/^\/+/, '');
+  const noExt = n.replace(/\.[^.]+$/, '');
+  return `lin/${noExt}.lin`;
+}
+
 export function holdoutArgs(arity, n = 8) {
   const seeds = [
     [0], [1], [2], [-1], [''], ['a'], ['foo'],
@@ -190,13 +197,19 @@ process.stdout.write(JSON.stringify(__out));
 
 /** Build oracle from classic/arrow-extracted fn source body. */
 export function oracleFromFn(fn) {
-  const bad = unsupported(fn);
-  if (bad) return { status: 'skip', reason: bad, name: fn.name };
+  const hint = unsupported(fn);
   const prelude = `${bindingsPrelude(fn.bindings)}${siblingsPrelude(fn.siblings)}`;
   const raw = `${prelude}function ${fn.name}(${fn.params.join(',')}){${fn.body}}`;
   const wrapped = `${raw}\nmodule.exports=${fn.name};\n`;
   const o = loadFn(wrapped, fn.name);
-  if (!o.ok) return { status: 'skip', reason: `orig:${o.reason}`, name: fn.name };
+  if (!o.ok) {
+    return {
+      status: 'fail',
+      stage: 'oracle',
+      reason: hint ? `${hint}:${o.reason}` : `orig:${o.reason}`,
+      name: fn.name,
+    };
+  }
   rm(o.tmp);
   restoreHostGlobals();
   const cases = holdoutArgs(fn.params.length, 8);
@@ -211,6 +224,7 @@ export function oracleFromFn(fn) {
     cases,
     outputs,
     hash: hashOutputs(outputs),
+    hint: hint || null,
   };
 }
 
@@ -227,7 +241,7 @@ export function verifyFnAgainstOracle(oracle) {
     return { status: 'fail', stage: 'emit', reason: String(e.message || e), name: oracle.name };
   }
   if (!lia || !lia.includes(`!${oracle.name}(`)) {
-    return { status: 'skip', stage: 'emit', reason: 'emit_empty', name: oracle.name };
+    return { status: 'fail', stage: 'emit', reason: 'emit_empty', name: oracle.name };
   }
   let compiled;
   try {
@@ -510,8 +524,8 @@ export function walkLang(root, lang) {
     go: /\.go$/i,
     rust: /\.rs$/i,
   }[String(lang || 'javascript').toLowerCase()] || /\.(js|mjs|cjs|ts)$/i;
-  const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|vendor|docs?|\.husky|target|__pycache__)([\\/]|$)/i;
-  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$/i;
+  const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|vendor|docs?|\.husky|target|__pycache__|perf|benchmarks?)([\\/]|$)/i;
+  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$/i;
   const out = [];
   const stack = [root];
   while (stack.length) {

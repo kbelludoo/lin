@@ -8,6 +8,8 @@ import { emitTs } from './emit_ts.mjs';
 import { emitPy } from './emit_py.mjs';
 import { emitGo } from './emit_go.mjs';
 import { emitRust } from './emit_rust.mjs';
+import { emitC } from './emit_c.mjs';
+import { emitJava } from './emit_java.mjs';
 import { TARGETS, defaultOutPath } from './emit_shared.mjs';
 
 export { TARGETS, defaultOutPath };
@@ -21,6 +23,8 @@ export function compileLia(liaText, opts = {}) {
   if (target === 'ts') return emitTs(liaText, opts);
   if (target === 'py') return emitPy(liaText, opts);
   if (target === 'go') return emitGo(liaText, opts);
+  if (target === 'c') return emitC(liaText, opts);
+  if (target === 'java') return emitJava(liaText, opts);
   return emitRust(liaText, opts);
 }
 
