@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes, parseParamList, rewriteFnValues } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes, parseParamList, rewriteFnValues, safeEmitId, isNoopExpr } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent, types, retType) {
@@ -22,6 +22,7 @@ function emitStmts(stmts, indent, types, retType) {
       if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break;`);
       else if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'rust', pad, rewriteExpr));
       else if (/^[A-Za-z_][\w]*$/.test(st.expr.trim())) continue;
+      else if (isNoopExpr(st.expr) || /String::new\(\)/.test(rewriteExpr(st.expr, 'rust'))) continue;
       else lines.push(`${pad}${rewriteExpr(st.expr, 'rust')};`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if ${emitCond(st.cond, 'rust')} {`);
@@ -87,12 +88,15 @@ function rustType(id, inferred) {
   }
   if (isNumishId(id)) return 'i64';
   if (isStringishId(id)) return 'String';
-  return 'i64';
+  return 'String';
 }
 
 function rustLocals(locals, stmts) {
   const inferred = inferTypes(stmts);
-  return locals.map((id) => `    let mut ${id}: ${rustType(id, inferred)};`);
+  return locals.map((id) => {
+    const sid = safeEmitId(id);
+    return `    let mut ${sid}: ${rustType(sid, inferred)};`;
+  });
 }
 
 export function emitRust(liaText, opts = {}) {
@@ -113,6 +117,7 @@ export function emitRust(liaText, opts = {}) {
     'fn _lia_at(s: &impl ToString, i: i64) -> String { let t = s.to_string(); let u = if i < 0 { 0 } else { i as usize }; t.chars().nth(u).map(|c| c.to_string()).unwrap_or_default() }',
     'fn _lia_or(a: impl ToString, b: impl ToString) -> String { let a = a.to_string(); if a.is_empty() { b.to_string() } else { a } }',
     'fn _lia_get<T>(_o: &T, _k: &str) -> String { String::new() }',
+    'fn _lia_includes(s: &impl ToString, x: impl ToString) -> bool { s.to_string().contains(&x.to_string()) }',
     'fn _lia_re_exec<T>(_s: T) -> String { String::new() }',
     'fn _lia_lower(x: impl ToString) -> String { x.to_string() }',
     'fn _lia_cache_get(cache: &[String], i: i32) -> String {',
@@ -174,7 +179,11 @@ export function emitRust(liaText, opts = {}) {
     const retType = /is_|empty|startsWith|endsWith|contains|typeof|^safeCompare$/i.test(fn.name)
       ? 'bool'
       : 'String';
-    const bodyLines = [...coerce, ...cacheStub, ...rustLocals(bodyLocals, bodyStmts), ...emitStmts(bodyStmts, 1, inferredTypes, retType)];
+    const emitted = emitStmts(bodyStmts, 1, inferredTypes, retType);
+    if (!/\breturn\b/.test(emitted.join('\n'))) {
+      emitted.push(retType === 'bool' ? '    false' : '    String::new()');
+    }
+    const bodyLines = [...coerce, ...cacheStub, ...rustLocals(bodyLocals, bodyStmts), ...emitted];
     parts.push(`pub fn ${name}(${paramList}) -> ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   if (opts.withMain !== false) {

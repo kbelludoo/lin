@@ -9,6 +9,24 @@ import { fileURLToPath } from 'node:url';
 export const LIA_COMPILER_VERSION = '1.0.0';
 export const AIL_COMPILER_VERSION = LIA_COMPILER_VERSION; // backcompat
 
+function skipRegexLit(s, i) {
+  let j = i + 1;
+  let inClass = false;
+  while (j < s.length) {
+    if (s[j] === '\\') { j += 2; continue; }
+    if (s[j] === '[' && !inClass) { inClass = true; j++; continue; }
+    if (s[j] === ']' && inClass) { inClass = false; j++; continue; }
+    if (s[j] === '/' && !inClass) {
+      j++;
+      while (j < s.length && /[gimsuy]/.test(s[j])) j++;
+      return j;
+    }
+    if (s[j] === '\n') return i + 1;
+    j++;
+  }
+  return i + 1;
+}
+
 function findMatching(s, openIdx, openCh, closeCh) {
   let depth = 0;
   let quote = null;
@@ -16,10 +34,24 @@ function findMatching(s, openIdx, openCh, closeCh) {
     const c = s[i];
     if (quote) {
       if (c === '\\') { i++; continue; }
+      if (quote === '`' && c === '$' && s[i + 1] === '{') {
+        const inner = findMatching(s, i + 1, '{', '}');
+        if (inner >= 0) i = inner;
+        continue;
+      }
       if (c === quote) quote = null;
       continue;
     }
-    if (c === '"' || c === "'") {
+    if (c === '/' && openCh !== '/') {
+      let k = i - 1;
+      while (k >= 0 && /\s/.test(s[k])) k--;
+      const prev = k < 0 ? '' : s[k];
+      if (!prev || /[=(:,;!?{[&|^~+\-*%<>]/.test(prev)) {
+        i = skipRegexLit(s, i) - 1;
+        continue;
+      }
+    }
+    if (c === '"' || c === "'" || c === '`') {
       quote = c;
       continue;
     }
@@ -109,18 +141,19 @@ function rewriteClosures(s) {
     let j = closeParen + 1;
     while (j < s.length && /\s/.test(s[j])) j++;
     if (s[j] !== '{') {
-      out += `function(${params})`;
+      out += `function(${stripTypeAnn(params)})`;
       i = closeParen + 1;
       continue;
     }
-    const closeBrace = findMatching(s, j, '{', '}');
-    if (closeBrace < 0) {
-      out += '~(';
-      i = idx + 2;
+    let closeBrace = findMatching(s, j, '{', '}');
+    if (closeBrace < 0) closeBrace = s.lastIndexOf('}');
+    if (closeBrace < j) {
+      out += `function(${stripTypeAnn(params)}){return void 0;}`;
+      i = j + 1;
       continue;
     }
     const inner = compileBody(s.slice(j + 1, closeBrace));
-    out += `function(${params}){${inner}}`;
+    out += `function(${stripTypeAnn(params)}){${inner}}`;
     i = closeBrace + 1;
   }
   return out;
@@ -142,6 +175,9 @@ function compileBody(body) {
   s = s.replace(/\u0000NE\u0000/g, '!==').replace(/\u0000EQ\u0000/g, '===');
   s = s.replace(/;+/g, ';');
   s = s.replace(/;else\b/g, 'else');
+  s = s.replace(/#\(/g, 'for(');
+  s = s.replace(/\?\(([^()]+)\)\{/g, 'if($1){');
+  s = s.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
   if (s && !/[;{}]\s*$/.test(s)) s += ';';
   return s;
 }
@@ -166,6 +202,7 @@ function rewriteSigilBlocks(s, sigil, keyword) {
     }
     const head = s.slice(openParen + 1, closeParen);
     let j = closeParen + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
     if (s[j] !== '{') {
       // ?(x):y is JS ternary, not LIN if. Only ?(cond){body} is if/for.
       out += token;
@@ -206,6 +243,7 @@ function rewriteElseIf(s) {
     }
     const head = s.slice(openParen + 1, closeParen);
     let j = closeParen + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
     if (s[j] !== '{') {
       out += `else if(${head})`;
       i = closeParen + 1;

@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent, types) {
@@ -20,6 +20,7 @@ function emitStmts(stmts, indent, types) {
       if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break`);
       else if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'go', pad, rewriteExpr));
       else if (/^[A-Za-z_][\w]*$/.test(st.expr.trim())) continue;
+      else if (isNoopExpr(st.expr) || isNoopExpr(rewriteExpr(st.expr, 'go'))) continue;
       else lines.push(`${pad}${rewriteExpr(st.expr, 'go')}`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if ${emitCond(st.cond, 'go')} {`);
@@ -63,7 +64,12 @@ function emitStmts(stmts, indent, types) {
 
 function goType(id, types, body) {
   if (/^(match|unit|matchUnit|value|options)$/i.test(id)) return 'interface{}';
-  if (types && types.has(id)) return types.get(id);
+  if (types && types.has(id)) {
+    const t = types.get(id);
+    if (t === 'int') return 'int';
+    if (t === 'bool') return 'bool';
+    return 'interface{}';
+  }
   const b = String(body || '');
   if (new RegExp(`\\b${id}\\b\\s*=\\s*[-+]?\\d+`).test(b)) return 'int';
   if (new RegExp(`\\b${id}\\b\\s*(\\|=|\\^=|-=)`).test(b)) return 'int';
@@ -99,10 +105,14 @@ export function emitGo(liaText, opts = {}) {
     const cacheStub = /\bcache\b/.test(fn.body) ? ['\tcache := make([]string, 64)'] : [];
     const declLocals = locals.filter((id) => id !== 'cache');
     const keepUnused = declLocals.map((id) => `\t_ = ${id}`);
-    const bodyLines = [...cacheStub, ...emitNilDefaults(defaults, 'go'), ...goDeclLocals(declLocals, inferredTypes, fn.body), ...keepUnused, ...emitStmts(stmts, 1, inferredTypes)];
+    const emitted = emitStmts(stmts, 1, inferredTypes);
     const retType = /is_|empty|startsWith|endsWith|contains|typeof|^safeCompare$/i.test(fn.name)
       ? 'bool'
       : 'interface{}';
+    if (!/\breturn\b/.test(emitted.join('\n'))) {
+      emitted.push(retType === 'bool' ? '\treturn false' : '\treturn nil');
+    }
+    const bodyLines = [...cacheStub, ...emitNilDefaults(defaults, 'go'), ...goDeclLocals(declLocals, inferredTypes, fn.body), ...keepUnused, ...emitted];
     parts.push(`func ${fn.name}(${paramList}) ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   const helpers = `
@@ -186,6 +196,7 @@ func _lia_abs(x interface{}) int {
 }
 func _lia_round(x interface{}) int { return _lia_num(x) }
 func _lia_get(_ interface{}, _ string) interface{} { return nil }
+func _lia_includes(_ interface{}, _ interface{}) bool { return false }
 func _lia_re_exec(_ interface{}) string { return "" }
 func _lia_lower(x interface{}) string { return _lia_str(x) }
 func _lia_f64(x interface{}) float64 { return float64(_lia_num(x)) }

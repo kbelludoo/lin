@@ -102,6 +102,10 @@ export function emitPy(liaText, opts = {}) {
     '    return getattr(o, k, None)',
     'def _lia_re_exec(s):',
     '    return None',
+    'def _lia_obj(*_a, **_k):',
+    '    return {}',
+    'def _lia_includes(s, x):',
+    '    return str(x) in str(s)',
     'def _lia_lower(x):',
     '    return str(x).lower()',
   ];

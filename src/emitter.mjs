@@ -238,10 +238,81 @@ export function desugarL0Expr(expr) {
   return s;
 }
 
+function hoistClosureAssigns(s) {
+  const assigns = [];
+  let out = '';
+  let i = 0;
+  const text = String(s || '');
+  while (i < text.length) {
+    const m = text.slice(i).match(/^([A-Za-z_$][\w$]*)=~\(/);
+    const atStmt = i === 0 || /[;{}]/.test(text[i - 1]);
+    if (m && atStmt) {
+      const openP = i + m[0].length - 1;
+      const closeP = findMatching(text, openP, '(', ')');
+      if (closeP >= 0) {
+        let j = closeP + 1;
+        while (j < text.length && /\s/.test(text[j])) j++;
+        if (text[j] === '{') {
+          const closeB = findMatching(text, j, '{', '}');
+          if (closeB >= 0) {
+            assigns.push(text.slice(i, closeB + 1));
+            i = closeB + 1;
+            if (text[i] === ';') i++;
+            continue;
+          }
+        }
+      }
+    }
+    out += text[i];
+    i++;
+  }
+  if (!assigns.length) return text;
+  return `${assigns.join(';')};${out}`;
+}
+
+function skipRegexLit(s, i) {
+  let j = i + 1;
+  let inClass = false;
+  while (j < s.length) {
+    if (s[j] === '\\') { j += 2; continue; }
+    if (s[j] === '[' && !inClass) { inClass = true; j++; continue; }
+    if (s[j] === ']' && inClass) { inClass = false; j++; continue; }
+    if (s[j] === '/' && !inClass) {
+      j++;
+      while (j < s.length && /[gimsuy]/.test(s[j])) j++;
+      return j;
+    }
+    if (s[j] === '\n') return i + 1;
+    j++;
+  }
+  return i + 1;
+}
+
 function findMatching(s, openIdx, openCh, closeCh) {
   let depth = 0;
+  let quote = null;
   for (let i = openIdx; i < s.length; i++) {
     const c = s[i];
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (quote === '`' && c === '$' && s[i + 1] === '{') {
+        const inner = findMatching(s, i + 1, '{', '}');
+        if (inner >= 0) i = inner;
+        continue;
+      }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '/' && openCh !== '/') {
+      let k = i - 1;
+      while (k >= 0 && /\s/.test(s[k])) k--;
+      const prev = k < 0 ? '' : s[k];
+      if (!prev || /[=(:,;!?{[&|^~+\-*%<>]/.test(prev)) {
+        i = skipRegexLit(s, i) - 1;
+        continue;
+      }
+    }
+    if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
     if (c === openCh) depth++;
     else if (c === closeCh) {
       depth--;
@@ -912,7 +983,11 @@ function protectClosuresForSigils(s) {
       continue;
     }
     const tok = `\u0000CL${held.length}\u0000`;
-    const bodyNorm = insertJsAsi(s.slice(j + 1, closeBrace)).replace(/\s+/g, ' ').trim();
+    const bodyNorm = insertJsAsi(stripTsFromJs(s.slice(j + 1, closeBrace)))
+      .replace(/\s+/g, ' ')
+      .replace(/\{;/g, '{')
+      .replace(/;\}/g, '}')
+      .trim();
     held.push(`{${bodyNorm}}`);
     out += s.slice(idx, j) + tok;
     i = closeBrace + 1;
@@ -928,11 +1003,20 @@ function restoreClosuresForSigils(s, held) {
   return out;
 }
 
+function stripTsFromJs(s) {
+  let t = String(s || '');
+  t = t.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
+  t = t.replace(/\):\s*[A-Za-z_$][\w$<>|&\[\]\s]+\s*=>/g, ')=>');
+  t = t.replace(/([A-Za-z_$][\w$]*)\?\s*:\s*[A-Za-z_$][\w$<>|&\[\]\s]+/g, '$1');
+  t = t.replace(/:\s*[A-Za-z_$][\w$<>|&\[\]\s]+\s*(?=[,)=])/g, '');
+  return t;
+}
+
 function insertJsAsi(s) {
   let t = String(s || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
   t = t.replace(/\n\s*(?=if\b|for\b|while\b|return\b|const\b|let\b|var\b|else\b|throw\b)/g, ';\n');
   t = t.replace(/([^\s])(\n\s*)(?=[A-Za-z_$][\w$]*\s*[=(.])/g, (all, prev, ws) => {
-    if (/[|&+,([?:=+\-*/%<>!.]/.test(prev)) return prev + ws;
+    if (/[|&+,([?:=+\-*/%<>!.{]/.test(prev)) return prev + ws;
     return `${prev};${ws}`;
   });
   return t;
@@ -944,7 +1028,15 @@ function applySourceSigils(jsBody) {
   s = s.replace(/\/\*[\s\S]*?\*\//g, '');
   s = s.replace(/(^|[^:])\/\/.*$/gm, '$1');
   // preserve closures before stripping var/let/const and other sigils
+  s = s.replace(/\bfunction\s+[A-Za-z_$][\w$]*\s*\([^;{]*\)\s*:\s*[^;{]+;/g, '');
+  s = s.replace(/\):\s*[A-Za-z_$][\w$<>|&\[\]\s]+\s*=>/g, ')=>');
+  s = s.replace(
+    /(^|[;{}]\s*)function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
+    '$1$2=~($3){',
+  );
   s = desugarClosures(s);
+  s = s.replace(/\b([A-Za-z_$][\w$]*)\.([A-Za-z_$][\w$]*)\s*=/g, '$1_$2=');
+  s = s.replace(/\{[^{}]*\.\.\.[^{}]*\}/g, '_lia_obj()');
   // protect closure bodies from ASI insertion and whitespace compaction
   const protectedClosures = protectClosuresForSigils(s);
   s = protectedClosures.text;
@@ -983,14 +1075,41 @@ function applySourceSigils(jsBody) {
   s = s.replace(/===/g, '==').replace(/!==/g, '!=');
   s = restoreQuoted(s, qs.held);
   s = restoreClosuresForSigils(s, protectedClosures.held);
+  s = s.replace(/~\(([^)]*)\)/g, (_, p) => {
+    const cleaned = String(p).split(',').map((x) => {
+      const t = x.trim();
+      if (!t) return '';
+      const def = t.match(/^([A-Za-z_$][\w$]*)\s*=\s*(.+)$/);
+      if (def) return `${def[1]}=${def[2].trim()}`;
+      const rest = t.startsWith('...');
+      const id = t.replace(/^\.\.\./, '').replace(/:\s*[\s\S]+$/, '').trim();
+      return id && /^[A-Za-z_$][\w$]*$/.test(id) ? `${rest ? '...' : ''}${id}` : '';
+    }).filter(Boolean);
+    return `~(${cleaned.join(',')})`;
+  });
+  s = hoistClosureAssigns(s);
+  const earlyRet = [];
+  s = s.replace(/\^([A-Za-z_$][\w$]*);(?=[^;]*\1=~)/g, (_, id) => {
+    earlyRet.push(id);
+    return '';
+  });
+  for (const id of earlyRet) {
+    if (!new RegExp(`\\^${id}\\b`).test(s)) s += `;^${id}`;
+  }
+  s = s.replace(/[\r\n]+/g, ' ');
   return s;
 }
 
 function splitParams(raw) {
-  return String(raw || '')
+  let s = String(raw || '').trim();
+  if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) {
+    s = s.slice(1, -1);
+  }
+  return s
     .split(',')
     .map((p) => p.trim())
-    .filter(Boolean);
+    .map((p) => p.replace(/^\.\.\./, '').replace(/\?$/, '').replace(/:\s*[\s\S]+$/, '').trim())
+    .filter((p) => p && /^[A-Za-z_$][\w$]*$/.test(p));
 }
 
 function extractBraceBody(text, openBraceIdx) {

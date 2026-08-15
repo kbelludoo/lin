@@ -220,6 +220,121 @@ function findPlus(s) {
   return { left, right, a: s.slice(left, at).trim(), b: s.slice(at + 1, right).trim() };
 }
 
+/** `id.method(...)` → `id` (compile stub; matchParen-safe). */
+export function dropMethodsKeepRecv(s, names) {
+  const t = String(s || '');
+  if (!names?.length) return t;
+  const re = new RegExp(`([A-Za-z_][\\w]*)\\s*\\.\\s*(?:${names.join('|')})\\s*\\(`, 'g');
+  let out = '';
+  let i = 0;
+  let m;
+  while ((m = re.exec(t))) {
+    out += t.slice(i, m.index) + m[1];
+    const open = m.index + m[0].length - 1;
+    const close = matchParen(t, open);
+    if (close < 0) return out + t.slice(m.index + m[1].length);
+    i = close + 1;
+    re.lastIndex = i;
+  }
+  return out + t.slice(i);
+}
+
+/** `id.replace(/re/, …).replace(…)` → `id` (compile stub; matchParen-safe). */
+export function dropRegexMethods(s) {
+  let t = String(s || '');
+  t = t.replace(
+    /([A-Za-z_][\w]*)\.match\s*\(\s*\/(?:\\\/|[^/\n])*\/[gimsuy]*\s*\)/g,
+    '_lia_re_exec($1)',
+  );
+  let out = '';
+  let i = 0;
+  const re = /([A-Za-z_][\w]*)\s*\.\s*replace\s*\(/g;
+  let m;
+  while ((m = re.exec(t))) {
+    out += t.slice(i, m.index) + m[1];
+    const open = m.index + m[0].length - 1;
+    const close = matchParen(t, open);
+    if (close < 0) {
+      out += t.slice(m.index + m[1].length);
+      return out;
+    }
+    let j = close + 1;
+    while (true) {
+      let k = j;
+      while (k < t.length && /\s/.test(t[k])) k++;
+      const chained = t.slice(k).match(/^\.\s*replace\s*\(/);
+      if (!chained) break;
+      const c = matchParen(t, k + chained[0].length - 1);
+      if (c < 0) break;
+      j = c + 1;
+    }
+    i = j;
+    re.lastIndex = i;
+  }
+  return out + t.slice(i);
+}
+
+function collapseCall(s, needle, repl) {
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const at = s.indexOf(needle, i);
+    if (at < 0) return out + s.slice(i);
+    out += s.slice(i, at) + repl;
+    const close = matchParen(s, at + needle.length - 1);
+    if (close < 0) return out + s.slice(at + needle.length);
+    i = close + 1;
+  }
+  return out;
+}
+
+/** `_lia_get(x,"p").foo.bar()` and unknown `t.stringLiteral(...)` → `_lia_obj()`. */
+export function collapseHostChains(s) {
+  let t = String(s || '');
+  t = t.replace(
+    /\b[A-Za-z_][\w]*\.(?!slice\b|split\b|join\b|indexOf\b|includes\b|charCodeAt\b|replace\b|match\b|substring\b|substr\b|trim\b|toLowerCase\b|toString\b|to_string\b|concat\b|push\b|map\b|filter\b|startsWith\b|endsWith\b|lastIndexOf\b|length\b|is_empty\b|clone\b|len\b|as_bytes\b|chars\b|contains\b)[A-Za-z_][\w]*\s*\(/g,
+    '_lia_obj(',
+  );
+  let out = '';
+  let i = 0;
+  const re = /_lia_[A-Za-z0-9_]+\(/g;
+  let m;
+  while ((m = re.exec(t))) {
+    const at = m.index;
+    const close = matchParen(t, at + m[0].length - 1);
+    if (close < 0) break;
+    out += t.slice(i, at);
+    const call = t.slice(at, close + 1);
+    let j = close + 1;
+    while (true) {
+      let k = j;
+      while (k < t.length && /\s/.test(t[k])) k++;
+      if (t[k] !== '.') break;
+      k++;
+      while (k < t.length && /\s/.test(t[k])) k++;
+      const id = t.slice(k).match(/^[A-Za-z_][\w]*/);
+      if (!id) break;
+      k += id[0].length;
+      while (k < t.length && /\s/.test(t[k])) k++;
+      if (t[k] === '(') {
+        const c = matchParen(t, k);
+        if (c < 0) break;
+        j = c + 1;
+      } else if (t[k] === '[') {
+        const c = t.indexOf(']', k);
+        if (c < 0) break;
+        j = c + 1;
+      } else {
+        j = k;
+      }
+    }
+    out += j > close + 1 ? '_lia_obj()' : call;
+    i = j;
+    re.lastIndex = i;
+  }
+  return collapseCall(out + t.slice(i), '_lia_obj(', '_lia_obj()');
+}
+
 export function rewriteHostExpr(s, target) {
   let t = rewriteIifeTernary(s);
   t = t.replace(/\bMath\.abs\s*\(/g, '_lia_abs(');
@@ -234,6 +349,11 @@ export function rewriteHostExpr(s, target) {
     t = t.replace(/\b([A-Za-z_][\w]*)\s*\|\s*0\b/g, '_lia_num($1)');
     t = t.replace(/\b([A-Za-z_][\w]*)--\s*>\s*0/g, '$1 > 0');
     t = t.replace(/\b([A-Za-z_][\w]*)--/g, '$1 != 0');
+    t = dropRegexMethods(t);
+    t = dropMethodsKeepRecv(t, ['slice', 'lastIndexOf', 'split', 'join', 'map', 'filter', 'substring', 'substr', 'evaluate', 'replaceWith']);
+    t = t.replace(/([A-Za-z_][\w]*)\.includes\s*\(/g, '_lia_includes($1,');
+    t = t.replace(/\/(?:\\\/|[^/\n])+\/[gimsuy]*/g, '""');
+    t = t.replace(/\b_\b/g, '_u');
   }
   t = t.replace(/\bJSON\.stringify\s*\(/g, '_lia_str(');
   t = t.replace(/\bparseFloat\s*\(/g, target === 'py' ? 'float(' : '_lia_num(');

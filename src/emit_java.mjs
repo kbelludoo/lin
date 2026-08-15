@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -20,6 +20,7 @@ function emitStmts(stmts, indent) {
       if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break;`);
       else if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'java', pad, rewriteExpr));
       else if (/^[A-Za-z_][\w]*$/.test(st.expr.trim())) continue;
+      else if (isNoopExpr(st.expr) || isNoopExpr(rewriteExpr(st.expr, 'java'))) continue;
       else lines.push(`${pad}${rewriteExpr(st.expr, 'java')};`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if (${emitCond(st.cond, 'java')}) {`);
@@ -74,6 +75,8 @@ export function emitJava(liaText, opts = {}) {
     '  static long _lia_num(Object x) { try { return Long.parseLong(String.valueOf(x)); } catch (Exception e) { return 0L; } }',
     '  static String _lia_or(Object a, Object b) { return a == null || "".equals(a) ? String.valueOf(b) : String.valueOf(a); }',
     '  static String _lia_get(Object o, String k) { return null; }',
+    '  static String _lia_obj(Object... _a) { return ""; }',
+    '  static boolean _lia_includes(Object s, Object x) { return String.valueOf(s).contains(String.valueOf(x)); }',
     '  static String _lia_re_exec(Object s) { return null; }',
     '  static String _lia_lower(Object x) { return String.valueOf(x).toLowerCase(); }',
     '  static boolean _lia_truthy(Object x) {',
@@ -101,15 +104,19 @@ export function emitJava(liaText, opts = {}) {
       rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'null'),
     );
     const inferred = inferTypes(stmts);
-    const assigned = collectAssignedIds(stmts).filter((id) => !params.includes(id) && id !== 'cache');
-    const paramList = params.map((p) => `${javaType(p, inferred)} ${p}`).join(', ');
+    const assigned = collectAssignedIds(stmts).filter((id) => !params.includes(id) && id !== 'cache').map(safeEmitId);
+    const paramList = params.map((p) => `${javaType(p, inferred)} ${safeEmitId(p)}`).join(', ');
     const decls = assigned.map((id) => {
       const t = javaType(id, inferred);
       const init = t === 'long' ? '0' : t === 'boolean' ? 'false' : 'null';
       return `    ${t} ${id} = ${init};`;
     });
-    const bodyLines = [...decls, ...emitNilDefaults(defaults, 'java'), ...emitStmts(stmts, 2)];
+    const emitted = emitStmts(stmts, 2);
     const ret = /is_|empty|startsWith|typeof|safeCompare/i.test(fn.name) ? 'boolean' : 'Object';
+    if (!/\breturn\b/.test(emitted.join('\n'))) {
+      emitted.push(ret === 'boolean' ? '    return false;' : '    return null;');
+    }
+    const bodyLines = [...decls, ...emitNilDefaults(defaults, 'java'), ...emitted];
     parts.push(`  public static ${ret} ${fn.name}(${paramList}) {\n${bodyLines.join('\n')}\n  }`);
   }
   parts.push('}');
