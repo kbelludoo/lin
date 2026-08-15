@@ -63,6 +63,8 @@ export function emitC(liaText, opts = {}) {
     '#include <stdbool.h>',
     '',
     'static const char *_lia_typeof(long long x) { (void)x; return "number"; }',
+    'static int _lia_instanceof(long long x) { (void)x; return 0; }',
+    'static void _lia_set(long long o, const char *k) { (void)o; (void)k; }',
     'static int _lia_isfinite(long long x) { (void)x; return 1; }',
     'static int _lia_isnan(long long x) { (void)x; return 0; }',
     'static char *_lia_cat_c(const char *a, const char *b) {',
@@ -85,9 +87,10 @@ export function emitC(liaText, opts = {}) {
     '}',
     '',
   ];
+  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name));
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
-    if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
+    if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(`long long ${fn.name}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
     }

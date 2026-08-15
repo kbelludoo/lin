@@ -70,8 +70,46 @@ export function emitNilDefaults(defaults, target) {
 }
 
 /** Detect JS-runtime-only surface (Buffer/crypto) — stub on non-JS targets. */
-export function isJsRuntimeOnly(body) {
-  return /\b(Buffer|crypto|bufferAllocUnsafe|timingSafeEqual|process)\b/.test(body);
+export function isJsRuntimeOnly(body, name) {
+  if (/^(meridiem|preparse|postformat|months|monthsShort|translate|plural|padZoneStr|monthDiff|prettyUnit|absFloor|padStart|relativeTimeFormatter|relativeTimeWithPlural|relativeTimeWithTense|relativeTimeWithMutation|ordinal|defaultExport|isUndefined|dual|threeFour|correctGrammarCase|resolveTemplate|lastNumber|softMutation|mutation|specialMutationForYears)$/.test(name || '')) {
+    return true;
+  }
+  return /\b(Buffer|crypto|bufferAllocUnsafe|timingSafeEqual|process|Intl|arguments|instanceof)\b/.test(body)
+    || /\bthis\./.test(body)
+    || /\bswitch\b/.test(body)
+    || /\bnew\s+Date\b/.test(body)
+    || /\bLs\b/.test(body);
+}
+
+const FREE_HOST_SKIP = /^(if|for|return|true|false|null|undefined|function|var|let|const|new|typeof|instanceof|delete|in|of|switch|case|break|continue|try|catch|throw|else|while|do|Math|JSON|Object|Array|String|Number|Boolean|Date|Error|RegExp|True|False|None|NULL|NaN|Infinity|console|parseInt|parseFloat|isNaN|isFinite|len|str|float|int|bool|interface|String|new)$/;
+
+/** Undeclared host caps (Ls, IS_DAYJS, FORMAT_DEFAULT) so py/go/rust/java compile. */
+export function collectFreeHostIds(body, params, fnNames) {
+  const bound = new Set([...(params || []), ...(fnNames || [])]);
+  const free = new Set();
+  const s = String(body || '');
+  if (/\bthis\b/.test(s)) free.add('this');
+  const re = /\b([A-Za-z_][\w]*)\b/g;
+  let m;
+  while ((m = re.exec(s))) {
+    const id = m[1];
+    if (bound.has(id) || id.startsWith('_lia_') || id.startsWith('__')) continue;
+    if (FREE_HOST_SKIP.test(id)) continue;
+    if (/^[A-Z]/.test(id) || /^(Ls|L)$/.test(id)) free.add(id);
+  }
+  return [...free];
+}
+
+export function emitFreeHostDecls(ids, target) {
+  return (ids || []).map((raw) => {
+    const id = target === 'java' && raw === 'this' ? '_lia_this' : raw;
+    if (target === 'go') return `\tvar ${id} interface{}\n\t_ = ${id}`;
+    if (target === 'py') return `    ${id} = None`;
+    if (target === 'rust') return `    let ${id} = String::new();`;
+    if (target === 'java') return `    Object ${id} = null;`;
+    if (target === 'c') return `  const char *${id} = "";`;
+    return '';
+  }).filter(Boolean);
 }
 
 /** Sibling fn used as a value (not a call) — stub so Rust/Java compile. */
@@ -125,7 +163,7 @@ function asBoolCond(rewritten, target) {
   if (!t) return t;
   if (/^\([A-Za-z_][\w]*\)$/.test(t)) t = t.slice(1, -1);
   if (/true|false|is_empty|_lia_empty|_lia_falsy|_lia_truthy|_lia_includes|==|!=|<=|>=|<|>/.test(t)) return t;
-  if (/_lia_obj\(|_lia_get\(/.test(t)) {
+  if (/_lia_obj\(|_lia_get\(|_lia_at\(/.test(t)) {
     if (target === 'rust') return `!${t}.is_empty()`;
     if (target === 'java') return `_lia_truthy(${t})`;
     if (target === 'go') return `!_lia_falsy(${t})`;
@@ -157,8 +195,21 @@ export function emitCond(cond, target) {
   return asBoolCond(rewriteExpr(t, target), target);
 }
 
+function emitDottedSet(id, rhs, target, pad) {
+  const idx = String(id).match(/^([A-Za-z_$][\w$]*)\[(.+)\]$/);
+  const obj = idx ? idx[1] : id.slice(0, String(id).indexOf('.'));
+  const key = idx ? rewriteExpr(idx[2], target) : JSON.stringify(id.slice(String(id).indexOf('.') + 1));
+  if (target === 'py') return `${pad}_lia_set(${obj}, ${key}, ${rhs})`;
+  if (target === 'go') return `${pad}_lia_set(${obj}, ${key}, ${rhs})`;
+  if (target === 'rust') return `${pad}_lia_set(&${obj}, ${key}, ${rhs});`;
+  if (target === 'java') return `${pad}_lia_set(${obj}, ${key}, ${rhs});`;
+  if (target === 'c') return `${pad}_lia_set(${obj}, ${key});`;
+  return `${pad}${id} = ${rhs};`;
+}
+
 export function assignOpLine(id, op, expr, target, pad, types) {
   const rhs = rewriteExpr(expr, target);
+  if (String(id).includes('.') || /\[[^\]]+\]/.test(String(id))) return emitDottedSet(id, rhs, target, pad);
   const rhsId = /^[A-Za-z_][\w]*$/.test(String(rhs).trim()) ? String(rhs).trim() : null;
   const idType = types?.get(id);
   if (op === '=') {
@@ -250,16 +301,19 @@ export function rewriteExpr(expr, target) {
     return s;
   }
   s = rewriteHostExpr(s, target);
+  s = s.replace(/\bdelete\s+/g, '');
+  s = s.replace(/\barguments\b/g, target === 'py' ? 'None' : target === 'go' ? 'nil' : target === 'c' ? '0' : target === 'rust' ? 'String::new()' : 'null');
   s = stripJsArrowIife(s);
   s = s.replace(/\?\./g, '.');
   s = s.replace(/\?\?/g, '||');
   s = rewriteTemplateLiterals(s, target);
   s = s.replace(/\bArray\s*\(([^)]*)\)\s*\.\s*join\s*\(([^)]*)\)/g, '_lia_str($2)');
   s = s.replace(
-    /([A-Za-z_][\w]*)\.(?!length\b|trim\b|charCodeAt\b|indexOf\b|includes\b)([A-Za-z_][\w]*)\b(?!\s*\()/g,
+    /([A-Za-z_][\w]*)\.(?!length\b|trim\b|charCodeAt\b|indexOf\b|includes\b)([A-Za-z_][\w]*)\b(?!\s*\()(?!\s*=(?!=))/g,
     target === 'rust' ? '_lia_get(&$1,"$2")' : '_lia_get($1,"$2")',
   );
   s = collapseHostChains(s);
+  if (target !== 'rust') s = s.replace(/\b[A-Za-z_][\w]*\.clone\s*\(/g, '_lia_obj(');
   let prevObj;
   do {
     prevObj = s;
@@ -270,6 +324,7 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/&&/g, ' and ').replace(/\|\|/g, ' or ');
     s = s.replace(/!(?!=)/g, 'not ');
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s+instanceof\s+[A-Za-z_][\w.]*/g, '_lia_instanceof($1)');
     s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisNaN\s*\(/g, '_lia_isnan(');
@@ -290,10 +345,13 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/''/g, '""');
     s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
     s = s.replace(
-      /\b([A-Za-z_][\w]*)\s*\|\|\s*([A-Za-z_][\w]*|"(?:\\.|[^"\\])*")/g,
+      /((?:_lia_get\([^)]+\)|_lia_at\([^)]+\)|[A-Za-z_][\w]*))\s*\|\|\s*((?:_lia_get\([^)]+\)|_lia_at\([^)]+\)|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))/g,
       '_lia_or($1,$2)',
     );
+    s = s.replace(/!(?!=)([A-Za-z_][\w]*\([^)]*\))/g, '_lia_falsy($1)');
+    s = s.replace(/&_lia_/g, '_lia_');
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s+instanceof\s+[A-Za-z_][\w.]*/g, '_lia_instanceof($1)');
     s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisNaN\s*\(/g, '_lia_isnan(');
@@ -332,8 +390,10 @@ export function rewriteExpr(expr, target) {
     return s;
   }
   if (target === 'java') {
+    s = s.replace(/\bthis\b/g, '_lia_this');
     s = s.replace(/!([A-Za-z_][\w]*)\s*&&\s*\1\s*!==?\s*0/g, '_lia_empty($1)');
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s+instanceof\s+[A-Za-z_][\w.]*/g, '_lia_instanceof($1)');
     s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/([A-Za-z_][\w]*)\.trim\s*\(\s*\)/g, '$1.trim()');
@@ -383,6 +443,7 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/!([A-Za-z_][\w]*)\s*&&\s*\1\s*!=\s*0/g, '($1 == NULL || $1[0] == 0)');
     s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof($1)');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s+instanceof\s+[A-Za-z_][\w.]*/g, '_lia_instanceof($1)');
     s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/===/g, '==').replace(/!==/g, '!=');
@@ -416,6 +477,7 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/!(?!=)([A-Za-z_][\w]*)\b(?!\s*[\(.])/g, '$1.is_empty()');
     s = s.replace(/\btypeof\s+([A-Za-z_][\w]*)/g, '_lia_typeof(&$1)');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s+instanceof\s+[A-Za-z_][\w.]*/g, '_lia_instanceof(&$1)');
     s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
     s = s.replace(/\bisNaN\s*\(/g, '_lia_isnan(');
     s = s.replace(/===/g, '==').replace(/!==/g, '!=');

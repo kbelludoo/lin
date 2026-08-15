@@ -25,11 +25,15 @@ export function matchParen(s, openIdx) {
 
 export function rewriteIifeTernary(s) {
   let t = String(s || '');
-  const re = /\(\(__c\)=>\{\?\(__c\)\{return\(([\s\S]*?)\)\}\s*;return\(([\s\S]*?)\)\}\)\(([\s\S]*?)\)/;
+  const patterns = [
+    /\(\(__c\)=>\{\?\(__c\)\{return\(([\s\S]*?)\)\}\s*;return\(([\s\S]*?)\)\}\)\(([\s\S]*?)\)/,
+    /\(\(__c\)=>\{if\(__c\)\{return\(([\s\S]*?)\)\}\s*;return\(([\s\S]*?)\)\}\)\(([\s\S]*?)\)/,
+    /\(\(__c\)=>\{if\(__c\)return\(([\s\S]*?)\);return\(([\s\S]*?)\)\}\)\(([\s\S]*?)\)/,
+  ];
   let prev;
   do {
     prev = t;
-    t = t.replace(re, '($3?$1:$2)');
+    for (const re of patterns) t = t.replace(re, '($3?$1:$2)');
   } while (t !== prev);
   return t;
 }

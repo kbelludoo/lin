@@ -129,6 +129,12 @@ function rewriteClosures(s) {
       i = idx + 2;
       continue;
     }
+    // ~~(x) is JS double-bitwise-not, not a LIN closure
+    if (idx > 0 && s[idx - 1] === '~') {
+      out += s.slice(i, idx + 1);
+      i = idx + 1;
+      continue;
+    }
     out += s.slice(i, idx);
     const openParen = idx + 1;
     const closeParen = findMatching(s, openParen, '(', ')');
@@ -177,6 +183,7 @@ function compileBody(body) {
   s = s.replace(/;else\b/g, 'else');
   s = s.replace(/#\(/g, 'for(');
   s = s.replace(/\?\(([^()]+)\)\{/g, 'if($1){');
+  s = s.replace(/([^;{}:\s])\s+(case\s|default\s*:)/g, '$1;$2');
   s = s.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
   if (s && !/[;{}]\s*$/.test(s)) s += ';';
   return s;
@@ -315,6 +322,22 @@ export function parseLia(liaText) {
 /** @deprecated use parseLia */
 export const parseAil = parseLia;
 
+function firstUseIsRead(body, id) {
+  const s = String(body || '');
+  const re = new RegExp(`\\b${id}\\b`, 'g');
+  let m;
+  while ((m = re.exec(s))) {
+    let j = m.index + id.length;
+    while (j < s.length && /\s/.test(s[j])) j++;
+    if (s[j] === '=' && s[j + 1] !== '=') return false;
+    const before = s.slice(Math.max(0, m.index - 48), m.index);
+    const after = s.slice(m.index + id.length, m.index + id.length + 48);
+    if (/\{[^{}]*$/.test(before) && /\}\s*=/.test(after)) return false;
+    return true;
+  }
+  return false;
+}
+
 function collectAssignedIds(body) {
   const ids = new Set();
   const re = /(?:^|[;{])\s*([A-Za-z_$][\w$]*)\s*=/g;
@@ -408,7 +431,9 @@ export function compileLiaToJs(liaText, opts = {}) {
     const body = compileBody(fn.body);
     const locals = collectAssignedIds(body).filter((id) => {
       const params = new Set(fn.params.split(',').map((p) => p.trim()).filter(Boolean));
-      return !params.has(id);
+      if (params.has(id)) return false;
+      if (firstUseIsRead(body, id)) return false;
+      return true;
     });
     const decl = locals.length ? `var ${locals.join(',')};` : '';
     parts.push(`/* effect:${fn.effect} */function ${fn.name}(${fn.params}){${decl}${body}}`);

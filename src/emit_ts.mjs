@@ -58,7 +58,7 @@ export function emitTs(liaText, opts = {}) {
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`const ${k} = ${v};`);
   }
   for (const fn of prog.fns) {
-    if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
+    if (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false) {
       parts.push(
         `export function ${fn.name}(_a: unknown, _b: unknown): boolean {\n  throw new Error("LIA_EMIT_TS: JS-runtime-only (${fn.name})");\n}`,
       );

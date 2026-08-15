@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent, types) {
@@ -90,10 +90,11 @@ export function emitGo(liaText, opts = {}) {
     parts.push(`var K = map[string]int{${Object.entries(prog.consts).map(([k, v]) => `"${k}": ${v}`).join(', ')}}`);
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`var ${k} = ${v}`);
   }
+  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name));
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     const paramList = params.map((p) => `${p} interface{}`).join(', ');
-    if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
+    if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(
         `func ${fn.name}(${paramList}) bool {\n\tpanic("LIA_EMIT_GO: JS-runtime-only (${fn.name})")\n}`,
       );
@@ -112,10 +113,13 @@ export function emitGo(liaText, opts = {}) {
     if (!/\breturn\b/.test(emitted.join('\n'))) {
       emitted.push(retType === 'bool' ? '\treturn false' : '\treturn nil');
     }
-    const bodyLines = [...cacheStub, ...emitNilDefaults(defaults, 'go'), ...goDeclLocals(declLocals, inferredTypes, fn.body), ...keepUnused, ...emitted];
+    const freeHost = emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'go');
+    const bodyLines = [...cacheStub, ...freeHost, ...emitNilDefaults(defaults, 'go'), ...goDeclLocals(declLocals, inferredTypes, fn.body), ...keepUnused, ...emitted];
     parts.push(`func ${fn.name}(${paramList}) ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   const helpers = `
+func _lia_instanceof(x interface{}) bool { return false }
+func _lia_set(_o interface{}, _k string, v interface{}) interface{} { return v }
 func _lia_typeof(x interface{}) string {
 	switch x.(type) {
 	case nil:

@@ -77,10 +77,53 @@ export function bindingsPrelude(bindings) {
   return parts.join('');
 }
 
+/** Quote/template-aware line and block comment strip; URLs inside strings stay intact. */
+export function stripJsComments(src) {
+  let out = '';
+  let i = 0;
+  const s = String(src || '');
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'" || c === '"' || c === '`') {
+      const q = c;
+      out += c;
+      i++;
+      while (i < s.length) {
+        if (s[i] === '\\') { out += s[i] + (s[i + 1] || ''); i += 2; continue; }
+        out += s[i];
+        if (s[i] === q) { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (c === '/' && s[i + 1] === '/') {
+      i += 2;
+      while (i < s.length && s[i] !== '\n') i++;
+      continue;
+    }
+    if (c === '/' && s[i + 1] === '*') {
+      i += 2;
+      while (i < s.length && !(s[i] === '*' && s[i + 1] === '/')) i++;
+      if (i < s.length) i += 2;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return out;
+}
+
+function stripExportImport(src) {
+  return String(src || '').replace(/\bexport\s+default\b/g, '').replace(/\bexport\s+/g, '').replace(/\bimport\s+[^;]+;/g, '');
+}
+
 /** Peripheral CLOSURE: same-file sibling fns as JS prelude (not LIN nucleus). */
 export function siblingsPrelude(siblings) {
   if (!siblings || !siblings.length) return '';
-  return siblings.map((s) => `function ${s.name}(${(s.params || []).join(',')}){${s.body}}\n`).join('');
+  return siblings.map((s) => {
+    const body = stripExportImport(stripJsComments(s.body || ''));
+    return `function ${s.name}(${(s.params || []).join(',')}){${body}}\n`;
+  }).join('');
 }
 
 /** Deterministic crypto/Math + do not let clone CLI kill the harness. */
@@ -199,7 +242,8 @@ process.stdout.write(JSON.stringify(__out));
 export function oracleFromFn(fn) {
   const hint = unsupported(fn);
   const prelude = `${bindingsPrelude(fn.bindings)}${siblingsPrelude(fn.siblings)}`;
-  const raw = `${prelude}function ${fn.name}(${fn.params.join(',')}){${fn.body}}`;
+  const body = stripExportImport(stripJsComments(fn.body || ''));
+  const raw = `${prelude}function ${fn.name}(${fn.params.join(',')}){${body}}`;
   const wrapped = `${raw}\nmodule.exports=${fn.name};\n`;
   const o = loadFn(wrapped, fn.name);
   if (!o.ok) {
@@ -525,7 +569,7 @@ export function walkLang(root, lang) {
     rust: /\.rs$/i,
   }[String(lang || 'javascript').toLowerCase()] || /\.(js|mjs|cjs|ts)$/i;
   const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|vendor|docs?|\.husky|target|__pycache__|perf|benchmarks?)([\\/]|$)/i;
-  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$|\.config\.(js|ts|mjs|cjs)$/i;
+  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$|\.config\.(js|ts|mjs|cjs)$|\.conf\.(js|ts|mjs|cjs)$|^karma\./i;
   const out = [];
   const stack = [root];
   while (stack.length) {

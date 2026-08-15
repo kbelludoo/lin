@@ -217,7 +217,7 @@ export function parseStmts(body) {
           });
         }
       } else {
-        const am = chunk.match(/^([A-Za-z_$][\w$]*)\s*(<<=|>>=|[+\-*/%&|^]=|=)\s*([\s\S]+)$/);
+        const am = chunk.match(/^((?:[A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*|\[[^\]]+\])*)+)\s*(<<=|>>=|[+\-*/%&|^]=|=)\s*([\s\S]+)$/);
         if (am) out.push({ type: 'assign', id: am[1], op: am[2], expr: am[3].trim() });
         else out.push({ type: 'expr', expr: chunk });
       }
@@ -231,7 +231,7 @@ export function collectAssignedIds(stmts) {
   const ids = new Set();
   const walk = (list) => {
     for (const st of list || []) {
-      if (st.type === 'assign') ids.add(st.id);
+      if (st.type === 'assign' && !String(st.id).includes('.') && !/\[[^\]]+\]/.test(String(st.id))) ids.add(st.id);
       if (st.type === 'for' || st.type === 'while') {
         if (st.type === 'for') {
           const im = st.init.match(/^([A-Za-z_$][\w$]*)\s*=/);
