@@ -78,11 +78,12 @@ function parseConstTable(line) {
 }
 
 function stripTypeAnn(params) {
+  if (!params) return '';
   return params
     .split(',')
     .map((p) => p.trim())
     .filter(Boolean)
-    .map((p) => p.replace(/:[\w\[\]|,]+$/g, '').trim())
+    .map((p) => p.replace(/:[\w\[\]|,<>]+$/g, '').trim())
     .join(', ');
 }
 
@@ -296,26 +297,101 @@ export function parseLia(liaText) {
     .split(/\r?\n/)
     .map((l) => l.trim())
     .filter(Boolean);
-  const meta = { header: null, consts: null, exports: [], fns: [] };
-  for (const line of lines) {
+  const meta = { header: null, consts: null, exports: [], fns: [], enums: [] };
+  
+  // Primeiro passo: coletar declarações de enum (podem spançar múltiplas linhas)
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    
     if (line.startsWith('@LIN:') || line.startsWith('@LIA:') || line.startsWith('@AIL:')) {
       meta.header = line;
+      i++;
+      continue;
     }
-    else if (line.startsWith('^')) continue;
-    else if (line.startsWith('~G')) continue;
-    else if (line.startsWith('$K')) meta.consts = parseConstTable(line);
+    else if (line.startsWith('^')) { i++; continue; }
+    else if (line.startsWith('~G')) { i++; continue; }
+    else if (line.startsWith('$K')) {
+      meta.consts = parseConstTable(line);
+      i++;
+      continue;
+    }
     else if (line.startsWith('=ex{')) {
       meta.exports = line
         .slice(4, -1)
         .split(',')
         .map((x) => x.trim())
         .filter(Boolean);
-    } else if (line.startsWith('!')) {
-      const m = line.match(/^!([A-Za-z_$][\w$]*)\(([^)]*)\)(?:->[\w\[\]|,]+)?\{([\s\S]*)\}\s*$/);
-      if (!m) throw new Error(`LIA_PARSE_FN: ${line.slice(0, 80)}`);
-      meta.fns.push({ name: m[1], params: stripTypeAnn(m[2]), body: m[3] });
+      i++;
+      continue;
     }
+    else if (line.startsWith('enum ')) {
+      // Parse enum declaration - pode spançar múltiplas linhas
+      const enumMatch = line.match(/^enum\s+([A-Za-z_$][\w$]*)(<[^>]*>)?\s*\{?([\s\S]*)$/);
+      if (enumMatch) {
+        const enumName = enumMatch[1];
+        const generics = enumMatch[2] || null;
+        let body = enumMatch[3] || '';
+        
+        // Se não tem fechamento, continuar coletando linhas
+        if (!body.includes('}')) {
+          while (i + 1 < lines.length) {
+            i++;
+            const nextLine = lines[i];
+            body += '\n' + nextLine;
+            if (nextLine.includes('}')) break;
+          }
+        }
+        
+        // Extrair variantes do enum - cada linha dentro das chaves
+        const variants = [];
+        const innerBody = body.replace(/^\{/, '').replace(/\}$/, '');
+        const variantLines = innerBody.split('\n');
+        for (const vLine of variantLines) {
+          const trimmed = vLine.trim().replace(/,$/, ''); // remove trailing comma
+          if (!trimmed) continue;
+          // Variante pode ser: Some(T), Some, None, etc.
+          const vMatch = trimmed.match(/^([A-Za-z_$][\w$]*)(\([^)]*\))?$/);
+          if (vMatch) {
+            variants.push({ name: vMatch[1], params: vMatch[2]?.slice(1, -1) || null });
+          }
+        }
+        
+        meta.enums.push({ name: enumName, generics, variants });
+      }
+      i++;
+      continue;
+    }
+    else if (line.startsWith('fn ') || line.startsWith('!')) {
+      // Suporta tanto 'fn name<T>(params): RetType { body }' quanto '!name<T>(params): RetType { body }'
+      // Pode spançar múltiplas linhas - regex simplificado para capturar o início
+      const fnStart = line.match(/^(?:fn|!)\s*([A-Za-z_$][\w$]*)(<[^>]*>)?\(([^)]*)\)(?:\s*:\s*([^{]+))?\s*\{?(.*)$/);
+      if (!fnStart) throw new Error(`LIA_PARSE_FN_START: ${line.slice(0, 80)}`);
+      
+      let fnName = fnStart[1];
+      let generics = fnStart[2] || null;
+      let paramsRaw = fnStart[3];
+      let returnType = fnStart[4]?.trim();
+      let body = fnStart[5] || '';
+      
+      // Se não tem fechamento, continuar coletando linhas
+      if (!body.includes('}')) {
+        while (i + 1 < lines.length) {
+          i++;
+          const nextLine = lines[i];
+          body += '\n' + nextLine;
+          if (nextLine.includes('}')) break;
+        }
+      }
+      
+      meta.fns.push({ name: fnName, generics, params: stripTypeAnn(paramsRaw), returnType, body });
+      i++;
+      continue;
+    }
+    
+    i++;
   }
+  
   return meta;
 }
 
