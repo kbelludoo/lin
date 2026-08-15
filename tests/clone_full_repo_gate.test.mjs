@@ -6,6 +6,7 @@ import { oracleFromFn } from '../scripts/clone_lia_oracle.mjs';
 import {
   canPublishFullRepo, fileCoverage, isTypeOnlyModule, missedExtracts, normalizeSkipToFail, multiAllFull,
   honestNucleusMulti, formatStubIntel, defaultEmitTarget, futurePickBestLang, refuseStubBenchmark,
+  rankQualityRows, allRowsFull, pickBestFromRows, benchRepeatCount,
 } from '../scripts/clone_lin_full_repo_gate.mjs';
 import { writeIntel } from '../scripts/clone_lin_improve.mjs';
 
@@ -94,6 +95,25 @@ assert.equal(defaultEmitTarget(), 'ts');
 assert.equal(futurePickBestLang().status, 'NOT_RUN');
 assert.equal(refuseStubBenchmark('asm'), true);
 assert.equal(refuseStubBenchmark('ts'), false);
+assert.ok(Number(benchRepeatCount()) >= 5);
+
+const rankIn = [
+  { lang: 'ts', compileOk: true, runOk: true, ms: 10, bytes: 100 },
+  { lang: 'c', compileOk: true, runOk: true, ms: 2, bytes: 200 },
+  { lang: 'js', compileOk: true, runOk: true, ms: 2, bytes: 50 },
+];
+assert.equal(allRowsFull(rankIn), true);
+const ranked = rankQualityRows(rankIn);
+assert.equal(ranked[0].lang, 'js');
+assert.equal(ranked[1].lang, 'c');
+assert.equal(ranked[2].lang, 'ts');
+assert.equal(ranked[0].rank, 1);
+const picked = pickBestFromRows(rankIn);
+assert.equal(picked.status, 'MEASURED');
+assert.equal(picked.lang, 'js');
+assert.equal(futurePickBestLang({ rows: rankIn }).lang, 'js');
+assert.equal(pickBestFromRows([{ lang: 'ts', compileOk: true, runOk: false, ms: 1, bytes: 1 }]).status, 'NOT_FULL');
+assert.equal(futurePickBestLang([{ lang: 'go', compileOk: true, runOk: true, ms: 3, bytes: 10 }]).status, 'MEASURED');
 
 assert.doesNotMatch(honestNucleusMulti({ js: { PASS: 1, SKIP: 0, FAIL: 0 }, asm: { PASS: 15, SKIP: 0, FAIL: 0 } }), /asm:P/);
 assert.match(formatStubIntel(), /EXPERIMENTAL_NOT_PASS/);
