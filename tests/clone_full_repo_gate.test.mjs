@@ -71,6 +71,37 @@ const cRes = compileLia(reservedLin, { target: 'c', exportMode: 'multiple', with
 assert.match(cRes.code, /bool_/);
 assert.doesNotMatch(cRes.code, /long long bool\(/);
 
+const dollarLin = `@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=test
+~G{?=if #=for ^=ret :else}
+!$(){^null}
+=ex{$}`;
+const pyDollar = compileLia(dollarLin, { target: 'py', exportMode: 'multiple', withMain: false });
+assert.match(pyDollar.code, /def dollar/);
+assert.doesNotMatch(pyDollar.code, /def \$/);
+const goDollar = compileLia(dollarLin, { target: 'go', exportMode: 'multiple', withMain: false, package: 'clonefn' });
+assert.match(goDollar.code, /func dollar/);
+assert.doesNotMatch(goDollar.code, /func \$/);
+
+const destSrc = 'export function createTerminalService({ maxEvents = 2000 } = {}) { return 1 }';
+assert.ok(extractJsFunctions(destSrc).some((f) => f.name === 'createTerminalService'));
+assert.equal(missedExtracts(destSrc, extractJsFunctions(destSrc)).length, 0);
+
+const nestedGen = oracleFromFn({
+  name: 'createArtifactParser',
+  params: [],
+  body: 'const state: ParserState = {x:1}; function* feed(delta: string): Generator { yield delta; } return {feed};',
+});
+assert.equal(nestedGen.status, 'ok');
+
+const uuidFn = oracleFromFn({
+  name: 'randomUuid',
+  params: [],
+  body: 'const c = globalThis.crypto; if (c && c.randomUUID) return c.randomUUID(); return "x";',
+});
+assert.equal(uuidFn.status, 'ok');
+assert.equal(uuidFn.outputs[0], '00000000-0000-4000-8000-000000000001');
+
 const easy = oracleFromFn({ name: 'add', params: ['a', 'b'], body: 'return a+b', bindings: {}, siblings: [] });
 assert.equal(easy.status, 'ok');
 assert.equal(typeof easy.hash, 'string');
