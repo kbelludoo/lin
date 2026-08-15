@@ -15,11 +15,11 @@ fs.writeFileSync(tmp, js, 'utf8');
 const mod = createRequire(import.meta.url)(tmp);
 try { fs.rmSync(tmp, { force: true }); } catch { /* ignore */ }
 
-assert.equal(mod.suggestCount(), 7);
-assert.equal(mod.suggestIds(), 'S001|S002|S003|S004|S005|S006|S007');
+assert.equal(mod.suggestCount(), 8);
+assert.equal(mod.suggestIds(), 'S001|S002|S003|S004|S005|S006|S007|S008');
 
 const keys = ['id', 'goal', 'why_for_ai', 'proof_or_gate', 'next_repair', 'status'];
-for (let i = 0; i < 7; i++) {
+for (let i = 0; i < 8; i++) {
   const row = mod.suggestionAt(i);
   for (const k of keys) {
     assert.ok(row[k], `missing ${k} at ${i}`);
@@ -38,6 +38,15 @@ assert.match(s001.proof_or_gate, /LIN_EMIT_FAIL_CLOSED/);
 const blob = mod.suggestAllLines();
 assert.match(blob, /id=S002/);
 assert.match(blob, /id=S007/);
+assert.match(blob, /id=S008/);
+assert.equal(mod.agreeAiCriteria(), 1);
+assert.equal(mod.agreeCompact(), 1);
+assert.equal(mod.compactMustNotLoseInfo(), 1);
+assert.equal(mod.redefineHash(), 0);
+assert.match(mod.stackLine(), /IA\|LIN/);
+assert.match(mod.pipeline(), /goal->constraints/);
+assert.match(mod.irNative(), /intent->LIN_semantic_IR->code/);
+assert.match(mod.semCompressWhy(), /not=text_zip/);
 
 assert.equal(mod.agreeRank(), 1);
 assert.equal(mod.mechCount(), 6);
@@ -85,5 +94,43 @@ assert.equal(ir.absAt(5).stars, 3);
 assert.equal(ir.openSpace(), 'IA thinks, mutates, proves BEFORE emit');
 assert.match(ir.agentLoop(), /prove/);
 assert.match(ir.absAllLines(), /arch=LIN\+LIN_Agent_IR\+LIN_Proof_Layer/);
+assert.equal(ir.agreeAiCriteria(), 1);
+assert.equal(ir.agreeCompact(), 1);
+assert.equal(ir.compactMustNotLoseInfo(), 1);
+assert.equal(ir.redefineHash(), 0);
+assert.equal(ir.copyLanguage(), 0);
+assert.equal(ir.notNeuralNetInternals(), 1);
+assert.equal(ir.stackCount(), 4);
+assert.equal(ir.stackAt(0).name, 'IA');
+assert.equal(ir.stackAt(1).name, 'LIN');
+assert.equal(ir.stackAt(2).name, 'emit7');
+assert.equal(ir.stackAt(3).name, 'machine');
+assert.match(ir.stackLine(), /emit7/);
+assert.match(ir.bitcoinAnalogy(), /PROTOCOL/);
+assert.match(ir.agentComplexityTest(), /AGENTS/);
+assert.match(ir.aiCriteria(), /semantic_compression/);
+assert.match(ir.notHumanCriteria(), /ergonomics/);
+assert.equal(ir.decisionShape().proof_required, '');
+const dec = ir.aiDecision('unproven_div', 'INV_REFINEMENT_SOUND', 'block_emit');
+assert.equal(dec.condition, 'unproven_div');
+assert.equal(dec.action, 'block_emit');
+assert.equal(ir.pipeCount(), 7);
+assert.equal(ir.pipeAt(0), 'goal');
+assert.equal(ir.pipeAt(6), 'execute');
+assert.equal(ir.haveCount(), 7);
+assert.equal(ir.haveAt(6).piece, 'proof_gate');
+assert.equal(ir.missCount(), 4);
+assert.equal(ir.missAt(0).invented_proofs, 0);
+assert.equal(ir.semCompress().codec, 'meaning');
+assert.equal(ir.semCompress().not, 'text_zip');
+assert.equal(ir.semRefAuth().id, 'AuthService');
+assert.equal(ir.semRefAuth().not_name_repeat, 1);
+const mem = ir.memByHash('AuthService', 'EXISTING_semantic_hash');
+assert.equal(mem.redefine, 0);
+assert.match(ir.hashNucleusPath(), /UNTOUCHED/);
+assert.equal(ir.incrStateShape().project_model, 'HASH');
+assert.match(ir.irNative(), /intent->LIN_semantic_IR->code/);
+assert.match(ir.notLegacyPipe(), /not code->AST->IR/);
+assert.match(ir.advantageHave(), /content_hash/);
 
 console.log('ok lin_suggest');

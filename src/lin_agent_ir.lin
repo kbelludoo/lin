@@ -23,4 +23,60 @@
 !agentLoop(){^'think -> emit_IR -> obligation -> verify -> mutate_iff_proven -> remember_why'}
 !absLine(row){?(row==null){^''};^('rank='+String(row.rank)+' mechanism='+row.mechanism+' absorb_from='+row.absorb_from+' stars='+String(row.stars)+' copy_language=0 lin_now='+row.lin_now)}
 !absAllLines(){out='';#(i=0;i<6;i++){?(i>0){out=out+'\n'};out=out+absLine(absAt(i))};^out+'\narch=LIN+LIN_Agent_IR+LIN_Proof_Layer\nopen_space='+openSpace()}
-=ex{mkLayer,layer0,layer1,layer2,layerCount,layerAt,mkAbs,abs0,abs1,abs2,abs3,abs4,abs5,absCount,absAt,openSpace,agreeAgentLangs,forbidShrink,intentRecord,agentLoop,absLine,absAllLines}
+!agreeAiCriteria(){^1}
+!agreeCompact(){^1}
+!compactMustNotLoseInfo(){^1}
+!aiPrimary(){^1}
+!notNeuralNetInternals(){^1}
+!redefineHash(){^0}
+!copyLanguage(){^0}
+!competeAs(){^'cognitive_infrastructure_for_agents'}
+!bitcoinAnalogy(){^'value_is_PROTOCOL_combining_existing_pieces'}
+!agentComplexityTest(){^'does_LIN_reduce_complexity_for_AGENTS_not_humans'}
+!aiCriteria(){^'determinism!low_ambiguity!verifiability!semantic_compression!automatic_reasoning!explainable_decisions!permission_control'}
+!notHumanCriteria(){^'readability!ergonomics!docs'}
+!mkStack(i,name,role){^({i:i,name:name,role:role})}
+!stack0(){^mkStack(0,'IA','thinks; emits intent+IR; not the machine')}
+!stack1(){^mkStack(1,'LIN','intent+semantics+proof; protocol; not Rust/Python substitute')}
+!stack2(){^mkStack(2,'emit7','ts!js!py!go!rust!c!java')}
+!stack3(){^mkStack(3,'machine','CPU/OS; LIN never replaces this')}
+!stackCount(){^4}
+!stackAt(i){?(i==0){^stack0()};?(i==1){^stack1()};?(i==2){^stack2()};?(i==3){^stack3()};^null}
+!stackLine(){^'IA|LIN(intent+semantics+proof)|emit7(ts!js!py!go!rust!c!java)|machine'}
+!humanIf(){^'branch_on_value;no_proof_object'}
+!mkDecision(condition,proof_required,action){^({condition:condition,proof_required:proof_required,action:action})}
+!decisionShape(){^({condition:'',proof_required:'',action:''})}
+!aiDecision(condition,proof_required,action){^mkDecision(condition,proof_required,action)}
+!pipeline(){^'goal->constraints->knowledge->plan->transform->proof->execute'}
+!pipeCount(){^7}
+!pipeAt(i){?(i==0){^'goal'};?(i==1){^'constraints'};?(i==2){^'knowledge'};?(i==3){^'plan'};?(i==4){^'transform'};?(i==5){^'proof'};?(i==6){^'execute'};^null}
+!mkHave(id,piece,where){^({id:id,piece:piece,where:where,have:1})}
+!have0(){^mkHave('H1','mod','compiler.mjs mod + use')}
+!have1(){^mkHave('H2','effects_caps','src/lin_effects.lin ~effects ~caps')}
+!have2(){^mkHave('H3','ast','src/lin_ast_data.lin walkAst transformAst')}
+!have3(){^mkHave('H4','match','compiler.mjs match( + emit_rust match')}
+!have4(){^mkHave('H5','generics','compiler.mjs fn/struct/enum generics')}
+!have5(){^mkHave('H6','dce','artifacts/m005-a/dce_modules.lin')}
+!have6(){^mkHave('H7','proof_gate','src/lin_refine_div.lin + spec/LIN_M006_PROOF.rulel slice1')}
+!haveCount(){^7}
+!haveAt(i){?(i==0){^have0()};?(i==1){^have1()};?(i==2){^have2()};?(i==3){^have3()};?(i==4){^have4()};?(i==5){^have5()};?(i==6){^have6()};^null}
+!mkMiss(id,piece,why){^({id:id,piece:piece,why:why,have:0,invented_proofs:0})}
+!miss0(){^mkMiss('M1','intent_goal','S003 NEXT; intentShape exists; entity!goal later')}
+!miss1(){^mkMiss('M2','semantic_memory','M009 ledger!trauma!knowledge; not weight learning')}
+!miss2(){^mkMiss('M3','hypothesis','storage/lia_hypotheses; not neural activations')}
+!miss3(){^mkMiss('M4','evidence','link hypothesis to obligation+EXISTING_semantic_hash; not fake Lean')}
+!missCount(){^4}
+!missAt(i){?(i==0){^miss0()};?(i==1){^miss1()};?(i==2){^miss2()};?(i==3){^miss3()};^null}
+!careNot(){^'do_not_imitate_neural_net_internals;represent_goals_rules_knowledge_transforms_verifiably'}
+!semCompress(){^({less_tokens:1,more_structure:1,more_verifiability:1,codec:'meaning',not:'text_zip'})}
+!semRef(id){^({kind:'sem_ref',id:id,not_name_repeat:1})}
+!semRefAuth(){^semRef('AuthService')}
+!memByHash(module_ref,hash){^({module_ref:module_ref,hash:hash,hash_nucleus:'EXISTING_semantic_hash',redefine:0})}
+!hashNucleusPath(){^'nucleus semantic_hash UNTOUCHED; content_hash.lin is peripheral'}
+!incrState(project_model,invariants){^({project_model:project_model,invariants:invariants})}
+!incrStateShape(){^({project_model:'HASH',invariants:''})}
+!intentVsImpl(){^'intent_separate_from_implementation'}
+!irNative(){^'intent->LIN_semantic_IR->code'}
+!notLegacyPipe(){^'not code->AST->IR'}
+!advantageHave(){^'AST!IR!mod!effects!proofs!fail_closed!content_hash'}
+=ex{mkLayer,layer0,layer1,layer2,layerCount,layerAt,mkAbs,abs0,abs1,abs2,abs3,abs4,abs5,absCount,absAt,openSpace,agreeAgentLangs,forbidShrink,intentRecord,agentLoop,absLine,absAllLines,agreeAiCriteria,agreeCompact,compactMustNotLoseInfo,aiPrimary,notNeuralNetInternals,redefineHash,copyLanguage,competeAs,bitcoinAnalogy,agentComplexityTest,aiCriteria,notHumanCriteria,mkStack,stack0,stack1,stack2,stack3,stackCount,stackAt,stackLine,humanIf,mkDecision,decisionShape,aiDecision,pipeline,pipeCount,pipeAt,mkHave,have0,have1,have2,have3,have4,have5,have6,haveCount,haveAt,mkMiss,miss0,miss1,miss2,miss3,missCount,missAt,careNot,semCompress,semRef,semRefAuth,memByHash,hashNucleusPath,incrState,incrStateShape,intentVsImpl,irNative,notLegacyPipe,advantageHave}
