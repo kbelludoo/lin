@@ -1,7 +1,36 @@
 ```
-# Rust target directory
-target/
+# Build artifacts and compiled files
+*.rlib
+*.compiled.js
+*.stderr
+*.stdout
+*.lia
+generated.rs
 
-# Generated files
-**/generated/**
+# Rust-specific
+target/
+**/target/
+Cargo.lock
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
+
+# Editors
+.vscode/
+.idea/
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+*.env.*
 ```
