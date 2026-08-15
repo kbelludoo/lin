@@ -2,8 +2,23 @@
  * LIA → TypeScript emitter (typed wrappers over JS body semantics).
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { emitBanner, isJsRuntimeOnly, rewriteExpr } from './emit_shared.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
+import { emitBanner, isJsRuntimeOnly, rewriteExpr, parseParamList, inferTypes, isNumishId } from './emit_shared.mjs';
+
+function tsType(id, inferred) {
+  if (inferred && inferred.get(id) === 'int') return 'number';
+  if (inferred && inferred.get(id) === 'bool') return 'boolean';
+  if (isNumishId(id)) return 'number';
+  return 'unknown';
+}
+
+function tsReturnType(fnName, inferred) {
+  if (/^is|^has|^can|Even$|^empty$|^startsWith$/.test(fnName)) return 'boolean';
+  if (inferred && inferred.get('__return') === 'int') return 'number';
+  if (inferred && inferred.get('__return') === 'bool') return 'boolean';
+  return 'any';
+}
+import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '  '.repeat(indent);
@@ -13,8 +28,12 @@ function emitStmts(stmts, indent) {
       lines.push(`${pad}${st.id} ${st.op} ${rewriteExpr(st.expr, 'ts')};`);
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'ts')};`);
+    } else if (st.type === 'throw') {
+      lines.push(emitThrowLine(st.expr, 'ts', pad, rewriteExpr));
     } else if (st.type === 'expr') {
-      lines.push(`${pad}${rewriteExpr(st.expr, 'ts')};`);
+      if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'ts', pad, rewriteExpr));
+      else if (/^[A-Za-z_][\w]*$/.test(st.expr.trim())) { /* no-op */ }
+      else lines.push(`${pad}${rewriteExpr(st.expr, 'ts')};`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if (${rewriteExpr(st.cond, 'ts')}) {`);
       lines.push(...emitStmts(st.then, indent + 1));
@@ -45,30 +64,38 @@ function emitStmts(stmts, indent) {
 export function emitTs(liaText, opts = {}) {
   const prog = parseLia(liaText);
   const parts = [emitBanner('ts').replace('/*', '//').replace('*/', '')];
-  if (prog.consts) {
+  const fileHosty = opts.stubRuntime !== false;
+  if (prog.consts && !fileHosty) {
     const obj = Object.entries(prog.consts)
       .map(([k, v]) => `${JSON.stringify(k)}: ${v}`)
       .join(', ');
     parts.push(`const $K: Record<string, number> = {${obj}};`);
+    for (const [k, v] of Object.entries(prog.consts)) parts.push(`const ${k} = ${v};`);
   }
   for (const fn of prog.fns) {
-    if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
+    if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(
         `export function ${fn.name}(_a: unknown, _b: unknown): boolean {\n  throw new Error("LIA_EMIT_TS: JS-runtime-only (${fn.name})");\n}`,
       );
       continue;
     }
-    const stmts = parseStmts(fn.body);
-    const params = fn.params
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
-    const paramList = params.map((p) => `${p}: unknown`).join(', ');
+    const stmts = tryParseStmts(fn.body);
+    if (!stmts) {
+      parts.push(
+        `export function ${fn.name}(_a: unknown, _b: unknown): boolean {\n  throw new Error("LIA_EMIT_TS: JS-runtime-only (${fn.name})");\n}`,
+      );
+      continue;
+    }
+    const inferred = inferTypes(stmts);
+    const { names: params, sigTs } = parseParamList(fn.params);
+    const typedParams = params.map((p) => `${p}: ${tsType(p, inferred)}`);
+    const paramList = typedParams.join(', ');
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const bodyLines = [];
     if (locals.length) bodyLines.push(`  let ${locals.join(', ')};`);
     bodyLines.push(...emitStmts(stmts, 1));
-    parts.push(`export function ${fn.name}(${paramList}): boolean {\n${bodyLines.join('\n')}\n}`);
+    const retType = tsReturnType(fn.name, inferred);
+    parts.push(`export function ${fn.name}(${paramList}): ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   return { code: parts.join('\n'), program: prog, target: 'ts' };
 }

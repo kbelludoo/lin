@@ -9,10 +9,52 @@ import { fileURLToPath } from 'node:url';
 export const LIA_COMPILER_VERSION = '1.0.0';
 export const AIL_COMPILER_VERSION = LIA_COMPILER_VERSION; // backcompat
 
+function skipRegexLit(s, i) {
+  let j = i + 1;
+  let inClass = false;
+  while (j < s.length) {
+    if (s[j] === '\\') { j += 2; continue; }
+    if (s[j] === '[' && !inClass) { inClass = true; j++; continue; }
+    if (s[j] === ']' && inClass) { inClass = false; j++; continue; }
+    if (s[j] === '/' && !inClass) {
+      j++;
+      while (j < s.length && /[gimsuy]/.test(s[j])) j++;
+      return j;
+    }
+    if (s[j] === '\n') return i + 1;
+    j++;
+  }
+  return i + 1;
+}
+
 function findMatching(s, openIdx, openCh, closeCh) {
   let depth = 0;
+  let quote = null;
   for (let i = openIdx; i < s.length; i++) {
     const c = s[i];
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (quote === '`' && c === '$' && s[i + 1] === '{') {
+        const inner = findMatching(s, i + 1, '{', '}');
+        if (inner >= 0) i = inner;
+        continue;
+      }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '/' && openCh !== '/') {
+      let k = i - 1;
+      while (k >= 0 && /\s/.test(s[k])) k--;
+      const prev = k < 0 ? '' : s[k];
+      if (!prev || /[=(:,;!?{[&|^~+\-*%<>]/.test(prev)) {
+        i = skipRegexLit(s, i) - 1;
+        continue;
+      }
+    }
+    if (c === '"' || c === "'" || c === '`') {
+      quote = c;
+      continue;
+    }
     if (c === openCh) depth++;
     else if (c === closeCh) {
       depth--;
@@ -58,7 +100,7 @@ function compileReturnSigils(s) {
     }
     const prev = out.length ? out[out.length - 1] : '';
     const next = s[i + 1] || '';
-    const prevOk = !prev || /[;{}\n,]/.test(prev);
+      const prevOk = !prev || /[;{}\n,:]/.test(prev);
     const nextOk = /[A-Za-z_$0-9(\[\-+!'"`{]/.test(next);
     if (prevOk && nextOk) {
       out += 'return ';
@@ -87,6 +129,12 @@ function rewriteClosures(s) {
       i = idx + 2;
       continue;
     }
+    // ~~(x) is JS double-bitwise-not, not a LIN closure
+    if (idx > 0 && s[idx - 1] === '~') {
+      out += s.slice(i, idx + 1);
+      i = idx + 1;
+      continue;
+    }
     out += s.slice(i, idx);
     const openParen = idx + 1;
     const closeParen = findMatching(s, openParen, '(', ')');
@@ -99,18 +147,19 @@ function rewriteClosures(s) {
     let j = closeParen + 1;
     while (j < s.length && /\s/.test(s[j])) j++;
     if (s[j] !== '{') {
-      out += `function(${params})`;
+      out += `function(${stripTypeAnn(params)})`;
       i = closeParen + 1;
       continue;
     }
-    const closeBrace = findMatching(s, j, '{', '}');
-    if (closeBrace < 0) {
-      out += '~(';
-      i = idx + 2;
+    let closeBrace = findMatching(s, j, '{', '}');
+    if (closeBrace < 0) closeBrace = s.lastIndexOf('}');
+    if (closeBrace < j) {
+      out += `function(${stripTypeAnn(params)}){return void 0;}`;
+      i = j + 1;
       continue;
     }
     const inner = compileBody(s.slice(j + 1, closeBrace));
-    out += `function(${params}){${inner}}`;
+    out += `function(${stripTypeAnn(params)}){${inner}}`;
     i = closeBrace + 1;
   }
   return out;
@@ -132,6 +181,10 @@ function compileBody(body) {
   s = s.replace(/\u0000NE\u0000/g, '!==').replace(/\u0000EQ\u0000/g, '===');
   s = s.replace(/;+/g, ';');
   s = s.replace(/;else\b/g, 'else');
+  s = s.replace(/#\(/g, 'for(');
+  s = s.replace(/\?\(([^()]+)\)\{/g, 'if($1){');
+  s = s.replace(/([^;{}:\s])\s+(case\s|default\s*:)/g, '$1;$2');
+  s = s.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
   if (s && !/[;{}]\s*$/.test(s)) s += ';';
   return s;
 }
@@ -156,9 +209,11 @@ function rewriteSigilBlocks(s, sigil, keyword) {
     }
     const head = s.slice(openParen + 1, closeParen);
     let j = closeParen + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
     if (s[j] !== '{') {
-      out += `${keyword}(${head})`;
-      i = closeParen + 1;
+      // ?(x):y is JS ternary, not LIN if. Only ?(cond){body} is if/for.
+      out += token;
+      i = idx + token.length;
       continue;
     }
     const closeBrace = findMatching(s, j, '{', '}');
@@ -195,6 +250,7 @@ function rewriteElseIf(s) {
     }
     const head = s.slice(openParen + 1, closeParen);
     let j = closeParen + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
     if (s[j] !== '{') {
       out += `else if(${head})`;
       i = closeParen + 1;
@@ -266,9 +322,25 @@ export function parseLia(liaText) {
 /** @deprecated use parseLia */
 export const parseAil = parseLia;
 
+function firstUseIsRead(body, id) {
+  const s = String(body || '');
+  const re = new RegExp(`\\b${id}\\b`, 'g');
+  let m;
+  while ((m = re.exec(s))) {
+    let j = m.index + id.length;
+    while (j < s.length && /\s/.test(s[j])) j++;
+    if (s[j] === '=' && s[j + 1] !== '=') return false;
+    const before = s.slice(Math.max(0, m.index - 48), m.index);
+    const after = s.slice(m.index + id.length, m.index + id.length + 48);
+    if (/\{[^{}]*$/.test(before) && /\}\s*=/.test(after)) return false;
+    return true;
+  }
+  return false;
+}
+
 function collectAssignedIds(body) {
   const ids = new Set();
-  const re = /(?:^|[;{])\s*([A-Za-z_$][\w$]*)\s*=/g;
+  const re = /(?:^|[;{,])\s*([A-Za-z_$][\w$]*)\s*=/g;
   let m;
   const s = `;${body}`;
   while ((m = re.exec(s)) !== null) {
@@ -359,7 +431,9 @@ export function compileLiaToJs(liaText, opts = {}) {
     const body = compileBody(fn.body);
     const locals = collectAssignedIds(body).filter((id) => {
       const params = new Set(fn.params.split(',').map((p) => p.trim()).filter(Boolean));
-      return !params.has(id);
+      if (params.has(id)) return false;
+      if (firstUseIsRead(body, id)) return false;
+      return true;
     });
     const decl = locals.length ? `var ${locals.join(',')};` : '';
     parts.push(`/* effect:${fn.effect} */function ${fn.name}(${fn.params}){${decl}${body}}`);

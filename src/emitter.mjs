@@ -238,10 +238,81 @@ export function desugarL0Expr(expr) {
   return s;
 }
 
+function hoistClosureAssigns(s) {
+  const assigns = [];
+  let out = '';
+  let i = 0;
+  const text = String(s || '');
+  while (i < text.length) {
+    const m = text.slice(i).match(/^([A-Za-z_$][\w$]*)=~\(/);
+    const atStmt = i === 0 || /[;{}]/.test(text[i - 1]);
+    if (m && atStmt) {
+      const openP = i + m[0].length - 1;
+      const closeP = findMatching(text, openP, '(', ')');
+      if (closeP >= 0) {
+        let j = closeP + 1;
+        while (j < text.length && /\s/.test(text[j])) j++;
+        if (text[j] === '{') {
+          const closeB = findMatching(text, j, '{', '}');
+          if (closeB >= 0) {
+            assigns.push(text.slice(i, closeB + 1));
+            i = closeB + 1;
+            if (text[i] === ';') i++;
+            continue;
+          }
+        }
+      }
+    }
+    out += text[i];
+    i++;
+  }
+  if (!assigns.length) return text;
+  return `${assigns.join(';')};${out}`;
+}
+
+function skipRegexLit(s, i) {
+  let j = i + 1;
+  let inClass = false;
+  while (j < s.length) {
+    if (s[j] === '\\') { j += 2; continue; }
+    if (s[j] === '[' && !inClass) { inClass = true; j++; continue; }
+    if (s[j] === ']' && inClass) { inClass = false; j++; continue; }
+    if (s[j] === '/' && !inClass) {
+      j++;
+      while (j < s.length && /[gimsuy]/.test(s[j])) j++;
+      return j;
+    }
+    if (s[j] === '\n') return i + 1;
+    j++;
+  }
+  return i + 1;
+}
+
 function findMatching(s, openIdx, openCh, closeCh) {
   let depth = 0;
+  let quote = null;
   for (let i = openIdx; i < s.length; i++) {
     const c = s[i];
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (quote === '`' && c === '$' && s[i + 1] === '{') {
+        const inner = findMatching(s, i + 1, '{', '}');
+        if (inner >= 0) i = inner;
+        continue;
+      }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '/' && openCh !== '/') {
+      let k = i - 1;
+      while (k >= 0 && /\s/.test(s[k])) k--;
+      const prev = k < 0 ? '' : s[k];
+      if (!prev || /[=(:,;!?{[&|^~+\-*%<>]/.test(prev)) {
+        i = skipRegexLit(s, i) - 1;
+        continue;
+      }
+    }
+    if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
     if (c === openCh) depth++;
     else if (c === closeCh) {
       depth--;
@@ -488,7 +559,14 @@ export function desugarTemplateLiterals(src) {
     let lit = '';
     while (i < s.length) {
       if (s[i] === '\\' && i + 1 < s.length) {
-        lit += s[i] + s[i + 1];
+        const n = s[i + 1];
+        if (n === '`') { lit += '`'; i += 2; continue; }
+        if (n === '$') { lit += '$'; i += 2; continue; }
+        if (n === '\\') { lit += '\\'; i += 2; continue; }
+        if (n === 'n') { lit += '\n'; i += 2; continue; }
+        if (n === 'r') { lit += '\r'; i += 2; continue; }
+        if (n === 't') { lit += '\t'; i += 2; continue; }
+        lit += n;
         i += 2;
         continue;
       }
@@ -514,7 +592,7 @@ export function desugarTemplateLiterals(src) {
           if (depth > 0) expr += s[i];
           i++;
         }
-        parts.push(`(${desugarTemplateLiterals(expr)})`);
+        parts.push(`String(${desugarTemplateLiterals(expr)})`);
         continue;
       }
       lit += s[i];
@@ -528,7 +606,7 @@ export function desugarTemplateLiterals(src) {
 }
 
 /**
- * Peripheral: desugar cond?a:b → ((__c)=>{if(__c)return(a);return(b);})(cond)
+ * Peripheral: desugar cond?a:b → ((__c)=>{if(__c){return(a);}return(b);})(cond)
  * so ternary `?(` never collides with LIN if-sigil `?(`.
  */
 export function desugarTernaries(src) {
@@ -568,7 +646,12 @@ function desugarOneTernary(s) {
       else if (ch === '(' || ch === '{' || ch === '[') {
         if (depth === 0) break;
         depth--;
-      } else if (depth === 0 && /[;{},]/.test(ch)) break;
+      } else if (depth === 0 && /[;{},:]/.test(ch)) break;
+      else if (
+        depth === 0 && ch === '='
+        && s[condStart + 1] !== '=' && s[condStart + 1] !== '>'
+        && !/[=!<>]/.test(s[condStart - 1] || '')
+      ) break;
       else if (depth === 0 && /\s/.test(ch)) {
         // keep `return|throw|yield` OUTSIDE ternary so
         // `return cond?a:b` → `return IIFE(cond)` (not IIFE(return cond))
@@ -629,6 +712,12 @@ function desugarOneTernary(s) {
         if (depth === 0) break;
         depth--;
       } else if (depth === 0 && /[;,]/.test(ch)) break;
+      else if (depth === 0) {
+        const prev = k > 0 ? s[k - 1] : '';
+        const rest = s.slice(k).replace(/^\s+/, '');
+        if (!/[\w$.]/.test(prev) && /^(case\b|default\s*:|const\b|let\b|var\b)/.test(rest)) break;
+        if ((ch === '\n' || ch === '\r') && /^(return\b|if\b|break\b|switch\b|\})/.test(rest)) break;
+      }
       k++;
     }
     const cond = s.slice(condStart, condEnd).trim();
@@ -637,7 +726,7 @@ function desugarOneTernary(s) {
     if (!cond || !thenP || !elseP) { i++; continue; }
     // avoid rewriting already-desugared or LIN if-sigils (?(...){)
     if (/^[\s]*\(/.test(thenP) && s[colon + 1] === undefined) { i++; continue; }
-    const repl = `(((__c)=>{if(__c)return(${thenP});return(${elseP});})(${cond}))`;
+    const repl = `(((__c)=>{if(__c){return(${thenP});}return(${elseP});})(${cond}))`;
     return s.slice(0, condStart) + repl + s.slice(k);
   }
   return s;
@@ -798,6 +887,10 @@ function scanArrowExpr(s, start) {
       continue;
     }
     if ((c === ';' || c === ',' || c === '?' || c === ':') && depthParen === 0 && depthBrace === 0 && depthBracket === 0) break;
+    if ((c === '\n' || c === '\r') && depthParen === 0 && depthBrace === 0 && depthBracket === 0) {
+      const rest = s.slice(i + 1).replace(/^\s+/, '');
+      if (/^(const\b|let\b|var\b|function\b|if\b|for\b|while\b|return\b|switch\b|[A-Za-z_$][\w$]*\s*[=.])/.test(rest)) break;
+    }
     i++;
   }
   return { expr: s.slice(exprStart, i).trim(), end: i };
@@ -824,6 +917,15 @@ function desugarClosures(src) {
     (_m, before, params) => `${before}~(${params}){`,
   );
 
+  // return (p)=>{...}  — prefix class [=,:;({\[] misses `return`
+  s = s.replace(
+    /\breturn\s+\(([^)]*)\)\s*=>\s*\{/g,
+    (_m, params) => `return ~(${params}){`,
+  );
+  s = s.replace(
+    /\breturn\s+([A-Za-z_$][\w$]*)\s*=>\s*\{/g,
+    (_m, param) => `return ~(${param}){`,
+  );
   // arrow block: (p)=>{...}  and p=>{...}
   s = s.replace(
     /([=,:;({\[]\s*)(?:async\s*)?\(([^)]*)\)\s*=>\s*\{/g,
@@ -861,6 +963,8 @@ function desugarClosures(src) {
   }
 
   // arrow expression body with balanced parens/brackets/braces/strings.
+  rewriteArrows(/(\breturn\s+)(?:async\s*)?\(([^)]*)\)\s*=>/g, true);
+  rewriteArrows(/(\breturn\s+)(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/g, false);
   rewriteArrows(/([=,:;({\[]\s*)(?:async\s*)?\(([^)]*)\)\s*=>/g, true);
   rewriteArrows(/([=,:;({\[]\s*)(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/g, false);
 
@@ -901,9 +1005,11 @@ function protectClosuresForSigils(s) {
       continue;
     }
     const tok = `\u0000CL${held.length}\u0000`;
-    // normalize closure body to a single line to keep parseLia line-based parser happy,
-    // but do NOT add ASI semicolons (they would break multi-line expressions).
-    const bodyNorm = s.slice(j + 1, closeBrace).replace(/\s+/g, ' ').trim();
+    const bodyNorm = insertJsAsi(stripTsFromJs(s.slice(j + 1, closeBrace)))
+      .replace(/\s+/g, ' ')
+      .replace(/\{;/g, '{')
+      .replace(/;\}/g, '}')
+      .trim();
     held.push(`{${bodyNorm}}`);
     out += s.slice(idx, j) + tok;
     i = closeBrace + 1;
@@ -919,13 +1025,52 @@ function restoreClosuresForSigils(s, held) {
   return out;
 }
 
+function stripTsFromJs(s) {
+  let t = String(s || '');
+  t = t.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
+  t = t.replace(/\):\s*[A-Za-z_$][\w$<>|&\[\]\s]+\s*=>/g, ')=>');
+  t = t.replace(/([A-Za-z_$][\w$]*)\?\s*:\s*[A-Za-z_$][\w$<>|&\[\]\s]+/g, '$1');
+  t = t.replace(/([A-Za-z_$][\w$]*)\s*:\s*[A-Za-z_$][\w$<>|&\[\]]+(?:\s*[|&]\s*[A-Za-z_$][\w$<>|&\[\]]+)*\s*(?=[,)=])/g, '$1');
+  return t;
+}
+
+function insertJsAsi(s) {
+  let t = String(s || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  t = t.replace(/\n\s*(?=if\b|for\b|while\b|return\b|const\b|let\b|var\b|else\b|throw\b|break\b|continue\b)/g, ';\n');
+  t = t.replace(/([^\s])(\n\s*)(?=[A-Za-z_$][\w$]*\s*(?:[+\-*/%^|&]=|[=(.\[]))/g, (all, prev, ws) => {
+    if (/[|&+,([?:=+\-*/%<>!.{]/.test(prev)) return prev + ws;
+    return `${prev};${ws}`;
+  });
+  return t;
+}
+
 function applySourceSigils(jsBody) {
   let s = String(jsBody || '');
   // strip comments before compaction (otherwise // eats the rest of the AIL/JS line)
   s = s.replace(/\/\*[\s\S]*?\*\//g, '');
   s = s.replace(/(^|[^:])\/\/.*$/gm, '$1');
   // preserve closures before stripping var/let/const and other sigils
+  s = s.replace(/\bfunction\s+[A-Za-z_$][\w$]*\s*\([^;{]*\)\s*:\s*[^;{]+;/g, '');
+  s = s.replace(/\):\s*[A-Za-z_$][\w$<>|&\[\]\s]+\s*=>/g, ')=>');
+  s = s.replace(
+    /(^|[;{}]\s*)function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
+    '$1$2=~($3){',
+  );
   s = desugarClosures(s);
+  s = s.replace(/\{([^{}]*)\}/g, (full, inner) => {
+    let depth = 0;
+    for (let i = 0; i < inner.length; i++) {
+      const ch = inner[i];
+      if (ch === '(' || ch === '[') depth++;
+      else if ((ch === ')' || ch === ']') && depth) depth--;
+      else if (depth === 0 && ch === '.' && inner[i + 1] === '.' && inner[i + 2] === '.') {
+        let p = i - 1;
+        while (p >= 0 && /\s/.test(inner[p])) p--;
+        if (p < 0 || inner[p] === ',') return '_lia_obj()';
+      }
+    }
+    return full;
+  });
   // protect closure bodies from ASI insertion and whitespace compaction
   const protectedClosures = protectClosuresForSigils(s);
   s = protectedClosures.text;
@@ -933,9 +1078,7 @@ function applySourceSigils(jsBody) {
   s = desugarTemplateLiterals(s);
   const qs = protectQuotedStrings(s);
   s = qs.text;
-  // ASI: insert ; before control/decl at line starts (semicolon-free sources like dayjs)
-  s = s.replace(/\n\s*(?=if\b|for\b|while\b|return\b|const\b|let\b|var\b|else\b)/g, ';\n');
-  s = s.replace(/\n\s*(?=[A-Za-z_$][\w$]*\s*[=(])/g, ';\n');
+  s = insertJsAsi(s);
   const rx = protectRegexLiterals(s);
   s = rx.text;
   s = s.replace(/\s+/g, ' ').trim();
@@ -945,8 +1088,36 @@ function applySourceSigils(jsBody) {
   s = s.replace(/\belse\s+if\s*\(/g, ':(');
   s = s.replace(/\bif\s*\(/g, '?(');
   s = s.replace(/\bfor\s*\(/g, '#(');
-  // drop decl-only (`var memo;`) before stripping keywords (avoids bare `memo;`)
-  s = s.replace(/\b(?:var|let|const)\s+[A-Za-z_$][\w$]*\s*;/g, '');
+  // expand `var a=1, b, c=2` so comma decls are not leftover reads
+  s = s.replace(/\b(var|let|const)\s+([^;]+);/g, (full, kw, list, offset, src) => {
+    const before = src.slice(Math.max(0, offset - 10), offset);
+    if (/(?:#|\bfor)\(\s*$/.test(before)) return full;
+    const parts = [];
+    let buf = '';
+    let d = 0;
+    let q = null;
+    for (let i = 0; i < list.length; i++) {
+      const c = list[i];
+      if (q) {
+        if (c === '\\') { buf += c + (list[i + 1] || ''); i++; continue; }
+        buf += c;
+        if (c === q) q = null;
+        continue;
+      }
+      if (c === '"' || c === "'" || c === '`') { q = c; buf += c; continue; }
+      if (c === '(' || c === '{' || c === '[') d++;
+      else if (c === ')' || c === '}' || c === ']') d--;
+      if (c === ',' && d === 0) { parts.push(buf.trim()); buf = ''; continue; }
+      buf += c;
+    }
+    if (buf.trim()) parts.push(buf.trim());
+    if (parts.length <= 1) return full;
+    return parts.map((p) => (
+      /^[A-Za-z_$][\w$]*$/.test(p) ? `${kw} ${p}=undefined;` : `${kw} ${p};`
+    )).join('');
+  });
+  // decl-only becomes assign so compileLiaToJs emits `var id`
+  s = s.replace(/\b(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*;/g, '$1=undefined;');
   s = s.replace(/\bvar\s+/g, '');
   s = s.replace(/\blet\s+/g, '');
   s = s.replace(/\bconst\s+/g, '');
@@ -963,17 +1134,51 @@ function applySourceSigils(jsBody) {
   s = s.replace(/;+/g, ';');
   s = s.replace(/;\}/g, '}');
   s = s.replace(/\{;/g, '{');
+  s = s.replace(/!==\s*(null|undefined)\b/g, '\u0000NE_$1\u0000');
+  s = s.replace(/===\s*(null|undefined)\b/g, '\u0000EQ_$1\u0000');
   s = s.replace(/===/g, '==').replace(/!==/g, '!=');
+  s = s.replace(/\u0000EQ_(null|undefined)\u0000/g, '===$1');
+  s = s.replace(/\u0000NE_(null|undefined)\u0000/g, '!==$1');
   s = restoreQuoted(s, qs.held);
   s = restoreClosuresForSigils(s, protectedClosures.held);
+  s = desugarTernaries(s);
+  s = s.replace(/~~\(/g, '\u0000DNOT(');
+  s = s.replace(/~\(([^)]*)\)/g, (_, p) => {
+    const cleaned = String(p).split(',').map((x) => {
+      const t = x.trim();
+      if (!t) return '';
+      const def = t.match(/^([A-Za-z_$][\w$]*)\s*=\s*(.+)$/);
+      if (def) return `${def[1]}=${def[2].trim()}`;
+      const rest = t.startsWith('...');
+      const id = t.replace(/^\.\.\./, '').replace(/:\s*[\s\S]+$/, '').trim();
+      return id && /^[A-Za-z_$][\w$]*$/.test(id) ? `${rest ? '...' : ''}${id}` : '';
+    }).filter(Boolean);
+    return `~(${cleaned.join(',')})`;
+  });
+  s = s.replace(/\u0000DNOT\(/g, '~~(');
+  s = hoistClosureAssigns(s);
+  const earlyRet = [];
+  s = s.replace(/\^([A-Za-z_$][\w$]*);(?=[^;]*\1=~)/g, (_, id) => {
+    earlyRet.push(id);
+    return '';
+  });
+  for (const id of earlyRet) {
+    if (!new RegExp(`\\^${id}\\b`).test(s)) s += `;^${id}`;
+  }
+  s = s.replace(/[\r\n]+/g, ' ');
   return s;
 }
 
 function splitParams(raw) {
-  return String(raw || '')
+  let s = String(raw || '').trim();
+  if ((s.startsWith('{') && s.endsWith('}')) || (s.startsWith('[') && s.endsWith(']'))) {
+    s = s.slice(1, -1);
+  }
+  return s
     .split(',')
     .map((p) => p.trim())
-    .filter(Boolean);
+    .map((p) => p.replace(/^\.\.\./, '').replace(/\?$/, '').replace(/:\s*[\s\S]+$/, '').trim())
+    .filter((p) => p && /^[A-Za-z_$][\w$]*$/.test(p));
 }
 
 function extractBraceBody(text, openBraceIdx) {
@@ -1005,7 +1210,16 @@ function extractBraceBody(text, openBraceIdx) {
     if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
     if (c === '/') {
       const next = text[i + 1];
-      if (next === '/' || next === '*') continue;
+      if (next === '/') {
+        while (i < text.length && text[i] !== '\n') i++;
+        continue;
+      }
+      if (next === '*') {
+        i += 2;
+        while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
+        i++;
+        continue;
+      }
       const before = text.slice(Math.max(0, i - 24), i).trimEnd();
       const last = before[before.length - 1];
       if (!last || /[({[=,:;!&|?+~\-*%^<>]/.test(last) || /\b(return|throw)$/.test(before)) {
@@ -1022,14 +1236,91 @@ function extractBraceBody(text, openBraceIdx) {
   return { body: text.slice(openBraceIdx + 1, i), end: i };
 }
 
+function skipWsComments(text, i) {
+  while (i < text.length) {
+    while (i < text.length && /\s/.test(text[i])) i++;
+    if (text[i] === '/' && text[i + 1] === '/') {
+      while (i < text.length && text[i] !== '\n') i++;
+      continue;
+    }
+    if (text[i] === '/' && text[i + 1] === '*') {
+      i += 2;
+      while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
+      i += 2;
+      continue;
+    }
+    break;
+  }
+  return i;
+}
+
+function matchParen(text, openIdx) {
+  if (text[openIdx] !== '(') return -1;
+  let d = 0;
+  let q = null;
+  for (let i = openIdx; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '\\') { i++; continue; }
+      if (c === q) q = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { q = c; continue; }
+    if (c === '(') d++;
+    else if (c === ')') {
+      d--;
+      if (d === 0) return i;
+    }
+  }
+  return -1;
+}
+
 /** Extract expression after `=>` until ; , newline, or unbalanced closer. */
 function extractArrowExpr(text, start) {
-  let i = start;
+  let i = skipWsComments(text, start);
   let depthParen = 0;
   let depthBrace = 0;
   let depthBracket = 0;
+  let quote = null;
+  let inRe = false;
+  let inClass = false;
   while (i < text.length) {
     const c = text[i];
+    if (inRe) {
+      if (c === '\\') { i += 2; continue; }
+      if (c === '[' && !inClass) inClass = true;
+      else if (c === ']' && inClass) inClass = false;
+      else if (c === '/' && !inClass) inRe = false;
+      i++;
+      continue;
+    }
+    if (quote) {
+      if (c === '\\') { i += 2; continue; }
+      if (c === quote) quote = null;
+      i++;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { quote = c; i++; continue; }
+    if (c === '/') {
+      const next = text[i + 1];
+      if (next === '/') {
+        while (i < text.length && text[i] !== '\n') i++;
+        continue;
+      }
+      if (next === '*') {
+        i += 2;
+        while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
+        i += 2;
+        continue;
+      }
+      const before = text.slice(Math.max(0, start), i).trimEnd();
+      const last = before[before.length - 1];
+      if (!last || /[({[=,:;!&|?+~\-*%^<>]/.test(last) || /\b(return|throw)$/.test(before)) {
+        inRe = true;
+        i++;
+        continue;
+      }
+    }
     if ((c === '\n' || c === '\r') && depthParen === 0 && depthBrace === 0 && depthBracket === 0) break;
     if (c === '(') depthParen++;
     else if (c === ')') {
@@ -1048,7 +1339,7 @@ function extractArrowExpr(text, start) {
     }
     i++;
   }
-  return { expr: text.slice(start, i).trim(), end: i };
+  return { expr: text.slice(start, i).trim().replace(/\s*\/\/[^\n]*$/, ''), end: i };
 }
 
 function fnInterval(text, startIdx) {
@@ -1075,9 +1366,9 @@ export function extractJsFunctions(source) {
   const candidates = [];
 
   const classic = [
-    /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
-    /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
-    /(?:module\.)?exports(?:\.([A-Za-z_$][\w$]*))?\s*=\s*(?:async\s+)?function(?:\s+([A-Za-z_$][\w$]*))?\s*\(([^)]*)\)\s*\{/g,
+    /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*(?:<[^>]*>)?\s*\(([^)]*)\)\s*(?::[^{=]+)?\s*\{/g,
+    /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?(?:\s*<[^>]*>)?\s*\(([^)]*)\)\s*(?::[^{=]+)?\s*\{/g,
+    /(?:module\.)?exports(?:\.([A-Za-z_$][\w$]*))?\s*=\s*(?:async\s+)?function(?:\s+([A-Za-z_$][\w$]*))?(?:\s*<[^>]*>)?\s*\(([^)]*)\)\s*(?::[^{=]+)?\s*\{/g,
   ];
   for (const re of classic) {
     let m;
@@ -1099,6 +1390,158 @@ export function extractJsFunctions(source) {
     }
   }
 
+  const fnHead = /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)/g;
+  let fh;
+  while ((fh = fnHead.exec(text)) !== null) {
+    const name = fh[1];
+    if (candidates.some((c) => c.name === name)) continue;
+    let hi = skipWsComments(text, fh.index + fh[0].length);
+    if (text[hi] === '<') {
+      let ad = 0;
+      for (; hi < text.length; hi++) {
+        const hc = text[hi];
+        if (hc === '<') ad++;
+        else if (hc === '>') {
+          ad--;
+          if (ad === 0) { hi++; break; }
+        }
+      }
+      hi = skipWsComments(text, hi);
+    }
+    if (text[hi] !== '(') continue;
+    const open = hi;
+    const closed = matchParen(text, open);
+    if (closed < 0) continue;
+    let i = skipWsComments(text, closed + 1);
+    if (text[i] === ':') {
+      i++;
+      let d = 0;
+      while (i < text.length) {
+        const c = text[i];
+        if (c === '{' && d === 0) break;
+        if (c === '{' || c === '(' || c === '[') d++;
+        else if (c === '}' || c === ')' || c === ']') d--;
+        i++;
+      }
+    }
+    i = skipWsComments(text, i);
+    if (text[i] !== '{') continue;
+    const iv = fnInterval(text, i);
+    candidates.push({
+      name,
+      params: splitParams(text.slice(open + 1, closed)),
+      body: iv.body,
+      async: /async\s+function/.test(fh[0]),
+      start: fh.index,
+      end: iv.end + 1,
+    });
+  }
+
+  // export default function name?(params) { ... }
+  const defFn = /export\s+default\s+(?:async\s+)?function(?:\s+([A-Za-z_$][\w$]*))?\s*\(([^)]*)\)\s*\{/g;
+  let dfm;
+  while ((dfm = defFn.exec(text)) !== null) {
+    const open = dfm.index + dfm[0].length - 1;
+    const iv = fnInterval(text, open);
+    candidates.push({
+      name: dfm[1] || 'defaultExport',
+      params: splitParams(dfm[2]),
+      body: iv.body,
+      async: /\basync\s+function\b/.test(dfm[0]),
+      start: dfm.index,
+      end: iv.end + 1,
+    });
+  }
+
+  // export default (a,b) => { ... } | export default a => expr
+  const defArrow =
+    /export\s+default\s+(?:async\s*)?(?:(\([^)]*\))|([A-Za-z_$][\w$]*))\s*=>\s*/g;
+  let dam;
+  while ((dam = defArrow.exec(text)) !== null) {
+    const params = splitParams((dam[1] || dam[2] || '').replace(/^\(|\)$/g, ''));
+    let i = dam.index + dam[0].length;
+    i = skipWsComments(text, i);
+    let body;
+    let end;
+    if (text[i] === '{') {
+      const iv = fnInterval(text, i);
+      body = iv.body;
+      end = iv.end + 1;
+    } else {
+      const expr = extractArrowExpr(text, i);
+      body = `return ${expr.expr}`;
+      end = expr.end;
+    }
+    candidates.push({
+      name: 'defaultExport',
+      params,
+      body,
+      async: /default\s+async\s*/.test(dam[0]),
+      start: dam.index,
+      end,
+    });
+  }
+
+  // object methods: name: (a) => ..., name: a => ..., name: function (...) {, name() {
+  const objArrow =
+    /(?:^|[,{\n])\s*([A-Za-z_$][\w$]*)\s*:\s*(?:async\s*)?(?:(\([^)]*\))|([A-Za-z_$][\w$]*))\s*=>\s*/g;
+  let oam;
+  while ((oam = objArrow.exec(text)) !== null) {
+    const name = oam[1];
+    const params = splitParams((oam[2] || oam[3] || '').replace(/^\(|\)$/g, ''));
+    let i = oam.index + oam[0].length;
+    i = skipWsComments(text, i);
+    let body;
+    let end;
+    if (text[i] === '{') {
+      const iv = fnInterval(text, i);
+      body = iv.body;
+      end = iv.end + 1;
+    } else {
+      const expr = extractArrowExpr(text, i);
+      body = `return ${expr.expr}`;
+      end = expr.end;
+    }
+    candidates.push({
+      name,
+      params,
+      body,
+      async: /:\s*async\s*/.test(oam[0]),
+      start: oam.index,
+      end,
+    });
+  }
+  const objFn =
+    /(?:^|[,{\n])\s*([A-Za-z_$][\w$]*)\s*:\s*(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g;
+  let ofm;
+  while ((ofm = objFn.exec(text)) !== null) {
+    const open = ofm.index + ofm[0].length - 1;
+    const iv = fnInterval(text, open);
+    candidates.push({
+      name: ofm[1],
+      params: splitParams(ofm[2]),
+      body: iv.body,
+      async: /\basync\s+function\b/.test(ofm[0]),
+      start: ofm.index,
+      end: iv.end + 1,
+    });
+  }
+  const objMethod =
+    /(?:^|[,{\n])\s*(?!if\b|for\b|while\b|switch\b|catch\b|function\b)([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g;
+  let omm;
+  while ((omm = objMethod.exec(text)) !== null) {
+    const open = omm.index + omm[0].length - 1;
+    const iv = fnInterval(text, open);
+    candidates.push({
+      name: omm[1],
+      params: splitParams(omm[2]),
+      body: iv.body,
+      async: false,
+      start: omm.index,
+      end: iv.end + 1,
+    });
+  }
+
   // const name = (a,b) => { ... }  |  const name = (a,b) => expr  |  const name = a => expr
   const arrowRe =
     /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:(\([^)]*\))|([A-Za-z_$][\w$]*))\s*=>\s*/g;
@@ -1107,7 +1550,7 @@ export function extractJsFunctions(source) {
     const name = am[1];
     const params = splitParams((am[2] || am[3] || '').replace(/^\(|\)$/g, ''));
     let i = am.index + am[0].length;
-    while (i < text.length && /\s/.test(text[i])) i++;
+    i = skipWsComments(text, i);
     let body;
     let end;
     if (text[i] === '{') {
@@ -1130,10 +1573,25 @@ export function extractJsFunctions(source) {
     });
   }
 
+  const classSpans = [];
+  const classRe = /\bclass\s+[A-Za-z_$][\w$]*[^{]*\{/g;
+  let cm;
+  while ((cm = classRe.exec(text)) !== null) {
+    const open = cm.index + cm[0].length - 1;
+    const iv = fnInterval(text, open);
+    classSpans.push({ start: cm.index, end: iv.end + 1 });
+  }
+
   // Keep only candidates that are not nested inside another candidate's full span.
   for (let i = 0; i < candidates.length; i++) {
     const c = candidates[i];
     let nested = false;
+    for (const cs of classSpans) {
+      if (c.start > cs.start && c.end < cs.end) {
+        nested = true;
+        break;
+      }
+    }
     for (let j = 0; j < candidates.length; j++) {
       if (i === j) continue;
       const other = candidates[j];
@@ -1142,7 +1600,11 @@ export function extractJsFunctions(source) {
         break;
       }
     }
-    if (!nested) push(c.name, c.params, c.body, { async: c.async });
+    const slice = text.slice(c.start, Math.min(text.length, c.start + 64));
+    const isFnDecl = /^(?:export\s+)?(?:async\s+)?function\s/.test(slice);
+    if (nested && braceDepthAt(text, c.start) === 0 && isFnDecl) nested = false;
+    if (nested) continue;
+    push(c.name, c.params, c.body, { async: c.async });
   }
 
   return fns;
@@ -1151,6 +1613,47 @@ export function extractJsFunctions(source) {
 function detectBytesMap(source) {
   if (/kb\s*:\s*1\s*<<\s*10/.test(source) || /map\s*=\s*\{[^}]*kb/.test(source)) return BYTES_K;
   return null;
+}
+
+/** Harvest top-level numeric const/let/var into $K (peripheral; not nucleus). */
+function braceDepthAt(s, idx) {
+  let depth = 0;
+  let quote = null;
+  for (let i = 0; i < idx && i < s.length; i++) {
+    const c = s[i];
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
+    if (c === '{') depth++;
+    else if (c === '}') depth--;
+  }
+  return depth;
+}
+
+export function harvestTopNumConsts(source) {
+  const env = {};
+  const s = String(source || '');
+  const re = /(?:^|[\n;])\s*const\s+([A-Za-z_$][\w$]*)\s*=\s*([^;\n]+)/g;
+  let m;
+  while ((m = re.exec(s))) {
+    if (braceDepthAt(s, m.index) !== 0) continue;
+    const expr = m[2].trim();
+    if (!/^[-+\d.\s/*()A-Za-z_$]+$/.test(expr)) continue;
+    try {
+      const keys = Object.keys(env);
+      const val = new Function(...keys, `return (${expr});`)(...keys.map((k) => env[k]));
+      if (typeof val === 'number' && Number.isFinite(val)) env[m[1]] = val;
+    } catch { /* skip */ }
+  }
+  return env;
+}
+
+function formatConstTable(env) {
+  const parts = Object.entries(env || {}).map(([k, v]) => `${k}=${v}`);
+  return parts.length ? `$K{${parts.join(' ')}}` : null;
 }
 
 /**
@@ -1167,12 +1670,18 @@ export function emitAilFromSource(source, opts = {}) {
     `^schema_once ^lossy=true ^ops=${opts.ops || DEFAULT_OPS}`,
     GRAMMAR,
   ];
-  const k = opts.constTable || detectBytesMap(source);
+  const k = opts.constTable || formatConstTable(harvestTopNumConsts(source)) || detectBytesMap(source);
   if (k) lines.push(k);
 
+  const importIds = [...String(source || '').matchAll(/\bimport\s*\{([^}]+)\}/g)]
+    .flatMap((m) => m[1].split(',').map((s) => s.trim().split(/\s+as\s+/).pop().trim()))
+    .filter((id) => id && /^[A-Za-z_$][\w$]*$/.test(id) && !fns.some((f) => f.name === id));
+  const importPrelude = importIds.map((id) => `${id}=''`).join(';');
   const names = [];
   for (const f of fns) {
     let body = applySourceSigils(f.body);
+    const usedImports = importIds.filter((id) => new RegExp(`\\b${id}\\b`).test(f.body));
+    if (usedImports.length) body = `${usedImports.map((id) => `${id}=''`).join(';')};${body}`;
     if (opts.shortenLocals !== false) body = shortenLocals(body);
     if (k) body = body.replace(/\bmap\[/g, '$K[').replace(/\bmap\./g, '$K.');
     // drop trailing semicolon noise

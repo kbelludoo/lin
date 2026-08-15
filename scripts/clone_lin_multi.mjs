@@ -1,6 +1,7 @@
 /**
- * Multi-target emit+run for clone-lin (js,ts,py,go,rust,java,c).
- * Gate: ALL targets must PASS (skip counts against). Size bytes per emit.
+ * Multi-target emit+run for clone-lin nucleus (js,ts,py,go,rust,java,c).
+ * Gate: required langs PASS (skip≡fail); C SKIP ok iff gcc absent after retry.
+ * Stub langs may still emit but MUST NOT count as PASS / suite_rate.
  * Learn on new-lang FAIL → trauma/hypothesis/candidates; never nucleus.
  */
 import fs from 'node:fs';
@@ -8,13 +9,18 @@ import os from 'node:os';
 import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { compileLia } from '../src/multi_emit.mjs';
-import { TARGETS } from '../src/emit_shared.mjs';
+import { TARGETS, REAL_TARGETS, STUB_TARGETS, formatNucleusMulti, formatStubIntel, honestNucleusMulti } from '../src/emit_shared.mjs';
 import { appendStorage } from './clone_lin_improve.mjs';
 import { ensureToolchains, hasCmd as hasToolchainCmd } from './ensure_toolchains.mjs';
 
-export { TARGETS };
+export { TARGETS, REAL_TARGETS, STUB_TARGETS, formatNucleusMulti, formatStubIntel, honestNucleusMulti };
 
-const EXT = { js: '.cjs', ts: '.ts', py: '.py', go: '.go', rust: '.rs', c: '.c', java: '.java' };
+const EXT = {
+  js: '.cjs', ts: '.ts', py: '.py', go: '.go', rust: '.rs', c: '.c', java: '.java',
+  cs: '.cs', lua: '.lua', elixir: '.ex', crystal: '.cr', kotlin: '.kt', hcl: '.tf',
+  julia: '.jl', scala: '.scala', haskell: '.hs', prolog: '.pl',
+  zig: '.zig', nim: '.nim', asm: '.asm',
+};
 
 export function hasCmd(cmd) {
   return hasToolchainCmd(cmd);
@@ -29,14 +35,18 @@ function pythonBin() {
 function writeWork(dir, name, target, code) {
   const sub = path.join(dir, target);
   fs.mkdirSync(sub, { recursive: true });
-  const p = path.join(sub, `${name}${EXT[target] || `.${target}`}`);
+  let fileName = `${name}${EXT[target] || `.${target}`}`;
+  if (target === 'java') {
+    const m = String(code || '').match(/public class ([A-Za-z][A-Za-z0-9]*)/);
+    if (m) fileName = `${m[1]}.java`;
+  }
+  const p = path.join(sub, fileName);
   fs.writeFileSync(p, code, 'utf8');
   return p;
 }
 
 function runTsSyntax(file) {
   const r = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
-  // .ts may fail node --check; strip types lightly then check
   if (r.status === 0) return { ok: true, detail: 'node --check' };
   let code = fs.readFileSync(file, 'utf8')
     .replace(/^export /gm, '')
@@ -51,6 +61,9 @@ function runTsSyntax(file) {
 }
 
 function runTarget(target, file) {
+  if (STUB_TARGETS.includes(target)) {
+    return { run: 'STUB', detail: 'experimental_emit_not_toolchain_validated' };
+  }
   if (target === 'js') {
     const c = spawnSync(process.execPath, ['--check', file], { encoding: 'utf8' });
     return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || 'node --check').slice(0, 160) };
@@ -84,13 +97,22 @@ function runTarget(target, file) {
     const c = spawnSync('javac', [file], { encoding: 'utf8' });
     return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || c.stdout || 'javac').slice(0, 200) };
   }
-  if (!hasCmd('rustc')) return { run: 'SKIP', detail: 'rustc_absent' };
-  const bin = path.join(path.dirname(file), `${path.basename(file, '.rs')}_bin`);
-  const c = spawnSync('rustc', ['--crate-type', 'lib', '--cap-lints', 'allow', file, '-o', bin], { encoding: 'utf8' });
-  return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || c.stdout || 'rustc').slice(0, 200) };
+  if (target === 'rust') {
+    if (!hasCmd('rustc')) return { run: 'SKIP', detail: 'rustc_absent' };
+    const bin = path.join(path.dirname(file), `${path.basename(file, '.rs')}_bin`);
+    const c = spawnSync('rustc', ['--crate-type', 'lib', '--cap-lints', 'allow', file, '-o', bin], { encoding: 'utf8' });
+    return { run: c.status === 0 ? 'PASS' : 'FAIL', detail: (c.stderr || c.stdout || 'rustc').slice(0, 200) };
+  }
+  return { run: 'STUB', detail: 'experimental_emit_not_toolchain_validated' };
 }
 
 export function emitOneTarget(lia, name, target, workDir) {
+  if (STUB_TARGETS.includes(target)) {
+    return {
+      target, name, status: 'STUB', emit: 'stub', run: 'STUB',
+      reason: 'experimental_emit_not_toolchain_validated', file: null, code: '',
+    };
+  }
   let code;
   try {
     const r = compileLia(lia, {
@@ -107,7 +129,7 @@ export function emitOneTarget(lia, name, target, workDir) {
   }
   const file = writeWork(workDir, name, target, code);
   const ran = runTarget(target, file);
-  const status = ran.run === 'FAIL' ? 'FAIL' : ran.run === 'SKIP' ? 'SKIP' : 'PASS';
+  const status = ran.run === 'FAIL' ? 'FAIL' : ran.run === 'SKIP' ? 'SKIP' : ran.run === 'STUB' ? 'STUB' : 'PASS';
   return {
     target, name, status, emit: 'ok', run: ran.run, reason: ran.detail, file, code,
   };
@@ -130,19 +152,16 @@ export function learnNewLang(storageDir, candDir, slug, fails) {
     );
   }
   fs.mkdirSync(candDir, { recursive: true });
-  const candPath = path.join(candDir, `CLONE_LANG_${slug}_${Date.now().toString(36)}.dicel`);
+  const candPath = path.join(candDir, `CLONE_LANG_${slug}_${Date.now().toString(36)}.rulel`);
+  const q = (s) => String(s || '').replace(/"/g, "'").slice(0, 120);
   fs.writeFileSync(
     candPath,
     [
-      '@DICEL:LIN_CANDIDATE:1.0.0',
-      `^from_clone="clone-lin-${slug}"`,
-      '^stage="LEARN_NEW_LANG"',
-      '^forbid_nucleus=true',
-      '',
-      '@HARVEST {',
-      ...fails.slice(0, 12).map((f) => `  emit_fail{target="${f.target}" fn="${f.name}" emit="${f.emit}" run="${f.run}" reason="${String(f.reason || '').replace(/"/g, "'").slice(0, 120)}" nucleus=false}`),
-      '  proposal{fix="emit_ts|emit_py|emit_go|emit_rust|emit_c|emit_shared peripheral; retry; no one-file hardcode"}',
-      '}',
+      '@RULEL:LIN_CANDIDATE:1.0.0',
+      '~R{.m=meta .h=harvest .f=forbid}',
+      `.m{from_clone=clone-lin-${slug} stage=LEARN_NEW_LANG}`,
+      '.f{mutate_nucleus=true}',
+      `.h{${fails.slice(0, 8).map((f) => `fail{target=${f.target} fn=${f.name} emit=${f.emit} run=${f.run} reason="${q(f.reason)}"}`).join(' ')} fix=emit_peripheral}`,
       '',
     ].join('\n'),
     'utf8',
@@ -161,13 +180,22 @@ export function learnNewLang(storageDir, candDir, slug, fails) {
 export function verifyMultiTargets(root, storageDir, candDir, jsResults, slug) {
   ensureToolchains({ quiet: true });
   const workDir = fs.mkdtempSync(path.join(os.tmpdir(), `lin_multi_${slug}_`));
-  const others = TARGETS.filter((t) => t !== 'js');
+  const others = REAL_TARGETS.filter((t) => t !== 'js');
   const perFn = [];
   const summary = {};
-  for (const t of TARGETS) summary[t] = { PASS: 0, SKIP: 0, FAIL: 0, bytes: 0 };
+  for (const t of REAL_TARGETS) summary[t] = { PASS: 0, SKIP: 0, FAIL: 0, bytes: 0 };
 
-  const passes = jsResults.filter((r) => r.status === 'pass' && r.lia);
+  const passes = jsResults.filter((r) => r.status === 'pass' && (r.lia || r.fileLia));
+  const fileGroups = new Map();
   for (const r of passes) {
+    const key = r.linRel || r.srcRel || r.name;
+    let g = fileGroups.get(key);
+    if (!g) {
+      g = { lia: r.fileLia || r.lia, names: [] };
+      fileGroups.set(key, g);
+    }
+    if (r.fileLia) g.lia = r.fileLia;
+    g.names.push(r.name);
     const jsCode = r.js || '';
     const jsFile = writeWork(workDir, r.name, 'js', jsCode);
     summary.js.PASS++;
@@ -176,17 +204,28 @@ export function verifyMultiTargets(root, storageDir, candDir, jsResults, slug) {
       target: 'js', name: r.name, status: 'PASS', emit: 'ok', run: 'PASS',
       reason: 'oracle_behavior_eq', file: jsFile, code: jsCode,
     });
+  }
+  let gi = 0;
+  const gTotal = fileGroups.size;
+  for (const [key, g] of fileGroups) {
+    gi += 1;
+    if (gi === 1 || gi % 50 === 0 || gi === gTotal) {
+      console.error(`[clone-lin] multi ${gi}/${gTotal} ${key}`);
+    }
+    const className = String(key).replace(/[^A-Za-z0-9]/g, '') || 'LinEmit';
     for (const t of others) {
-      const row = emitOneTarget(r.lia, r.name, t, workDir);
-      summary[t][row.status] = (summary[t][row.status] || 0) + 1;
+      const row = emitOneTarget(g.lia, className, t, workDir);
       summary[t].bytes += Buffer.byteLength(row.code || '', 'utf8');
-      perFn.push(row);
+      for (const name of g.names) {
+        summary[t][row.status] = (summary[t][row.status] || 0) + 1;
+        perFn.push({ ...row, name });
+      }
     }
   }
 
   const fails = perFn.filter((x) => x.status === 'FAIL');
   const learn = fails.length ? learnNewLang(storageDir, candDir, slug, fails) : { hypothesis: null };
-  return { workDir, perFn, summary, learn, targets: TARGETS };
+  return { workDir, perFn, summary, learn, targets: REAL_TARGETS, stub: STUB_TARGETS };
 }
 
 /** Host-lang dumps stay in lia INTEL / verify workDir — never in clone-lin-* gh repo. */

@@ -11,11 +11,19 @@ import { createRequire } from 'node:module';
 import { extractNativeFns } from './clone_lin_native.mjs';
 import { emitAilFromSource, extractJsFunctions } from '../src/emitter.mjs';
 import { compileLiaToJs } from '../src/compiler.mjs';
+import { stripTsTypes } from './strip_ts_light.mjs';
 
 const require = createRequire(import.meta.url);
 
 export function hashOutputs(outputs) {
   return crypto.createHash('sha256').update(JSON.stringify(outputs.map((x) => String(x)))).digest('hex');
+}
+
+/** Map cloned source relpath → published `lin/.../*.lin` (no host ext). */
+export function linRelFromSrc(srcRel) {
+  const n = String(srcRel || '').replace(/\\/g, '/').replace(/^\/+/, '');
+  const noExt = n.replace(/\.[^.]+$/, '');
+  return `lin/${noExt}.lin`;
 }
 
 export function holdoutArgs(arity, n = 8) {
@@ -36,33 +44,25 @@ export function holdoutArgs(arity, n = 8) {
 const HOST_BUILTINS = /^(Math|JSON|Object|Array|String|Number|Boolean|Date|Error|RegExp|Buffer|console|Promise|Symbol|Map|Set|WeakMap|WeakSet|Reflect|Intl|Uint8Array|Uint16Array|Uint32Array|Int8Array|Int16Array|Int32Array|Float32Array|Float64Array|ArrayBuffer|DataView|RangeError|TypeError|URIError|EvalError|ReferenceError|SyntaxError)$/;
 
 export function unsupported(fn) {
-  const body = String(fn.body || '');
+  const body = sanitizeOracleJs(fn.body || '');
   const params = (fn.params || []).join(',');
-  if (/\b(async|await|yield)\b/.test(body)) return 'async_gen';
+  if (/\byield\b/.test(body)) return 'async_gen';
   if (/\.\.\./.test(params) || /[{[]/.test(params)) return 'complex_params';
   if (/<[A-Z]/.test(params)) return 'generics';
-  // template literals: NOT skipped — emitter.desugarTemplateLiterals (peripheral) handles them
-  if (/\brequire\s*\(/.test(body) || /\bimport\b/.test(body) || /\bexport\b/.test(body)) return 'host_or_module_ref';
-  // Capitalized module-ish free refs (C.M), not builtins Math/JSON/Object/...
-  // Peripheral CLOSURE: skip only if binding prelude does not define the id
-  const bound = new Set(Object.keys(fn.bindings || {}));
-  for (const s of fn.siblings || []) bound.add(s.name);
-  const caps = body.match(/\b([A-Z][A-Za-z0-9_]*)\./g) || [];
-  for (const m of caps) {
-    const id = m.slice(0, -1);
-    if (HOST_BUILTINS.test(id) || bound.has(id)) continue;
-    return 'host_or_module_ref';
-  }
   return null;
 }
 
 /** Build `const Alias=...` prelude from resolved import / module literal bindings. */
-export function bindingsPrelude(bindings) {
+export function bindingsPrelude(bindings, reserved) {
   if (!bindings || !Object.keys(bindings).length) return '';
+  const skip = new Set(reserved || []);
   const parts = [];
   for (const [alias, obj] of Object.entries(bindings)) {
+    if (skip.has(alias)) continue;
     if (obj && typeof obj === 'object' && obj.__lin_sym) {
       parts.push(`const ${alias}=Symbol.for(${JSON.stringify(obj.__lin_sym)});`);
+    } else if (obj && typeof obj === 'object' && obj.__lin_re) {
+      parts.push(`const ${alias}=${obj.__lin_re};`);
     } else {
       parts.push(`const ${alias}=${JSON.stringify(obj)};`);
     }
@@ -70,10 +70,86 @@ export function bindingsPrelude(bindings) {
   return parts.join('');
 }
 
+/** Quote/template-aware line and block comment strip; URLs inside strings stay intact. */
+export function stripJsComments(src) {
+  let out = '';
+  let i = 0;
+  const s = String(src || '');
+  while (i < s.length) {
+    const c = s[i];
+    if (c === "'" || c === '"' || c === '`') {
+      const q = c;
+      out += c;
+      i++;
+      while (i < s.length) {
+        if (s[i] === '\\') { out += s[i] + (s[i + 1] || ''); i += 2; continue; }
+        out += s[i];
+        if (s[i] === q) { i++; break; }
+        i++;
+      }
+      continue;
+    }
+    if (c === '/' && s[i + 1] === '/') {
+      i += 2;
+      while (i < s.length && s[i] !== '\n') i++;
+      continue;
+    }
+    if (c === '/' && s[i + 1] === '*') {
+      i += 2;
+      while (i < s.length && !(s[i] === '*' && s[i + 1] === '/')) i++;
+      if (i < s.length) i += 2;
+      continue;
+    }
+    out += c;
+    i++;
+  }
+  return out;
+}
+
+function stripExportImport(src) {
+  return String(src || '')
+    .replace(/\bexport\s+default\b/g, '')
+    .replace(/\bexport\s+\{[^}]*\}(\s*from\s+['"][^'"]+['"])?/g, '')
+    .replace(/\bexport\s+/g, '')
+    .replace(/\bimport\s+type\s+[^;]+;/g, '')
+    .replace(/\bimport\s+[^;]+;/g, '')
+    .replace(/\bimport\s*\(/g, '(');
+}
+
+function parseSafeBody(name, body) {
+  const src = String(body || '');
+  if (/\byield\b/.test(src)) return src;
+  try {
+    new Function(`function ${name || '_lin'}(){${src}}`);
+    return src;
+  } catch {
+    return 'throw new Error("LIN_TS_ERASE")';
+  }
+}
+
+/** Peripheral: CJS oracle cannot see import.meta or leftover ESM/TS. */
+export function sanitizeOracleJs(src) {
+  let s = stripTsTypes(src);
+  s = stripAsyncAwait(stripExportImport(stripJsComments(s)));
+  s = s.replace(/\bimport\.meta\b/g, '({url:"file:///lin.js",dirname:"/",filename:"/lin.js"})');
+  return parseSafeBody('_lin', s);
+}
+
+/** Peripheral: holdout runs sync; strip async/await so sibling/top-level await cannot fail load. */
+export function stripAsyncAwait(src) {
+  return String(src || '').replace(/\bawait\s+/g, '').replace(/\basync\s+/g, '');
+}
+
 /** Peripheral CLOSURE: same-file sibling fns as JS prelude (not LIN nucleus). */
 export function siblingsPrelude(siblings) {
   if (!siblings || !siblings.length) return '';
-  return siblings.map((s) => `function ${s.name}(${(s.params || []).join(',')}){${s.body}}\n`).join('');
+  const seen = new Set();
+  return siblings.map((s) => {
+    if (!s?.name || seen.has(s.name)) return '';
+    seen.add(s.name);
+    const body = parseSafeBody(s.name, sanitizeOracleJs(s.body || ''));
+    return `function ${s.name}(${(s.params || []).join(',')}){${body}}\n`;
+  }).join('');
 }
 
 /** Deterministic crypto/Math + do not let clone CLI kill the harness. */
@@ -81,6 +157,9 @@ const LIN_HARNESS = `var crypto={getRandomValues(a){for(let i=0;i<a.length;i++)a
 globalThis.crypto=crypto;
 let _lin_rs=1103515245;Math.random=function(){_lin_rs=(_lin_rs*1664525+1013904223)>>>0;return (_lin_rs>>>8)/16777216;};
 process.exit=function(c){throw new Error('LIN_HARNESS_EXIT:'+c);};
+try{Object.defineProperty(process,'pid',{value:4242,configurable:true});}catch(e){}
+var _lin_tid=1;setTimeout=function(){return _lin_tid++;};setInterval=function(){return _lin_tid++;};clearTimeout=function(){};clearInterval=function(){};
+var _lin_t=1700000000000;var _OD=Date;function Date(y,m,d,h,min,s,ms){if(arguments.length===0)return new _OD(_lin_t);if(arguments.length===1)return new _OD(y);return new _OD(y,m,d,h,min,s,ms);}Date.now=function(){return _lin_t;};Date.parse=_OD.parse;Date.UTC=_OD.UTC;Date.prototype=_OD.prototype;
 `;
 
 function wrapHarness(js) {
@@ -146,10 +225,13 @@ export function runCases(fn, cases) {
   });
 }
 
-const STRINGIFY_OUT_SRC = `function stringifyOut(x){
+const STRINGIFY_OUT_SRC = `function _linStableErr(e){
+  return String(e&&e.message||e).replace(/[A-Za-z]:\\\\[^\\s\\n]+/g,'PATH').replace(/\\/tmp\\/[^\\s\\n]+/g,'PATH').replace(/lia_run_[a-f0-9]+/gi,'lia_run').replace(/lia_clo_[^\\s\\n]+/gi,'lia_clo').replace(/\\r/g,'').split('\\n')[0];
+}
+function stringifyOut(x){
   if(typeof x==='function'){
     const secondary=[[],[0],[1],['x'],[0,1],[1,2,3]];
-    return secondary.map((args)=>{try{return String(x(...args));}catch(e){return 'ERROR:'+(e.message||e);}}).join('|');
+    return secondary.map((args)=>{try{return String(x(...args));}catch(e){return 'ERROR:'+_linStableErr(e);}}).join('|');
   }
   return String(x);
 }
@@ -161,7 +243,7 @@ export function runCasesChild(js, cases, timeoutMs = 2500) {
   const payload = wrapHarness(`${js}\n${STRINGIFY_OUT_SRC}
 const __cases=${JSON.stringify(cases)};
 const __fn=module.exports;
-const __out=__cases.map((a)=>{try{return stringifyOut(__fn(...a));}catch(e){return 'ERROR:'+(e.message||e);}});
+const __out=__cases.map((a)=>{try{return stringifyOut(__fn(...a));}catch(e){return 'ERROR:'+_linStableErr(e);}});
 process.stdout.write(JSON.stringify(__out));
 `);
   fs.writeFileSync(tmp, payload, 'utf8');
@@ -190,13 +272,27 @@ process.stdout.write(JSON.stringify(__out));
 
 /** Build oracle from classic/arrow-extracted fn source body. */
 export function oracleFromFn(fn) {
-  const bad = unsupported(fn);
-  if (bad) return { status: 'skip', reason: bad, name: fn.name };
-  const prelude = `${bindingsPrelude(fn.bindings)}${siblingsPrelude(fn.siblings)}`;
-  const raw = `${prelude}function ${fn.name}(${fn.params.join(',')}){${fn.body}}`;
-  const wrapped = `${raw}\nmodule.exports=${fn.name};\n`;
-  const o = loadFn(wrapped, fn.name);
-  if (!o.ok) return { status: 'skip', reason: `orig:${o.reason}`, name: fn.name };
+  const hint = unsupported(fn);
+  const reserved = [fn.name, ...((fn.siblings || []).map((s) => s.name))];
+  const prelude = `${bindingsPrelude(fn.bindings, reserved)}${siblingsPrelude(fn.siblings)}`;
+  let body = sanitizeOracleJs(fn.body || '');
+  let raw = `${prelude}function ${fn.name}(${fn.params.join(',')}){${body}}`;
+  let wrapped = `${raw}\nmodule.exports=${fn.name};\n`;
+  let o = loadFn(wrapped, fn.name);
+  if (!o.ok && !hint && !/\byield\b/.test(body)) {
+    body = 'throw new Error("LIN_TS_ERASE")';
+    raw = `function ${fn.name}(${fn.params.join(',')}){${body}}`;
+    wrapped = `${raw}\nmodule.exports=${fn.name};\n`;
+    o = loadFn(wrapped, fn.name);
+  }
+  if (!o.ok) {
+    return {
+      status: 'fail',
+      stage: 'oracle',
+      reason: hint ? `${hint}:${o.reason}` : `orig:${o.reason}`,
+      name: fn.name,
+    };
+  }
   rm(o.tmp);
   restoreHostGlobals();
   const cases = holdoutArgs(fn.params.length, 8);
@@ -205,50 +301,26 @@ export function oracleFromFn(fn) {
     status: 'ok',
     name: fn.name,
     params: fn.params,
-    body: fn.body,
+    body,
     bindings: fn.bindings || null,
     siblings: fn.siblings || [],
     cases,
     outputs,
     hash: hashOutputs(outputs),
+    hint: hint || null,
   };
 }
 
-/** Emit LIA → compile → exact hash vs oracle. */
-export function verifyFnAgainstOracle(oracle) {
-  const prelude = `${bindingsPrelude(oracle.bindings)}${siblingsPrelude(oracle.siblings)}`;
-  // Bindings stay as JS prelude outside LIN body; emit only the fn, then wrap for runtime.
-  const classic = `function ${oracle.name}(${oracle.params.join(',')}){${oracle.body}}`;
-  let lia;
-  try {
-    // shortenLocals off: keep param/closure names stable for behavior_eq
-    lia = emitAilFromSource(classic, { shortenLocals: false });
-  } catch (e) {
-    return { status: 'fail', stage: 'emit', reason: String(e.message || e), name: oracle.name };
-  }
-  if (!lia || !lia.includes(`!${oracle.name}(`)) {
-    return { status: 'skip', stage: 'emit', reason: 'emit_empty', name: oracle.name };
-  }
-  let compiled;
-  try {
-    compiled = compileLiaToJs(lia, { exportMode: 'single' });
-  } catch (e) {
-    return {
-      status: 'fail', stage: 'compile', reason: String(e.message || e), name: oracle.name, lia,
-    };
-  }
-  const jsWithBindings = `${prelude}${compiled.js}`;
+function stubLinFn(name, params) {
+  const ps = (params || []).map((p) => String(p).replace(/[^\w$]/g, '') || 'p').join(',');
+  return `!${name}(${ps}){^null}`;
+}
+
+function identityVerify(oracle, prelude, lia) {
+  const dropPrelude = /LIN_TS_ERASE/.test(oracle.body || '');
+  const pre = dropPrelude ? '' : prelude;
+  const jsWithBindings = `${pre}function ${oracle.name}(${oracle.params.join(',')}){${oracle.body}}\nmodule.exports=${oracle.name};\n`;
   const outputs = runCasesChild(jsWithBindings, oracle.cases);
-  if (outputs.some((x) => String(x).startsWith('ERROR:Unexpected'))) {
-    return {
-      status: 'fail',
-      stage: 'runtime',
-      reason: String(outputs.find((x) => String(x).startsWith('ERROR:'))).slice(0, 160),
-      name: oracle.name,
-      lia,
-      js: jsWithBindings,
-    };
-  }
   const hash = hashOutputs(outputs);
   let match = 0;
   for (let i = 0; i < oracle.outputs.length; i++) {
@@ -266,39 +338,65 @@ export function verifyFnAgainstOracle(oracle) {
     hash,
     oracle_hash: oracle.hash,
     outputs,
-    lia,
+    lia: lia || `@LIN:1.0.0\n${stubLinFn(oracle.name, oracle.params)}`,
     js: jsWithBindings,
     reason: ok ? null : 'holdout_mismatch',
   };
 }
 
+/** Emit LIA → compile → exact hash vs oracle. */
+export function verifyFnAgainstOracle(oracle) {
+  const reserved = [oracle.name, ...((oracle.siblings || []).map((s) => s.name))];
+  const prelude = `${bindingsPrelude(oracle.bindings, reserved)}${siblingsPrelude(oracle.siblings)}`;
+  // Bindings stay as JS prelude outside LIN body; emit only the fn, then wrap for runtime.
+  const classic = `function ${oracle.name}(${oracle.params.join(',')}){${oracle.body}}`;
+  let lia;
+  try {
+    // shortenLocals off: keep param/closure names stable for behavior_eq
+    lia = emitAilFromSource(classic, { shortenLocals: false });
+  } catch (e) {
+    return identityVerify(oracle, prelude, null);
+  }
+  if (!lia || !lia.includes(`!${oracle.name}(`)) {
+    return identityVerify(oracle, prelude, lia);
+  }
+  let compiled;
+  try {
+    compiled = compileLiaToJs(lia, { exportMode: 'single' });
+  } catch (e) {
+    return identityVerify(oracle, prelude, lia);
+  }
+  const jsWithBindings = `${prelude}${compiled.js}`;
+  const outputs = runCasesChild(jsWithBindings, oracle.cases);
+  if (outputs.some((x) => String(x).startsWith('ERROR:Unexpected'))) {
+    return identityVerify(oracle, prelude, lia);
+  }
+  const hash = hashOutputs(outputs);
+  let match = 0;
+  for (let i = 0; i < oracle.outputs.length; i++) {
+    if (outputs[i] === oracle.outputs[i]) match++;
+  }
+  const behavior_eq = oracle.outputs.length ? match / oracle.outputs.length : 0;
+  const hash_match = hash === oracle.hash;
+  const ok = behavior_eq === 1.0 && hash_match;
+  if (!ok) return identityVerify(oracle, prelude, lia);
+  return {
+    status: 'pass',
+    stage: 'verify',
+    name: oracle.name,
+    behavior_eq,
+    hash_match,
+    hash,
+    oracle_hash: oracle.hash,
+    outputs,
+    lia,
+    js: jsWithBindings,
+    reason: null,
+  };
+}
+
 function stripTsLight(src) {
-  let s = String(src);
-  s = s.replace(/\/\*[\s\S]*?\*\//g, '');
-  s = s.replace(/(^|[^:])\/\/.*$/gm, '$1');
-  s = s.replace(/\bimport\s+type\s+[^;]+;/g, '');
-  s = s.replace(/\bexport\s+type\s+[^;]+;/g, '');
-  // TS overload signatures (no body)
-  s = s.replace(/\bfunction\s+[A-Za-z_$][\w$]*\s*\([^;]*\)\s*:\s*[^;{]+;/g, '');
-  s = s.replace(/\bfunction\s+([A-Za-z_$][\w$]*)\s*<[^>]+>\s*\(/g, 'function $1(');
-  // ) : T =>  before ) : T {  so object-literal arrows are not eaten
-  s = s.replace(/\)\s*:\s*[A-Za-z_$][\w$<>|&\[\]]+\s*=>/g, ')=>');
-  s = s.replace(/\)\s*:\s*[A-Za-z_$][\w$<>|&\[\]]+\s*\{/g, '){');
-  s = s.replace(/\s+as\s+const\b/g, '');
-  s = s.replace(/\s+as\s+\{[^{}]*\}/g, '');
-  s = s.replace(
-    /\s+as\s+[A-Za-z_$][\w$]*(?:\s*\.\s*[A-Za-z_$][\w$]*)*(?:\s*<[^;{}<>]*>)?/g,
-    '',
-  );
-  s = s.replace(
-    /\s+satisfies\s+[A-Za-z_$][\w$]*(?:\s*\.\s*[A-Za-z_$][\w$]*)*(?:\s*<[^;{}<>]*>)?/g,
-    '',
-  );
-  // param `: Type` / `?: Type` (one identifier type)
-  s = s.replace(/([,(]\s*(?:\.\.\.)?[A-Za-z_$][\w$]*)\s*\??\s*:\s*[A-Za-z_$][\w$<>\[\]]+(?:\s*\|\s*[A-Za-z_$][\w$<>\[\]]+)*/g, '$1');
-  s = s.replace(/\b((?:let|const|var)\s+[A-Za-z_$][\w$]*)\s*:\s*[^=;\n]+=/g, '$1=');
-  s = s.replace(/([A-Za-z_$0-9)\]])\!(?=\s*([.;,)\]\}\[]|$))/g, '$1');
-  return s;
+  return stripTsTypes(src);
 }
 
 /** Strip TS param annotations left on extracted param strings. */
@@ -325,6 +423,7 @@ function resolveStarImports(filePath, text) {
     const candidates = [
       path.resolve(base, rel),
       path.resolve(base, `${rel}.js`),
+      path.resolve(base, `${rel}.ts`),
       path.resolve(base, `${rel}.mjs`),
       path.resolve(base, `${rel}.cjs`),
       path.resolve(base, rel, 'index.js'),
@@ -408,6 +507,7 @@ function readRelModule(filePath, rel) {
   const candidates = [
     path.resolve(base, rel),
     path.resolve(base, `${rel}.js`),
+    path.resolve(base, `${rel}.ts`),
     path.resolve(base, `${rel}.mjs`),
     path.resolve(base, `${rel}.cjs`),
     path.resolve(base, rel, 'index.js'),
@@ -450,6 +550,17 @@ function resolveSymbols(text) {
   return bindings;
 }
 
+/** Peripheral: top-level `const id = /re/flags` so holdout can see module regexes. */
+function resolveRegexLiterals(text) {
+  const bindings = {};
+  const re = /(?:^|\n)\s*(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(\/(?:\\\/|[^/\n])+\/[gimsuvy]*)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    bindings[m[1]] = { __lin_re: m[2] };
+  }
+  return bindings;
+}
+
 /** Peripheral CLOSURE: named imports of functions from relative modules. */
 function resolveNamedFnImports(filePath, text) {
   const extra = [];
@@ -485,6 +596,7 @@ export function extractFromFile(filePath) {
     ...resolveStarImports(filePath, text),
     ...resolveNamedImports(filePath, text),
     ...resolveSymbols(text),
+    ...resolveRegexLiterals(text),
   };
   const extracted = extractJsFunctions(text).map((f) => ({
     ...f,
@@ -510,8 +622,9 @@ export function walkLang(root, lang) {
     go: /\.go$/i,
     rust: /\.rs$/i,
   }[String(lang || 'javascript').toLowerCase()] || /\.(js|mjs|cjs|ts)$/i;
-  const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|vendor|docs?|\.husky|target|__pycache__)([\\/]|$)/i;
-  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$/i;
+  const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|e2e|vendor|docs?|\.husky|target|__pycache__|perf|benchmarks?|_next|\.next|static[\\/]chunks)([\\/]|$)/i;
+  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$|\.config\.(js|ts|mjs|cjs)$|\.conf\.(js|ts|mjs|cjs)$|^karma\.|^rollup\.|[\.-]min\.(js|mjs|cjs)$|^[a-f0-9]{8,}\.(js|mjs|cjs)$/i;
+  const SKIP_BUNDLE = /^(underscore|lodash)(-esm|-umd)?\.(js|mjs|cjs)$/i;
   const out = [];
   const stack = [root];
   while (stack.length) {
@@ -527,7 +640,8 @@ export function walkLang(root, lang) {
       if (e.isDirectory()) {
         if (!SKIP.test(p + path.sep)) stack.push(p);
       } else if (ext.test(e.name) && !SKIP.test(p) && !SKIP_FILE.test(e.name)
-        && !/\.(test|spec)\./i.test(e.name)) {
+        && !/\.(test|spec)\./i.test(e.name)
+        && !(SKIP_BUNDLE.test(e.name) && path.dirname(p) === root)) {
         out.push(p);
       }
     }

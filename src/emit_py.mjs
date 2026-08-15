@@ -2,8 +2,9 @@
  * LIA → Python emitter.
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase } from './emit_shared.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, parseParamList, collectFreeHostIds, emitFreeHostDecls, safeEmitId, emitNameMap } from './emit_shared.mjs';
+import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '    '.repeat(indent);
@@ -11,7 +12,12 @@ function emitStmts(stmts, indent) {
   for (const st of stmts) {
     if (st.type === 'assign') {
       const rhs = rewriteExpr(st.expr, 'py');
-      if (st.op === '=') lines.push(`${pad}${st.id} = ${rhs}`);
+      if (String(st.id).includes('.') || /\[[^\]]+\]/.test(String(st.id))) {
+        const idx = String(st.id).match(/^([A-Za-z_$][\w$]*)\[(.+)\]$/);
+        const obj = idx ? idx[1] : st.id.slice(0, String(st.id).indexOf('.'));
+        const key = idx ? rewriteExpr(idx[2], 'py') : JSON.stringify(st.id.slice(String(st.id).indexOf('.') + 1));
+        lines.push(`${pad}_lia_set(${obj}, ${key}, ${rhs})`);
+      } else if (st.op === '=') lines.push(`${pad}${st.id} = ${rhs}`);
       else if (st.op === '|=') lines.push(`${pad}${st.id} |= ${rhs}`);
       else if (st.op === '+=') lines.push(`${pad}${st.id} += ${rhs}`);
       else if (st.op === '-=') lines.push(`${pad}${st.id} -= ${rhs}`);
@@ -20,8 +26,11 @@ function emitStmts(stmts, indent) {
       else lines.push(`${pad}${st.id} = ${st.id} ${st.op[0]} (${rhs})`);
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'py')}`);
+    } else if (st.type === 'throw') {
+      lines.push(emitThrowLine(st.expr, 'py', pad, rewriteExpr));
     } else if (st.type === 'expr') {
-      lines.push(`${pad}${rewriteExpr(st.expr, 'py')}`);
+      if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'py', pad, rewriteExpr));
+      else lines.push(`${pad}${rewriteExpr(st.expr, 'py')}`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if ${rewriteExpr(st.cond, 'py')}:`);
       const thenL = emitStmts(st.then, indent + 1);
@@ -69,6 +78,8 @@ export function emitPy(liaText, opts = {}) {
     '    if isinstance(x, str): return \'string\'',
     '    if callable(x): return \'function\'',
     "    return 'object'",
+    'def _lia_instanceof(x):',
+    '    return False',
     'def _lia_isfinite(x):',
     '    try:',
     "        return x == x and abs(float(x)) != float('inf')",
@@ -79,28 +90,63 @@ export function emitPy(liaText, opts = {}) {
     '        return x != x',
     '    except Exception:',
     '        return True',
+    'def _lia_abs(x):',
+    '    try: return abs(x)',
+    '    except Exception: return 0',
+    'def _lia_round(x):',
+    '    try: return round(x)',
+    '    except Exception: return 0',
+    'def _lia_str(x):',
+    '    return str(x)',
+    'def _lia_num(x):',
+    '    try: return float(x)',
+    '    except Exception: return 0',
+    'def _lia_or(a, b):',
+    '    return b if a is None or a == "" or a is False else a',
+    'def _lia_get(o, k):',
+    '    if o is None: return None',
+    '    if isinstance(o, dict): return o.get(k)',
+    '    return getattr(o, k, None)',
+    'def _lia_set(o, k, v):',
+    '    if isinstance(o, dict):',
+    '        o[k] = v',
+    '        return v',
+    '    try: setattr(o, str(k).replace(".", "_"), v)',
+    '    except Exception: pass',
+    '    return v',
+    'def _lia_re_exec(s):',
+    '    return None',
+    'def _lia_obj(*_a, **_k):',
+    '    return {}',
+    'def _lia_includes(s, x):',
+    '    return str(x) in str(s)',
+    'def _lia_lower(x):',
+    '    return str(x).lower()',
   ];
-  if (prog.consts) {
+  const fileHosty = opts.stubRuntime !== false;
+  if (prog.consts && !fileHosty) {
     parts.push(`K = {${Object.entries(prog.consts).map(([k, v]) => `${JSON.stringify(k)}: ${v}`).join(', ')}}`);
+    for (const [k, v] of Object.entries(prog.consts)) parts.push(`${k} = ${v}`);
   }
+  const aliases = emitNameMap(prog.fns, snakeCase);
   for (const fn of prog.fns) {
-    const name = snakeCase(fn.name);
-    const params = fn.params
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
-    if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
+    const name = aliases[fn.name];
+    const { names: params, sigPy } = parseParamList(fn.params);
+    if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(`def ${name}(*_args, **_kwargs):\n    raise NotImplementedError("LIA_EMIT_PY: JS-runtime-only (${fn.name})")`);
       continue;
     }
-    const stmts = parseStmts(fn.body);
+    const stmts = tryParseStmts(rewriteSiblingCalls(fn.body, aliases)) || tryParseStmts(fn.body);
+    if (!stmts) {
+      parts.push(`def ${name}(*_args, **_kwargs):\n    raise NotImplementedError("LIA_EMIT_PY: JS-runtime-only (${fn.name})")`);
+      continue;
+    }
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const body = [];
-    // Python needs locals assigned before use; first assign handles it
-    void locals;
+    body.push(...emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'py'));
     body.push(...emitStmts(stmts, 1));
     if (!body.length) body.push('    pass');
-    parts.push(`def ${name}(${params.join(', ')}):\n${body.join('\n')}`);
+    parts.push(`def ${name}(${sigPy.join(', ')}):\n${body.join('\n')}`);
   }
   const ex = (prog.exports.length ? prog.exports : prog.fns.map((f) => f.name)).map(snakeCase);
   parts.push(`\n__all__ = [${ex.map((n) => JSON.stringify(n)).join(', ')}]`);

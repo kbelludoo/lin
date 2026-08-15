@@ -1,6 +1,7 @@
 /**
- * ALWAYS_INSTALL_MISSING for LIN multi-emit (js/ts/py/go/rust).
- * SKIP only after honest install+retry fail. Never logs secrets.
+ * ALWAYS_INSTALL_MISSING for LIN real nucleus (js/ts/py/go/rust/c/java).
+ * C SKIP only after honest gcc install+retry fail. Never logs secrets.
+ * Stub langs are experimental and are not installed here.
  */
 import fs from 'node:fs';
 import os from 'node:os';
@@ -14,6 +15,19 @@ const WIN = process.platform === 'win32';
 function whichEnvPath() {
   const extra = [];
   const home = os.homedir();
+  extra.push(path.join(home, 'scoop', 'shims'));
+  extra.push(path.join(home, 'scoop', 'apps', 'gcc', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'elixir', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'erlang', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'crystal', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'lua', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'kotlin', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'dotnet-sdk', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'julia', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'scala', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'zig', 'current'));
+  extra.push(path.join(home, 'scoop', 'apps', 'nim', 'current', 'bin'));
+  extra.push(path.join(home, 'scoop', 'apps', 'nasm', 'current'));
   extra.push(path.join(home, '.cargo', 'bin'));
   extra.push(path.join(home, 'go', 'bin'));
   extra.push(path.join(process.env.LOCALAPPDATA || '', 'Programs', 'Python', 'Python312'));
@@ -21,6 +35,10 @@ function whichEnvPath() {
   extra.push(path.join(process.env.ProgramFiles || 'C:\\Program Files', 'Go', 'bin'));
   extra.push(path.join(process.env['ProgramFiles(x86)'] || '', 'Go', 'bin'));
   extra.push(path.join(process.env.APPDATA || '', 'npm'));
+  extra.push('C:\\mingw64\\bin');
+  extra.push(path.join(process.env.ProgramFiles || 'C:\\Program Files', 'mingw64', 'bin'));
+  extra.push(path.join(process.env.LOCALAPPDATA || '', 'Programs', 'WinLibs', 'mingw64', 'bin'));
+  extra.push(path.join(process.env.ProgramFiles || 'C:\\Program Files', 'Microsoft', 'jdk-21.0.6-hotspot', 'bin'));
   const cur = process.env.PATH || '';
   const add = extra.filter((p) => p && fs.existsSync(p) && !cur.toLowerCase().includes(p.toLowerCase()));
   if (add.length) process.env.PATH = `${add.join(path.delimiter)}${path.delimiter}${cur}`;
@@ -73,6 +91,40 @@ function hasRust() {
 
 function hasNode() {
   return hasCmd('node');
+}
+
+function hasGcc() {
+  return hasCmd('gcc') || hasCmd('cc');
+}
+
+function hasJavac() {
+  return hasCmd('javac');
+}
+
+function installGcc() {
+  if (WIN) {
+    let r = wingetInstall('BrechtSanders.WinLibs.POSIX.UCRT');
+    whichEnvPath();
+    if (hasGcc()) return { ok: true, tries: [r] };
+    r = chocoInstall('mingw');
+    whichEnvPath();
+    return { ok: hasGcc(), tries: [r] };
+  }
+  const r = run('apt-get', ['install', '-y', 'gcc'], { timeout: 180_000 });
+  return { ok: hasGcc(), tries: [{ ok: r.status === 0, cmd: 'apt-get install -y gcc', detail: r.out }] };
+}
+
+function installJavac() {
+  if (WIN) {
+    let r = wingetInstall('Microsoft.OpenJDK.21');
+    whichEnvPath();
+    if (hasJavac()) return { ok: true, tries: [r] };
+    r = chocoInstall('temurin21');
+    whichEnvPath();
+    return { ok: hasJavac(), tries: [r] };
+  }
+  const r = run('apt-get', ['install', '-y', 'openjdk-21-jdk-headless'], { timeout: 180_000 });
+  return { ok: hasJavac(), tries: [{ ok: r.status === 0, cmd: 'apt-get install -y openjdk-21-jdk-headless', detail: r.out }] };
 }
 
 function wingetInstall(id) {
@@ -211,6 +263,8 @@ const CHECKERS = {
   python: hasPython,
   go: hasGo,
   rustc: hasRust,
+  gcc: hasGcc,
+  javac: hasJavac,
 };
 
 const INSTALLERS = {
@@ -219,6 +273,8 @@ const INSTALLERS = {
   python: installPython,
   go: installGo,
   rustc: installRustup,
+  gcc: installGcc,
+  javac: installJavac,
 };
 
 /**
@@ -230,7 +286,7 @@ export function ensureToolchains(opts = {}) {
   const present = [];
   const installed = [];
   const failed = [];
-  for (const name of ['node', 'tsc', 'python', 'go', 'rustc']) {
+  for (const name of ['node', 'tsc', 'python', 'go', 'rustc', 'gcc', 'javac']) {
     if (CHECKERS[name]()) {
       present.push(name);
       continue;

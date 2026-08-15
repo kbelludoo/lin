@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 /**
  * LIN CLI — lingua ia nativa (canonical). Aliases: lia, ail.
- * Usage: lin compile file.lin|.lia --target js|ts|py|go|rust [-o out]
+ * Usage: lin compile file.lin|.lia --target ts|js|py|go|rust|c|java [-o out]
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { emitAil, emitAilFile, estTokens, LIN_HEADER } from '../src/emitter.mjs';
 import { parseLia } from '../src/compiler.mjs';
-import { compileLiaToTargetFile, TARGETS } from '../src/multi_emit.mjs';
+import { compileLiaToTargetFile, REAL_TARGETS, DEFAULT_EMIT_TARGET } from '../src/multi_emit.mjs';
 import { compileLiaFile } from '../src/compiler.mjs';
+import { defaultEmitTarget } from '../scripts/clone_lin_full_repo_gate.mjs';
 import { parseRulel, validateComms } from '../src/rulel_parser.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -19,8 +20,8 @@ function usage() {
 
 Commands:
   emit <file.js|PROJECT.dicel> [-o out.lin]     JS/legacy L0 → LIN
-  compile <file.lin|file.lia|file.ail> --target <t> [-o out]
-       targets: ${TARGETS.join('|')} (default js)
+  compile <file.lin|file.lia|file.ail> [--target <t>] [-o out]
+       targets: ${REAL_TARGETS.join('|')} (default ${DEFAULT_EMIT_TARGET})
   check <file.lin|file.lia|file.ail>            parse + list fns
   clone-lin [--cycles N] [--stop-file path]     clone→rewrite→improve→publish
   clone-lia ...                                 alias → clone-lin
@@ -76,7 +77,7 @@ if (cmd === 'compile') {
   argv = outT.args;
   const tgt = takeFlag(argv, '--target');
   argv = tgt.args;
-  let target = tgt.value || 'js';
+  let target = tgt.value || defaultEmitTarget() || DEFAULT_EMIT_TARGET;
   argv = argv.filter((a) => {
     if (a.startsWith('--target=')) {
       target = a.slice('--target='.length);
@@ -87,15 +88,15 @@ if (cmd === 'compile') {
   const file = argv[0];
   if (!file) usage();
   target = String(target).toLowerCase();
-  if (!TARGETS.includes(target)) {
-    console.error(`unsupported target ${target}; want ${TARGETS.join('|')}`);
+  if (!REAL_TARGETS.includes(target)) {
+    console.error(`unsupported target ${target}; want ${REAL_TARGETS.join('|')} (default ${DEFAULT_EMIT_TARGET})`);
     process.exit(2);
   }
   if (target === 'js' && !outT.value) {
     const r = compileLiaFile(file, null);
     console.log(JSON.stringify({ out: r.outPath, target, fns: r.program.fns.map((f) => f.name) }, null, 2));
   } else {
-    const r = compileLiaToTargetFile(file, outT.value, { target });
+    const r = compileLiaToTargetFile(file, outT.value, { target, stubRuntime: false, withMain: false });
     console.log(
       JSON.stringify({ out: r.outPath, target, fns: r.program.fns.map((f) => f.name) }, null, 2),
     );

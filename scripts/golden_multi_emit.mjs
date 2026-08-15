@@ -30,21 +30,9 @@ function checkPairs(fn) {
   assert.equal(fn('', ''), true);
 }
 
-// --- JS ---
-{
-  const lia = fs.readFileSync(src, 'utf8');
-  const { js } = compileLiaToJs(lia, { exportMode: 'single' });
-  const tmp = path.join(outDir, 'safe-compare.cjs');
-  fs.writeFileSync(tmp, js, 'utf8');
-  const fn = require(tmp);
-  checkPairs(fn);
-  report.push({ target: 'js', emit: 'ok', run: 'ok', detail: 'node require behavior' });
-}
-
-// --- TS (emit + strip-run via node by compiling conceptually as JS-compatible) ---
+// --- TS (prefer-ts default; type-strip + node behavior) ---
 {
   const r = compileLiaToTargetFile(src, path.join(outDir, 'safe-compare.ts'), { target: 'ts' });
-  // Behavior: transpile lightly — strip types and run as CJS
   let code = r.code
     .replace(/^export /gm, '')
     .replace(/: unknown/g, '')
@@ -57,6 +45,17 @@ function checkPairs(fn) {
   const fn = require(tmp);
   checkPairs(fn);
   report.push({ target: 'ts', emit: 'ok', run: 'ok', detail: 'type-strip + node behavior' });
+}
+
+// --- JS ---
+{
+  const lia = fs.readFileSync(src, 'utf8');
+  const { js } = compileLiaToJs(lia, { exportMode: 'single' });
+  const tmp = path.join(outDir, 'safe-compare.cjs');
+  fs.writeFileSync(tmp, js, 'utf8');
+  const fn = require(tmp);
+  checkPairs(fn);
+  report.push({ target: 'js', emit: 'ok', run: 'ok', detail: 'node require behavior' });
 }
 
 // --- Python ---
