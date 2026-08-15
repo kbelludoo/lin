@@ -1,0 +1,49 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_ain_lb_clr
+~G{?=if #=for ^=ret :else}
+!clrId(){^'CLR-001'}
+!clrName(){^'context_loss_recovery'}
+!side(){^'LIN_only'}
+!mkPhase(i,name,gets,not){^({i:i,name:name,gets:gets,not:not})}
+!phase0(){^mkPhase(0,'build_payments','lin_artifacts_user_balance_transfer_audit_perms_logs','not_py_rust_agents')}
+!phase1(){^mkPhase(1,'wipe_chat','repo_artifacts_plus_request_intl_fx_country_limits','not_chat_history')}
+!phase2(){^mkPhase(2,'metrics_record','accept_deny_causal_plus_file_counts','not_invented_scores')}
+!phaseCount(){^3}
+!phaseAt(i){?(i==0){^phase0()};?(i==1){^phase1()};?(i==2){^phase2()};^null}
+!advReset(){^'old_commit_plus_broken_new; fix_via_intent_constraints_effects_proofs_EXISTING_semantic_hash; not_chat'}
+!metric0(){^'architecture_discovery_correct_files_over_total'}
+!metric1(){^'semantic_violation_Storage.write_without_io_DENIED_causal'}
+!metric2(){^'context_compression_keeps_module_ref_semantic_hash_effects_contracts_agent_ir'}
+!metric3(){^'context_window_curve_8k_16k_32k_128k_SPEC_ONLY'}
+!metricCount(){^4}
+!metricAt(i){?(i==0){^metric0()};?(i==1){^metric1()};?(i==2){^metric2()};?(i==3){^metric3()};^''}
+!windowSpec(){^'8k|16k|32k|128k'}
+!windowMeasured(){^0}
+!inventScore(){^0}
+!fakeCurve(){^0}
+!fakeAgents(){^0}
+!redefineHash(){^0}
+!hashNucleus(){^'EXISTING_semantic_hash'}
+!keepFields(){^'module_ref|semantic_hash|effects|contracts|agent_ir'}
+!expectedModules(){^'User|Balance|Transfer|Audit|Perms|Logs'}
+!expectedCount(){^6}
+!approvalRule(){^'transfer_gt_10000_needs_approval'}
+!newRequest(){^'international_payments_plus_fx_plus_country_limits'}
+!wipeLeaves(){^'agent_ir_plus_contracts'}
+!chatAfterWipe(){^0}
+!cli(){^'lin agent-ir'}
+!hyp(){^'H_CLR001: after wipe, Agent_IR+contracts+allowed_effects suffice for lin agent-ir to ACCEPT add_international_payments and DENY Storage.write without io; ACCEPT on deny fixture falsifies H; no win_pct until real models'}
+!falsifyIf(){^'deny_fixture_status_ACCEPT OR accept_fixture_status_not_ACCEPT'}
+!ainLbSpec(){^'spec/AIN-LB.rulel'}
+!ainLbHarness(){^'benchmarks/ain-lb'}
+!wireExisting(){^1}
+!fixtureDir(){^'tests/ain_lb'}
+!runnerPath(){^'tests/ain_lb/runner.mjs'}
+!ingestPath(){^'src/lin_agent_ir_ingest.lin'}
+!priorityPath(){^'src/lin_priority.lin'}
+!phase0Dir(){^'tests/ain_lb/fixtures/phase0'}
+!wipeDir(){^'tests/ain_lb/fixtures/wipe'}
+!advDir(){^'tests/ain_lb/fixtures/adversarial'}
+!acceptFixture(){^'tests/ain_lb/fixtures/wipe/add_international_payments.json'}
+!denyFixture(){^'tests/ain_lb/fixtures/wipe/deny_write_no_io.json'}
+=ex{clrId,clrName,side,mkPhase,phase0,phase1,phase2,phaseCount,phaseAt,advReset,metric0,metric1,metric2,metric3,metricCount,metricAt,windowSpec,windowMeasured,inventScore,fakeCurve,fakeAgents,redefineHash,hashNucleus,keepFields,expectedModules,expectedCount,approvalRule,newRequest,wipeLeaves,chatAfterWipe,cli,hyp,falsifyIf,ainLbSpec,ainLbHarness,wireExisting,fixtureDir,runnerPath,ingestPath,priorityPath,phase0Dir,wipeDir,advDir,acceptFixture,denyFixture}

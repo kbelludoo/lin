@@ -21,21 +21,30 @@ try { fs.rmSync(priTmp, { force: true }); } catch { /* ignore */ }
 
 assert.equal(pri.priCount(), 6);
 assert.equal(pri.p0().name, 'agent_ir');
-assert.equal(pri.p0().status, 'SLICE1');
-assert.equal(pri.p1().status, 'KEEP');
-assert.equal(pri.p1().next, 'not_Lean');
-assert.equal(pri.p2().status, 'SLICE1');
-assert.equal(pri.p3().now, 'Storage.write_without_io_DENIED');
-assert.equal(pri.p4().now, 'module_ref_only_EXISTING_semantic_hash');
+assert.equal(pri.p0().status, 'SLICE1_DONE');
+assert.equal(pri.p0().next, 'ain_lb_clr_001');
+assert.equal(pri.p1().name, 'ain_lb_clr');
+assert.equal(pri.p1().status, 'CLR-001');
+assert.equal(pri.p1().lin_now, 'src/lin_ain_lb_clr.lin');
+assert.equal(pri.p2().name, 'real_models');
+assert.equal(pri.p2().status, 'WAIT');
+assert.equal(pri.p3().name, 'win_lose');
+assert.equal(pri.p4().name, 'm006');
+assert.equal(pri.p4().status, 'DEFER');
+assert.equal(pri.p4().next, 'not_Lean');
 assert.equal(pri.p5().status, 'KEEP');
 assert.equal(pri.sigilRequired(), 0);
 assert.equal(pri.buildLean(), 0);
 assert.equal(pri.redefineHash(), 0);
+assert.equal(pri.inventScore(), 0);
+assert.equal(pri.fakeAgents(), 0);
 assert.equal(pri.expandFailClosedLangs(), 0);
-assert.match(pri.pipeNow(), /Agent_IR_JSON/);
-assert.match(pri.pipeNot(), /not IA -> LIN_text -> parser/);
-assert.match(pri.decisiveExperiment(), /7lang_still_compiles/);
+assert.match(pri.pipeNow(), /CLR-001_LIN_harness/);
+assert.match(pri.pipeNot(), /not deep_M006_before_AIN_LB/);
+assert.match(pri.decisiveExperiment(), /DENY_write_without_io/);
+assert.match(pri.hypAinLb(), /H_CLR001/);
 assert.equal(pri.priById('P0').lin_now, 'src/lin_agent_ir_ingest.lin');
+assert.equal(pri.priById('P1').lin_now, 'src/lin_ain_lb_clr.lin');
 
 assert.equal(linPath(), 'src/lin_agent_ir_ingest.lin');
 

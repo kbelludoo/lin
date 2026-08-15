@@ -33,6 +33,7 @@ Commands:
   autonomy-status                               memory + gates snapshot
   agent-ir <file.json>                          JSON Agent IR → LIN validate (no sigils)
   ingest-ir <file.json>                         alias → agent-ir
+  ain-lb-clr                                    CLR-001 LIN-only harness (ACCEPT/DENIED)
   rulel-check <file.rulel>                      parse + validate RULEL/COMMS file
   version
 
@@ -165,6 +166,16 @@ if (cmd === 'agent-ir' || cmd === 'ingest-ir') {
   const result = ingestFile(file);
   console.log(JSON.stringify(result, null, 2));
   process.exit(result.ok ? 0 : 1);
+}
+
+if (cmd === 'ain-lb-clr' || cmd === 'ain_lb_clr') {
+  const { spawnSync } = await import('node:child_process');
+  const r = spawnSync(process.execPath, [path.join(__dirname, '..', 'tests', 'ain_lb', 'runner.mjs'), ...rest], {
+    cwd: path.join(__dirname, '..'),
+    encoding: 'utf8',
+    stdio: 'inherit',
+  });
+  process.exit(r.status ?? 1);
 }
 
 if (cmd === 'rulel-check') {
