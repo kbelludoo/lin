@@ -31,6 +31,8 @@ Commands:
        --clone-cycles N  cap clone retries (default 0=until queue_complete)
        --skip-clone      improve+evolve only
   autonomy-status                               memory + gates snapshot
+  agent-ir <file.json>                          JSON Agent IR → LIN validate (no sigils)
+  ingest-ir <file.json>                         alias → agent-ir
   rulel-check <file.rulel>                      parse + validate RULEL/COMMS file
   version
 
@@ -154,6 +156,15 @@ if (cmd === 'clone-lin' || cmd === 'clone_lin' || cmd === 'clone-lia' || cmd ===
     stdio: 'inherit',
   });
   process.exit(r.status ?? 1);
+}
+
+if (cmd === 'agent-ir' || cmd === 'ingest-ir') {
+  const file = rest[0];
+  if (!file) usage();
+  const { ingestFile } = await import('../src/lin_agent_ir_ingest_load.mjs');
+  const result = ingestFile(file);
+  console.log(JSON.stringify(result, null, 2));
+  process.exit(result.ok ? 0 : 1);
 }
 
 if (cmd === 'rulel-check') {

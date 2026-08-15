@@ -61,7 +61,7 @@
 !haveCount(){^7}
 !haveAt(i){?(i==0){^have0()};?(i==1){^have1()};?(i==2){^have2()};?(i==3){^have3()};?(i==4){^have4()};?(i==5){^have5()};?(i==6){^have6()};^null}
 !mkMiss(id,piece,why){^({id:id,piece:piece,why:why,have:0,invented_proofs:0})}
-!miss0(){^mkMiss('M1','intent_goal','S003 NEXT; intentShape exists; entity!goal later')}
+!miss0(){^mkMiss('M1','intent_goal','S003 SLICE1 json ingest; entity!goal later')}
 !miss1(){^mkMiss('M2','semantic_memory','M009 ledger!trauma!knowledge; not weight learning')}
 !miss2(){^mkMiss('M3','hypothesis','storage/lia_hypotheses; not neural activations')}
 !miss3(){^mkMiss('M4','evidence','link hypothesis to obligation+EXISTING_semantic_hash; not fake Lean')}
@@ -79,4 +79,6 @@
 !irNative(){^'intent->LIN_semantic_IR->code'}
 !notLegacyPipe(){^'not code->AST->IR'}
 !advantageHave(){^'AST!IR!mod!effects!proofs!fail_closed!content_hash'}
-=ex{mkLayer,layer0,layer1,layer2,layerCount,layerAt,mkAbs,abs0,abs1,abs2,abs3,abs4,abs5,absCount,absAt,openSpace,agreeAgentLangs,forbidShrink,intentRecord,agentLoop,absLine,absAllLines,agreeAiCriteria,agreeCompact,compactMustNotLoseInfo,aiPrimary,notNeuralNetInternals,redefineHash,copyLanguage,competeAs,bitcoinAnalogy,agentComplexityTest,aiCriteria,notHumanCriteria,mkStack,stack0,stack1,stack2,stack3,stackCount,stackAt,stackLine,humanIf,mkDecision,decisionShape,aiDecision,pipeline,pipeCount,pipeAt,mkHave,have0,have1,have2,have3,have4,have5,have6,haveCount,haveAt,mkMiss,miss0,miss1,miss2,miss3,missCount,missAt,careNot,semCompress,semRef,semRefAuth,memByHash,hashNucleusPath,incrState,incrStateShape,intentVsImpl,irNative,notLegacyPipe,advantageHave}
+!ingestPath(){^'src/lin_agent_ir_ingest.lin'}
+!priorityPath(){^'src/lin_priority.lin'}
+=ex{mkLayer,layer0,layer1,layer2,layerCount,layerAt,mkAbs,abs0,abs1,abs2,abs3,abs4,abs5,absCount,absAt,openSpace,agreeAgentLangs,forbidShrink,intentRecord,agentLoop,absLine,absAllLines,agreeAiCriteria,agreeCompact,compactMustNotLoseInfo,aiPrimary,notNeuralNetInternals,redefineHash,copyLanguage,competeAs,bitcoinAnalogy,agentComplexityTest,aiCriteria,notHumanCriteria,mkStack,stack0,stack1,stack2,stack3,stackCount,stackAt,stackLine,humanIf,mkDecision,decisionShape,aiDecision,pipeline,pipeCount,pipeAt,mkHave,have0,have1,have2,have3,have4,have5,have6,haveCount,haveAt,mkMiss,miss0,miss1,miss2,miss3,missCount,missAt,careNot,semCompress,semRef,semRefAuth,memByHash,hashNucleusPath,incrState,incrStateShape,intentVsImpl,irNative,notLegacyPipe,advantageHave,ingestPath,priorityPath}

@@ -132,5 +132,7 @@ assert.equal(ir.incrStateShape().project_model, 'HASH');
 assert.match(ir.irNative(), /intent->LIN_semantic_IR->code/);
 assert.match(ir.notLegacyPipe(), /not code->AST->IR/);
 assert.match(ir.advantageHave(), /content_hash/);
+assert.equal(ir.ingestPath(), 'src/lin_agent_ir_ingest.lin');
+assert.equal(ir.priorityPath(), 'src/lin_priority.lin');
 
 console.log('ok lin_suggest');

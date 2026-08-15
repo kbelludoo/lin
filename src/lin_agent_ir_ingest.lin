@@ -1,0 +1,19 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_agent_ir_ingest
+~G{?=if #=for ^=ret :else}
+!isBlank(v){?(v==null){^1};s=String(v);?(s==''||s=='undefined'||s=='null'){^1};^0}
+!isObj(v){?(v==null){^0};s=String(v);?(s=='[object Object]'){^1};^0}
+!isList(v){?(v==null){^0};?(v.join){^1};^0}
+!normList(v){?(isList(v)){^v};?(isBlank(v)){^[]};^([String(v)])}
+!listHas(list,name){arr=list||[];#(i=0;i<arr.length;i++){?(String(arr[i])==name){^1}};^0}
+!rejectMsg(field,missing,repairs){^('REJECTED AGENT_IR\nField: '+field+'\nMissing: '+missing+'\nrepairs: '+repairs)}
+!denyStorageMsg(){^('DENIED AGENT_IR\nNode: Storage.write\nMissing: io\nrepairs: add io to allowed_effects | remove Storage.write')}
+!mkReject(field,missing,repairs){^({ok:0,status:'REJECT',kind:'agent_ir',field:field,missing:missing,repairs:repairs,node:'',message:rejectMsg(field,missing,repairs),sigil_required:0,redefine:0})}
+!mkDeny(field,missing,repairs,node){^({ok:0,status:'DENIED',kind:'agent_ir',field:field,missing:missing,repairs:repairs,node:node,message:denyStorageMsg(),sigil_required:0,redefine:0})}
+!mkAccept(intent,target,constraints,allowed){^({ok:1,status:'ACCEPT',kind:'agent_ir',intent:intent,target:target,constraints:constraints,allowed_effects:allowed,module_ref:target,hash_nucleus:'EXISTING_semantic_hash',redefine:0,proof:'AGENT_IR_VALID',sigil_required:0,field:'',missing:'',repairs:'',node:'',message:'ACCEPT AGENT_IR'})}
+!hasStorageWrite(ir){?(ir==null){^0};?(String(ir.op)=='Storage.write'){^1};?(String(ir.requested_op)=='Storage.write'){^1};?(listHas(normList(ir.ops),'Storage.write')){^1};^0}
+!validateAgentIr(ir){?(isObj(ir)==0){^mkReject('root','object Agent IR','pass JSON object with intent target constraints allowed_effects | do not pass text LIN')};?(isBlank(ir.intent)){^mkReject('intent','non-empty intent','set intent to a non-empty string | do not omit intent')};?(isBlank(ir.target)){^mkReject('target','non-empty target','set target to a module name | do not omit target')};?(ir.constraints==null){^mkReject('constraints','constraints field','set constraints to a list | use [] if none')};?(ir.allowed_effects==null){^mkReject('allowed_effects','allowed_effects field','set allowed_effects to a list | use [] if none')};cons=normList(ir.constraints);effs=normList(ir.allowed_effects);?(hasStorageWrite(ir)){?(listHas(effs,'io')==0){^mkDeny('allowed_effects','io','add io to allowed_effects | remove Storage.write','Storage.write')}};^mkAccept(String(ir.intent),String(ir.target),cons,effs)}
+!ingestJson(text){?(isBlank(text)){^mkReject('json','non-empty JSON text','write a JSON Agent IR file | do not send empty')};ir=JSON.parse(String(text));^validateAgentIr(ir)}
+!sigilRequired(){^0}
+!hashNucleusPath(){^'nucleus semantic_hash UNTOUCHED'}
+=ex{isBlank,isObj,isList,normList,listHas,rejectMsg,denyStorageMsg,mkReject,mkDeny,mkAccept,hasStorageWrite,validateAgentIr,ingestJson,sigilRequired,hashNucleusPath}

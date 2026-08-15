@@ -1,0 +1,24 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_priority
+~G{?=if #=for ^=ret :else}
+!mkPri(id,name,status,now,next,lin_now){^({id:id,name:name,status:status,now:now,next:next,lin_now:lin_now,copy_language:0})}
+!p0(){^mkPri('P0','agent_ir','SLICE1','json_ingest_validate_emit_or_causal_reject','full_semantic_ir_to_verified_ir','src/lin_agent_ir_ingest.lin')}
+!p1(){^mkPri('P1','proof_obligations','KEEP','M006_div_slice1_INV_REFINEMENT_SOUND','not_Lean','src/lin_refine_div.lin')}
+!p2(){^mkPri('P2','causal_errors','SLICE1','agent_ir_reject_causal_plus_repairs','keep_refine_blockedMsg','src/lin_agent_ir_ingest.lin rejectMsg')}
+!p3(){^mkPri('P3','caps_effects_deny','SLICE1','Storage.write_without_io_DENIED','full_agent_capability_set','src/lin_agent_ir_ingest.lin denyStorageWrite')}
+!p4(){^mkPri('P4','semantic_memory','ENCODE','module_ref_only_EXISTING_semantic_hash','full_depends_invariants','src/lin_agent_ir.lin memByHash')}
+!p5(){^mkPri('P5','fail_closed','KEEP','js_node_check_already','not_expand_6_langs_this_pass','spec/LIN_EMIT_FAIL_CLOSED.rulel')}
+!priCount(){^6}
+!priAt(i){?(i==0){^p0()};?(i==1){^p1()};?(i==2){^p2()};?(i==3){^p3()};?(i==4){^p4()};?(i==5){^p5()};^null}
+!priById(id){s=String(id||'');#(i=0;i<6;i++){row=priAt(i);?(row&&row.id==s){^row}};^null}
+!priLine(row){?(row==null){^''};^('id='+row.id+' name='+row.name+' status='+row.status+' now='+row.now+' next='+row.next+' lin_now='+row.lin_now)}
+!priAllLines(){out='';#(i=0;i<6;i++){?(i>0){out=out+'\n'};out=out+priLine(priAt(i))};^out}
+!pipeNow(){^'IA -> Agent_IR_JSON -> validate -> accept_emit|causal_reject'}
+!pipeNot(){^'not IA -> LIN_text -> parser'}
+!sigilRequired(){^0}
+!buildLean(){^0}
+!redefineHash(){^0}
+!expandFailClosedLangs(){^0}
+!decisiveExperiment(){^'AI_changes_module -> LIN_accept_or_reject_with_proof -> 7lang_still_compiles'}
+!experimentNow(){^'P0_json_ingest_is_the_accept_reject_gate; 7lang_emit_unchanged'}
+=ex{mkPri,p0,p1,p2,p3,p4,p5,priCount,priAt,priById,priLine,priAllLines,pipeNow,pipeNot,sigilRequired,buildLean,redefineHash,expandFailClosedLangs,decisiveExperiment,experimentNow}
