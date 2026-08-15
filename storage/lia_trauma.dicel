@@ -471,3 +471,7 @@
 @E{t="2026-08-14T00:16:49.802Z" class=NEW_LANG corpus=clone-lin-ponytail targets=py,go,rust count=29 fix_target=emit_peripheral}
 
 @E{t="2026-08-14T00:16:49.806Z" class=HARVEST corpus=clone-lin-ponytail note="emit_peripheral:CLOSURE×2|positive_transfer:ok×10" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T18:40:10.985Z" class=HARVEST corpus=clone-lin-open-design note="observe:none_new×0|autogen=createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:COMPILE_OK_NO_ORACLE" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T18:40:44.014Z" class=HARVEST corpus=clone-lin-open-design note="observe:none_new×0|autogen=createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:STUB_NOT_PASS" fix_target=compiler_outside_nucleus}

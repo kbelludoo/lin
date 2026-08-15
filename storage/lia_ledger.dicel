@@ -644,3 +644,7 @@
 @E{t="2026-08-14T00:16:49.805Z" kind=improve_lin_from_clone slug=ponytail harvest="emit_peripheral:CLOSURE×2|positive_transfer:ok×10" candidate="CLONE_ponytail_mss76365.dicel" nucleus=untouched}
 
 @E{t="2026-08-14T00:16:49.815Z" kind=clone_lin status=PARTIAL_PASS slug=ponytail pass=10 fail=0 skip=2 suite_rate=0.8333 done=false published=false}
+
+@E{t="2026-08-15T18:40:10.983Z" kind=improve_lin_from_clone slug=open-design harvest="observe:none_new×0" autogen="createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:COMPILE_OK_NO_ORACLE" candidate="CLONE_open-design_msuq0uzc.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T18:40:44.012Z" kind=improve_lin_from_clone slug=open-design harvest="observe:none_new×0" autogen="createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:STUB_NOT_PASS" candidate="CLONE_open-design_msuq1kgt.rulel" nucleus=untouched}
