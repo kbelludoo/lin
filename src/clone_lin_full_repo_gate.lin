@@ -5,7 +5,7 @@
 !realNucleusLangs(){^(['ts','js','py','go','rust','c','java'])}
 !compileOrder(){^(['ts','js','py','go','rust','c','java'])}
 !gateRequiredLangs(){^(['ts','js','py','go','rust','java'])}
-!stubEmitLangs(){^(['cs','lua','elixir','crystal','kotlin','hcl','julia','scala','haskell','prolog','zig','nim','asm'])}
+!stubEmitLangs(){^(['cs','lua','elixir','crystal','kotlin','hcl','julia','scala','haskell','prolog','zig','nim','asm','ocaml'])}
 !formatStubIntel(){stubs=stubEmitLangs();names='';#(i=0;i<stubs.length;i++){?(i>0){names=names+','};names=names+stubs[i]};^('EXPERIMENTAL_NOT_PASS '+names+' no_toolchain_no_oracle')}
 !honestNucleusMulti(summary){langs=realNucleusLangs();out='';#(i=0;i<langs.length;i++){t=langs[i];s=(summary&&summary[t])||{PASS:0,SKIP:0,FAIL:0};?(i>0){out=out+' '};out=out+t+':P'+(s.PASS||0)+'/S'+(s.SKIP||0)+'/F'+(s.FAIL||0)};^out}
 !hasStubPassScore(text){s=String(text||'');stubs=stubEmitLangs();#(i=0;i<stubs.length;i++){?(s.indexOf(stubs[i]+':P')>=0){^true}};^false}

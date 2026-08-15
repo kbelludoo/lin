@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes, parseParamList, rewriteFnValues, safeEmitId, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, isBoolishId, inferTypes, parseParamList, rewriteFnValues, safeEmitId, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 import { isQualityFnSet, wantSafeCompareMain, formatQualityMain } from './emit_entry_main_load.mjs';
 
@@ -16,7 +16,8 @@ function emitStmts(stmts, indent, types, retType) {
     } else if (st.type === 'return') {
       const e = rewriteExpr(st.expr, 'rust');
       if (retType === 'String') {
-        if (/^\(?\s*\[/.test(String(st.expr || '').trim()) || /^\(?\s*\[/.test(String(e || '').trim())) {
+        if (/_lia_arr\(/.test(e)) lines.push(`${pad}return ${e};`);
+        else if (/^\(?\s*\[/.test(String(st.expr || '').trim()) || /^\(?\s*\[/.test(String(e || '').trim())) {
           lines.push(`${pad}return format!("{:?}", ${e});`);
         } else {
           lines.push(`${pad}return _lia_val(${e});`);
@@ -101,6 +102,7 @@ function rustType(id, inferred) {
     return t;
   }
   if (isNumishId(id)) return 'i64';
+  if (isBoolishId(id)) return 'bool';
   if (isStringishId(id)) return 'String';
   return 'String';
 }
@@ -135,6 +137,11 @@ function rustRetType(fn, stmts) {
   };
   walk(stmts);
   if (!rets.length) return 'String';
+  const boolish = (t) => {
+    const s = String(t || '').trim();
+    return /^(true|false)$/.test(s) || /(==|!=|<=|>=|<|>|&&|\|\||_lia_truthy|_lia_re_test)/.test(s);
+  };
+  if (isBoolFnName(fn.name) || (rets.length && rets.every(boolish))) return 'bool';
   const looksNumeric = (t) => {
     const s = String(t || '').trim();
     if (/^-?\d+$/.test(s) || inf.get(s) === 'int' || isNumishId(s)) return true;
@@ -178,13 +185,20 @@ export function emitRust(liaText, opts = {}) {
     'fn _lia_isfinite<T>(_x: &T) -> bool { true }',
     'fn _lia_isnan<T>(_x: T) -> bool { false }',
     'fn _lia_obj() -> String { String::new() }',
+    'fn _lia_arr(items: &[&str]) -> String { format!("\\u{1e}{}", items.join("\\u{1f}")) }',
+    'fn _lia_len(s: &impl ToString) -> i64 { let t = s.to_string(); if let Some(rest) = t.strip_prefix(\'\\u{1e}\') { if rest.is_empty() { 0 } else { rest.split(\'\\u{1f}\').count() as i64 } } else { t.chars().count() as i64 } }',
+    'fn _lia_at(s: &impl ToString, i: i64) -> String { let t = s.to_string(); let u = if i < 0 { 0 } else { i as usize }; if let Some(rest) = t.strip_prefix(\'\\u{1e}\') { rest.split(\'\\u{1f}\').nth(u).unwrap_or("").to_string() } else { t.chars().nth(u).map(|c| c.to_string()).unwrap_or_default() } }',
+    'fn _lia_push(s: &mut String, v: impl ToString) { let v = v.to_string(); if s.is_empty() || !s.starts_with(\'\\u{1e}\') { *s = format!("\\u{1e}{}", v); return; } if s.len() == \'\\u{1e}\'.len_utf8() { s.push_str(&v); } else { s.push(\'\\u{1f}\'); s.push_str(&v); } }',
+    'fn _lia_index_of(s: &impl ToString, x: impl ToString) -> i64 { let t = s.to_string(); let q = x.to_string(); if let Some(rest) = t.strip_prefix(\'\\u{1e}\') { rest.split(\'\\u{1f}\').position(|p| p == q).map(|i| i as i64).unwrap_or(-1) } else { t.find(&q).map(|i| t[..i].chars().count() as i64).unwrap_or(-1) } }',
+    'fn _lia_keys(_o: &impl ToString) -> String { _lia_arr(&[]) }',
+    'fn _lia_truthy(s: impl ToString) -> bool { let t = s.to_string(); t != "" && t != "false" && t != "0" && t != "null" && t != "undefined" }',
+    'fn _lia_re_test(pat: &str, s: impl ToString) -> bool { let t = s.to_string(); if pat == "\\\\s" { t.chars().any(|c| c.is_whitespace()) } else if pat.contains("[A-Za-z0-9_$]") || pat == "[A-Za-z0-9_$]" { t.chars().any(|c| c.is_ascii_alphanumeric() || c == \'_\' || c == \'$\') } else { t.contains(pat) } }',
     'fn _lia_abs(x: &impl ToString) -> i64 { x.to_string().parse::<i64>().unwrap_or(0).abs() }',
     'fn _lia_round(x: i64) -> i64 { x }',
     'fn _lia_str(x: impl ToString) -> String { x.to_string() }',
     'fn _lia_val(x: impl ToString) -> String { x.to_string() }',
     'fn _lia_cat<A: ToString, B: ToString>(a: &A, b: &B) -> String { format!("{}{}", a.to_string(), b.to_string()) }',
     'fn _lia_num(x: &impl ToString) -> i64 { x.to_string().parse::<i64>().unwrap_or(0) }',
-    'fn _lia_at(s: &impl ToString, i: i64) -> String { let t = s.to_string(); let u = if i < 0 { 0 } else { i as usize }; t.chars().nth(u).map(|c| c.to_string()).unwrap_or_default() }',
     'fn _lia_or(a: impl ToString, b: impl ToString) -> String { let a = a.to_string(); if a.is_empty() { b.to_string() } else { a } }',
     'fn _lia_get<T>(_o: &T, _k: &str) -> String { String::new() }',
     'fn _lia_includes(s: &impl ToString, x: impl ToString) -> bool { s.to_string().contains(&x.to_string()) }',
@@ -218,12 +232,13 @@ export function emitRust(liaText, opts = {}) {
     const paramList = params.map((p, i) => {
       const orig = rawNames[i] || p;
       if (isNumishId(orig) && !/^ms$/i.test(orig)) return `mut ${p}: i64`;
+      if (isBoolishId(orig)) return `${p}: bool`;
       return `${p}: impl ToString`;
     }).join(', ');
     const coerce = params
       .filter((p, i) => {
         const orig = rawNames[i] || p;
-        return !(isNumishId(orig) && !/^ms$/i.test(orig));
+        return !(isNumishId(orig) && !/^ms$/i.test(orig)) && !isBoolishId(orig);
       })
       .map((p) => `    let mut ${p} = ${p}.to_string();`);
     if (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false) {
@@ -294,6 +309,22 @@ fn main() {
     println!("{}", ${h('cMemoryLabel')}());
     println!("{}", ${h('langMemoryKind')}("c"));
     println!("{}", ${h('langMemoryKind')}("rust"));
+}
+`);
+  } else if (fnNames.includes('coreBanner')) {
+    const h = (n) => aliases[n] || snakeCase(n);
+    parts.push(`
+fn main() {
+    println!("{}", ${h('coreBanner')}());
+    println!("{}", ${h('coreHostLang')}());
+    println!("{}", ${h('cliDefaultLang')}());
+    println!("{}", ${h('bootstrapLang')}());
+    println!("{}", ${h('gatewayLang')}());
+    println!("{}", ${h('unsafeTargetLang')}());
+    println!("{}", ${h('phase1Name')}());
+    println!("{}", ${h('rank1Lang')}());
+    println!("{}", ${h('rank2Lang')}());
+    println!("{}", ${h('rank3Lang')}());
 }
 `);
   } else if (wantSafeCompareMain(opts.withMain, fnNames)) {
