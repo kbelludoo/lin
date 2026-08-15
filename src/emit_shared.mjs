@@ -606,6 +606,10 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/===/g, '==').replace(/!==/g, '!=');
     s = s.replace(/\btrue\b/g, '1').replace(/\bfalse\b/g, '0');
     s = s.replace(/\bnull\b|\bundefined\b/g, 'NULL');
+    s = s.replace(
+      /([A-Za-z_][\w]*)\s*\|\|\s*((?:"(?:\\.|[^"\\])*"|[A-Za-z_][\w]*))/g,
+      '_lia_or_c($1,$2)',
+    );
     s = s.replace(/\bparseInt\s*\(\s*([A-Za-z_][\w]*)\s*,\s*10\s*\)/g, 'strtoll($1, NULL, 10)');
     s = s.replace(/([A-Za-z_][\w]*)\.indexOf\(([^)]+)\)\s*>=\s*0/g, 'strstr($1, $2)');
     s = s.replace(/([A-Za-z_][\w]*)\.includes\(([^)]+)\)/g, 'strstr($1, $2)');

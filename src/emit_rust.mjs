@@ -4,6 +4,7 @@
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, isBoolishId, inferTypes, parseParamList, rewriteFnValues, safeEmitId, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
+import { rawParamNames, rewriteSafeParamIds } from './emit_safe_ids_load.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 import { isQualityFnSet, wantSafeCompareMain, formatQualityMain } from './emit_entry_main_load.mjs';
 
@@ -155,23 +156,6 @@ function rustRetType(fn, stmts) {
     return false;
   };
   return rets.every(looksNumeric) ? 'i64' : 'String';
-}
-
-function rewriteSafeParamIds(body, rawNames) {
-  let s = String(body || '');
-  for (const raw of rawNames) {
-    const safe = safeEmitId(raw);
-    if (safe !== raw) s = s.replace(new RegExp(`\\b${raw}\\b`, 'g'), safe);
-  }
-  return s;
-}
-
-function rawParamNames(paramsRaw) {
-  return String(paramsRaw || '')
-    .split(',')
-    .map((p) => p.trim())
-    .filter(Boolean)
-    .map((p) => p.replace(/\?$/, '').replace(/:\s*[\w[\]|]+$/, '').replace(/\s*=.+$/, '').trim());
 }
 
 export function emitRust(liaText, opts = {}) {
