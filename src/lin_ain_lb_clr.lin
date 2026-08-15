@@ -168,3 +168,29 @@
 !clr003Nucleus(){^'UNTOUCHED_existing_semantic_hash'}
 =ex{clr003Id,clr003Name,clr003Status,clr003FixtureDir,clr003RunnerPath,clr003TestPath,clr003GraphSource,clr003AnalyzerScope,clr003Limitation,clr003CausalGraph,clr003WrongFixture,clr003RepairedFixture,clr003Modules,clr003Metric0,clr003Metric1,clr003Metric2,clr003Metric3,clr003Metric4,clr003Metric5,clr003Metric6,clr003Metric7,clr003MetricCount,clr003Registry,clr003ApprovalRule,clr003NoLlm,clr003NoDicel,clr003Nucleus}
 =ex{clrId,clrName,side,focus,theoryPass,mkPhase,phase0,phase1,phase2,phaseCount,phaseAt,advReset,metric0,metric1,metric2,metric3,metric4,metricCount,metricAt,keyMetric,keyMetricPath,windowSpec,windowMeasured,inventScore,fakeCurve,fakeAgents,redefineHash,hashNucleus,hashVia,hashImpl,keepFields,expectedModules,expectedCount,approvalRule,newRequest,wipeLeaves,chatAfterWipe,cli,hyp,falsifyIf,ainLbSpec,ainLbHarness,wireExisting,fixtureDir,runnerPath,ingestPath,priorityPath,phase0Dir,wipeDir,advDir,acceptFixture,denyFixture,caseDir,mkCase,case0,case1,case2,case3,case4,caseCount,caseAt,c4Tests,regFields,regCount,regAt,regField0,regField1,regField2,regField3,regField4,regField5,regField6,regField7,regField8,regField9,regField10,regField11,regField12,regField13,regField14,regField15,decisionAccept,decisionReject,emptyReg,q0,q1,q2,qCount,qAt,qAnswered,q0Answer,q1Answer,q2Answer,mechRepair0,mechCount,repairLoopMax,effHas,addIoEffects,isMechRepair,firstMechRepair,applyAddIo,applyMechRepair,realModelRound,ninerouterBlock,deepM006,clr002Id,clr002Name,clr002Side,clr002Status,clr002AutonomyPolicy,clr002CausalGraph,clr002Operation,clr002Effect,clr002Capability,clr002RequiredContext,clr002RepairPolicy,clr002ApplyMode,clr002ProofOrder,clr002HashVia,clr002HashNucleus,clr002NoTargetMutation,clr002AnalyzerScope,clr002Limitation,clr002Paused,clr002EffectFor,clr002CapabilityFor,clr002ContextAllows,clr002Graph,clr002RepairAllowed,clr002RepairDecision,clr002PureToIo,clr002FixtureDir,clr002RunnerPath,clr002TestPath,clr002NoLlm,clr002NoDicel,clr002TargetMutation,clr002SemanticHashPreserved}
+!clr004Id(){^'CLR-004'}
+!clr004Name(){^'real_repository_evolution'}
+!clr004Status(){^'ACTIVE_DETERMINISTIC_CONTEXT_LOSS_PROTOCOL'}
+!clr004FixtureDir(){^'tests/ain_lb/fixtures/clr004'}
+!clr004RepoDir(){^'tests/ain_lb/fixtures/clr004/repo'}
+!clr004WipeDir(){^'tests/ain_lb/fixtures/clr004/wipe'}
+!clr004MutationDir(){^'tests/ain_lb/fixtures/clr004/mutations'}
+!clr004RunnerPath(){^'tests/ain_lb/clr004_runner.mjs'}
+!clr004TestPath(){^'tests/ain_lb/clr004_repository_evolution.test.mjs'}
+!clr004Modules(){^'auth|storage|transfer|audit|fx|country_limits'}
+!clr004ModuleCount(){^6}
+!clr004GraphSource(){^'real_lin_files_repository_graph'}
+!clr004AnalyzerScope(){^'source_metadata_and_mutation_body_patterns;not_global_ast_or_compiler_effect_inference'}
+!clr004Limitation(){^'real_source_graph_parsing_is_wired_for_declared_module_metadata;effects_and_observed_targets_use_metadata_and_body_patterns_only'}
+!clr004CausalGraph(){^'context_loss->artifact_graph->wrong_causal_effect->DENIED->proof->explicit_approval->ACCEPT'}
+!clr004WipeFields(){^'agent_ir|module_refs|contracts|semantic_hashes|effects'}
+!clr004ApprovalRule(){^'correct_mutation_requires_proof_and_explicit_approval_before_apply'}
+!clr004WrongFeature(){^'international_payments_fx_country_limit_without_country_limits_dependency'}
+!clr004CorrectFeature(){^'international_payments_fx_country_limit_with_country_limits_dependency_and_declared_io'}
+!clr004Metrics(){^'model|tokens_input|tokens_output|time_to_accept|attempts|violations|unexpected_changes'}
+!clr004NoModelScores(){^1}
+!clr004NoDicel(){^1}
+!clr004Nucleus(){^'UNTOUCHED_existing_semantic_hash_verifier_behavior_eq_LIN_gate'}
+!clr004Hypothesis(){^'H_CLR004: after context loss, the artifact set reconstructs a real multi-module LIN graph; a causally invalid country-limit mutation is DENIED, while the correct FX mutation is ACCEPTED only after proof and explicit approval; no unrelated module changes occur'}
+!clr004FalsifyIf(){^'wrong_mutation_status_ACCEPT OR correct_mutation_applied_without_approval OR unexpected_changes_nonempty OR module_refs_or_hashes_drift'}
+=ex{clr004Id,clr004Name,clr004Status,clr004FixtureDir,clr004RepoDir,clr004WipeDir,clr004MutationDir,clr004RunnerPath,clr004TestPath,clr004Modules,clr004ModuleCount,clr004GraphSource,clr004AnalyzerScope,clr004Limitation,clr004CausalGraph,clr004WipeFields,clr004ApprovalRule,clr004WrongFeature,clr004CorrectFeature,clr004Metrics,clr004NoModelScores,clr004NoDicel,clr004Nucleus,clr004Hypothesis,clr004FalsifyIf}
