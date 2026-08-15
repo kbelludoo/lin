@@ -5,6 +5,7 @@ import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, safeEmitId, emitNameMap, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
+import { rawParamNames, rewriteSafeParamIds } from './emit_safe_ids_load.mjs';
 import { isQualityFnSet, wantSafeCompareMain, formatQualityMain } from './emit_entry_main_load.mjs';
 
 function emitStmts(stmts, indent, types) {
@@ -96,9 +97,8 @@ export function emitGo(liaText, opts = {}) {
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     const goName = names[fn.name];
-    const paramAlias = Object.fromEntries(params.map((p) => [p, safeEmitId(p)]));
     const paramList = params.map((p) => `${safeEmitId(p)} interface{}`).join(', ');
-    const bodySrc = rewriteSiblingCalls(fn.body, { ...names, ...paramAlias });
+    const bodySrc = rewriteSafeParamIds(rewriteSiblingCalls(fn.body, names), rawParamNames(fn.params));
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       const keep = params.map((p) => `\t_ = ${safeEmitId(p)}`).join('\n');
       parts.push(
@@ -106,7 +106,7 @@ export function emitGo(liaText, opts = {}) {
       );
       continue;
     }
-    const stmts = tryParseStmts(bodySrc) || tryParseStmts(fn.body);
+    const stmts = tryParseStmts(bodySrc) || tryParseStmts(rewriteSafeParamIds(fn.body, rawParamNames(fn.params)));
     if (!stmts) {
       parts.push(
         `func ${goName}(${paramList}) bool {\n\tpanic("LIA_EMIT_GO: JS-runtime-only (${fn.name})")\n}`,

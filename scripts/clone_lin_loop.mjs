@@ -309,7 +309,7 @@ function runOneCycle(args, target) {
     console.error(`[clone-lin] js_gate pass=${report.pass} fail=${report.fail} files_ok=${report.coverage.files_ok}/${report.coverage.files_total} rate=${report.suite_rate}`);
 
     const fails = results.filter((r) => r.status === 'fail');
-    if (args.bootstrap && fails.length) {
+    if (fails.length) {
       report.learn = learnFromFails(STORAGE, fails, slug).hypothesis;
     }
 
@@ -337,9 +337,7 @@ function runOneCycle(args, target) {
       pass: report.pass,
     });
 
-    report.improve_lin = args.bootstrap
-      ? improveLinFromClone(ROOT, STORAGE, CAND, results, slug).summary
-      : 'loop_mode_no_improve';
+    report.improve_lin = improveLinFromClone(ROOT, STORAGE, CAND, results, slug).summary;
 
     report.clone_lin_local = '';
     report.clone_lin_url = '';

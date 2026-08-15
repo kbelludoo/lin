@@ -118,6 +118,7 @@ export function emitOneTarget(lia, name, target, workDir) {
     const r = compileLia(lia, {
       target, exportMode: 'single', withMain: false, package: 'clonefn',
       className: String(name || 'LinEmit').replace(/[^A-Za-z0-9]/g, '') || 'LinEmit',
+      stubRuntime: false,
     });
     code = r.code || r.js || '';
     if (!code) throw new Error('empty_emit');

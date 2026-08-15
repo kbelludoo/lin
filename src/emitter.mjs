@@ -1266,6 +1266,16 @@ function matchParen(text, openIdx) {
       continue;
     }
     if (c === '"' || c === "'" || c === '`') { q = c; continue; }
+    if (c === '/' && text[i + 1] === '/') {
+      while (i < text.length && text[i] !== '\n') i++;
+      continue;
+    }
+    if (c === '/' && text[i + 1] === '*') {
+      i += 2;
+      while (i < text.length && !(text[i] === '*' && text[i + 1] === '/')) i++;
+      i += 1;
+      continue;
+    }
     if (c === '(') d++;
     else if (c === ')') {
       d--;

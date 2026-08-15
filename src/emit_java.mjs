@@ -5,6 +5,7 @@ import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
+import { rawParamNames, rewriteSafeParamIds } from './emit_safe_ids_load.mjs';
 import { isQualityFnSet, formatQualityMain } from './emit_entry_main_load.mjs';
 
 function emitStmts(stmts, indent) {
@@ -109,9 +110,11 @@ export function emitJava(liaText, opts = {}) {
       parts.push(`  public static boolean ${jName}() { throw new RuntimeException("JS-runtime-only"); }`);
       continue;
     }
-    const stmts = tryParseStmts(
+    const bodySrc = rewriteSafeParamIds(
       rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'null'),
-    ) || tryParseStmts(fn.body);
+      rawParamNames(fn.params),
+    );
+    const stmts = tryParseStmts(bodySrc) || tryParseStmts(rewriteSafeParamIds(fn.body, rawParamNames(fn.params)));
     if (!stmts) {
       parts.push(`  public static boolean ${safeEmitId(fn.name)}() { throw new RuntimeException("JS-runtime-only"); }`);
       continue;

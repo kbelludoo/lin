@@ -3,8 +3,9 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, safeEmitId, emitNameMap } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, isStringishId, parseParamList, emitNilDefaults, safeEmitId, emitNameMap } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
+import { rawParamNames, rewriteSafeParamIds } from './emit_safe_ids_load.mjs';
 import { isQualityFnSet, formatQualityMain } from './emit_entry_main_load.mjs';
 
 function emitStmts(stmts, indent) {
@@ -48,9 +49,9 @@ function emitStmts(stmts, indent) {
   return lines;
 }
 
-function cTypeFor(id, params, stringish) {
-  if (stringish.has(id)) return 'const char *';
-  if (/^(str|fmt|s|key|name)/i.test(id)) return 'const char *';
+function cTypeFor(id) {
+  if (isNumishId(id)) return 'long long';
+  if (isStringishId(id) || /^(str|fmt|s|key|name)/i.test(String(id || '').replace(/_+$/, ''))) return 'const char *';
   return 'long long';
 }
 
@@ -86,6 +87,10 @@ export function emitC(liaText, opts = {}) {
     '  else snprintf(buf, 64, "%lldb", v);',
     '  return buf;',
     '}',
+    'static const char *_lia_or_c(const char *a, const char *b) {',
+    '  if (a && a[0]) return a;',
+    '  return b ? b : "";',
+    '}',
     '',
   ];
   const fileHosty = opts.stubRuntime !== false;
@@ -100,24 +105,19 @@ export function emitC(liaText, opts = {}) {
       parts.push(`long long ${cName}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
     }
-    const stmts = tryParseStmts(fn.body);
+    const bodySrc = rewriteSafeParamIds(fn.body, rawParamNames(fn.params));
+    const stmts = tryParseStmts(bodySrc) || tryParseStmts(fn.body);
     if (!stmts) {
       parts.push(`long long ${cName}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
     }
     const assigned = collectAssignedIds(stmts);
-    const stringish = new Set(
-      params.filter((p) => !/^(len|n|i|idx|count|num|bytes|val)$/i.test(p)),
-    );
-    if (fn.body.includes('indexOf') || fn.body.includes('strstr') || fn.body.includes('parseInt')) {
-      params.forEach((p) => { if (!/bytes|val|n\b/i.test(p)) stringish.add(p); });
-    }
     const paramList = params.length
-      ? params.map((p) => `${cTypeFor(p, params, stringish)} ${safeEmitId(p)}`).join(', ')
+      ? params.map((p) => `${cTypeFor(p)} ${safeEmitId(p)}`).join(', ')
       : 'void';
     const locals = assigned.filter((id) => !params.includes(id));
     const decls = locals.map((id) => {
-      const t = /fmt|str/i.test(id) ? 'const char *' : 'long long';
+      const t = cTypeFor(id);
       return `  ${t} ${id} = ${t.includes('char') ? 'NULL' : '0'};`;
     });
     const cacheStub = /\bcache\b/.test(fn.body) ? ['  const char *cache[64] = {0};'] : [];

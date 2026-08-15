@@ -7,6 +7,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { stripStubPassScores } from '../src/emit_shared.mjs';
 import { formatStubIntel, honestNucleusMulti, hasStubPassScore } from './clone_lin_full_repo_gate.mjs';
+import { autoGenerateFromFails } from './lin_auto_generate.mjs';
 
 export function runCmd(cmd, args, opts = {}) {
   const r = spawnSync(cmd, args, {
@@ -90,35 +91,34 @@ export function improveLinFromClone(root, storageDir, candDir, results, slug) {
     harvest.push({ kind: 'observe', gap: 'none_new', n: 0, proposal: 'no_new_peripheral_gap', nucleus: false });
   }
 
-  const candPath = path.join(candDir, `CLONE_${slug}_${Date.now().toString(36)}.dicel`);
+  const candPath = path.join(candDir, `CLONE_${slug}_${Date.now().toString(36)}.rulel`);
   fs.writeFileSync(
     candPath,
     [
-      '@DICEL:LIN_CANDIDATE:1.0.0',
-      `^from_clone="clone-lin-${slug}"`,
-      '^stage="IMPROVE_LIN_FROM_CLONE"',
-      '^forbid_nucleus=true',
-      '',
-      '@HARVEST {',
-      ...harvest.map((h) => `  ${h.kind}{gap="${h.gap}" n=${h.n} proposal="${h.proposal}" nucleus=${h.nucleus}}`),
-      '}',
+      '@RULEL:LIN_CANDIDATE:1.0.0',
+      '~R{.m=meta .h=harvest .f=forbid}',
+      `.m{from_clone=clone-lin-${slug} stage=IMPROVE_LIN_FROM_CLONE}`,
+      '.f{mutate_nucleus=true}',
+      '.h{' + harvest.map((h) => `${h.kind}{gap="${h.gap}" n=${h.n} proposal="${h.proposal}" nucleus=${h.nucleus}}`).join(' ') + '}',
       '',
     ].join('\n'),
     'utf8',
   );
 
-  const summary = harvest.map((h) => `${h.kind}:${h.gap || 'ok'}×${h.n}`).join('|');
+  const autogen = autoGenerateFromFails(root, candDir, fails, slug);
+  const harvestSummary = harvest.map((h) => `${h.kind}:${h.gap || 'ok'}×${h.n}`).join('|');
+  const summary = autogen.n ? `${harvestSummary}|autogen=${autogen.summary}` : harvestSummary;
   appendStorage(
     storageDir,
     'lia_ledger.dicel',
-    `kind=improve_lin_from_clone slug=${slug} harvest="${summary}" candidate="${path.basename(candPath)}" nucleus=untouched`,
+    `kind=improve_lin_from_clone slug=${slug} harvest="${harvestSummary}" autogen="${autogen.summary}" candidate="${path.basename(candPath)}" nucleus=untouched`,
   );
   appendStorage(
     storageDir,
     'lia_trauma.dicel',
     `class=HARVEST corpus=clone-lin-${slug} note="${summary}" fix_target=compiler_outside_nucleus`,
   );
-  return { harvest, candidate: candPath, summary, root };
+  return { harvest, candidate: candPath, summary, autogen, root };
 }
 
 export function writeIntel(root, report) {
