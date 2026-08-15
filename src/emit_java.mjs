@@ -4,6 +4,7 @@
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId } from './emit_shared.mjs';
+import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '    '.repeat(indent);
@@ -13,8 +14,12 @@ function emitStmts(stmts, indent) {
       lines.push(assignOpLine(st.id, st.op, st.expr, 'java', pad));
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'java')};`);
+    } else if (st.type === 'throw') {
+      lines.push(emitThrowLine(st.expr, 'java', pad, rewriteExpr));
     } else if (st.type === 'expr') {
       if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break;`);
+      else if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'java', pad, rewriteExpr));
+      else if (/^[A-Za-z_][\w]*$/.test(st.expr.trim())) continue;
       else lines.push(`${pad}${rewriteExpr(st.expr, 'java')};`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if (${emitCond(st.cond, 'java')}) {`);
@@ -44,7 +49,9 @@ function emitStmts(stmts, indent) {
 }
 
 function javaType(id) {
-  if (isNumishId(id) || /^(len|n|i|idx|count|num|bytes|val)$/i.test(id)) return 'long';
+  if (/Plural$/i.test(id) || /^is[A-Z]/.test(id)) return 'boolean';
+  if (/^(value|options|ms|str)$/i.test(id)) return 'Object';
+  if (isNumishId(id) || /^(len|n|i|idx|count|num|bytes|val|msAbs)$/i.test(id) || /Abs$/i.test(id)) return 'long';
   return 'String';
 }
 
@@ -56,10 +63,30 @@ export function emitJava(liaText, opts = {}) {
     `public class ${className} {`,
     '  static String _lia_typeof(Object x) { return x == null ? "object" : "string"; }',
     '  static boolean _lia_isfinite(Object x) { return true; }',
-    '  static boolean _lia_empty(String s) { return s == null || s.isEmpty(); }',
+    '  static boolean _lia_empty(Object s) { return s == null || String.valueOf(s).isEmpty(); }',
+    '  static long _lia_abs(Object x) { try { return Math.abs(Long.parseLong(String.valueOf(x))); } catch (Exception e) { return 0L; } }',
+    '  static long _lia_round(Object x) { return _lia_abs(x); }',
+    '  static String _lia_str(Object x) { return String.valueOf(x); }',
+    '  static long _lia_num(Object x) { try { return Long.parseLong(String.valueOf(x)); } catch (Exception e) { return 0L; } }',
+    '  static String _lia_or(Object a, Object b) { return a == null || "".equals(a) ? String.valueOf(b) : String.valueOf(a); }',
+    '  static String _lia_get(Object o, String k) { return null; }',
+    '  static String _lia_re_exec(Object s) { return null; }',
+    '  static String _lia_lower(Object x) { return String.valueOf(x).toLowerCase(); }',
+    '  static boolean _lia_truthy(Object x) {',
+    '    if (x == null) return false;',
+    '    if (x instanceof Boolean) return (Boolean)x;',
+    '    if (x instanceof String) return !((String)x).isEmpty();',
+    '    if (x instanceof Number) return ((Number)x).longValue() != 0L;',
+    '    return true;',
+    '  }',
     '  static String[] cache = new String[64];',
     '',
   ];
+  if (prog.consts) {
+    for (const [k, v] of Object.entries(prog.consts)) {
+      parts.push(`  static final long ${k} = ${v}L;`);
+    }
+  }
   for (const fn of prog.fns) {
     const params = fn.params.split(',').map((p) => p.trim()).filter(Boolean);
     if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
@@ -69,11 +96,13 @@ export function emitJava(liaText, opts = {}) {
     const stmts = parseStmts(fn.body);
     const assigned = collectAssignedIds(stmts).filter((id) => !params.includes(id) && id !== 'cache');
     const paramList = params.map((p) => `${javaType(p)} ${p}`).join(', ');
-    const decls = assigned.map((id) => `    ${javaType(id)} ${id} = ${javaType(id) === 'long' ? '0' : 'null'};`);
+    const decls = assigned.map((id) => {
+      const t = javaType(id);
+      const init = t === 'long' ? '0' : t === 'boolean' ? 'false' : 'null';
+      return `    ${t} ${id} = ${init};`;
+    });
     const bodyLines = [...decls, ...emitStmts(stmts, 2)];
-    const ret = /==|!=|is_|empty|startsWith|typeof/.test(fn.name + fn.body) && !/leftPad|pad|join|trim/i.test(fn.name)
-      ? 'boolean'
-      : /leftPad|pad|join|trim|to_string|fmt/i.test(fn.name) ? 'String' : 'long';
+    const ret = /is_|empty|startsWith|typeof|safeCompare/i.test(fn.name) ? 'boolean' : 'Object';
     parts.push(`  public static ${ret} ${fn.name}(${paramList}) {\n${bodyLines.join('\n')}\n  }`);
   }
   parts.push('}');

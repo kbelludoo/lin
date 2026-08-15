@@ -4,6 +4,7 @@
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId } from './emit_shared.mjs';
+import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '  '.repeat(indent);
@@ -13,8 +14,11 @@ function emitStmts(stmts, indent) {
       lines.push(assignOpLine(st.id, st.op, st.expr, 'c', pad));
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'c')};`);
+    } else if (st.type === 'throw') {
+      lines.push(emitThrowLine(st.expr, 'c', pad, rewriteExpr));
     } else if (st.type === 'expr') {
       if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break;`);
+      else if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'c', pad, rewriteExpr));
       else lines.push(`${pad}${rewriteExpr(st.expr, 'c')};`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if (${emitCond(st.cond, 'c')}) {`);

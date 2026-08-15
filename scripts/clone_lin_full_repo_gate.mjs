@@ -21,3 +21,4 @@ export const normalizeSkipToFail = mod.normalizeSkipToFail;
 export const fileCoverage = mod.fileCoverage;
 export const missedExtracts = mod.missedExtracts;
 export const canPublishFullRepo = mod.canPublishFullRepo;
+export const isTypeOnlyModule = mod.isTypeOnlyModule;

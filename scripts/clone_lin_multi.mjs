@@ -29,7 +29,12 @@ function pythonBin() {
 function writeWork(dir, name, target, code) {
   const sub = path.join(dir, target);
   fs.mkdirSync(sub, { recursive: true });
-  const p = path.join(sub, `${name}${EXT[target] || `.${target}`}`);
+  let fileName = `${name}${EXT[target] || `.${target}`}`;
+  if (target === 'java') {
+    const m = String(code || '').match(/public class ([A-Za-z][A-Za-z0-9]*)/);
+    if (m) fileName = `${m[1]}.java`;
+  }
+  const p = path.join(sub, fileName);
   fs.writeFileSync(p, code, 'utf8');
   return p;
 }
@@ -163,8 +168,17 @@ export function verifyMultiTargets(root, storageDir, candDir, jsResults, slug) {
   const summary = {};
   for (const t of TARGETS) summary[t] = { PASS: 0, SKIP: 0, FAIL: 0, bytes: 0 };
 
-  const passes = jsResults.filter((r) => r.status === 'pass' && r.lia);
+  const passes = jsResults.filter((r) => r.status === 'pass' && (r.lia || r.fileLia));
+  const fileGroups = new Map();
   for (const r of passes) {
+    const key = r.linRel || r.srcRel || r.name;
+    let g = fileGroups.get(key);
+    if (!g) {
+      g = { lia: r.fileLia || r.lia, names: [] };
+      fileGroups.set(key, g);
+    }
+    if (r.fileLia) g.lia = r.fileLia;
+    g.names.push(r.name);
     const jsCode = r.js || '';
     const jsFile = writeWork(workDir, r.name, 'js', jsCode);
     summary.js.PASS++;
@@ -173,11 +187,16 @@ export function verifyMultiTargets(root, storageDir, candDir, jsResults, slug) {
       target: 'js', name: r.name, status: 'PASS', emit: 'ok', run: 'PASS',
       reason: 'oracle_behavior_eq', file: jsFile, code: jsCode,
     });
+  }
+  for (const [key, g] of fileGroups) {
+    const className = String(key).replace(/[^A-Za-z0-9]/g, '') || 'LinEmit';
     for (const t of others) {
-      const row = emitOneTarget(r.lia, r.name, t, workDir);
-      summary[t][row.status] = (summary[t][row.status] || 0) + 1;
+      const row = emitOneTarget(g.lia, className, t, workDir);
       summary[t].bytes += Buffer.byteLength(row.code || '', 'utf8');
-      perFn.push(row);
+      for (const name of g.names) {
+        summary[t][row.status] = (summary[t][row.status] || 0) + 1;
+        perFn.push({ ...row, name });
+      }
     }
   }
 

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { oracleFromFn } from '../scripts/clone_lia_oracle.mjs';
 import {
-  canPublishFullRepo, fileCoverage, missedExtracts, normalizeSkipToFail,
+  canPublishFullRepo, fileCoverage, isTypeOnlyModule, missedExtracts, normalizeSkipToFail,
 } from '../scripts/clone_lin_full_repo_gate.mjs';
 
 const remapped = normalizeSkipToFail([
@@ -52,5 +52,8 @@ const host = oracleFromFn({
 });
 assert.equal(host.status, 'fail');
 assert.notEqual(host.status, 'skip');
+
+assert.equal(isTypeOnlyModule('export type Foo = string;'), true);
+assert.equal(isTypeOnlyModule('function add(a,b){return a+b}'), false);
 
 console.log('ok clone_full_repo_gate');

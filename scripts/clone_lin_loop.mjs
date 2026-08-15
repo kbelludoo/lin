@@ -26,7 +26,7 @@ import { ensureToolchains } from './ensure_toolchains.mjs';
 import { copyMultiIntoPublish, verifyMultiTargets } from './clone_lin_multi.mjs';
 import { loadYearStarQueue, buildYearStarQueue } from './fetch_star_queue.mjs';
 import {
-  canPublishFullRepo, fileCoverage, missedExtracts, normalizeSkipToFail,
+  canPublishFullRepo, fileCoverage, isTypeOnlyModule, missedExtracts, normalizeSkipToFail,
 } from './clone_lin_full_repo_gate.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -196,7 +196,7 @@ function runOneCycle(args, target) {
   try {
     const cloned = cloneSource(target.source, path.join(tempRoot, 'src'), args.shallow);
     if (!cloned.ok) throw new Error(`clone_failed:${cloned.error}`);
-    const files = preferSort(walkLang(cloned.dest, target.lang || 'javascript'), args.prefer || target.prefer);
+    const files = preferSort(walkLang(cloned.dest, target.lang || 'typescript'), args.prefer || target.prefer);
     const cap = args.maxFns > 0 ? args.maxFns : Infinity;
     const results = [];
     let seen = 0;
@@ -224,6 +224,14 @@ function runOneCycle(args, target) {
       const { fns, text } = extracted;
       const missed = missedExtracts(text, fns);
       if (!fns.length && !missed.length) {
+        if (isTypeOnlyModule(text)) {
+          results.push({
+            status: 'pass', stage: 'extract', reason: 'type_only_no_fn',
+            name: 'type_only', srcRel, linRel,
+          });
+          file_units.push({ srcRel, linRel, status: 'pass', reason: 'type_only_no_fn', bytes: srcBytes });
+          continue;
+        }
         report.fail++;
         report.fail_names.push(`${srcRel}:extract_empty`);
         results.push({

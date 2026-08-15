@@ -4,6 +4,7 @@
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
 import { emitBanner, isJsRuntimeOnly, rewriteExpr } from './emit_shared.mjs';
+import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '  '.repeat(indent);
@@ -13,8 +14,12 @@ function emitStmts(stmts, indent) {
       lines.push(`${pad}${st.id} ${st.op} ${rewriteExpr(st.expr, 'ts')};`);
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'ts')};`);
+    } else if (st.type === 'throw') {
+      lines.push(emitThrowLine(st.expr, 'ts', pad, rewriteExpr));
     } else if (st.type === 'expr') {
-      lines.push(`${pad}${rewriteExpr(st.expr, 'ts')};`);
+      if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'ts', pad, rewriteExpr));
+      else if (/^[A-Za-z_][\w]*$/.test(st.expr.trim())) { /* no-op */ }
+      else lines.push(`${pad}${rewriteExpr(st.expr, 'ts')};`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if (${rewriteExpr(st.cond, 'ts')}) {`);
       lines.push(...emitStmts(st.then, indent + 1));
@@ -50,6 +55,7 @@ export function emitTs(liaText, opts = {}) {
       .map(([k, v]) => `${JSON.stringify(k)}: ${v}`)
       .join(', ');
     parts.push(`const $K: Record<string, number> = {${obj}};`);
+    for (const [k, v] of Object.entries(prog.consts)) parts.push(`const ${k} = ${v};`);
   }
   for (const fn of prog.fns) {
     if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {

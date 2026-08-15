@@ -1153,6 +1153,29 @@ function detectBytesMap(source) {
   return null;
 }
 
+/** Harvest top-level numeric const/let/var into $K (peripheral; not nucleus). */
+export function harvestTopNumConsts(source) {
+  const env = {};
+  const re = /(?:^|[\n;])\s*(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([^;\n]+)/g;
+  let m;
+  while ((m = re.exec(String(source || '')))) {
+    const id = m[1];
+    const expr = m[2].trim();
+    if (!/^[-+\d.\s/*()A-Za-z_$]+$/.test(expr)) continue;
+    try {
+      const keys = Object.keys(env);
+      const val = new Function(...keys, `return (${expr});`)(...keys.map((k) => env[k]));
+      if (typeof val === 'number' && Number.isFinite(val)) env[id] = val;
+    } catch { /* skip non-numeric */ }
+  }
+  return env;
+}
+
+function formatConstTable(env) {
+  const parts = Object.entries(env || {}).map(([k, v]) => `${k}=${v}`);
+  return parts.length ? `$K{${parts.join(' ')}}` : null;
+}
+
 /**
  * Emit LIA from JS source (default compact path).
  */
@@ -1167,7 +1190,7 @@ export function emitAilFromSource(source, opts = {}) {
     `^schema_once ^lossy=true ^ops=${opts.ops || DEFAULT_OPS}`,
     GRAMMAR,
   ];
-  const k = opts.constTable || detectBytesMap(source);
+  const k = opts.constTable || formatConstTable(harvestTopNumConsts(source)) || detectBytesMap(source);
   if (k) lines.push(k);
 
   const names = [];

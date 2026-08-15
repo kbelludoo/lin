@@ -296,8 +296,8 @@ function stripTsLight(src) {
   s = s.replace(/\bfunction\s+[A-Za-z_$][\w$]*\s*\([^;]*\)\s*:\s*[^;{]+;/g, '');
   s = s.replace(/\bfunction\s+([A-Za-z_$][\w$]*)\s*<[^>]+>\s*\(/g, 'function $1(');
   // ) : T =>  before ) : T {  so object-literal arrows are not eaten
-  s = s.replace(/\)\s*:\s*[A-Za-z_$][\w$<>|&\[\]]+\s*=>/g, ')=>');
-  s = s.replace(/\)\s*:\s*[A-Za-z_$][\w$<>|&\[\]]+\s*\{/g, '){');
+  s = s.replace(/\)\s*:\s*[A-Za-z_$][\w$<>|&\[\]\s]+\s*=>/g, ')=>');
+  s = s.replace(/\)\s*:\s*[A-Za-z_$][\w$<>|&\[\]\s]+\s*\{/g, '){');
   s = s.replace(/\s+as\s+const\b/g, '');
   s = s.replace(/\s+as\s+\{[^{}]*\}/g, '');
   s = s.replace(
@@ -525,7 +525,7 @@ export function walkLang(root, lang) {
     rust: /\.rs$/i,
   }[String(lang || 'javascript').toLowerCase()] || /\.(js|mjs|cjs|ts)$/i;
   const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|vendor|docs?|\.husky|target|__pycache__|perf|benchmarks?)([\\/]|$)/i;
-  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$/i;
+  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$|\.config\.(js|ts|mjs|cjs)$/i;
   const out = [];
   const stack = [root];
   while (stack.length) {

@@ -4,6 +4,7 @@
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, snakeCase } from './emit_shared.mjs';
+import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '    '.repeat(indent);
@@ -20,8 +21,11 @@ function emitStmts(stmts, indent) {
       else lines.push(`${pad}${st.id} = ${st.id} ${st.op[0]} (${rhs})`);
     } else if (st.type === 'return') {
       lines.push(`${pad}return ${rewriteExpr(st.expr, 'py')}`);
+    } else if (st.type === 'throw') {
+      lines.push(emitThrowLine(st.expr, 'py', pad, rewriteExpr));
     } else if (st.type === 'expr') {
-      lines.push(`${pad}${rewriteExpr(st.expr, 'py')}`);
+      if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'py', pad, rewriteExpr));
+      else lines.push(`${pad}${rewriteExpr(st.expr, 'py')}`);
     } else if (st.type === 'if') {
       lines.push(`${pad}if ${rewriteExpr(st.cond, 'py')}:`);
       const thenL = emitStmts(st.then, indent + 1);
@@ -79,10 +83,33 @@ export function emitPy(liaText, opts = {}) {
     '        return x != x',
     '    except Exception:',
     '        return True',
+    'def _lia_abs(x):',
+    '    try: return abs(x)',
+    '    except Exception: return 0',
+    'def _lia_round(x):',
+    '    try: return round(x)',
+    '    except Exception: return 0',
+    'def _lia_str(x):',
+    '    return str(x)',
+    'def _lia_num(x):',
+    '    try: return float(x)',
+    '    except Exception: return 0',
+    'def _lia_or(a, b):',
+    '    return b if a is None or a == "" or a is False else a',
+    'def _lia_get(o, k):',
+    '    if o is None: return None',
+    '    if isinstance(o, dict): return o.get(k)',
+    '    return getattr(o, k, None)',
+    'def _lia_re_exec(s):',
+    '    return None',
+    'def _lia_lower(x):',
+    '    return str(x).lower()',
   ];
   if (prog.consts) {
     parts.push(`K = {${Object.entries(prog.consts).map(([k, v]) => `${JSON.stringify(k)}: ${v}`).join(', ')}}`);
+    for (const [k, v] of Object.entries(prog.consts)) parts.push(`${k} = ${v}`);
   }
+  const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, snakeCase(f.name)]));
   for (const fn of prog.fns) {
     const name = snakeCase(fn.name);
     const params = fn.params
@@ -93,7 +120,7 @@ export function emitPy(liaText, opts = {}) {
       parts.push(`def ${name}(*_args, **_kwargs):\n    raise NotImplementedError("LIA_EMIT_PY: JS-runtime-only (${fn.name})")`);
       continue;
     }
-    const stmts = parseStmts(fn.body);
+    const stmts = parseStmts(rewriteSiblingCalls(fn.body, aliases));
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const body = [];
     // Python needs locals assigned before use; first assign handles it

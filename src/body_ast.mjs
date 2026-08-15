@@ -3,8 +3,15 @@
  */
 export function findMatching(s, openIdx, openCh, closeCh) {
   let depth = 0;
+  let quote = null;
   for (let i = openIdx; i < s.length; i++) {
     const c = s[i];
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'") { quote = c; continue; }
     if (c === openCh) depth++;
     else if (c === closeCh) {
       depth--;
@@ -113,6 +120,46 @@ export function parseStmts(body) {
       continue;
     }
 
+    if (s.startsWith('throw', i) && !/[A-Za-z0-9_$]/.test(s[i + 5] || '')) {
+      let j = i + 5;
+      let depth = 0;
+      let quote = null;
+      while (j < s.length) {
+        const c = s[j];
+        if (quote) {
+          if (c === '\\') { j += 2; continue; }
+          if (c === quote) quote = null;
+          j++;
+          continue;
+        }
+        if (c === '"' || c === "'") { quote = c; j++; continue; }
+        if (c === '(' || c === '{' || c === '[') depth++;
+        else if (c === ')' || c === '}' || c === ']') depth--;
+        else if (c === ';' && depth === 0) break;
+        else if (depth === 0 && j > i + 5 && (s.startsWith('?(', j) || s.startsWith('#(', j) || s[j] === '^')) break;
+        j++;
+      }
+      out.push({ type: 'throw', expr: s.slice(i, j).trim() });
+      i = j < s.length && s[j] === ';' ? j + 1 : j;
+      continue;
+    }
+
+    if (s.startsWith('switch', i) && /^\s*\(/.test(s.slice(i + 6))) {
+      const open = s.indexOf('(', i);
+      const close = findMatching(s, open, '(', ')');
+      if (close >= 0) {
+        let j = skipWs(s, close + 1);
+        if (s[j] === '{') {
+          const closeB = findMatching(s, j, '{', '}');
+          if (closeB >= 0) {
+            out.push(switchToIf(s.slice(open + 1, close).trim(), s.slice(j + 1, closeB)));
+            i = closeB + 1;
+            continue;
+          }
+        }
+      }
+    }
+
     if (s[i] === '^') {
       let j = i + 1;
       let depth = 0;
@@ -129,22 +176,51 @@ export function parseStmts(body) {
       continue;
     }
 
-    // assignment or expr until ; or control at depth 0
+    // assignment or expr until ; or control at depth 0 (not ^ inside /regex/ or strings)
     let j = i;
     let depth = 0;
+    let quote = null;
+    let inRe = false;
     while (j < s.length) {
       const c = s[j];
+      if (quote) {
+        if (c === '\\') { j += 2; continue; }
+        if (c === quote) quote = null;
+        j++;
+        continue;
+      }
+      if (inRe) {
+        if (c === '\\') { j += 2; continue; }
+        if (c === '/') inRe = false;
+        j++;
+        continue;
+      }
+      if (c === '"' || c === "'") { quote = c; j++; continue; }
+      if (c === '/' && isRegexStart(s, j)) { inRe = true; j++; continue; }
       if (c === '(' || c === '{' || c === '[') depth++;
       else if (c === ')' || c === '}' || c === ']') depth--;
       else if (c === ';' && depth === 0) break;
-      else if (depth === 0 && j > i && (s.startsWith('?(', j) || s.startsWith('#(', j) || s[j] === '^')) break;
+      else if (depth === 0 && j > i && (s.startsWith('?(', j) || s.startsWith('#(', j))) break;
       j++;
     }
     const chunk = s.slice(i, j).trim();
     if (chunk) {
-      const am = chunk.match(/^([A-Za-z_$][\w$]*)\s*(<<=|>>=|[+\-*/%&|^]=|=)\s*([\s\S]+)$/);
-      if (am) out.push({ type: 'assign', id: am[1], op: am[2], expr: am[3].trim() });
-      else out.push({ type: 'expr', expr: chunk });
+      const dm = chunk.match(/^\(\{([^}]+)\}=([\s\S]+)\)$/);
+      if (dm) {
+        for (const part of dm[1].split(',')) {
+          const pm = part.trim().match(/^([A-Za-z_$][\w$]*)(?:\s*=\s*([\s\S]+))?$/);
+          if (!pm) continue;
+          const fallback = pm[2] ? pm[2].trim() : '""';
+          out.push({
+            type: 'assign', id: pm[1], op: '=',
+            expr: `_lia_or(_lia_get(${dm[2].trim()},"${pm[1]}"),${fallback})`,
+          });
+        }
+      } else {
+        const am = chunk.match(/^([A-Za-z_$][\w$]*)\s*(<<=|>>=|[+\-*/%&|^]=|=)\s*([\s\S]+)$/);
+        if (am) out.push({ type: 'assign', id: am[1], op: am[2], expr: am[3].trim() });
+        else out.push({ type: 'expr', expr: chunk });
+      }
     }
     i = j < s.length && s[j] === ';' ? j + 1 : j;
   }
@@ -172,4 +248,81 @@ export function collectAssignedIds(stmts) {
   };
   walk(stmts);
   return [...ids];
+}
+
+function isRegexStart(s, j) {
+  let k = j - 1;
+  while (k >= 0 && /\s/.test(s[k])) k--;
+  if (k < 0) return true;
+  return /[=(,[:!?&|{;]/.test(s[k]);
+}
+
+function onlySemi(s) {
+  return !String(s || '').replace(/[\s;]/g, '');
+}
+
+function switchToIf(cond, inner) {
+  const clauses = [];
+  let i = 0;
+  let labels = [];
+  let isDefault = false;
+  let bodyStart = -1;
+  const flush = (end) => {
+    if (bodyStart < 0 && !labels.length && !isDefault) return;
+    clauses.push({ labels, isDefault, body: parseStmts(inner.slice(Math.max(bodyStart, 0), end)) });
+    labels = [];
+    isDefault = false;
+    bodyStart = -1;
+  };
+  while (i < inner.length) {
+    i = skipWs(inner, i);
+    if (i >= inner.length) break;
+    if (inner.startsWith('case', i) && /[\s'"]/.test(inner[i + 4] || '')) {
+      if (bodyStart >= 0 && !onlySemi(inner.slice(bodyStart, i))) flush(i);
+      let e = i + 4;
+      e = skipWs(inner, e);
+      let d = 0;
+      let q = null;
+      let k = e;
+      for (; k < inner.length; k++) {
+        const ch = inner[k];
+        if (q) {
+          if (ch === '\\') { k++; continue; }
+          if (ch === q) q = null;
+          continue;
+        }
+        if (ch === '"' || ch === "'") { q = ch; continue; }
+        if (ch === '(' || ch === '{') d++;
+        else if (ch === ')' || ch === '}') d--;
+        else if (ch === ':' && d === 0) break;
+      }
+      labels.push(inner.slice(e, k).trim());
+      i = k + 1;
+      bodyStart = i;
+      continue;
+    }
+    if (inner.startsWith('default', i) && /[\s:]/.test(inner[i + 7] || '')) {
+      if (bodyStart >= 0 && !onlySemi(inner.slice(bodyStart, i))) flush(i);
+      isDefault = true;
+      const col = inner.indexOf(':', i);
+      i = col >= 0 ? col + 1 : i + 7;
+      bodyStart = i;
+      continue;
+    }
+    i++;
+  }
+  if (labels.length || isDefault || bodyStart >= 0) flush(inner.length);
+  const normals = clauses.filter((c) => !c.isDefault);
+  const def = clauses.find((c) => c.isDefault);
+  const orCond = (ls) => (ls.length ? ls.map((l) => `${cond}==${l}`).join('||') : 'true');
+  if (!normals.length) {
+    return { type: 'if', cond: 'true', then: def?.body || [], elseIf: [], else: null };
+  }
+  return {
+    type: 'if',
+    cond: orCond(normals[0].labels),
+    then: normals[0].body,
+    elseIf: normals.slice(1).map((c) => ({ cond: orCond(c.labels), body: c.body })),
+    else: def ? def.body : null,
+  };
 }
