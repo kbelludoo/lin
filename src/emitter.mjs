@@ -824,6 +824,15 @@ function desugarClosures(src) {
     (_m, before, params) => `${before}~(${params}){`,
   );
 
+  // return (p)=>{...}  — prefix class [=,:;({\[] misses `return`
+  s = s.replace(
+    /\breturn\s+\(([^)]*)\)\s*=>\s*\{/g,
+    (_m, params) => `return ~(${params}){`,
+  );
+  s = s.replace(
+    /\breturn\s+([A-Za-z_$][\w$]*)\s*=>\s*\{/g,
+    (_m, param) => `return ~(${param}){`,
+  );
   // arrow block: (p)=>{...}  and p=>{...}
   s = s.replace(
     /([=,:;({\[]\s*)(?:async\s*)?\(([^)]*)\)\s*=>\s*\{/g,
@@ -861,6 +870,8 @@ function desugarClosures(src) {
   }
 
   // arrow expression body with balanced parens/brackets/braces/strings.
+  rewriteArrows(/(\breturn\s+)(?:async\s*)?\(([^)]*)\)\s*=>/g, true);
+  rewriteArrows(/(\breturn\s+)(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/g, false);
   rewriteArrows(/([=,:;({\[]\s*)(?:async\s*)?\(([^)]*)\)\s*=>/g, true);
   rewriteArrows(/([=,:;({\[]\s*)(?:async\s*)?([A-Za-z_$][\w$]*)\s*=>/g, false);
 
@@ -901,9 +912,7 @@ function protectClosuresForSigils(s) {
       continue;
     }
     const tok = `\u0000CL${held.length}\u0000`;
-    // normalize closure body to a single line to keep parseLia line-based parser happy,
-    // but do NOT add ASI semicolons (they would break multi-line expressions).
-    const bodyNorm = s.slice(j + 1, closeBrace).replace(/\s+/g, ' ').trim();
+    const bodyNorm = insertJsAsi(s.slice(j + 1, closeBrace)).replace(/\s+/g, ' ').trim();
     held.push(`{${bodyNorm}}`);
     out += s.slice(idx, j) + tok;
     i = closeBrace + 1;
@@ -917,6 +926,16 @@ function restoreClosuresForSigils(s, held) {
     out = out.split(`\u0000CL${i}\u0000`).join(held[i]);
   }
   return out;
+}
+
+function insertJsAsi(s) {
+  let t = String(s || '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  t = t.replace(/\n\s*(?=if\b|for\b|while\b|return\b|const\b|let\b|var\b|else\b|throw\b)/g, ';\n');
+  t = t.replace(/([^\s])(\n\s*)(?=[A-Za-z_$][\w$]*\s*[=(.])/g, (all, prev, ws) => {
+    if (/[|&+,([?:=+\-*/%<>!.]/.test(prev)) return prev + ws;
+    return `${prev};${ws}`;
+  });
+  return t;
 }
 
 function applySourceSigils(jsBody) {
@@ -933,9 +952,7 @@ function applySourceSigils(jsBody) {
   s = desugarTemplateLiterals(s);
   const qs = protectQuotedStrings(s);
   s = qs.text;
-  // ASI: insert ; before control/decl at line starts (semicolon-free sources like dayjs)
-  s = s.replace(/\n\s*(?=if\b|for\b|while\b|return\b|const\b|let\b|var\b|else\b)/g, ';\n');
-  s = s.replace(/\n\s*(?=[A-Za-z_$][\w$]*\s*[=(])/g, ';\n');
+  s = insertJsAsi(s);
   const rx = protectRegexLiterals(s);
   s = rx.text;
   s = s.replace(/\s+/g, ' ').trim();
@@ -1154,19 +1171,37 @@ function detectBytesMap(source) {
 }
 
 /** Harvest top-level numeric const/let/var into $K (peripheral; not nucleus). */
+function braceDepthAt(s, idx) {
+  let depth = 0;
+  let quote = null;
+  for (let i = 0; i < idx && i < s.length; i++) {
+    const c = s[i];
+    if (quote) {
+      if (c === '\\') { i++; continue; }
+      if (c === quote) quote = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { quote = c; continue; }
+    if (c === '{') depth++;
+    else if (c === '}') depth--;
+  }
+  return depth;
+}
+
 export function harvestTopNumConsts(source) {
   const env = {};
-  const re = /(?:^|[\n;])\s*(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*([^;\n]+)/g;
+  const s = String(source || '');
+  const re = /(?:^|[\n;])\s*const\s+([A-Za-z_$][\w$]*)\s*=\s*([^;\n]+)/g;
   let m;
-  while ((m = re.exec(String(source || '')))) {
-    const id = m[1];
+  while ((m = re.exec(s))) {
+    if (braceDepthAt(s, m.index) !== 0) continue;
     const expr = m[2].trim();
     if (!/^[-+\d.\s/*()A-Za-z_$]+$/.test(expr)) continue;
     try {
       const keys = Object.keys(env);
       const val = new Function(...keys, `return (${expr});`)(...keys.map((k) => env[k]));
-      if (typeof val === 'number' && Number.isFinite(val)) env[id] = val;
-    } catch { /* skip non-numeric */ }
+      if (typeof val === 'number' && Number.isFinite(val)) env[m[1]] = val;
+    } catch { /* skip */ }
   }
   return env;
 }
@@ -1193,9 +1228,15 @@ export function emitAilFromSource(source, opts = {}) {
   const k = opts.constTable || formatConstTable(harvestTopNumConsts(source)) || detectBytesMap(source);
   if (k) lines.push(k);
 
+  const importIds = [...String(source || '').matchAll(/\bimport\s*\{([^}]+)\}/g)]
+    .flatMap((m) => m[1].split(',').map((s) => s.trim().split(/\s+as\s+/).pop().trim()))
+    .filter((id) => id && /^[A-Za-z_$][\w$]*$/.test(id) && !fns.some((f) => f.name === id));
+  const importPrelude = importIds.map((id) => `${id}=''`).join(';');
   const names = [];
   for (const f of fns) {
     let body = applySourceSigils(f.body);
+    const usedImports = importIds.filter((id) => new RegExp(`\\b${id}\\b`).test(f.body));
+    if (usedImports.length) body = `${usedImports.map((id) => `${id}=''`).join(';')};${body}`;
     if (opts.shortenLocals !== false) body = shortenLocals(body);
     if (k) body = body.replace(/\bmap\[/g, '$K[').replace(/\bmap\./g, '$K.');
     // drop trailing semicolon noise

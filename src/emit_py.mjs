@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, parseParamList } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -112,10 +112,7 @@ export function emitPy(liaText, opts = {}) {
   const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, snakeCase(f.name)]));
   for (const fn of prog.fns) {
     const name = snakeCase(fn.name);
-    const params = fn.params
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
+    const { names: params, sigPy } = parseParamList(fn.params);
     if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
       parts.push(`def ${name}(*_args, **_kwargs):\n    raise NotImplementedError("LIA_EMIT_PY: JS-runtime-only (${fn.name})")`);
       continue;
@@ -127,7 +124,7 @@ export function emitPy(liaText, opts = {}) {
     void locals;
     body.push(...emitStmts(stmts, 1));
     if (!body.length) body.push('    pass');
-    parts.push(`def ${name}(${params.join(', ')}):\n${body.join('\n')}`);
+    parts.push(`def ${name}(${sigPy.join(', ')}):\n${body.join('\n')}`);
   }
   const ex = (prog.exports.length ? prog.exports : prog.fns.map((f) => f.name)).map(snakeCase);
   parts.push(`\n__all__ = [${ex.map((n) => JSON.stringify(n)).join(', ')}]`);

@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { emitBanner, isJsRuntimeOnly, rewriteExpr } from './emit_shared.mjs';
+import { emitBanner, isJsRuntimeOnly, rewriteExpr, parseParamList } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -65,11 +65,8 @@ export function emitTs(liaText, opts = {}) {
       continue;
     }
     const stmts = parseStmts(fn.body);
-    const params = fn.params
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
-    const paramList = params.map((p) => `${p}: unknown`).join(', ');
+    const { names: params, sigTs } = parseParamList(fn.params);
+    const paramList = sigTs.join(', ');
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const bodyLines = [];
     if (locals.length) bodyLines.push(`  let ${locals.join(', ')};`);

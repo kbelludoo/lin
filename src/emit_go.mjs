@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent, types) {
@@ -68,7 +68,8 @@ function goType(id, types, body) {
   if (new RegExp(`\\b${id}\\b\\s*=\\s*[-+]?\\d+`).test(b)) return 'int';
   if (new RegExp(`\\b${id}\\b\\s*(\\|=|\\^=|-=)`).test(b)) return 'int';
   if (/Abs$|^(n|ms)$/i.test(id)) return 'int';
-  return isNumishId(id) ? 'int' : 'string';
+  if (/mask|step|cutoff|index|accepted|target|offset|poolNext|poolOffset|alphabetLen|charCodes/i.test(id)) return 'int';
+  return isNumishId(id) ? 'int' : 'interface{}';
 }
 
 function goDeclLocals(locals, types, body) {
@@ -84,10 +85,7 @@ export function emitGo(liaText, opts = {}) {
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`var ${k} = ${v}`);
   }
   for (const fn of prog.fns) {
-    const params = fn.params
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
+    const { names: params, defaults } = parseParamList(fn.params);
     const paramList = params.map((p) => `${p} interface{}`).join(', ');
     if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
       parts.push(
@@ -99,7 +97,9 @@ export function emitGo(liaText, opts = {}) {
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const inferredTypes = inferTypes(stmts);
     const cacheStub = /\bcache\b/.test(fn.body) ? ['\tcache := make([]string, 64)'] : [];
-    const bodyLines = [...cacheStub, ...goDeclLocals(locals.filter((id) => id !== 'cache'), inferredTypes, fn.body), ...emitStmts(stmts, 1, inferredTypes)];
+    const declLocals = locals.filter((id) => id !== 'cache');
+    const keepUnused = declLocals.map((id) => `\t_ = ${id}`);
+    const bodyLines = [...cacheStub, ...emitNilDefaults(defaults, 'go'), ...goDeclLocals(declLocals, inferredTypes, fn.body), ...keepUnused, ...emitStmts(stmts, 1, inferredTypes)];
     const retType = /is_|empty|startsWith|endsWith|contains|typeof|^safeCompare$/i.test(fn.name)
       ? 'bool'
       : 'interface{}';
@@ -119,6 +119,12 @@ func _lia_typeof(x interface{}) string {
 	default:
 		return "object"
 	}
+}
+func _lia_at(s interface{}, i interface{}) string {
+	str := _lia_str(s)
+	n := _lia_num(i)
+	if n < 0 || n >= len(str) { return "" }
+	return str[n:n+1]
 }
 func _lia_isfinite(x interface{}) bool { return true }
 func _lia_isnan(x interface{}) bool { return false }
@@ -178,7 +184,7 @@ func _lia_abs(x interface{}) int {
 	if n < 0 { return -n }
 	return n
 }
-func _lia_round(x interface{}) string { return _lia_str(_lia_num(x)) }
+func _lia_round(x interface{}) int { return _lia_num(x) }
 func _lia_get(_ interface{}, _ string) interface{} { return nil }
 func _lia_re_exec(_ interface{}) string { return "" }
 func _lia_lower(x interface{}) string { return _lia_str(x) }

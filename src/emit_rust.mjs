@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes, parseParamList, rewriteFnValues } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent, types, retType) {
@@ -110,6 +110,7 @@ export function emitRust(liaText, opts = {}) {
     'fn _lia_val(x: impl ToString) -> String { x.to_string() }',
     'fn _lia_cat<A: ToString, B: ToString>(a: &A, b: &B) -> String { format!("{}{}", a.to_string(), b.to_string()) }',
     'fn _lia_num(x: &impl ToString) -> i64 { x.to_string().parse::<i64>().unwrap_or(0) }',
+    'fn _lia_at(s: &impl ToString, i: i64) -> String { let t = s.to_string(); let u = if i < 0 { 0 } else { i as usize }; t.chars().nth(u).map(|c| c.to_string()).unwrap_or_default() }',
     'fn _lia_or(a: impl ToString, b: impl ToString) -> String { let a = a.to_string(); if a.is_empty() { b.to_string() } else { a } }',
     'fn _lia_get<T>(_o: &T, _k: &str) -> String { String::new() }',
     'fn _lia_re_exec<T>(_s: T) -> String { String::new() }',
@@ -125,10 +126,7 @@ export function emitRust(liaText, opts = {}) {
   const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, snakeCase(f.name)]));
   for (const fn of prog.fns) {
     const name = snakeCase(fn.name);
-    const params = fn.params
-      .split(',')
-      .map((p) => p.trim())
-      .filter(Boolean);
+    const { names: params } = parseParamList(fn.params);
     const paramList = params.map((p) => {
       if (isNumishId(p) && !/^ms$/i.test(p)) return `mut ${p}: i64`;
       return `${p}: impl ToString`;
@@ -143,7 +141,10 @@ export function emitRust(liaText, opts = {}) {
       continue;
     }
     const bodyStmts = parseStmts(
-      rewriteSiblingCalls(fn.body, aliases)
+      rewriteSiblingCalls(
+        rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'String::new()'),
+        aliases,
+      )
         .replace(/\bmatch\b/g, 'match_')
         .replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1.to_string()'),
     );

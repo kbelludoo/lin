@@ -224,6 +224,17 @@ export function rewriteHostExpr(s, target) {
   let t = rewriteIifeTernary(s);
   t = t.replace(/\bMath\.abs\s*\(/g, '_lia_abs(');
   t = t.replace(/\bMath\.round\s*\(/g, '_lia_round(');
+  t = t.replace(/\bMath\.(ceil|floor|trunc)\s*\(/g, '_lia_round(');
+  t = t.replace(/\bMath\.(min|max)\s*\(([^,)]+),\s*([^)]+)\)/g, '_lia_num($2)');
+  t = t.replace(/\bMath\.random\s*\(\s*\)/g, '0');
+  t = t.replace(/\bMath\.[A-Za-z0-9]+\s*\(/g, '_lia_num(');
+  if (target !== 'js' && target !== 'ts') {
+    t = t.replace(/\b(\d+)\.(\d+)\b/g, (_, a, b) => String(Math.round(Number(`${a}.${b}`))));
+    t = t.replace(/(\d+)\s*\*\s*([A-Za-z_][\w]*)/g, '$1*_lia_num($2)');
+    t = t.replace(/\b([A-Za-z_][\w]*)\s*\|\s*0\b/g, '_lia_num($1)');
+    t = t.replace(/\b([A-Za-z_][\w]*)--\s*>\s*0/g, '$1 > 0');
+    t = t.replace(/\b([A-Za-z_][\w]*)--/g, '$1 != 0');
+  }
   t = t.replace(/\bJSON\.stringify\s*\(/g, '_lia_str(');
   t = t.replace(/\bparseFloat\s*\(/g, target === 'py' ? 'float(' : '_lia_num(');
   t = t.replace(/\bNaN\b/g, target === 'py' ? "float('nan')" : '0');

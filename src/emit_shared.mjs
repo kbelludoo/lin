@@ -21,9 +21,55 @@ export function snakeCase(name) {
     .toLowerCase();
 }
 
+/** Split LIN/JS param lists; strip `size=21` so Go/Rust/Java/C signatures stay valid. */
+export function parseParamList(raw) {
+  const items = String(raw || '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const names = [];
+  const defaults = [];
+  const sigPy = [];
+  const sigTs = [];
+  for (const item of items) {
+    const m = item.match(/^([A-Za-z_$][\w$]*)\s*=\s*(.+)$/);
+    if (m) {
+      names.push(m[1]);
+      defaults.push({ name: m[1], value: m[2].trim() });
+      sigPy.push(`${m[1]}=${m[2].trim()}`);
+      sigTs.push(`${m[1]}: unknown = ${m[2].trim()}`);
+    } else {
+      const id = item.replace(/\?$/, '').replace(/:\s*[\w[\]|]+$/, '').trim() || item;
+      names.push(id);
+      sigPy.push(id);
+      sigTs.push(`${id}: unknown`);
+    }
+  }
+  return { names, defaults, sigPy, sigTs };
+}
+
+export function emitNilDefaults(defaults, target) {
+  return (defaults || []).map(({ name, value }) => {
+    if (target === 'go') return `\tif ${name} == nil { ${name} = ${value} }`;
+    if (target === 'java' && /^["']/.test(value)) return `    if (${name} == null) ${name} = ${value};`;
+    if (target === 'c' && /^["']/.test(value)) return `  if (!${name}) ${name} = ${value};`;
+    return null;
+  }).filter(Boolean);
+}
+
 /** Detect JS-runtime-only surface (Buffer/crypto) — stub on non-JS targets. */
 export function isJsRuntimeOnly(body) {
-  return /\b(Buffer|crypto|bufferAllocUnsafe|timingSafeEqual)\b/.test(body);
+  return /\b(Buffer|crypto|bufferAllocUnsafe|timingSafeEqual|process)\b/.test(body);
+}
+
+/** Sibling fn used as a value (not a call) — stub so Rust/Java compile. */
+export function rewriteFnValues(body, fnNames, stub) {
+  let s = String(body || '');
+  for (const name of fnNames || []) {
+    if (!/^[A-Za-z_][\w]*$/.test(name)) continue;
+    s = s.replace(new RegExp(`\\b${name}\\b(?!\\s*\\()`, 'g'), stub);
+  }
+  return s;
 }
 
 export function isNumishId(id) {
@@ -38,7 +84,7 @@ export function inferTypes(stmts) {
       if (st.type === 'assign' && st.op === '=') {
         const rhs = String(st.expr || '').trim();
         let t = null;
-        if (/\.to_string\s*\(\)|String\s*\(|"[^"]*"/.test(rhs)) t = 'string';
+        if (/\.to_string\s*\(\)|String\s*\(|"[^"]*"|'[^']*'/.test(rhs)) t = 'string';
         else if (/\/.+\/[gimsuy]*|\b_lia_re_exec\b/.test(rhs)) t = 'string';
         else if (/==|!=|<=|>=|<|>/.test(rhs)) t = 'bool';
         else if (/\b(length|len|is_empty|Math\.abs|Math\.round|_lia_abs|_lia_round|_lia_num|parseFloat)\b/.test(rhs)) t = 'int';
@@ -58,7 +104,7 @@ export function inferTypes(stmts) {
 export function isStringishId(id) {
   const s = String(id || '');
   if (isNumishId(s)) return false;
-  return /^(str|ch|pad|fmt|s|key|name|cache|match|unit|matchUnit|value)$/i.test(s) || /str|fmt|ch|pad/i.test(s);
+  return /^(str|ch|pad|fmt|s|key|name|cache|match|unit|matchUnit|value|id|alphabet|urlAlphabet)$/i.test(s) || /str|fmt|ch|pad|alphabet/i.test(s);
 }
 
 function asBoolCond(rewritten, target) {
@@ -70,7 +116,9 @@ function asBoolCond(rewritten, target) {
 }
 
 export function emitCond(cond, target) {
-  const t = String(cond || '').trim();
+  let t = String(cond || '').trim();
+  t = t.replace(/\b([A-Za-z_][\w]*)--\s*>\s*0/g, '$1 > 0');
+  t = t.replace(/\b([A-Za-z_][\w]*)--/g, '$1 != 0');
   if (t === 'true') {
     if (target === 'c') return '1';
     if (target === 'go') return 'true';
@@ -142,17 +190,32 @@ function rewriteTemplateLiterals(s, target) {
 
 function stripJsArrowIife(s) {
   let t = String(s || '');
-  if (t.includes('=>') || t.includes('__c')) {
+  if (/\bNumber\.isFinite\b/.test(t) && (t.includes('=>') || t.includes('__c'))) {
+    const m = t.match(/Number\.isFinite\s*\(\s*([A-Za-z_][\w]*)\s*\)/);
+    if (m) return `_lia_isfinite(${m[1]})`;
     const plus = t.match(/\+\s*([A-Za-z_][\w]*)/);
-    const id = plus ? plus[1] : 'num';
-    return `_lia_isfinite(${id})`;
+    if (plus) return `_lia_isfinite(${plus[1]})`;
   }
   t = t.replace(/\bNumber\.isFinite\b(?!\s*\()/g, 'true');
   return t;
 }
 
+function stubClosureExpr(target) {
+  if (target === 'go') return 'nil';
+  if (target === 'rust') return 'String::new()';
+  if (target === 'java') return 'null';
+  if (target === 'c') return '0';
+  if (target === 'py') return 'None';
+  if (target === 'ts') return '(() => "")';
+  return null;
+}
+
 export function rewriteExpr(expr, target) {
   let s = String(expr || '');
+  if (/~\(|=>/.test(s)) {
+    const stub = stubClosureExpr(target);
+    if (stub != null) return stub;
+  }
   if (target === 'js' || target === 'ts') {
     s = rewriteIifeTernary(s);
     s = s.replace(/!==/g, '!==');
@@ -215,6 +278,7 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, 'int($1[$2])');
     s = s.replace(/\btrue\b/g, 'true').replace(/\bfalse\b/g, 'false');
     s = s.replace(/\bcache\[([^\]]+)\]/g, 'cache[_lia_num($1)]');
+    s = s.replace(/\b([A-Za-z_][\w]*)\[([^\]]+)\]/g, '_lia_at($1,$2)');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*&\s*/g, '_lia_num($1) & ');
     s = s.replace(/\bnull\b|\bundefined\b/g, 'nil');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*(<=|>=|<|>|==|!=)\s*(-?\d+)/g, '_lia_num($1) $2 $3');
@@ -257,6 +321,7 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/([A-Za-z_][\w]*)\.length\b(?!\s*\()/g, 'String.valueOf($1).length()');
     s = s.replace(/\bparseInt\s*\(\s*([A-Za-z_$][\w]*)\s*,\s*10\s*\)/g, 'Long.parseLong($1)');
     s = s.replace(/\bcache\[([^\]]+)\]/g, 'cache[(int)($1)]');
+    s = s.replace(/\b([A-Za-z_][\w]*)\[([^\]]+)\]/g, '_lia_at($1,$2)');
     s = s.replace(/!_lia_get\(([^)]+)\)/g, '!_lia_truthy(_lia_get($1))');
     s = s.replace(/_lia_get\(([^)]+)\)\s*\?/g, '_lia_truthy(_lia_get($1)) ?');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*!=\s*0\b/g, (_, id) => (
@@ -342,6 +407,7 @@ export function rewriteExpr(expr, target) {
       isNumishId(id) || !isStringishId(id) ? `${id} == 0` : `${id}.is_empty()`
     ));
     s = s.replace(/\bcache\[([^\]]+)\]/g, '_lia_cache_get(&cache, $1)');
+    s = s.replace(/\b([A-Za-z_][\w]*)\[([^\]]+)\]/g, '_lia_at(&$1,$2)');
     s = s.replace(/!_lia_get\(([^)]+)\)/g, '_lia_get($1).is_empty()');
     s = s.replace(/_lia_get\(_lia_get\(/g, '_lia_get(&_lia_get(');
     s = s.replace(/\(_lia_str\(([^)]+)\)\)/g, '_lia_str($1)');

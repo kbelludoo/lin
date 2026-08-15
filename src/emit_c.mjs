@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -86,7 +86,7 @@ export function emitC(liaText, opts = {}) {
     '',
   ];
   for (const fn of prog.fns) {
-    const params = fn.params.split(',').map((p) => p.trim()).filter(Boolean);
+    const { names: params, defaults } = parseParamList(fn.params);
     if (isJsRuntimeOnly(fn.body) && opts.stubRuntime !== false) {
       parts.push(`long long ${fn.name}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
@@ -108,7 +108,7 @@ export function emitC(liaText, opts = {}) {
       return `  ${t} ${id} = ${t.includes('char') ? 'NULL' : '0'};`;
     });
     const cacheStub = /\bcache\b/.test(fn.body) ? ['  const char *cache[64] = {0};'] : [];
-    const bodyLines = [...cacheStub, ...decls, ...emitStmts(stmts, 1)];
+    const bodyLines = [...cacheStub, ...decls, ...emitNilDefaults(defaults, 'c'), ...emitStmts(stmts, 1)];
     const retIsStr = /asprintf|_lia_sprintf|bytes_to_string/.test(fn.name + fn.body)
       || fn.name.includes('to_string') || fn.name.includes('ToString')
       || /leftPad|pad|join|trim/i.test(fn.name);
