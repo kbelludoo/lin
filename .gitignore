@@ -1,6 +1,7 @@
 ```
-# Rust-specific ignores
+# Rust target directory
 target/
-Cargo.lock
-**/output/
+
+# Generated files
+**/generated/**
 ```
