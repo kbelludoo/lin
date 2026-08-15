@@ -1390,12 +1390,26 @@ export function extractJsFunctions(source) {
     }
   }
 
-  const fnHead = /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*(?:<[^>]*>)?\s*\(/g;
+  const fnHead = /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)/g;
   let fh;
   while ((fh = fnHead.exec(text)) !== null) {
     const name = fh[1];
     if (candidates.some((c) => c.name === name)) continue;
-    const open = fh.index + fh[0].length - 1;
+    let hi = skipWsComments(text, fh.index + fh[0].length);
+    if (text[hi] === '<') {
+      let ad = 0;
+      for (; hi < text.length; hi++) {
+        const hc = text[hi];
+        if (hc === '<') ad++;
+        else if (hc === '>') {
+          ad--;
+          if (ad === 0) { hi++; break; }
+        }
+      }
+      hi = skipWsComments(text, hi);
+    }
+    if (text[hi] !== '(') continue;
+    const open = hi;
     const closed = matchParen(text, open);
     if (closed < 0) continue;
     let i = skipWsComments(text, closed + 1);
@@ -1588,7 +1602,8 @@ export function extractJsFunctions(source) {
     }
     const slice = text.slice(c.start, Math.min(text.length, c.start + 64));
     const isFnDecl = /^(?:export\s+)?(?:async\s+)?function\s/.test(slice);
-    if (nested && !isFnDecl) continue;
+    if (nested && braceDepthAt(text, c.start) === 0 && isFnDecl) nested = false;
+    if (nested) continue;
     push(c.name, c.params, c.body, { async: c.async });
   }
 

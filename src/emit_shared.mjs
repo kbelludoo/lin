@@ -217,7 +217,12 @@ export function isNumishId(id) {
 }
 
 export function isBoolFnName(name) {
-  return /^(is[A-Z]|safeCompare)|is_|empty|startsWith|endsWith|contains|typeof/i.test(String(name || ''));
+  return /^(is[A-Z]|want[A-Z]|has[A-Z]|can[A-Z]|safeCompare)|is_|want_|has_|can_|empty|startsWith|endsWith|contains|typeof|row_is|all_rows|refuse_|lang_is|multi_all/i.test(String(name || ''));
+}
+
+export function isBoolishId(id) {
+  const s = String(id || '').replace(/_+$/, '');
+  return /^(ok|flag|valid|done|withMain|rustOk|aOk|bOk|full|alive)$/i.test(s);
 }
 
 function numericPlusOperand(t) {
@@ -260,6 +265,7 @@ export function inferTypes(stmts) {
         if (/~\(|=>/.test(rhs)) t = 'string';
         else if (/\.to_string\s*\(\)|String\s*\(|"[^"]*"|'[^']*'/.test(rhs)) t = 'string';
         else if (/\/.+\/[gimsuy]*|\b_lia_re_exec\b/.test(rhs)) t = 'string';
+        else if (/^(true|false)$/.test(rhs)) t = 'bool';
         else if (/==|!=|<=|>=|<|>/.test(rhs)) t = 'bool';
         else if (/\b(length|len|is_empty|Math\.abs|Math\.round|_lia_abs|_lia_round|_lia_num|parseFloat)\b/.test(rhs)) t = 'int';
         else if (/[a-zA-Z_$][\w$]*\s*[+\-*/]\s*[a-zA-Z_$][\w$]*(\[[^\]]+\])?/.test(rhs)) {
@@ -294,7 +300,9 @@ function asBoolCond(rewritten, target) {
   let t = String(rewritten || '').trim();
   if (!t) return t;
   if (/^\([A-Za-z_][\w]*\)$/.test(t)) t = t.slice(1, -1);
-  if (/true|false|is_empty|_lia_empty|_lia_falsy|_lia_truthy|_lia_includes|==|!=|<=|>=|<|>/.test(t)) return t;
+  if (/true|false|is_empty|_lia_empty|_lia_falsy|_lia_truthy|_lia_includes|_lia_re_test|_lia_and|==|!=|<=|>=|<|>/.test(t)) return t;
+  const callm = t.match(/^([A-Za-z_][\w]*)\s*\(/);
+  if (callm && isBoolFnName(callm[1])) return t;
   if (/_lia_obj\(|_lia_get\(|_lia_at\(/.test(t)) {
     if (target === 'rust') return `!${t}.is_empty()`;
     if (target === 'java') return `_lia_truthy(${t})`;
@@ -621,6 +629,9 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
     s = s.replace(/\bString\(([A-Za-z_][\w]*)\s*\|\|\s*""\)/g, '$1.clone()');
     s = s.replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1.clone()');
+    s = s.replace(/([A-Za-z_][\w]*)\s*\|\|\s*\[\]/g, 'if $1.is_empty() { _lia_arr(&[]) } else { $1.clone() }');
+    s = s.replace(/\[\s*\]/g, '_lia_arr(&[])');
+    s = s.replace(/\[((?:"(?:\\.|[^"])*"\s*,\s*)*"(?:\\.|[^"])*")\]/g, (_, inner) => `_lia_arr(&[${inner}])`);
     s = s.replace(
       /([A-Za-z_][\w]*)\s*\|\|\s*("(?:\\.|[^"\\])*"|[A-Za-z_][\w]*)/g,
       'if $1.is_empty() { $2.to_string() } else { $1.clone() }',
@@ -640,9 +651,14 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/\b_lia_num\(([^)&][^)]*)\)/g, '_lia_num(&$1)');
     s = s.replace(/\b_lia_isfinite\(([^)&][^)]*)\)/g, '_lia_isfinite(&$1)');
     s = s.replace(/\b_lia_includes\(([^,&][^,)]*)/g, '_lia_includes(&$1');
-    s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, '$1.len() as i64');
+    s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, '_lia_len(&$1)');
     s = s.replace(/([A-Za-z_][\w]*)\.trim\s*\(\s*\)/g, '$1.trim()');
     s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, '$1.as_bytes()[$2 as usize] as i64');
+    s = s.replace(/([A-Za-z_][\w]*)\.charAt\s*\(/g, '_lia_at(&$1,');
+    s = s.replace(/([A-Za-z_][\w]*)\.indexOf\s*\(/g, '_lia_index_of(&$1,');
+    s = s.replace(/([A-Za-z_][\w]*)\.push\s*\(/g, '_lia_push(&mut $1,');
+    s = s.replace(/\bObject\.keys\s*\(/g, '_lia_keys(');
+    s = s.replace(/!!\(/g, '_lia_truthy(');
     s = s.replace(/\btrue\b/g, 'true').replace(/\bfalse\b/g, 'false');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*!=\s*0\b/g, (_, id) => (
       isNumishId(id) || !isStringishId(id) ? `${id} != 0` : `!${id}.is_empty()`
@@ -664,7 +680,7 @@ export function rewriteExpr(expr, target) {
       const cond = /_lia_get\(|_lia_obj\(/.test(c) ? `!${c}.is_empty()` : c;
       return `(if ${cond} { ${a} } else { ${b} })`;
     });
-    s = s.replace(/\bnull\b|\bundefined\b/g, 'None');
+    s = s.replace(/\bnull\b|\bundefined\b/g, 'String::new()');
     let prevRs;
     do {
       prevRs = s;

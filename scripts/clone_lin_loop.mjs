@@ -188,12 +188,18 @@ function runOneCycle(args, target) {
     const cloned = cloneSource(target.source, path.join(tempRoot, 'src'), args.shallow);
     if (!cloned.ok) throw new Error(`clone_failed:${cloned.error}`);
     const files = preferSort(walkLang(cloned.dest, target.lang || 'typescript'), args.prefer || target.prefer);
+    console.error(`[clone-lin] walk files=${files.length} dest=${cloned.dest}`);
     const cap = args.maxFns > 0 ? args.maxFns : Infinity;
     const results = [];
     let seen = 0;
     let source_tree_bytes = 0;
     const file_units = [];
+    let fileIdx = 0;
     for (const f of files) {
+      fileIdx += 1;
+      if (fileIdx === 1 || fileIdx % 100 === 0 || fileIdx === files.length) {
+        console.error(`[clone-lin] extract ${fileIdx}/${files.length} fail=${report.fail} seen=${seen}`);
+      }
       const srcRel = path.relative(cloned.dest, f).replace(/\\/g, '/');
       const linRel = linRelFromSrc(srcRel);
       let srcBytes = 0;
@@ -300,6 +306,7 @@ function runOneCycle(args, target) {
     const stats = suiteStats(report.pass, report.fail, report.skip);
     report.suite_total = stats.total;
     report.suite_rate = Number(stats.suite_rate.toFixed(4));
+    console.error(`[clone-lin] js_gate pass=${report.pass} fail=${report.fail} files_ok=${report.coverage.files_ok}/${report.coverage.files_total} rate=${report.suite_rate}`);
 
     const fails = results.filter((r) => r.status === 'fail');
     if (args.bootstrap && fails.length) {

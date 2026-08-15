@@ -350,6 +350,12 @@ export function rewriteHostExpr(s, target) {
   t = t.replace(/\bMath\.random\s*\(\s*\)/g, '0');
   t = t.replace(/\bMath\.[A-Za-z0-9]+\s*\(/g, '_lia_num(');
   if (target !== 'js' && target !== 'ts') {
+    if (target === 'rust') {
+      t = t.replace(/\/((?:\\\/|[^/\n])+)\/[gimsuy]*\.test\s*\(/g, (_, pat) => {
+        const p = String(pat).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+        return `_lia_re_test("${p}", `;
+      });
+    }
     t = t.replace(/\b(\d+)\.(\d+)\b/g, (_, a, b) => String(Math.round(Number(`${a}.${b}`))));
     t = t.replace(/(\d+)\s*\*\s*([A-Za-z_][\w]*)/g, '$1*_lia_num($2)');
     t = t.replace(/\b([A-Za-z_][\w]*)\s*\|\s*0\b/g, '_lia_num($1)');

@@ -205,7 +205,13 @@ export function verifyMultiTargets(root, storageDir, candDir, jsResults, slug) {
       reason: 'oracle_behavior_eq', file: jsFile, code: jsCode,
     });
   }
+  let gi = 0;
+  const gTotal = fileGroups.size;
   for (const [key, g] of fileGroups) {
+    gi += 1;
+    if (gi === 1 || gi % 50 === 0 || gi === gTotal) {
+      console.error(`[clone-lin] multi ${gi}/${gTotal} ${key}`);
+    }
     const className = String(key).replace(/[^A-Za-z0-9]/g, '') || 'LinEmit';
     for (const t of others) {
       const row = emitOneTarget(g.lia, className, t, workDir);
