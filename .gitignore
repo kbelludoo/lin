@@ -1,16 +1,6 @@
-node_modules/
-examples/.tmp_*
-.bench_400k_tmp/
-.bench_size_tmp/
-.clone_lia_publish/
-.clone_lin_publish/
-.clone_lin_stop
-*.log
-.DS_Store
-.env
-.env.*
-.clone_lin_*.err
-.clone_lin_*.json
-.clone_lin_queue_state.json
-
-examples/.multi_emit_out/
+```
+# Rust-specific ignores
+target/
+Cargo.lock
+**/output/
+```
