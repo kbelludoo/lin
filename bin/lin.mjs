@@ -96,7 +96,7 @@ if (cmd === 'compile') {
     const r = compileLiaFile(file, null);
     console.log(JSON.stringify({ out: r.outPath, target, fns: r.program.fns.map((f) => f.name) }, null, 2));
   } else {
-    const r = compileLiaToTargetFile(file, outT.value, { target });
+    const r = compileLiaToTargetFile(file, outT.value, { target, stubRuntime: false, withMain: false });
     console.log(
       JSON.stringify({ out: r.outPath, target, fns: r.program.fns.map((f) => f.name) }, null, 2),
     );

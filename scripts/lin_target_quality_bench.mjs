@@ -3,6 +3,8 @@
  * LIN Target Quality Benchmark
  * FULL = compile+run PASS on all 7 real nucleus langs. COMPILE_ONLY is not done.
  * Rank only after every nucleus lang is FULL. INTEL/stub auto-PASS is forbidden.
+ * fastest = wall-clock (C may win). best_in_memory / systems_pick = rust.
+ * C is memory=unsafe, compile+run gate only — not the in-process LIN host.
  * Wipes .lin_quality_work each run.
  */
 import fs from 'node:fs';
@@ -220,9 +222,11 @@ for (const s of ranked) {
 
 console.log('\n====================================================================');
 if (pick.status === 'MEASURED') {
-  console.log(`WINNER: ${pick.lang}  ${Number(pick.ms).toFixed(2)}ms  ${pick.bytes} bytes`);
-  console.log('metric: FULL first, then fastest median wall ms, then smallest emitted bytes');
-  console.log(`CLI default remains ${pick.prefer_until_bench || 'ts'} (clone/behavior_eq); this is the runtime winner.`);
+  console.log(`FASTEST: ${pick.fastest}  ${Number(pick.fastest_ms).toFixed(2)}ms  ${pick.fastest_bytes} bytes  (wall-clock; C may win)`);
+  console.log(`BEST_IN_MEMORY: ${pick.best_in_memory}  systems_pick=${pick.systems_pick}  memory_winner=${pick.memory_winner}`);
+  console.log(`IN_MEMORY_HOST: ${pick.in_memory_host}  runtime_winner=${pick.runtime_winner}  c_memory=${pick.c_memory}`);
+  console.log('C is compile+run gate/portability only; not the in-process LIN host. Speed does not make C the best option.');
+  console.log(`CLI default remains ${pick.prefer_until_bench || 'ts'} (clone/behavior_eq).`);
 } else {
   console.log(`pick status=${pick.status} — no winner`);
   process.exit(1);

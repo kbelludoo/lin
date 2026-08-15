@@ -15,8 +15,15 @@ function emitStmts(stmts, indent, types, retType) {
       lines.push(assignOpLine(st.id, st.op, st.expr, 'rust', pad, types));
     } else if (st.type === 'return') {
       const e = rewriteExpr(st.expr, 'rust');
-      if (retType === 'String') lines.push(`${pad}return _lia_val(${e});`);
-      else lines.push(`${pad}return ${e};`);
+      if (retType === 'String') {
+        if (/^\(?\s*\[/.test(String(st.expr || '').trim()) || /^\(?\s*\[/.test(String(e || '').trim())) {
+          lines.push(`${pad}return format!("{:?}", ${e});`);
+        } else {
+          lines.push(`${pad}return _lia_val(${e});`);
+        }
+      } else {
+        lines.push(`${pad}return ${e};`);
+      }
     } else if (st.type === 'throw') {
       lines.push(emitThrowLine(st.expr, 'rust', pad, rewriteExpr));
     } else if (st.type === 'expr') {
@@ -128,11 +135,36 @@ function rustRetType(fn, stmts) {
   };
   walk(stmts);
   if (!rets.length) return 'String';
-  const numeric = rets.every((t) => (
-    /^-?\d+$/.test(t) || inf.get(t) === 'int' || isNumishId(t)
-      || /^[A-Za-z_][\w]*(\s*[+\-*/%]\s*[A-Za-z_][\w]*)+$/.test(t)
-  ));
-  return numeric ? 'i64' : 'String';
+  const looksNumeric = (t) => {
+    const s = String(t || '').trim();
+    if (/^-?\d+$/.test(s) || inf.get(s) === 'int' || isNumishId(s)) return true;
+    if (/^[A-Za-z_][\w]*(\s*[+\-*/%]\s*[A-Za-z_][\w]*)+$/.test(s)) {
+      if (/\+/.test(s)) {
+        const ids = s.split(/\s*[+\-*/%]\s*/);
+        if (ids.some((id) => isStringishId(id) || inf.get(id) === 'string' || inf.get(id) === 'String')) return false;
+      }
+      return true;
+    }
+    return false;
+  };
+  return rets.every(looksNumeric) ? 'i64' : 'String';
+}
+
+function rewriteSafeParamIds(body, rawNames) {
+  let s = String(body || '');
+  for (const raw of rawNames) {
+    const safe = safeEmitId(raw);
+    if (safe !== raw) s = s.replace(new RegExp(`\\b${raw}\\b`, 'g'), safe);
+  }
+  return s;
+}
+
+function rawParamNames(paramsRaw) {
+  return String(paramsRaw || '')
+    .split(',')
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => p.replace(/\?$/, '').replace(/:\s*[\w[\]|]+$/, '').replace(/\s*=.+$/, '').trim());
 }
 
 export function emitRust(liaText, opts = {}) {
@@ -181,27 +213,35 @@ export function emitRust(liaText, opts = {}) {
   usedFn.clear();
   for (const fn of prog.fns) {
     const name = rustFnName(fn.name);
+    const rawNames = rawParamNames(fn.params);
     const { names: params } = parseParamList(fn.params);
-    const paramList = params.map((p) => {
-      if (isNumishId(p) && !/^ms$/i.test(p)) return `mut ${p}: i64`;
+    const paramList = params.map((p, i) => {
+      const orig = rawNames[i] || p;
+      if (isNumishId(orig) && !/^ms$/i.test(orig)) return `mut ${p}: i64`;
       return `${p}: impl ToString`;
     }).join(', ');
     const coerce = params
-      .filter((p) => !(isNumishId(p) && !/^ms$/i.test(p)))
+      .filter((p, i) => {
+        const orig = rawNames[i] || p;
+        return !(isNumishId(orig) && !/^ms$/i.test(orig));
+      })
       .map((p) => `    let mut ${p} = ${p}.to_string();`);
-    if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
+    if (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false) {
       parts.push(
         `pub fn ${name}() -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
       );
       continue;
     }
     const bodyStmts = tryParseStmts(
-      rewriteSiblingCalls(
-        rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'String::new()'),
-        aliases,
-      )
-        .replace(/\bmatch\b/g, 'match_')
-        .replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1.to_string()'),
+      rewriteSafeParamIds(
+        rewriteSiblingCalls(
+          rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'String::new()'),
+          aliases,
+        )
+          .replace(/\bmatch\b/g, 'match_')
+          .replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1.to_string()'),
+        rawNames,
+      ),
     );
     if (!bodyStmts) {
       parts.push(
@@ -244,6 +284,18 @@ export function emitRust(liaText, opts = {}) {
   const fnNames = prog.fns.map((f) => f.name);
   if (isQualityFnSet(fnNames)) {
     parts.push(formatQualityMain('rust', aliases));
+  } else if (fnNames.includes('hostPickBanner')) {
+    const h = (n) => aliases[n] || snakeCase(n);
+    parts.push(`
+fn main() {
+    println!("{}", ${h('hostPickBanner')}());
+    println!("{}", ${h('inMemoryHostLang')}());
+    println!("{}", ${h('cliEmitDefault')}());
+    println!("{}", ${h('cMemoryLabel')}());
+    println!("{}", ${h('langMemoryKind')}("c"));
+    println!("{}", ${h('langMemoryKind')}("rust"));
+}
+`);
   } else if (wantSafeCompareMain(opts.withMain, fnNames)) {
     const primary = snakeCase(prog.exports[0] || prog.fns[0]?.name || 'safeCompare');
     parts.push(`

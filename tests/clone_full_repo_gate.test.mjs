@@ -7,8 +7,11 @@ import {
   canPublishFullRepo, fileCoverage, isTypeOnlyModule, missedExtracts, normalizeSkipToFail, multiAllFull,
   honestNucleusMulti, formatStubIntel, defaultEmitTarget, futurePickBestLang, refuseStubBenchmark,
   rankQualityRows, allRowsFull, pickBestFromRows, benchRepeatCount,
+  langMemoryKind, langIsMemorySafe, inMemoryHostLang, cMemoryLabel,
 } from '../scripts/clone_lin_full_repo_gate.mjs';
 import { writeIntel } from '../scripts/clone_lin_improve.mjs';
+import { extractJsFunctions } from '../src/emitter.mjs';
+import { compileLia } from '../src/multi_emit.mjs';
 
 const remapped = normalizeSkipToFail([
   { status: 'pass', name: 'ok', srcRel: 'a.js' },
@@ -43,6 +46,30 @@ const missed = missedExtracts(
   [{ name: 'keep' }],
 );
 assert.deepEqual(missed.map((m) => m.name), ['drop']);
+
+const nestedSrc = 'function FileViewer(){function handleClick(){return 1}return handleClick()}';
+assert.equal(missedExtracts(nestedSrc, [{ name: 'FileViewer' }]).length, 0);
+const nestedFns = extractJsFunctions(nestedSrc);
+assert.ok(nestedFns.some((f) => f.name === 'FileViewer'));
+assert.equal(nestedFns.some((f) => f.name === 'handleClick'), false);
+const genericFns = extractJsFunctions('export function foo<T extends Record<string, unknown>>(x){return x}');
+assert.ok(genericFns.some((f) => f.name === 'foo'));
+
+const reservedLin = `@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=test
+~G{?=if #=for ^=ret :else}
+!bool(x){^!!x}
+!assert(x){^x}
+=ex{bool,assert}`;
+const goRes = compileLia(reservedLin, { target: 'go', exportMode: 'multiple', withMain: false, package: 'clonefn' });
+assert.match(goRes.code, /func bool_/);
+assert.doesNotMatch(goRes.code, /func bool\(/);
+const pyRes = compileLia(reservedLin, { target: 'py', exportMode: 'multiple', withMain: false });
+assert.match(pyRes.code, /def assert_/);
+assert.doesNotMatch(pyRes.code, /def assert\(/);
+const cRes = compileLia(reservedLin, { target: 'c', exportMode: 'multiple', withMain: false });
+assert.match(cRes.code, /bool_/);
+assert.doesNotMatch(cRes.code, /long long bool\(/);
 
 const easy = oracleFromFn({ name: 'add', params: ['a', 'b'], body: 'return a+b', bindings: {}, siblings: [] });
 assert.equal(easy.status, 'ok');
@@ -111,9 +138,42 @@ assert.equal(ranked[0].rank, 1);
 const picked = pickBestFromRows(rankIn);
 assert.equal(picked.status, 'MEASURED');
 assert.equal(picked.lang, 'js');
+assert.equal(picked.fastest, 'js');
+assert.equal(picked.best_in_memory, 'js');
+assert.equal(picked.in_memory_host, 'rust');
+assert.equal(picked.c_memory, 'unsafe');
 assert.equal(futurePickBestLang({ rows: rankIn }).lang, 'js');
 assert.equal(pickBestFromRows([{ lang: 'ts', compileOk: true, runOk: false, ms: 1, bytes: 1 }]).status, 'NOT_FULL');
 assert.equal(futurePickBestLang([{ lang: 'go', compileOk: true, runOk: true, ms: 3, bytes: 10 }]).status, 'MEASURED');
+
+assert.equal(langMemoryKind('c'), 'unsafe');
+assert.equal(langIsMemorySafe('c'), false);
+assert.equal(langIsMemorySafe('rust'), true);
+assert.equal(inMemoryHostLang(), 'rust');
+assert.equal(cMemoryLabel(), 'unsafe');
+assert.equal(defaultEmitTarget(), 'ts');
+
+const seven = [
+  { lang: 'c', compileOk: true, runOk: true, ms: 32.46, bytes: 1798 },
+  { lang: 'rust', compileOk: true, runOk: true, ms: 35.20, bytes: 2270 },
+  { lang: 'go', compileOk: true, runOk: true, ms: 35.46, bytes: 3267 },
+  { lang: 'py', compileOk: true, runOk: true, ms: 105.27, bytes: 1736 },
+  { lang: 'ts', compileOk: true, runOk: true, ms: 113.98, bytes: 487 },
+  { lang: 'js', compileOk: true, runOk: true, ms: 115.27, bytes: 447 },
+  { lang: 'java', compileOk: true, runOk: true, ms: 197.86, bytes: 2579 },
+];
+assert.equal(rankQualityRows(seven)[0].lang, 'c');
+const hostPick = pickBestFromRows(seven);
+assert.equal(hostPick.fastest, 'c');
+assert.equal(hostPick.best_in_memory, 'rust');
+assert.equal(hostPick.systems_pick, 'rust');
+assert.equal(hostPick.memory_winner, 'rust');
+assert.equal(hostPick.in_memory_host, 'rust');
+assert.equal(hostPick.runtime_winner, 'rust');
+assert.equal(hostPick.lang, 'rust');
+assert.notEqual(hostPick.lang, 'c');
+assert.equal(hostPick.c_memory, 'unsafe');
+assert.match(String(hostPick.note), /CLI emit stays ts/);
 
 assert.doesNotMatch(honestNucleusMulti({ js: { PASS: 1, SKIP: 0, FAIL: 0 }, asm: { PASS: 15, SKIP: 0, FAIL: 0 } }), /asm:P/);
 assert.match(formatStubIntel(), /EXPERIMENTAL_NOT_PASS/);

@@ -212,7 +212,8 @@ export function rewriteFnValues(body, fnNames, stub) {
 }
 
 export function isNumishId(id) {
-  return /^(len|n|i|idx|count|num|ms|msAbs)$/i.test(String(id || ''));
+  const s = String(id || '').replace(/_+$/, '');
+  return /^(len|n|i|idx|count|num|ms|msAbs)$/i.test(s);
 }
 
 export function isBoolFnName(name) {
@@ -261,15 +262,20 @@ export function inferTypes(stmts) {
         else if (/\/.+\/[gimsuy]*|\b_lia_re_exec\b/.test(rhs)) t = 'string';
         else if (/==|!=|<=|>=|<|>/.test(rhs)) t = 'bool';
         else if (/\b(length|len|is_empty|Math\.abs|Math\.round|_lia_abs|_lia_round|_lia_num|parseFloat)\b/.test(rhs)) t = 'int';
-        else if (/[a-zA-Z_$][\w$]*\s*[+\-*/]\s*[a-zA-Z_$][\w$]*(\[[^\]]+\])?/.test(rhs)) t = 'int';
+        else if (/[a-zA-Z_$][\w$]*\s*[+\-*/]\s*[a-zA-Z_$][\w$]*(\[[^\]]+\])?/.test(rhs)) {
+          if (types.get(st.id) === 'string' || isStringishId(st.id)) t = 'string';
+          else t = 'int';
+        }
         else if (/[a-zA-Z_$][\w$]*\s*\+\+/.test(rhs)) t = 'int';
         else if (/[a-zA-Z_$][\w$]*\s*[+\-*/%]\s*\d/.test(rhs)) t = 'int';
         else if (/^\d+\s*[+\-*/]\s*[a-zA-Z_$][\w$]*/.test(rhs)) t = 'int';
         else if (/^\d+$/.test(rhs)) t = 'int';
         else if (/^[A-Za-z_][\w]*$/.test(rhs) && types.has(rhs)) t = types.get(rhs);
         if (t && types.get(st.id) !== t) {
-          types.set(st.id, t);
-          changed = true;
+          if (!(types.get(st.id) === 'string' && t === 'int')) {
+            types.set(st.id, t);
+            changed = true;
+          }
         }
       }
     }
@@ -613,6 +619,8 @@ export function rewriteExpr(expr, target) {
   }
   if (target === 'rust') {
     s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
+    s = s.replace(/\bString\(([A-Za-z_][\w]*)\s*\|\|\s*""\)/g, '$1.clone()');
+    s = s.replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1.clone()');
     s = s.replace(
       /([A-Za-z_][\w]*)\s*\|\|\s*("(?:\\.|[^"\\])*"|[A-Za-z_][\w]*)/g,
       'if $1.is_empty() { $2.to_string() } else { $1.clone() }',
@@ -642,8 +650,12 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/\b([A-Za-z_][\w]*)\s*==\s*0\b/g, (_, id) => (
       isNumishId(id) || !isStringishId(id) ? `${id} == 0` : `${id}.is_empty()`
     ));
-    s = s.replace(/\bcache\[([^\]]+)\]/g, '_lia_cache_get(&cache, $1)');
-    s = s.replace(/\b([A-Za-z_][\w]*)\[([^\]]+)\]/g, '_lia_at(&$1,$2)');
+    s = s.replace(/\bcache\[([^\[\]]+)\]/g, '_lia_cache_get(&cache, $1)');
+    let prevAt;
+    do {
+      prevAt = s;
+      s = s.replace(/\b([A-Za-z_][\w]*)\[([^\[\]]+)\]/g, '_lia_at(&$1,$2)');
+    } while (s !== prevAt);
     s = collapseHostChains(s);
     s = s.replace(/!_lia_get\(([^)]+)\)/g, '_lia_get($1).is_empty()');
     s = s.replace(/_lia_get\(_lia_get\(/g, '_lia_get(&_lia_get(');
