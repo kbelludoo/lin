@@ -240,11 +240,7 @@ export function emitRust(liaText, opts = {}) {
     const genDecl = fn.generics ? fn.generics.slice(1, -1) : null; // "T" or "T,U"
     const rawNames = rawParamNames(fn.params);
     const { names: params } = parseParamList(fn.params);
-    // Extrair os nomes limpos de parâmetros (antes de qualquer anotação de tipo)
-    const cleanParamNames = params.map((p, i) => {
-      const orig = rawNames[i] || p;
-      return orig.split(':')[0].trim();
-    });
+    const cleanParamNames = params.map((p) => safeEmitId(String(p).split(':')[0].trim()));
     // Build Rust generic param declaration for function signature
     const genRust = genDecl ? `<${genDecl.split(',').map(g => g.trim()).filter(Boolean).join(', ')}>` : '';
     const paramList = params.map((p, i) => {

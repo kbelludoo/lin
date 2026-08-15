@@ -6,6 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { assertJsParse } from './js_syntax_check.mjs';
+import { assertDivProof } from './lin_refine_div_load.mjs';
 
 export const LIA_COMPILER_VERSION = '1.0.0';
 export const AIL_COMPILER_VERSION = LIA_COMPILER_VERSION; // backcompat
@@ -733,17 +734,16 @@ export function parseLia(liaText) {
         returnType = fnStart[4]?.trim();
       }
       
-      // Se a linha tem a abertura '{', computar chaves nesta linha e subsequentes
+      // Body '{' is after the param list, not a refinement like b:int{>0}
       let fullFnText = line;
-      let firstBrace = fullFnText.indexOf('{');
+      const braceFrom = closeParenIdx >= 0 ? closeParenIdx + 1 : 0;
+      let firstBrace = fullFnText.indexOf('{', braceFrom);
       if (firstBrace < 0) {
         while (i + 1 < lines.length) {
           i++;
           fullFnText += '\n' + lines[i];
-          if (fullFnText.includes('{')) {
-            firstBrace = fullFnText.indexOf('{');
-            break;
-          }
+          firstBrace = fullFnText.indexOf('{', braceFrom);
+          if (firstBrace >= 0) break;
         }
       }
       
@@ -901,6 +901,9 @@ function inferEffect(fn, allFns) {
  */
 export function compileLiaToJs(liaText, opts = {}) {
   const prog = parseLia(liaText);
+  if (opts.skipRefineProof !== true) {
+    assertDivProof(liaText, prog);
+  }
   const fnNames = new Set(prog.fns.map((f) => f.name));
   for (const name of prog.exports) {
     if (!fnNames.has(name)) throw new Error(`LIN_EXPORT_NO_FN: ${name}`);

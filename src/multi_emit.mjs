@@ -3,6 +3,8 @@
  * Default target = ts (LIN defaultEmitTarget). Stub langs are not PASS.
  */
 import fs from 'node:fs';
+import { parseLia } from './compiler.mjs';
+import { assertDivProof } from './lin_refine_div_load.mjs';
 import { emitJs } from './emit_js.mjs';
 import { emitTs } from './emit_ts.mjs';
 import { emitPy } from './emit_py.mjs';
@@ -21,6 +23,9 @@ export function compileLia(liaText, opts = {}) {
   }
   if (!REAL_TARGETS.includes(target)) {
     throw new Error(`LIA_EMIT_TARGET: unsupported ${target}; want ${REAL_TARGETS.join('|')} (default ${DEFAULT_EMIT_TARGET})`);
+  }
+  if (opts.skipRefineProof !== true) {
+    assertDivProof(liaText, parseLia(liaText));
   }
   if (target === 'ts') return emitTs(liaText, opts);
   if (target === 'js') return emitJs(liaText, opts);
