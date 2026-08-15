@@ -562,11 +562,11 @@ export function parseLia(liaText) {
       continue;
     }
     else if (line.startsWith('=ex{')) {
-      meta.exports = line
+      meta.exports = (meta.exports || []).concat(line
         .slice(4, -1)
         .split(',')
         .map((x) => x.trim())
-        .filter(Boolean);
+        .filter(Boolean));
       i++;
       continue;
     }

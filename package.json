@@ -13,7 +13,7 @@
     "emit": "node bin/lin.mjs emit",
     "compile": "node bin/lin.mjs compile",
     "check": "node bin/lin.mjs check",
-    "test": "node tests/roundtrip.test.mjs && node tests/clone_full_repo_gate.test.mjs && node tests/emit_leftpad_all.test.mjs && node tests/lin_auto_generate.test.mjs && node tests/m006_refine_div.test.mjs && node tests/lin_suggest.test.mjs && node tests/lin_agent_ir_ingest.test.mjs && node tests/ain_lb/ain_lb_clr.test.mjs",
+    "test": "node tests/roundtrip.test.mjs && node tests/clone_full_repo_gate.test.mjs && node tests/emit_leftpad_all.test.mjs && node tests/lin_auto_generate.test.mjs && node tests/m006_refine_div.test.mjs && node tests/lin_suggest.test.mjs && node tests/lin_agent_ir_ingest.test.mjs && node tests/ain_lb/ain_lb_clr.test.mjs && node tests/ain_lb/clr002_effect_repair.test.mjs && node tests/ain_lb/clr003_semantic_repair.test.mjs",
     "ain-lb-clr": "node tests/ain_lb/runner.mjs",
     "test:multi": "node scripts/golden_multi_emit.mjs",
     "ensure-toolchains": "node scripts/ensure_toolchains.mjs",
