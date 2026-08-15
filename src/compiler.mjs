@@ -1,10 +1,11 @@
 /**
  * LIA → JS compiler (M1/M3) — dual-reads @LIA and legacy @AIL headers.
- * Spec: LIA_SEMANTIC_CORE.dicel + LIA_COMPILER_SPEC.dicel
+ * Spec: LIA_SEMANTIC_CORE.dicel + LIA_COMPILER_SPEC.dicel + spec/LIN_EMIT_FAIL_CLOSED.rulel
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { assertJsParse } from './js_syntax_check.mjs';
 
 export const LIA_COMPILER_VERSION = '1.0.0';
 export const AIL_COMPILER_VERSION = LIA_COMPILER_VERSION; // backcompat
@@ -79,11 +80,28 @@ function parseConstTable(line) {
 
 function stripTypeAnn(params) {
   if (!params) return '';
-  return params
-    .split(',')
-    .map((p) => p.trim())
+  const parts = [];
+  let current = '';
+  let depth = 0;
+  for (let k = 0; k < params.length; k++) {
+    const ch = params[k];
+    if (ch === '(' || ch === '<' || ch === '{' || ch === '[') depth++;
+    else if (ch === ')' || ch === '>' || ch === '}' || ch === ']') depth--;
+    if (ch === ',' && depth === 0) {
+      parts.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) parts.push(current.trim());
+
+  return parts
+    .map((p) => {
+      const colon = p.indexOf(':');
+      return (colon >= 0 ? p.slice(0, colon) : p).trim();
+    })
     .filter(Boolean)
-    .map((p) => p.replace(/:[\w\[\]|,<>]+$/g, '').trim())
     .join(', ');
 }
 
@@ -275,8 +293,23 @@ function compileMatchToJs(targetExpr, inner) {
     let binds = '';
     if (pat === '_') {
       cond = guard ? `(${guard})` : 'true';
+    } else if (pat.includes('|')) {
+      const subPats = pat.split('|').map((p) => p.trim()).filter(Boolean);
+      const subConds = subPats.map((p) => {
+        if (p === 'true' || p === 'false') return `${targetExpr}===${p}`;
+        if (/^-?\d+(\.\d+)?$/.test(p)) return `${targetExpr}===${p}`;
+        if (/^["']/.test(p)) return `${targetExpr}===${p}`;
+        return `${targetExpr}===${p}`;
+      });
+      cond = `(${subConds.join('||')})`;
+      if (guard) cond += `&&(${guard})`;
     } else {
       const enumMatch = pat.match(/^([A-Za-z_$][\w$]*)\(([^)]+)\)$/);
+      // Tuple destructuring: (a, b)
+      const tupleMatch = pat.match(/^\(([^)]+)\)$/);
+      // Struct destructuring: Point { x, y } or { x, y }
+      const structDestruct = pat.match(/^(?:([A-Za-z_$][\w$]*)\s*)?\{([^}]+)\}$/);
+      
       if (enumMatch) {
         const tag = enumMatch[1];
         const v = enumMatch[2].trim();
@@ -292,6 +325,22 @@ function compileMatchToJs(targetExpr, inner) {
           binds = `let ${v}=${targetExpr}.value!==undefined?${targetExpr}.value:${targetExpr}.${tag};`;
         }
         cond = tagCheck;
+        if (guard) cond += `&&(${guard})`;
+      } else if (tupleMatch) {
+        const elements = tupleMatch[1].split(',').map((x) => x.trim());
+        cond = `(Array.isArray(${targetExpr}) && ${targetExpr}.length >= ${elements.length})`;
+        binds = elements.map((elem, idx) => `let ${elem}=${targetExpr}[${idx}];`).join('');
+        if (guard) cond += `&&(${guard})`;
+      } else if (structDestruct) {
+        const structName = structDestruct[1];
+        const fields = structDestruct[2].split(',').map((x) => x.trim()).filter(Boolean);
+        cond = `(${targetExpr}!=null && typeof ${targetExpr}==='object'${structName ? ` && (${targetExpr} instanceof ${structName} || ${targetExpr}.__struct==='${structName}' || true)` : ''})`;
+        binds = fields.map((f) => {
+          const colon = f.indexOf(':');
+          const prop = colon >= 0 ? f.slice(0, colon).trim() : f;
+          const binding = colon >= 0 ? f.slice(colon + 1).trim() : f;
+          return `let ${binding}=${targetExpr}.${prop};`;
+        }).join('');
         if (guard) cond += `&&(${guard})`;
       } else if (/^[A-Za-z_$][\w$]*$/.test(pat) && pat === 'None') {
         cond = `(${targetExpr}==null||${targetExpr}===undefined||(typeof ${targetExpr}==='object'&&(${targetExpr}.tag==='None'||'None' in ${targetExpr})))`;
@@ -315,11 +364,11 @@ function compileMatchToJs(targetExpr, inner) {
 
 function compileBody(body) {
   let s = String(body || '');
+  s = s.replace(/([A-Za-z_$][\w$]*)::([A-Za-z_$][\w$]*)/g, '$1.$2');
   s = rewriteClosures(s);
   s = rewriteMatchBlocks(s);
   s = rewriteSigilBlocks(s, '?', 'if');
-  s = rewriteElseIf(s);
-  s = rewriteElseBare(s);
+  s = rewriteLinElse(s);
   s = rewriteSigilBlocks(s, '#', 'for');
   s = compileReturnSigils(s);
   s = s.replace(/([^;{}(\[,:?])while\s*\(/g, '$1;while(');
@@ -331,6 +380,7 @@ function compileBody(body) {
   s = s.replace(/;+/g, ';');
   s = s.replace(/;else\b/g, 'else');
   s = s.replace(/#\(/g, 'for(');
+  s = insertCtrlSeps(s);
   s = s.replace(/\?\(([^()]+)\)\{/g, 'if($1){');
   s = s.replace(/([^;{}:\s])\s+(case\s|default\s*:)/g, '$1;$2');
   s = s.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
@@ -379,60 +429,105 @@ function rewriteSigilBlocks(s, sigil, keyword) {
   return out;
 }
 
-function rewriteElseIf(s) {
-  // :(cond){body} → else if(cond){body}
+function skipQuote(s, i) {
+  const q = s[i];
+  let j = i + 1;
+  while (j < s.length) {
+    if (s[j] === '\\') { j += 2; continue; }
+    if (q === '`' && s[j] === '$' && s[j + 1] === '{') {
+      const inner = findMatching(s, j + 1, '{', '}');
+      j = inner >= 0 ? inner + 1 : j + 2;
+      continue;
+    }
+    if (s[j] === q) return j + 1;
+    j++;
+  }
+  return s.length;
+}
+
+function isLinElsePrev(s, colonIdx) {
+  let k = colonIdx - 1;
+  while (k >= 0 && /\s/.test(s[k])) k--;
+  if (k < 0) return false;
+  return s[k] === '}' || s[k] === ';';
+}
+
+/** `:{` / `:(cond){` are else only after `}` or `;`. Never rewrite `:` inside `{k:v}` or strings. */
+function rewriteLinElse(s) {
   let out = '';
   let i = 0;
   while (i < s.length) {
-    const idx = s.indexOf(':(', i);
-    if (idx < 0) {
-      out += s.slice(i);
-      break;
-    }
-    out += s.slice(i, idx);
-    const openParen = idx + 1;
-    const closeParen = findMatching(s, openParen, '(', ')');
-    if (closeParen < 0) {
-      out += ':(';
-      i = idx + 2;
+    const c = s[i];
+    if (c === '"' || c === "'" || c === '`') {
+      const end = skipQuote(s, i);
+      out += s.slice(i, end);
+      i = end;
       continue;
     }
-    const head = s.slice(openParen + 1, closeParen);
-    let j = closeParen + 1;
-    while (j < s.length && /\s/.test(s[j])) j++;
-    if (s[j] !== '{') {
-      out += `else if(${head})`;
-      i = closeParen + 1;
-      continue;
+    if (c === '/' && i + 1 < s.length && s[i + 1] !== '/' && s[i + 1] !== '*') {
+      let k = i - 1;
+      while (k >= 0 && /\s/.test(s[k])) k--;
+      const prev = k < 0 ? '' : s[k];
+      if (!prev || /[=(:,;!?{[&|^~+\-*%<>]/.test(prev)) {
+        const end = skipRegexLit(s, i);
+        out += s.slice(i, end);
+        i = end;
+        continue;
+      }
     }
-    const closeBrace = findMatching(s, j, '{', '}');
-    const inner = compileBody(s.slice(j + 1, closeBrace));
-    out += `else if(${head}){${inner}}`;
-    i = closeBrace + 1;
+    if (c === ':' && isLinElsePrev(s, i)) {
+      let j = i + 1;
+      while (j < s.length && /\s/.test(s[j])) j++;
+      if (s[j] === '{') {
+        const closeBrace = findMatching(s, j, '{', '}');
+        if (closeBrace >= 0) {
+          out += `else{${compileBody(s.slice(j + 1, closeBrace))}}`;
+          i = closeBrace + 1;
+          continue;
+        }
+      }
+      if (s[j] === '(') {
+        const closeParen = findMatching(s, j, '(', ')');
+        if (closeParen >= 0) {
+          let k = closeParen + 1;
+          while (k < s.length && /\s/.test(s[k])) k++;
+          if (s[k] === '{') {
+            const closeBrace = findMatching(s, k, '{', '}');
+            if (closeBrace >= 0) {
+              const head = s.slice(j + 1, closeParen);
+              out += `else if(${head}){${compileBody(s.slice(k + 1, closeBrace))}}`;
+              i = closeBrace + 1;
+              continue;
+            }
+          }
+        }
+      }
+    }
+    out += c;
+    i++;
   }
   return out;
 }
 
-function rewriteElseBare(s) {
-  // :{body} → else{body}
+/** Keep `return ({k:v})for(...)` from gluing into one illegal statement. */
+function insertCtrlSeps(s) {
   let out = '';
   let i = 0;
   while (i < s.length) {
-    const idx = s.indexOf(':{', i);
-    if (idx < 0) {
-      out += s.slice(i);
-      break;
-    }
-    out += s.slice(i, idx);
-    const closeBrace = findMatching(s, idx + 1, '{', '}');
-    if (closeBrace < 0) {
-      out += ':{';
-      i = idx + 2;
+    const c = s[i];
+    if (c === '"' || c === "'" || c === '`') {
+      const end = skipQuote(s, i);
+      out += s.slice(i, end);
+      i = end;
       continue;
     }
-    const inner = compileBody(s.slice(idx + 2, closeBrace));
-    out += `else{${inner}}`;
-    i = closeBrace + 1;
+    if ((c === ')' || c === '}') && /^(for|if|while)\(/.test(s.slice(i + 1))) {
+      out += `${c};`;
+      i++;
+      continue;
+    }
+    out += c;
+    i++;
   }
   return out;
 }
@@ -445,9 +540,9 @@ export function parseLia(liaText) {
         .split(/\r?\n/)
         .map((l) => l.trim())
         .filter(Boolean);
-  const meta = { header: null, consts: null, exports: [], fns: [], enums: [] };
+  const meta = { header: null, consts: null, exports: [], fns: [], enums: [], structs: [], modules: [], uses: [] };
   
-  // Primeiro passo: coletar declarações de enum (podem spançar múltiplas linhas)
+  // Primeiro passo: coletar declarações de enum, struct, mod e use (podem spançar múltiplas linhas)
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
@@ -460,7 +555,8 @@ export function parseLia(liaText) {
     else if (line.startsWith('^')) { i++; continue; }
     else if (line.startsWith('~G')) { i++; continue; }
     else if (line.startsWith('$K')) {
-      meta.consts = parseConstTable(line);
+      const next = parseConstTable(line);
+      if (next) meta.consts = Object.assign(meta.consts || {}, next);
       i++;
       continue;
     }
@@ -470,6 +566,90 @@ export function parseLia(liaText) {
         .split(',')
         .map((x) => x.trim())
         .filter(Boolean);
+      i++;
+      continue;
+    }
+    else if (line.startsWith('use ')) {
+      // use Module::{sym1, sym2} or use Module::sym1
+      const useMatch = line.match(/^use\s+([A-Za-z_$][\w$]*)::(?:\{([^}]+)\}|([A-Za-z_$][\w$]*))\s*;?$/);
+      if (useMatch) {
+        const modName = useMatch[1];
+        const symbols = useMatch[2]
+          ? useMatch[2].split(',').map((s) => s.trim()).filter(Boolean)
+          : [useMatch[3].trim()];
+        meta.uses.push({ module: modName, symbols });
+      }
+      i++;
+      continue;
+    }
+    else if (line.startsWith('mod ')) {
+      // Parse module block: mod Math { ... }
+      const modMatch = line.match(/^mod\s+([A-Za-z_$][\w$]*)\s*\{?([\s\S]*)$/);
+      if (modMatch) {
+        const modName = modMatch[1];
+        let body = modMatch[2] || '';
+        let openBraces = 0;
+        const firstBrace = line.indexOf('{');
+        if (firstBrace >= 0) {
+          for (let k = firstBrace; k < line.length; k++) {
+            if (line[k] === '{') openBraces++;
+            else if (line[k] === '}') openBraces--;
+          }
+        } else {
+          openBraces = 1;
+        }
+
+        while (openBraces > 0 && i + 1 < lines.length) {
+          i++;
+          const nextLine = lines[i];
+          body += '\n' + nextLine;
+          for (const ch of nextLine) {
+            if (ch === '{') openBraces++;
+            else if (ch === '}') openBraces--;
+          }
+        }
+
+        const lastBrace = body.lastIndexOf('}');
+        const innerCode = lastBrace >= 0 ? body.slice(0, lastBrace) : body;
+        
+        // Recursively parse inner program of the module
+        const modProg = parseLia(innerCode);
+        meta.modules.push({ name: modName, program: modProg });
+      }
+      i++;
+      continue;
+    }
+    else if (line.startsWith('struct ')) {
+      // Parse struct declaration: struct Point { x: int, y: int }
+      const structMatch = line.match(/^struct\s+([A-Za-z_$][\w$]*)(<[^>]*>)?\s*\{?([\s\S]*)$/);
+      if (structMatch) {
+        const structName = structMatch[1];
+        const generics = structMatch[2] || null;
+        let body = structMatch[3] || '';
+        
+        if (!body.includes('}')) {
+          while (i + 1 < lines.length) {
+            i++;
+            const nextLine = lines[i];
+            body += '\n' + nextLine;
+            if (nextLine.includes('}')) break;
+          }
+        }
+        
+        const fields = [];
+        const innerBody = body.replace(/^\{/, '').replace(/\}$/, '');
+        const fieldLines = innerBody.split(/[\n,]/);
+        for (const fLine of fieldLines) {
+          const trimmed = fLine.trim();
+          if (!trimmed) continue;
+          const fMatch = trimmed.match(/^([A-Za-z_$][\w$]*)\s*:\s*([^,;]+)$/);
+          if (fMatch) {
+            fields.push({ name: fMatch[1], type: fMatch[2].trim() });
+          }
+        }
+        
+        meta.structs.push({ name: structName, generics, fields });
+      }
       i++;
       continue;
     }
@@ -511,13 +691,47 @@ export function parseLia(liaText) {
       continue;
     }
     else if (line.startsWith('fn ') || line.startsWith('!')) {
-      const fnStart = line.match(/^(?:fn|!)\s*([A-Za-z_$][\w$]*)(<[^>]*>)?\(([^)]*)\)(?:\s*(?:->|:)\s*([^{]+))?\s*\{?([\s\S]*)$/);
-      if (!fnStart) throw new Error(`LIA_PARSE_FN_START: ${line.slice(0, 80)}`);
+      let openParenIdx = line.indexOf('(');
+      let closeParenIdx = -1;
+      let pDepth = 0;
+      for (let k = openParenIdx; k < line.length; k++) {
+        if (line[k] === '(') pDepth++;
+        else if (line[k] === ')') {
+          pDepth--;
+          if (pDepth === 0) {
+            closeParenIdx = k;
+            break;
+          }
+        }
+      }
       
-      let fnName = fnStart[1];
-      let generics = fnStart[2] || null;
-      let paramsRaw = fnStart[3];
-      let returnType = fnStart[4]?.trim();
+      let fnHeader = line;
+      let paramsRaw = '';
+      let fnName = '';
+      let generics = null;
+      let returnType = null;
+      
+      if (openParenIdx >= 0 && closeParenIdx > openParenIdx) {
+        const pre = line.slice(0, openParenIdx).trim();
+        const nmMatch = pre.match(/^(?:fn|!)\s*([A-Za-z_$][\w$]*)(<[^>]*>)?$/);
+        if (nmMatch) {
+          fnName = nmMatch[1];
+          generics = nmMatch[2] || null;
+        }
+        paramsRaw = line.slice(openParenIdx + 1, closeParenIdx);
+        const post = line.slice(closeParenIdx + 1);
+        const retMatch = post.match(/^\s*(?:->|:)\s*([^{]+)/);
+        if (retMatch) {
+          returnType = retMatch[1].trim();
+        }
+      } else {
+        const fnStart = line.match(/^(?:fn|!)\s*([A-Za-z_$][\w$]*)(<[^>]*>)?\(([^)]*)\)(?:\s*(?:->|:)\s*([^{]+))?\s*\{?([\s\S]*)$/);
+        if (!fnStart) throw new Error(`LIA_PARSE_FN_START: ${line.slice(0, 80)}`);
+        fnName = fnStart[1];
+        generics = fnStart[2] || null;
+        paramsRaw = fnStart[3];
+        returnType = fnStart[4]?.trim();
+      }
       
       // Se a linha tem a abertura '{', computar chaves nesta linha e subsequentes
       let fullFnText = line;
@@ -578,7 +792,7 @@ export function parseLia(liaText) {
         ? fullFnText.slice(firstBrace + 1, lastBrace)
         : '';
       
-      meta.fns.push({ name: fnName, generics, params: stripTypeAnn(paramsRaw), returnType, body });
+      meta.fns.push({ name: fnName, generics, params: stripTypeAnn(paramsRaw), rawParams: paramsRaw, returnType, body });
       i++;
       continue;
     }
@@ -687,6 +901,10 @@ function inferEffect(fn, allFns) {
  */
 export function compileLiaToJs(liaText, opts = {}) {
   const prog = parseLia(liaText);
+  const fnNames = new Set(prog.fns.map((f) => f.name));
+  for (const name of prog.exports) {
+    if (!fnNames.has(name)) throw new Error(`LIN_EXPORT_NO_FN: ${name}`);
+  }
   const parts = [];
   parts.push(`/* generated by lia_compiler ${LIA_COMPILER_VERSION} */`);
   if (opts.prelude) parts.push(String(opts.prelude).trim());
@@ -696,6 +914,24 @@ export function compileLiaToJs(liaText, opts = {}) {
       .join(',');
     parts.push(`var $K={${obj}};`);
   }
+
+  // Emit nested modules as namespace objects
+  for (const mod of prog.modules || []) {
+    const modFns = [];
+    for (const fn of mod.program.fns || []) {
+      const body = compileBody(fn.body);
+      modFns.push(`${fn.name}: function(${fn.params}){${body}}`);
+    }
+    parts.push(`const ${mod.name} = {\n  ${modFns.join(',\n  ')}\n};`);
+  }
+
+  // Handle use declarations
+  for (const u of prog.uses || []) {
+    for (const sym of u.symbols) {
+      parts.push(`const ${sym} = ${u.module}.${sym};`);
+    }
+  }
+
   for (const fn of prog.fns) {
     fn.effect = inferEffect(fn, prog.fns);
     const body = compileBody(fn.body);
@@ -725,6 +961,8 @@ export function compileLiaToJs(liaText, opts = {}) {
   if (opts.sandbox) {
     js = wrapSandbox(js, prog, opts.sandbox);
   }
+  const lossy = opts.lossy === true || /\blossy\s*=\s*true\b/.test(String(liaText || ''));
+  assertJsParse(js, { lossy });
   return { js, program: prog };
 }
 

@@ -1,5 +1,6 @@
 /**
  * LIA → JavaScript emitter (canonical working path).
+ * Fail-closed: compileLiaToJs runs node --check; illegal JS is never OK.
  */
 import { compileLiaToJs } from './compiler.mjs';
 
