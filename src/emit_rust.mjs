@@ -89,6 +89,18 @@ function emitStmts(stmts, indent, types, retType) {
         lines.push(...emitStmts(st.body, indent + 1, types, retType));
         lines.push(`${pad}}`);
       }
+    } else if (st.type === 'match') {
+      const matchTarget = rewriteExpr(st.expr, 'rust');
+      lines.push(`${pad}match ${matchTarget} {`);
+      for (const arm of st.arms || []) {
+        const guardStr = arm.guard ? ` if ${emitCond(arm.guard, 'rust')}` : '';
+        let armPat = arm.pat;
+        if (armPat === '_') armPat = '_';
+        lines.push(`${pad}    ${armPat}${guardStr} => {`);
+        lines.push(...emitStmts(arm.body, indent + 2, types, retType));
+        lines.push(`${pad}    }`);
+      }
+      lines.push(`${pad}}`);
     }
   }
   return lines;
@@ -124,6 +136,9 @@ function rustLocals(locals, stmts) {
 }
 
 function rustRetType(fn, stmts) {
+  if (fn && fn.returnType) {
+    return fn.returnType;
+  }
   if (isBoolFnName(fn.name)) return 'bool';
   const inf = inferTypes(stmts);
   const rets = [];
@@ -197,6 +212,16 @@ export function emitRust(liaText, opts = {}) {
   if (prog.consts && !fileHosty) {
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`const ${k}: i64 = ${v};`);
   }
+  if (prog.enums && prog.enums.length) {
+    for (const en of prog.enums) {
+      const genStr = en.generics ? `<${en.generics.slice(1, -1)}>` : '';
+      const varLines = (en.variants || []).map((v) => {
+        if (v.params) return `    ${v.name}(${v.params}),`;
+        return `    ${v.name},`;
+      });
+      parts.push(`#[derive(Debug, Clone, PartialEq)]\npub enum ${en.name}${genStr} {\n${varLines.join('\n')}\n}`);
+    }
+  }
   const usedFn = new Set();
   const rustFnName = (raw) => {
     let n = safeEmitId(snakeCase(raw));
@@ -215,21 +240,37 @@ export function emitRust(liaText, opts = {}) {
     const genDecl = fn.generics ? fn.generics.slice(1, -1) : null; // "T" or "T,U"
     const rawNames = rawParamNames(fn.params);
     const { names: params } = parseParamList(fn.params);
+    // Extrair os nomes limpos de parâmetros (antes de qualquer anotação de tipo)
+    const cleanParamNames = params.map((p, i) => {
+      const orig = rawNames[i] || p;
+      return orig.split(':')[0].trim();
+    });
     // Build Rust generic param declaration for function signature
     const genRust = genDecl ? `<${genDecl.split(',').map(g => g.trim()).filter(Boolean).join(', ')}>` : '';
     const paramList = params.map((p, i) => {
       const orig = rawNames[i] || p;
-      if (isNumishId(orig) && !/^ms$/i.test(orig)) return `mut ${p}: i64`;
-      if (isBoolishId(orig)) return `${p}: bool`;
-      return `${p}: impl ToString`;
+      const cleanName = cleanParamNames[i];
+      if (orig.includes(':')) {
+        const typePart = orig.split(':')[1].trim();
+        return `${cleanName}: ${typePart}`;
+      }
+      if (genDecl && genDecl.split(',').map(g=>g.trim()).includes(fn.returnType)) {
+        return `${cleanName}: ${fn.returnType}`;
+      }
+      if (isNumishId(orig) && !/^ms$/i.test(orig)) return `mut ${cleanName}: i64`;
+      if (isBoolishId(orig)) return `${cleanName}: bool`;
+      return `${cleanName}: impl ToString`;
     }).join(', ');
     const fullParamList = genDecl ? `${genRust}(${paramList})` : `(${paramList})`;
-    const coerce = params
-      .filter((p, i) => {
-        const orig = rawNames[i] || p;
-        return !(isNumishId(orig) && !/^ms$/i.test(orig)) && !isBoolishId(orig);
-      })
-      .map((p) => `    let mut ${p} = ${p}.to_string();`);
+    const coerce = [];
+    for (let i = 0; i < params.length; i++) {
+      const orig = rawNames[i] || params[i];
+      if (orig.includes(':')) continue;
+      if (genDecl && genDecl.split(',').map(g=>g.trim()).includes(fn.returnType)) continue;
+      if (!(isNumishId(orig) && !/^ms$/i.test(orig)) && !isBoolishId(orig)) {
+        coerce.push(`    let mut ${cleanParamNames[i]} = ${cleanParamNames[i]}.to_string();`);
+      }
+    }
     if (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false) {
       parts.push(
         `pub fn ${name}${genRust}() -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
@@ -242,7 +283,6 @@ export function emitRust(liaText, opts = {}) {
           rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'String::new()'),
           aliases,
         )
-          .replace(/\bmatch\b/g, 'match_')
           .replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1.to_string()'),
         rawNames,
       ),
@@ -269,8 +309,26 @@ export function emitRust(liaText, opts = {}) {
       }
     };
     collectFor(bodyStmts);
+    const patternVars = new Set();
+    const collectPatVars = (list) => {
+      for (const st of list || []) {
+        if (st.type === 'match') {
+          for (const arm of st.arms || []) {
+            const idm = arm.pat.match(/^[A-Za-z_$][\w$]*\(([^)]+)\)$/);
+            if (idm) {
+              for (const v of idm[1].split(',').map((x) => x.trim())) patternVars.add(v);
+            }
+            collectPatVars(arm.body);
+          }
+        }
+      }
+    };
+    collectPatVars(bodyStmts);
+    const enumVariantNames = new Set(
+      (prog.enums || []).flatMap((e) => (e.variants || []).map((v) => v.name))
+    );
     const bodyLocals = collectAssignedIds(bodyStmts).filter(
-      (id) => !params.includes(id) && !forVars.has(id) && id !== 'cache',
+      (id) => !cleanParamNames.includes(id) && !forVars.has(id) && !patternVars.has(id) && !enumVariantNames.has(id) && id !== 'cache' && !/^[A-Z]/.test(id),
     );
     const inferredTypes = inferTypes(bodyStmts);
     const cacheStub = /\bcache\b/.test(fn.body)

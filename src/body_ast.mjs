@@ -168,6 +168,25 @@ export function parseStmts(body) {
       }
     }
 
+    if (s.startsWith('match', i) && /^\s*\(/.test(s.slice(i + 5))) {
+      const open = s.indexOf('(', i);
+      const close = findMatching(s, open, '(', ')');
+      if (close >= 0) {
+        let j = skipWs(s, close + 1);
+        if (s[j] === '{') {
+          const closeB = findMatching(s, j, '{', '}');
+          if (closeB >= 0) {
+            const expr = s.slice(open + 1, close).trim();
+            const inner = s.slice(j + 1, closeB);
+            const arms = parseMatchArms(inner);
+            out.push({ type: 'match', expr, arms });
+            i = closeB + 1;
+            continue;
+          }
+        }
+      }
+    }
+
     if (s[i] === '^') {
       let j = i + 1;
       let depth = 0;
@@ -252,6 +271,16 @@ export function collectAssignedIds(stmts) {
         for (const e of st.elseIf || []) walk(e.body);
         if (st.else) walk(st.else);
       }
+      if (st.type === 'match') {
+        for (const arm of st.arms || []) {
+          const idm = arm.pat.match(/^[A-Za-z_$][\w$]*\(([^)]+)\)$/);
+          if (idm) {
+            const innerVars = idm[1].split(',').map((x) => x.trim()).filter((x) => /^[A-Za-z_$][\w$]*$/.test(x));
+            for (const v of innerVars) ids.add(v);
+          }
+          walk(arm.body);
+        }
+      }
     }
   };
   walk(stmts);
@@ -267,6 +296,82 @@ function isRegexStart(s, j) {
 
 function onlySemi(s) {
   return !String(s || '').replace(/[\s;]/g, '');
+}
+
+function parseMatchArms(inner) {
+  const arms = [];
+  let i = 0;
+  while (i < inner.length) {
+    i = skipWs(inner, i);
+    if (i >= inner.length) break;
+    if (inner[i] === ';') { i++; continue; }
+    let q = null;
+    let d = 0;
+    let arrowIdx = -1;
+    for (let k = i; k < inner.length; k++) {
+      const ch = inner[k];
+      if (q) {
+        if (ch === '\\') { k++; continue; }
+        if (ch === q) q = null;
+        continue;
+      }
+      if (ch === '"' || ch === "'") { q = ch; continue; }
+      if (ch === '(' || ch === '{' || ch === '[') d++;
+      else if (ch === ')' || ch === '}' || ch === ']') d--;
+      else if (d === 0 && ch === '=' && inner[k + 1] === '>') {
+        arrowIdx = k;
+        break;
+      }
+    }
+    if (arrowIdx < 0) break;
+    const patRaw = inner.slice(i, arrowIdx).trim();
+    let pat = patRaw;
+    let guard = null;
+    const guardMatch = patRaw.match(/^([\s\S]+?)\s+if\s+([\s\S]+)$/);
+    if (guardMatch) {
+      pat = guardMatch[1].trim();
+      guard = guardMatch[2].trim();
+    }
+    let bodyStart = arrowIdx + 2;
+    bodyStart = skipWs(inner, bodyStart);
+    let bodyStmts = [];
+    let nextI = bodyStart;
+    if (inner[bodyStart] === '{') {
+      const closeB = findMatching(inner, bodyStart, '{', '}');
+      if (closeB >= 0) {
+        bodyStmts = parseStmts(inner.slice(bodyStart + 1, closeB));
+        nextI = closeB + 1;
+      }
+    } else {
+      let k = bodyStart;
+      let q2 = null;
+      let d2 = 0;
+      for (; k < inner.length; k++) {
+        const ch = inner[k];
+        if (q2) {
+          if (ch === '\\') { k++; continue; }
+          if (ch === q2) q2 = null;
+          continue;
+        }
+        if (ch === '"' || ch === "'") { q2 = ch; continue; }
+        if (ch === '(' || ch === '{' || ch === '[') d2++;
+        else if (ch === ')' || ch === '}' || ch === ']') d2--;
+        else if (d2 === 0 && (ch === ',' || ch === ';')) break;
+      }
+      const exprStr = inner.slice(bodyStart, k).trim();
+      if (exprStr) {
+        if (/^\^/.test(exprStr)) {
+          bodyStmts = [{ type: 'return', expr: exprStr.slice(1).trim() }];
+        } else {
+          bodyStmts = [{ type: 'expr', expr: exprStr }];
+        }
+      }
+      nextI = k < inner.length ? k + 1 : k;
+    }
+    arms.push({ pat, guard, body: bodyStmts });
+    i = nextI;
+  }
+  return arms;
 }
 
 function switchToIf(cond, inner) {

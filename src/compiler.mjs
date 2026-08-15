@@ -166,9 +166,157 @@ function rewriteClosures(s) {
   return out;
 }
 
+function rewriteMatchBlocks(s) {
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const idx = s.indexOf('match(', i);
+    if (idx < 0) {
+      out += s.slice(i);
+      break;
+    }
+    out += s.slice(i, idx);
+    const openParen = idx + 5;
+    const closeParen = findMatching(s, openParen, '(', ')');
+    if (closeParen < 0) {
+      out += 'match(';
+      i = idx + 6;
+      continue;
+    }
+    const targetExpr = s.slice(openParen + 1, closeParen).trim();
+    let j = closeParen + 1;
+    while (j < s.length && /\s/.test(s[j])) j++;
+    if (s[j] !== '{') {
+      out += `match(${targetExpr})`;
+      i = closeParen + 1;
+      continue;
+    }
+    const closeBrace = findMatching(s, j, '{', '}');
+    if (closeBrace < 0) {
+      out += `match(${targetExpr}){`;
+      i = j + 1;
+      continue;
+    }
+    const inner = s.slice(j + 1, closeBrace);
+    out += compileMatchToJs(targetExpr, inner);
+    i = closeBrace + 1;
+  }
+  return out;
+}
+
+function compileMatchToJs(targetExpr, inner) {
+  const parts = [];
+  let i = 0;
+  let first = true;
+  while (i < inner.length) {
+    while (i < inner.length && /[\s;]/.test(inner[i])) i++;
+    if (i >= inner.length) break;
+    let q = null;
+    let d = 0;
+    let arrowIdx = -1;
+    for (let k = i; k < inner.length; k++) {
+      const ch = inner[k];
+      if (q) {
+        if (ch === '\\') { k++; continue; }
+        if (ch === q) q = null;
+        continue;
+      }
+      if (ch === '"' || ch === "'") { q = ch; continue; }
+      if (ch === '(' || ch === '{' || ch === '[') d++;
+      else if (ch === ')' || ch === '}' || ch === ']') d--;
+      else if (d === 0 && ch === '=' && inner[k + 1] === '>') {
+        arrowIdx = k;
+        break;
+      }
+    }
+    if (arrowIdx < 0) break;
+    const patRaw = inner.slice(i, arrowIdx).trim();
+    let pat = patRaw;
+    let guard = null;
+    const guardMatch = patRaw.match(/^([\s\S]+?)\s+if\s+([\s\S]+)$/);
+    if (guardMatch) {
+      pat = guardMatch[1].trim();
+      guard = guardMatch[2].trim();
+    }
+    let bodyStart = arrowIdx + 2;
+    while (bodyStart < inner.length && /\s/.test(inner[bodyStart])) bodyStart++;
+    let bodyStr = '';
+    let nextI = bodyStart;
+    if (inner[bodyStart] === '{') {
+      const closeB = findMatching(inner, bodyStart, '{', '}');
+      if (closeB >= 0) {
+        bodyStr = compileBody(inner.slice(bodyStart + 1, closeB));
+        nextI = closeB + 1;
+      }
+    } else {
+      let k = bodyStart;
+      let q2 = null;
+      let d2 = 0;
+      for (; k < inner.length; k++) {
+        const ch = inner[k];
+        if (q2) {
+          if (ch === '\\') { k++; continue; }
+          if (ch === q2) q2 = null;
+          continue;
+        }
+        if (ch === '"' || ch === "'") { q2 = ch; continue; }
+        if (ch === '(' || ch === '{' || ch === '[') d2++;
+        else if (ch === ')' || ch === '}' || ch === ']') d2--;
+        else if (d2 === 0 && (ch === ',' || ch === ';')) break;
+      }
+      const raw = inner.slice(bodyStart, k).trim();
+      if (raw) {
+        bodyStr = compileBody(raw);
+      }
+      nextI = k < inner.length ? k + 1 : k;
+    }
+
+    let cond = '';
+    let binds = '';
+    if (pat === '_') {
+      cond = guard ? `(${guard})` : 'true';
+    } else {
+      const enumMatch = pat.match(/^([A-Za-z_$][\w$]*)\(([^)]+)\)$/);
+      if (enumMatch) {
+        const tag = enumMatch[1];
+        const v = enumMatch[2].trim();
+        let tagCheck = '';
+        if (tag === 'Some') {
+          tagCheck = `(${targetExpr}!=null && (typeof ${targetExpr}==='object'?('Some' in ${targetExpr}||${targetExpr}.tag==='Some'):true))`;
+          binds = `let ${v}=typeof ${targetExpr}==='object'&&${targetExpr}!==null?(${targetExpr}.value!==undefined?${targetExpr}.value:${targetExpr}.Some):${targetExpr};`;
+        } else if (tag === 'Ok' || tag === 'Err') {
+          tagCheck = `(${targetExpr}!=null && typeof ${targetExpr}==='object' && (${targetExpr}.tag==='${tag}'||'${tag}' in ${targetExpr}))`;
+          binds = `let ${v}=${targetExpr}.value!==undefined?${targetExpr}.value:${targetExpr}.${tag};`;
+        } else {
+          tagCheck = `(${targetExpr}!=null && typeof ${targetExpr}==='object' && (${targetExpr}.tag==='${tag}'||'${tag}' in ${targetExpr}))`;
+          binds = `let ${v}=${targetExpr}.value!==undefined?${targetExpr}.value:${targetExpr}.${tag};`;
+        }
+        cond = tagCheck;
+        if (guard) cond += `&&(${guard})`;
+      } else if (/^[A-Za-z_$][\w$]*$/.test(pat) && pat === 'None') {
+        cond = `(${targetExpr}==null||${targetExpr}===undefined||(typeof ${targetExpr}==='object'&&(${targetExpr}.tag==='None'||'None' in ${targetExpr})))`;
+        if (guard) cond += `&&(${guard})`;
+      } else {
+        cond = `(${targetExpr}===${pat})`;
+        if (guard) cond += `&&(${guard})`;
+      }
+    }
+
+    if (first) {
+      parts.push(`if(${cond}){${binds}${bodyStr}}`);
+      first = false;
+    } else {
+      parts.push(`else if(${cond}){${binds}${bodyStr}}`);
+    }
+    i = nextI;
+  }
+  return parts.join('');
+}
+
 function compileBody(body) {
   let s = String(body || '');
   s = rewriteClosures(s);
+  s = rewriteMatchBlocks(s);
   s = rewriteSigilBlocks(s, '?', 'if');
   s = rewriteElseIf(s);
   s = rewriteElseBare(s);
@@ -293,10 +441,10 @@ function rewriteElseBare(s) {
  * Parse LIN/LIA program. Dual-reads @LIN + legacy @LIA/@AIL headers.
  */
 export function parseLia(liaText) {
-  const lines = String(liaText || '')
-    .split(/\r?\n/)
-    .map((l) => l.trim())
-    .filter(Boolean);
+      const lines = String(liaText || '')
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .filter(Boolean);
   const meta = { header: null, consts: null, exports: [], fns: [], enums: [] };
   
   // Primeiro passo: coletar declarações de enum (podem spançar múltiplas linhas)
@@ -363,26 +511,72 @@ export function parseLia(liaText) {
       continue;
     }
     else if (line.startsWith('fn ') || line.startsWith('!')) {
-      // Suporta tanto 'fn name<T>(params): RetType { body }' quanto '!name<T>(params): RetType { body }'
-      // Pode spançar múltiplas linhas - regex simplificado para capturar o início
-      const fnStart = line.match(/^(?:fn|!)\s*([A-Za-z_$][\w$]*)(<[^>]*>)?\(([^)]*)\)(?:\s*:\s*([^{]+))?\s*\{?(.*)$/);
+      const fnStart = line.match(/^(?:fn|!)\s*([A-Za-z_$][\w$]*)(<[^>]*>)?\(([^)]*)\)(?:\s*(?:->|:)\s*([^{]+))?\s*\{?([\s\S]*)$/);
       if (!fnStart) throw new Error(`LIA_PARSE_FN_START: ${line.slice(0, 80)}`);
       
       let fnName = fnStart[1];
       let generics = fnStart[2] || null;
       let paramsRaw = fnStart[3];
       let returnType = fnStart[4]?.trim();
-      let body = fnStart[5] || '';
       
-      // Se não tem fechamento, continuar coletando linhas
-      if (!body.includes('}')) {
+      // Se a linha tem a abertura '{', computar chaves nesta linha e subsequentes
+      let fullFnText = line;
+      let firstBrace = fullFnText.indexOf('{');
+      if (firstBrace < 0) {
         while (i + 1 < lines.length) {
           i++;
-          const nextLine = lines[i];
-          body += '\n' + nextLine;
-          if (nextLine.includes('}')) break;
+          fullFnText += '\n' + lines[i];
+          if (fullFnText.includes('{')) {
+            firstBrace = fullFnText.indexOf('{');
+            break;
+          }
         }
       }
+      
+      let openBraces = 0;
+      let quote = null;
+      let started = false;
+      for (let k = firstBrace; k < fullFnText.length; k++) {
+        const ch = fullFnText[k];
+        if (quote) {
+          if (ch === '\\') { k++; continue; }
+          if (ch === quote) quote = null;
+          continue;
+        }
+        if (ch === '"' || ch === "'") { quote = ch; continue; }
+        if (ch === '{') {
+          openBraces++;
+          started = true;
+        } else if (ch === '}') {
+          openBraces--;
+        }
+      }
+      
+      while ((!started || openBraces > 0) && i + 1 < lines.length) {
+        i++;
+        const nextLine = lines[i];
+        fullFnText += '\n' + nextLine;
+        for (let k = 0; k < nextLine.length; k++) {
+          const ch = nextLine[k];
+          if (quote) {
+            if (ch === '\\') { k++; continue; }
+            if (ch === quote) quote = null;
+            continue;
+          }
+          if (ch === '"' || ch === "'") { quote = ch; continue; }
+          if (ch === '{') {
+            openBraces++;
+            started = true;
+          } else if (ch === '}') {
+            openBraces--;
+          }
+        }
+      }
+      
+      const lastBrace = fullFnText.lastIndexOf('}');
+      const body = firstBrace >= 0 && lastBrace > firstBrace
+        ? fullFnText.slice(firstBrace + 1, lastBrace)
+        : '';
       
       meta.fns.push({ name: fnName, generics, params: stripTypeAnn(paramsRaw), returnType, body });
       i++;
