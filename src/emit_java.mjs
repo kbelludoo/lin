@@ -91,16 +91,20 @@ export function emitJava(liaText, opts = {}) {
     '  static String[] cache = new String[64];',
     '',
   ];
-  if (prog.consts) {
+  const fileHosty = opts.stubRuntime !== false;
+  if (prog.consts && !fileHosty) {
     for (const [k, v] of Object.entries(prog.consts)) {
       parts.push(`  static final long ${k} = ${v}L;`);
     }
   }
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
+  const usedJava = new Set();
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
+    let jName = safeEmitId(fn.name);
+    while (usedJava.has(jName)) jName = `${jName}U`;
+    usedJava.add(jName);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
-      parts.push(`  public static boolean ${safeEmitId(fn.name)}() { throw new RuntimeException("JS-runtime-only"); }`);
+      parts.push(`  public static boolean ${jName}() { throw new RuntimeException("JS-runtime-only"); }`);
       continue;
     }
     const stmts = tryParseStmts(

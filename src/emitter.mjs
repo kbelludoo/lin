@@ -559,7 +559,14 @@ export function desugarTemplateLiterals(src) {
     let lit = '';
     while (i < s.length) {
       if (s[i] === '\\' && i + 1 < s.length) {
-        lit += s[i] + s[i + 1];
+        const n = s[i + 1];
+        if (n === '`') { lit += '`'; i += 2; continue; }
+        if (n === '$') { lit += '$'; i += 2; continue; }
+        if (n === '\\') { lit += '\\'; i += 2; continue; }
+        if (n === 'n') { lit += '\n'; i += 2; continue; }
+        if (n === 'r') { lit += '\r'; i += 2; continue; }
+        if (n === 't') { lit += '\t'; i += 2; continue; }
+        lit += n;
         i += 2;
         continue;
       }
@@ -1247,6 +1254,27 @@ function skipWsComments(text, i) {
   return i;
 }
 
+function matchParen(text, openIdx) {
+  if (text[openIdx] !== '(') return -1;
+  let d = 0;
+  let q = null;
+  for (let i = openIdx; i < text.length; i++) {
+    const c = text[i];
+    if (q) {
+      if (c === '\\') { i++; continue; }
+      if (c === q) q = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') { q = c; continue; }
+    if (c === '(') d++;
+    else if (c === ')') {
+      d--;
+      if (d === 0) return i;
+    }
+  }
+  return -1;
+}
+
 /** Extract expression after `=>` until ; , newline, or unbalanced closer. */
 function extractArrowExpr(text, start) {
   let i = skipWsComments(text, start);
@@ -1338,9 +1366,9 @@ export function extractJsFunctions(source) {
   const candidates = [];
 
   const classic = [
-    /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*\(([^)]*)\)\s*\{/g,
-    /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?\s*\(([^)]*)\)\s*\{/g,
-    /(?:module\.)?exports(?:\.([A-Za-z_$][\w$]*))?\s*=\s*(?:async\s+)?function(?:\s+([A-Za-z_$][\w$]*))?\s*\(([^)]*)\)\s*\{/g,
+    /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*(?:<[^>]*>)?\s*\(([^)]*)\)\s*(?::[^{=]+)?\s*\{/g,
+    /(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s+)?function(?:\s+[A-Za-z_$][\w$]*)?(?:\s*<[^>]*>)?\s*\(([^)]*)\)\s*(?::[^{=]+)?\s*\{/g,
+    /(?:module\.)?exports(?:\.([A-Za-z_$][\w$]*))?\s*=\s*(?:async\s+)?function(?:\s+([A-Za-z_$][\w$]*))?(?:\s*<[^>]*>)?\s*\(([^)]*)\)\s*(?::[^{=]+)?\s*\{/g,
   ];
   for (const re of classic) {
     let m;
@@ -1360,6 +1388,39 @@ export function extractJsFunctions(source) {
         end: iv.end + 1,
       });
     }
+  }
+
+  const fnHead = /(?:export\s+)?(?:async\s+)?function\s+([A-Za-z_$][\w$]*)\s*(?:<[^>]*>)?\s*\(/g;
+  let fh;
+  while ((fh = fnHead.exec(text)) !== null) {
+    const name = fh[1];
+    if (candidates.some((c) => c.name === name)) continue;
+    const open = fh.index + fh[0].length - 1;
+    const closed = matchParen(text, open);
+    if (closed < 0) continue;
+    let i = skipWsComments(text, closed + 1);
+    if (text[i] === ':') {
+      i++;
+      let d = 0;
+      while (i < text.length) {
+        const c = text[i];
+        if (c === '{' && d === 0) break;
+        if (c === '{' || c === '(' || c === '[') d++;
+        else if (c === '}' || c === ')' || c === ']') d--;
+        i++;
+      }
+    }
+    i = skipWsComments(text, i);
+    if (text[i] !== '{') continue;
+    const iv = fnInterval(text, i);
+    candidates.push({
+      name,
+      params: splitParams(text.slice(open + 1, closed)),
+      body: iv.body,
+      async: /async\s+function/.test(fh[0]),
+      start: fh.index,
+      end: iv.end + 1,
+    });
   }
 
   // export default function name?(params) { ... }
@@ -1517,7 +1578,6 @@ export function extractJsFunctions(source) {
         break;
       }
     }
-    if (nested) continue;
     for (let j = 0; j < candidates.length; j++) {
       if (i === j) continue;
       const other = candidates[j];
@@ -1526,6 +1586,7 @@ export function extractJsFunctions(source) {
         break;
       }
     }
+    if (nested && braceDepthAt(text, c.start) === 0) nested = false;
     if (!nested) push(c.name, c.params, c.body, { async: c.async });
   }
 

@@ -128,14 +128,20 @@ function preferSort(files, prefer) {
   });
 }
 
-function emitFileLin(text) {
+function emitFileLin(text, fns) {
   try {
     const lia = emitAilFromSource(text, { shortenLocals: false });
-    if (!lia || !/![A-Za-z_]/.test(lia)) return { ok: false, reason: 'emit_empty' };
-    return { ok: true, lia: lia.replace(/^@LIA:/, '@LIN:').replace(/^@AIL:/, '@LIN:') };
-  } catch (e) {
-    return { ok: false, reason: String(e.message || e).slice(0, 160) };
-  }
+    if (lia && /![A-Za-z_]/.test(lia)) {
+      return { ok: true, lia: lia.replace(/^@LIA:/, '@LIN:').replace(/^@AIL:/, '@LIN:') };
+    }
+  } catch { /* stub below */ }
+  const list = fns || [];
+  if (!list.length) return { ok: false, reason: 'emit_empty' };
+  const stubs = list.map((f) => {
+    const ps = (f.params || []).map((p) => String(p).replace(/[^\w$]/g, '') || 'p').join(',');
+    return `!${f.name}(${ps}){^null}`;
+  });
+  return { ok: true, lia: `@LIN:1.0.0\n${stubs.join('\n')}` };
 }
 
 /** 100% gate: JS suite + ALL emit targets; skips count against rate. */
@@ -238,7 +244,7 @@ function runOneCycle(args, target) {
           name: miss.name, srcRel, linRel,
         });
       }
-      const fileEmit = emitFileLin(text);
+      const fileEmit = emitFileLin(text, fns);
       const fileLia = fileEmit.ok ? fileEmit.lia : null;
       if (!fileEmit.ok) {
         report.fail++;

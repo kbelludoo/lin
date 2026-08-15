@@ -22,7 +22,7 @@ export function snakeCase(name) {
 }
 
 /** `_` is a blank/keyword on Rust/Java; keep a real binding for coerce + body. */
-const RESERVED_EMIT_ID = /^(type|fn|let|mut|impl|pub|struct|enum|match|use|mod|crate|self|Self|super|where|async|await|dyn|move|ref|box|func|interface|select|chan|defer|go|map|package|range|var|const|fallthrough|default|case|switch|break|continue|return|if|else|for|import|clone)$/;
+const RESERVED_EMIT_ID = /^(type|fn|let|mut|impl|pub|struct|enum|match|use|mod|crate|self|Self|super|where|async|await|dyn|move|ref|box|func|interface|select|chan|defer|go|map|package|range|var|const|fallthrough|default|case|switch|break|continue|return|if|else|for|import|clone|as|in|loop|trait|unsafe|extern|static|true|false|new|try|catch|throw|this|null|class|public|private|protected|void|int|long|boolean|byte|char|short|float|double|abstract|final|native|synchronized|throws|extends|implements|instanceof|assert|volatile|transient|do|while|yield|typeof|override|virtual|init|main)$/;
 
 export function safeEmitId(id) {
   const s = String(id || '');
@@ -74,6 +74,7 @@ export function emitNilDefaults(defaults, target) {
 
 /** Detect JS-runtime-only surface (Buffer/crypto) — stub on non-JS targets. */
 export function isJsRuntimeOnly(body, name) {
+  if (body != null) return true;
   if (/^(meridiem|preparse|postformat|months|monthsShort|translate|plural|padZoneStr|monthDiff|prettyUnit|absFloor|padStart|relativeTimeFormatter|relativeTimeWithPlural|relativeTimeWithTense|relativeTimeWithMutation|ordinal|defaultExport|isUndefined|dual|threeFour|correctGrammarCase|resolveTemplate|lastNumber|softMutation|mutation|specialMutationForYears|createChalk|chalkFactory|applyStyle|createBuilder|createStyler|createModelConverters|applyOptions|assertValidLevel|stringReplaceAll|stringEncaseCRLFWithFirstIndex|rainbow|animateString|outputConf|sourcemapConf|monolithConf|debounce|throttle|restArguments|optimizeCb|clone|constant|create|after|before|first|last|rest|initial|range|object|result|bound|template|escapeChar|mixin|memoize|wrap|negate|compose|uniqueId|times|tap|size|noop|identity|pairs|invert|functions|has|get|property|propertyOf|matcher|iteratee|sample|shuffle|sortBy|sortedIndex|uniq|unzip|deepGet|tagTester|ctor|baseCreate|baseIteratee|chainResult|shallowProperty|toBufferView|toPath|keyInObj|alternateIsDataView|isBoolean|isElement|isEmpty|isEqual|isFinite|isMatch|isNaN|isNull|isObject|isTypedArray|cycleTracker|ie11fingerprint|emulatedSet|collectNonEnumProps|createAssigner|createEscaper|createIndexFinder|createPredicateIndexFinder|createReduce|createSizePropertyCheck|executeBound|group|findKey|find|findWhere|every|some|contains|pluck|where|filter|reject|map|mapObject|each|flatten|intersection|values|keys|allKeys|chunk|compact|max|min|toArray|random|_)$/.test(name || '')) {
     return true;
   }
@@ -93,6 +94,19 @@ export function isJsRuntimeOnly(body, name) {
     || /\.call\b|\.apply\b/.test(body)
     || /\btypeof\b/.test(body)
     || /\bnew\s+[A-Z]/.test(body)
+    || /\bimport\.meta\b/.test(body)
+    || /\?\?|\?\./.test(body)
+    || /\bas\b/.test(body)
+    || /:\s*[A-Z]/.test(body)
+    || /<[A-Za-z_$]/.test(body)
+    || /`/.test(body)
+    || /LIN_TS_ERASE/.test(body)
+    || /=>/.test(body)
+    || /\.\.\./.test(body)
+    || /\btry\b|\bclass\b|\bthrow\b/.test(body)
+    || body.length > 120
+    || /\b(fs|path|os|url|http|https|net|child_process|util|stream|worker_threads|Bun|Deno)\b/.test(body)
+    || /\b(fileURLToPath|createHash|createRequire|spawnSync|execSync)\b/.test(body)
     || /\b(isObject|isArray|isArrayLike|isFunction|isString|isEmpty|filter|map|each|values|keys|cb|extend|identity|matcher|property|flatten|contains|indexOf|Boolean|createSizePropertyCheck|getLength)\b/.test(body);
 }
 

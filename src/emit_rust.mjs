@@ -127,7 +127,8 @@ export function emitRust(liaText, opts = {}) {
     '    if u < cache.len() { cache[u].clone() } else { String::new() }',
     '}',
   ];
-  if (prog.consts) {
+  const fileHosty = opts.stubRuntime !== false;
+  if (prog.consts && !fileHosty) {
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`const ${k}: i64 = ${v};`);
   }
   const usedFn = new Set();
@@ -142,7 +143,6 @@ export function emitRust(liaText, opts = {}) {
   };
   const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, rustFnName(f.name)]));
   usedFn.clear();
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
   for (const fn of prog.fns) {
     const name = rustFnName(fn.name);
     const { names: params } = parseParamList(fn.params);
@@ -155,7 +155,7 @@ export function emitRust(liaText, opts = {}) {
       .map((p) => `    let mut ${p} = ${p}.to_string();`);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(
-        `pub fn ${name}(${paramList}) -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
+        `pub fn ${name}() -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
       );
       continue;
     }

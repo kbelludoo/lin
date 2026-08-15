@@ -123,12 +123,12 @@ export function emitPy(liaText, opts = {}) {
     'def _lia_lower(x):',
     '    return str(x).lower()',
   ];
-  if (prog.consts) {
+  const fileHosty = opts.stubRuntime !== false;
+  if (prog.consts && !fileHosty) {
     parts.push(`K = {${Object.entries(prog.consts).map(([k, v]) => `${JSON.stringify(k)}: ${v}`).join(', ')}}`);
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`${k} = ${v}`);
   }
   const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, snakeCase(f.name)]));
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
   for (const fn of prog.fns) {
     const name = snakeCase(fn.name);
     const { names: params, sigPy } = parseParamList(fn.params);

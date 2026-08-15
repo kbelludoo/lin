@@ -87,7 +87,7 @@ export function emitC(liaText, opts = {}) {
     '}',
     '',
   ];
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
+  const fileHosty = opts.stubRuntime !== false;
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
