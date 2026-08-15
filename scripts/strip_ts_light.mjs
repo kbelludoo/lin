@@ -319,6 +319,13 @@ export function stripTsTypes(src) {
       const afterFn = skipWs(s, i);
       out.push(s.slice(i, afterFn) || ' ');
       i = afterFn;
+      if (s[i] === '*') {
+        out.push('*');
+        i += 1;
+        const afterStar = skipWs(s, i);
+        out.push(s.slice(i, afterStar));
+        i = afterStar;
+      }
       if (isIdentStart(s[i])) {
         const n = i;
         while (i < s.length && isIdent(s[i])) i++;

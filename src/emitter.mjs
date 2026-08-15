@@ -1358,9 +1358,9 @@ export function extractJsFunctions(source) {
   const fns = [];
   const push = (name, params, body, extra = {}) => {
     if (!name || fns.some((f) => f.name === name)) return;
-    const pjoin = (params || []).join(',');
-    if (/[{[]/.test(pjoin)) return;
-    fns.push({ name, params, body, async: !!extra.async });
+    let ps = Array.isArray(params) ? params.slice() : [];
+    if (/[{[]/.test(ps.join(','))) ps = ['opts'];
+    fns.push({ name, params: ps, body, async: !!extra.async });
   };
 
   const candidates = [];

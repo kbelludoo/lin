@@ -90,6 +90,9 @@ export function emitC(liaText, opts = {}) {
   ];
   const fileHosty = opts.stubRuntime !== false;
   const names = emitNameMap(prog.fns);
+  if (fileHosty) {
+    for (const k of Object.keys(names)) names[k] = `lfn_${names[k]}`;
+  }
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     const cName = names[fn.name];
