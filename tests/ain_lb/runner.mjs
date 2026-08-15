@@ -8,6 +8,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { getClr } from '../../src/lin_ain_lb_clr_load.mjs';
+import { validateAgentIr } from '../../src/lin_agent_ir_ingest_load.mjs';
 import { contentHash, semanticEquals } from '../../src/content_hash.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
@@ -59,14 +60,22 @@ function discovery(clr) {
 function emptyRegistry(clr) {
   const t = clr.emptyReg();
   return {
+    run_id: t.run_id || '',
+    timestamp: t.timestamp || '',
     model: t.model || '',
+    provider: t.provider || '',
     temperature: t.temperature || '',
     seed: t.seed || '',
-    prompt_hash: t.prompt_hash || '',
-    repository_hash: t.repository_hash || '',
-    lin_version: t.lin_version || '',
-    artifact_hash: t.artifact_hash || '',
-    result: t.result || '',
+    input_task_hash: t.input_task_hash || '',
+    repo_hash_before: t.repo_hash_before || '',
+    repo_hash_after: t.repo_hash_after || '',
+    agent_ir_hash: t.agent_ir_hash || '',
+    decision: t.decision || '',
+    violations: Array.isArray(t.violations) ? t.violations : [],
+    repair_attempts: t.repair_attempts || '',
+    tokens_input: t.tokens_input || '',
+    tokens_output: t.tokens_output || '',
+    latency: t.latency || '',
   };
 }
 
@@ -83,6 +92,94 @@ function semanticDupCheck(row) {
     existing_hash: contentHash(fx.existing_fn.name, fx.existing_fn.params, fx.existing_fn.body),
     same_hash: same,
     names_differ: namesDiffer,
+    note: 'semantic_equivalence_not_name_clash',
+  };
+}
+
+function encodedQuestions(clr) {
+  return {
+    answered: clr.qAnswered(),
+    items: [
+      { id: 'Q1', text: clr.q0(), answer: clr.q0Answer() },
+      { id: 'Q2', text: clr.q1(), answer: clr.q1Answer() },
+      { id: 'Q3', text: clr.q2(), answer: clr.q2Answer() },
+    ],
+    note: 'encoded_unanswered_until_real_model',
+  };
+}
+
+function repairLoop(clr, fixtureRel) {
+  const ir0 = JSON.parse(fs.readFileSync(path.join(root, fixtureRel), 'utf8'));
+  const steps = [];
+  let ir = ir0;
+  let attempts = 0;
+  const max = Number(clr.repairLoopMax()) || 8;
+  while (attempts <= max) {
+    const got = validateAgentIr(ir);
+    const step = {
+      attempt: attempts,
+      status: got.status,
+      field: got.field || '',
+      missing: got.missing || '',
+      repairs: got.repairs || '',
+      node: got.node || '',
+      applied: '',
+    };
+    if (got.status === 'ACCEPT') {
+      steps.push(step);
+      return {
+        case_id: 'C1',
+        source: 'mechanical_no_model',
+        invented_llm: 0,
+        converged: 1,
+        repair_loop_length: attempts,
+        status: 'ACCEPT',
+        steps,
+        hash_via: 'EXISTING_semantic_hash',
+      };
+    }
+    if (got.status !== 'DENIED') {
+      steps.push(step);
+      return {
+        case_id: 'C1',
+        source: 'mechanical_no_model',
+        invented_llm: 0,
+        converged: 0,
+        repair_loop_length: attempts,
+        status: got.status,
+        steps,
+        hash_via: 'EXISTING_semantic_hash',
+      };
+    }
+    const repair = clr.firstMechRepair(got.repairs);
+    if (!repair) {
+      steps.push(step);
+      return {
+        case_id: 'C1',
+        source: 'mechanical_no_model',
+        invented_llm: 0,
+        converged: 0,
+        repair_loop_length: attempts,
+        status: 'DENIED',
+        reason: 'no_mechanical_repair',
+        steps,
+        hash_via: 'EXISTING_semantic_hash',
+      };
+    }
+    ir = clr.applyMechRepair(ir, repair);
+    step.applied = repair;
+    steps.push(step);
+    attempts += 1;
+  }
+  return {
+    case_id: 'C1',
+    source: 'mechanical_no_model',
+    invented_llm: 0,
+    converged: 0,
+    repair_loop_length: attempts,
+    status: 'MAX',
+    steps,
+    hash_via: 'EXISTING_semantic_hash',
   };
 }
 
@@ -173,6 +270,11 @@ export function runClr001() {
     ingest,
     cases,
     five_cases_hold: casesHold(cases),
+    c4_tests: clr.c4Tests(),
+    key_metric: clr.keyMetric(),
+    key_metric_path: clr.keyMetricPath(),
+    repair_loop: repairLoop(clr, clr.case0().fixture),
+    questions: encodedQuestions(clr),
     registry_fields: String(clr.regFields()).split('|'),
     registry_template: emptyRegistry(clr),
     real_model_round: clr.realModelRound(),
@@ -199,8 +301,14 @@ function main() {
     throw new Error('runner must not invent win scores');
   }
   const t = report.registry_template;
-  if (t.model || t.temperature || t.seed || t.result) {
+  if (t.model || t.provider || t.decision || t.run_id || t.tokens_input || t.agent_ir_hash) {
     throw new Error('registry template must stay empty until a real model key exists');
+  }
+  if (report.questions.answered !== 0) {
+    throw new Error('CLR questions must stay unanswered until a real model runs');
+  }
+  if (report.repair_loop.invented_llm !== 0) {
+    throw new Error('repair loop must not invent LLM output');
   }
   console.log(text);
 }

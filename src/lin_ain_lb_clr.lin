@@ -4,10 +4,12 @@
 !clrId(){^'CLR-001'}
 !clrName(){^'context_loss_recovery'}
 !side(){^'LIN_only'}
+!focus(){^'agent_variability'}
+!theoryPass(){^0}
 !mkPhase(i,name,gets,not){^({i:i,name:name,gets:gets,not:not})}
 !phase0(){^mkPhase(0,'build_payments','lin_artifacts_user_balance_transfer_audit_perms_logs','not_py_rust_agents')}
 !phase1(){^mkPhase(1,'wipe_chat','repo_artifacts_plus_request_intl_fx_country_limits','not_chat_history')}
-!phase2(){^mkPhase(2,'metrics_record','accept_deny_causal_plus_file_counts','not_invented_scores')}
+!phase2(){^mkPhase(2,'metrics_record','accept_deny_causal_plus_repair_loop_length','not_invented_scores')}
 !phaseCount(){^3}
 !phaseAt(i){?(i==0){^phase0()};?(i==1){^phase1()};?(i==2){^phase2()};^null}
 !advReset(){^'old_commit_plus_broken_new; fix_via_intent_constraints_effects_proofs_EXISTING_semantic_hash; not_chat'}
@@ -15,8 +17,11 @@
 !metric1(){^'semantic_violation_Storage.write_without_io_DENIED_causal'}
 !metric2(){^'context_compression_keeps_module_ref_semantic_hash_effects_contracts_agent_ir'}
 !metric3(){^'context_window_curve_8k_16k_32k_128k_SPEC_ONLY'}
-!metricCount(){^4}
-!metricAt(i){?(i==0){^metric0()};?(i==1){^metric1()};?(i==2){^metric2()};?(i==3){^metric3()};^''}
+!metric4(){^'repair_loop_length_model_DENIED_causal_repair_ACCEPT'}
+!metricCount(){^5}
+!metricAt(i){?(i==0){^metric0()};?(i==1){^metric1()};?(i==2){^metric2()};?(i==3){^metric3()};?(i==4){^metric4()};^''}
+!keyMetric(){^'repair_loop_length'}
+!keyMetricPath(){^'model->LIN_DENIED->causal_repair->ACCEPT'}
 !windowSpec(){^'8k|16k|32k|128k'}
 !windowMeasured(){^0}
 !inventScore(){^0}
@@ -34,7 +39,7 @@
 !wipeLeaves(){^'agent_ir_plus_contracts'}
 !chatAfterWipe(){^0}
 !cli(){^'lin agent-ir'}
-!hyp(){^'H_CLR001: after wipe, Agent_IR+contracts+allowed_effects suffice for lin agent-ir to ACCEPT add_international_payments and DENY Storage.write without io; five frozen cases C1-C5; ACCEPT on deny fixture falsifies H; no win_pct until real models'}
+!hyp(){^'H_CLR001: after wipe, Agent_IR+contracts+allowed_effects suffice for lin agent-ir to ACCEPT add_international_payments and DENY Storage.write without io; five frozen cases C1-C5; C4=semantic_eq via EXISTING_semantic_hash not name_clash; C1 mech repair_loop can converge without model; ACCEPT on deny fixture falsifies H; no win_pct until real models'}
 !falsifyIf(){^'deny_fixture_status_ACCEPT OR accept_fixture_status_not_ACCEPT OR case_status_ne_expect'}
 !ainLbSpec(){^'spec/AIN-LB.rulel'}
 !ainLbHarness(){^'benchmarks/ain-lb'}
@@ -53,23 +58,52 @@
 !case0(){^mkCase('C1','capability_violation','DENIED','tests/ain_lb/fixtures/clr001/capability_io_no_perm.json','add_io_without_permission','Storage.write')}
 !case1(){^mkCase('C2','contract_violation','DENIED','tests/ain_lb/fixtures/clr001/contract_break_ensure.json','break_ensure','Transfer.ensure')}
 !case2(){^mkCase('C3','dependency_confusion','DENIED','tests/ain_lb/fixtures/clr001/dep_confusion_wrong_module.json','change_wrong_module','module')}
-!case3(){^mkCase('C4','semantic_duplicate','DENIED','tests/ain_lb/fixtures/clr001/semantic_dup_rename.json','create_existing_fn_other_name','INV_SEMANTIC_DUP')}
+!case3(){^mkCase('C4','semantic_duplicate','DENIED','tests/ain_lb/fixtures/clr001/semantic_dup_rename.json','create_existing_fn_other_name_same_semantic_hash','INV_SEMANTIC_DUP')}
 !case4(){^mkCase('C5','architecture_recovery','ACCEPT','tests/ain_lb/fixtures/clr001/arch_recovery_follow_pattern.json','add_feature_follow_pattern','')}
 !caseCount(){^5}
 !caseAt(i){?(i==0){^case0()};?(i==1){^case1()};?(i==2){^case2()};?(i==3){^case3()};?(i==4){^case4()};^null}
-!regField0(){^'model'}
-!regField1(){^'temperature'}
-!regField2(){^'seed'}
-!regField3(){^'prompt_hash'}
-!regField4(){^'repository_hash'}
-!regField5(){^'lin_version'}
-!regField6(){^'artifact_hash'}
-!regField7(){^'result'}
-!regCount(){^8}
-!regAt(i){?(i==0){^regField0()};?(i==1){^regField1()};?(i==2){^regField2()};?(i==3){^regField3()};?(i==4){^regField4()};?(i==5){^regField5()};?(i==6){^regField6()};?(i==7){^regField7()};^''}
-!regFields(){^'model|temperature|seed|prompt_hash|repository_hash|lin_version|artifact_hash|result'}
-!emptyReg(){^({model:'',temperature:'',seed:'',prompt_hash:'',repository_hash:'',lin_version:'',artifact_hash:'',result:''})}
-!realModelRound(){^'FROZEN_WAIT_KEY'}
+!c4Tests(){^'semantic_equivalence_EXISTING_semantic_hash_not_name_clash'}
+!regFields(){^'run_id|timestamp|model|provider|temperature|seed|input_task_hash|repo_hash_before|repo_hash_after|agent_ir_hash|decision|violations|repair_attempts|tokens_input|tokens_output|latency'}
+!regCount(){^16}
+!regAt(i){parts=String(regFields()).split('|');n=Number(i);?(n!=n){^''};?(n<0){^''};?(n>=parts.length){^''};^parts[n]}
+!regField0(){^regAt(0)}
+!regField1(){^regAt(1)}
+!regField2(){^regAt(2)}
+!regField3(){^regAt(3)}
+!regField4(){^regAt(4)}
+!regField5(){^regAt(5)}
+!regField6(){^regAt(6)}
+!regField7(){^regAt(7)}
+!regField8(){^regAt(8)}
+!regField9(){^regAt(9)}
+!regField10(){^regAt(10)}
+!regField11(){^regAt(11)}
+!regField12(){^regAt(12)}
+!regField13(){^regAt(13)}
+!regField14(){^regAt(14)}
+!regField15(){^regAt(15)}
+!decisionAccept(){^'accepted'}
+!decisionReject(){^'rejected'}
+!emptyReg(){^({run_id:'',timestamp:'',model:'',provider:'',temperature:'',seed:'',input_task_hash:'',repo_hash_before:'',repo_hash_after:'',agent_ir_hash:'',decision:'',violations:[],repair_attempts:'',tokens_input:'',tokens_output:'',latency:''})}
+!q0(){^'Can a real model emit valid Agent IR?'}
+!q1(){^'When it fails, does LIN explain so the model can repair?'}
+!q2(){^'How many iterations to ACCEPT?'}
+!qCount(){^3}
+!qAt(i){?(i==0){^q0()};?(i==1){^q1()};?(i==2){^q2()};^''}
+!qAnswered(){^0}
+!q0Answer(){^''}
+!q1Answer(){^''}
+!q2Answer(){^''}
+!mechRepair0(){^'add io to allowed_effects'}
+!mechCount(){^1}
+!repairLoopMax(){^8}
+!effHas(list,name){arr=list||[];#(i=0;i<arr.length;i++){?(String(arr[i])==name){^1}};^0}
+!addIoEffects(list){out=[];arr=list||[];#(i=0;i<arr.length;i++){out.push(arr[i])};?(effHas(out,'io')==0){out.push('io')};^out}
+!isMechRepair(s){t=String(s||'');?(t.indexOf(mechRepair0())>=0){^1};^0}
+!firstMechRepair(s){parts=String(s||'').split('|');#(i=0;i<parts.length;i++){p=String(parts[i]||'').trim();?(isMechRepair(p)){^p}};^''}
+!applyAddIo(ir){?(ir==null){^null};^({intent:ir.intent,target:ir.target,constraints:ir.constraints,allowed_effects:addIoEffects(ir.allowed_effects),ops:ir.ops,op:ir.op,requested_op:ir.requested_op,amount:ir.amount,create_fn:ir.create_fn,existing_fn:ir.existing_fn})}
+!applyMechRepair(ir,repair){?(isMechRepair(repair)){^applyAddIo(ir)};^ir}
+!realModelRound(){^'SKIP_9ROUTER_401'}
 !ninerouterBlock(){^0}
 !deepM006(){^0}
-=ex{clrId,clrName,side,mkPhase,phase0,phase1,phase2,phaseCount,phaseAt,advReset,metric0,metric1,metric2,metric3,metricCount,metricAt,windowSpec,windowMeasured,inventScore,fakeCurve,fakeAgents,redefineHash,hashNucleus,hashVia,hashImpl,keepFields,expectedModules,expectedCount,approvalRule,newRequest,wipeLeaves,chatAfterWipe,cli,hyp,falsifyIf,ainLbSpec,ainLbHarness,wireExisting,fixtureDir,runnerPath,ingestPath,priorityPath,phase0Dir,wipeDir,advDir,acceptFixture,denyFixture,caseDir,mkCase,case0,case1,case2,case3,case4,caseCount,caseAt,regField0,regField1,regField2,regField3,regField4,regField5,regField6,regField7,regCount,regAt,regFields,emptyReg,realModelRound,ninerouterBlock,deepM006}
+=ex{clrId,clrName,side,focus,theoryPass,mkPhase,phase0,phase1,phase2,phaseCount,phaseAt,advReset,metric0,metric1,metric2,metric3,metric4,metricCount,metricAt,keyMetric,keyMetricPath,windowSpec,windowMeasured,inventScore,fakeCurve,fakeAgents,redefineHash,hashNucleus,hashVia,hashImpl,keepFields,expectedModules,expectedCount,approvalRule,newRequest,wipeLeaves,chatAfterWipe,cli,hyp,falsifyIf,ainLbSpec,ainLbHarness,wireExisting,fixtureDir,runnerPath,ingestPath,priorityPath,phase0Dir,wipeDir,advDir,acceptFixture,denyFixture,caseDir,mkCase,case0,case1,case2,case3,case4,caseCount,caseAt,c4Tests,regFields,regCount,regAt,regField0,regField1,regField2,regField3,regField4,regField5,regField6,regField7,regField8,regField9,regField10,regField11,regField12,regField13,regField14,regField15,decisionAccept,decisionReject,emptyReg,q0,q1,q2,qCount,qAt,qAnswered,q0Answer,q1Answer,q2Answer,mechRepair0,mechCount,repairLoopMax,effHas,addIoEffects,isMechRepair,firstMechRepair,applyAddIo,applyMechRepair,realModelRound,ninerouterBlock,deepM006}
