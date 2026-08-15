@@ -24,6 +24,8 @@
 !fakeAgents(){^0}
 !redefineHash(){^0}
 !hashNucleus(){^'EXISTING_semantic_hash'}
+!hashVia(){^'EXISTING_semantic_hash'}
+!hashImpl(){^'src/content_hash.lin'}
 !keepFields(){^'module_ref|semantic_hash|effects|contracts|agent_ir'}
 !expectedModules(){^'User|Balance|Transfer|Audit|Perms|Logs'}
 !expectedCount(){^6}
@@ -32,8 +34,8 @@
 !wipeLeaves(){^'agent_ir_plus_contracts'}
 !chatAfterWipe(){^0}
 !cli(){^'lin agent-ir'}
-!hyp(){^'H_CLR001: after wipe, Agent_IR+contracts+allowed_effects suffice for lin agent-ir to ACCEPT add_international_payments and DENY Storage.write without io; ACCEPT on deny fixture falsifies H; no win_pct until real models'}
-!falsifyIf(){^'deny_fixture_status_ACCEPT OR accept_fixture_status_not_ACCEPT'}
+!hyp(){^'H_CLR001: after wipe, Agent_IR+contracts+allowed_effects suffice for lin agent-ir to ACCEPT add_international_payments and DENY Storage.write without io; five frozen cases C1-C5; ACCEPT on deny fixture falsifies H; no win_pct until real models'}
+!falsifyIf(){^'deny_fixture_status_ACCEPT OR accept_fixture_status_not_ACCEPT OR case_status_ne_expect'}
 !ainLbSpec(){^'spec/AIN-LB.rulel'}
 !ainLbHarness(){^'benchmarks/ain-lb'}
 !wireExisting(){^1}
@@ -46,4 +48,28 @@
 !advDir(){^'tests/ain_lb/fixtures/adversarial'}
 !acceptFixture(){^'tests/ain_lb/fixtures/wipe/add_international_payments.json'}
 !denyFixture(){^'tests/ain_lb/fixtures/wipe/deny_write_no_io.json'}
-=ex{clrId,clrName,side,mkPhase,phase0,phase1,phase2,phaseCount,phaseAt,advReset,metric0,metric1,metric2,metric3,metricCount,metricAt,windowSpec,windowMeasured,inventScore,fakeCurve,fakeAgents,redefineHash,hashNucleus,keepFields,expectedModules,expectedCount,approvalRule,newRequest,wipeLeaves,chatAfterWipe,cli,hyp,falsifyIf,ainLbSpec,ainLbHarness,wireExisting,fixtureDir,runnerPath,ingestPath,priorityPath,phase0Dir,wipeDir,advDir,acceptFixture,denyFixture}
+!caseDir(){^'tests/ain_lb/fixtures/clr001'}
+!mkCase(id,name,expect,fixture,causal,node){^({id:id,name:name,expect:expect,fixture:fixture,causal:causal,node:node})}
+!case0(){^mkCase('C1','capability_violation','DENIED','tests/ain_lb/fixtures/clr001/capability_io_no_perm.json','add_io_without_permission','Storage.write')}
+!case1(){^mkCase('C2','contract_violation','DENIED','tests/ain_lb/fixtures/clr001/contract_break_ensure.json','break_ensure','Transfer.ensure')}
+!case2(){^mkCase('C3','dependency_confusion','DENIED','tests/ain_lb/fixtures/clr001/dep_confusion_wrong_module.json','change_wrong_module','module')}
+!case3(){^mkCase('C4','semantic_duplicate','DENIED','tests/ain_lb/fixtures/clr001/semantic_dup_rename.json','create_existing_fn_other_name','INV_SEMANTIC_DUP')}
+!case4(){^mkCase('C5','architecture_recovery','ACCEPT','tests/ain_lb/fixtures/clr001/arch_recovery_follow_pattern.json','add_feature_follow_pattern','')}
+!caseCount(){^5}
+!caseAt(i){?(i==0){^case0()};?(i==1){^case1()};?(i==2){^case2()};?(i==3){^case3()};?(i==4){^case4()};^null}
+!regField0(){^'model'}
+!regField1(){^'temperature'}
+!regField2(){^'seed'}
+!regField3(){^'prompt_hash'}
+!regField4(){^'repository_hash'}
+!regField5(){^'lin_version'}
+!regField6(){^'artifact_hash'}
+!regField7(){^'result'}
+!regCount(){^8}
+!regAt(i){?(i==0){^regField0()};?(i==1){^regField1()};?(i==2){^regField2()};?(i==3){^regField3()};?(i==4){^regField4()};?(i==5){^regField5()};?(i==6){^regField6()};?(i==7){^regField7()};^''}
+!regFields(){^'model|temperature|seed|prompt_hash|repository_hash|lin_version|artifact_hash|result'}
+!emptyReg(){^({model:'',temperature:'',seed:'',prompt_hash:'',repository_hash:'',lin_version:'',artifact_hash:'',result:''})}
+!realModelRound(){^'FROZEN_WAIT_KEY'}
+!ninerouterBlock(){^0}
+!deepM006(){^0}
+=ex{clrId,clrName,side,mkPhase,phase0,phase1,phase2,phaseCount,phaseAt,advReset,metric0,metric1,metric2,metric3,metricCount,metricAt,windowSpec,windowMeasured,inventScore,fakeCurve,fakeAgents,redefineHash,hashNucleus,hashVia,hashImpl,keepFields,expectedModules,expectedCount,approvalRule,newRequest,wipeLeaves,chatAfterWipe,cli,hyp,falsifyIf,ainLbSpec,ainLbHarness,wireExisting,fixtureDir,runnerPath,ingestPath,priorityPath,phase0Dir,wipeDir,advDir,acceptFixture,denyFixture,caseDir,mkCase,case0,case1,case2,case3,case4,caseCount,caseAt,regField0,regField1,regField2,regField3,regField4,regField5,regField6,regField7,regCount,regAt,regFields,emptyReg,realModelRound,ninerouterBlock,deepM006}

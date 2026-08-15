@@ -8,6 +8,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { getClr } from '../../src/lin_ain_lb_clr_load.mjs';
+import { contentHash, semanticEquals } from '../../src/content_hash.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const bin = path.join(root, 'bin', 'lin.mjs');
@@ -55,6 +56,72 @@ function discovery(clr) {
   };
 }
 
+function emptyRegistry(clr) {
+  const t = clr.emptyReg();
+  return {
+    model: t.model || '',
+    temperature: t.temperature || '',
+    seed: t.seed || '',
+    prompt_hash: t.prompt_hash || '',
+    repository_hash: t.repository_hash || '',
+    lin_version: t.lin_version || '',
+    artifact_hash: t.artifact_hash || '',
+    result: t.result || '',
+  };
+}
+
+function semanticDupCheck(row) {
+  if (row.name !== 'semantic_duplicate') return { used: 0 };
+  const fx = JSON.parse(fs.readFileSync(path.join(root, row.fixture), 'utf8'));
+  const same = semanticEquals(fx.create_fn, fx.existing_fn) ? 1 : 0;
+  const namesDiffer = fx.create_fn.name !== fx.existing_fn.name ? 1 : 0;
+  return {
+    used: 1,
+    hash_via: 'EXISTING_semantic_hash',
+    hash_impl: 'src/content_hash.lin',
+    create_hash: contentHash(fx.create_fn.name, fx.create_fn.params, fx.create_fn.body),
+    existing_hash: contentHash(fx.existing_fn.name, fx.existing_fn.params, fx.existing_fn.body),
+    same_hash: same,
+    names_differ: namesDiffer,
+  };
+}
+
+function runCases(clr) {
+  const rows = [];
+  const n = clr.caseCount();
+  for (let i = 0; i < n; i++) {
+    const spec = clr.caseAt(i);
+    const got = agentIr(path.join(root, spec.fixture));
+    const row = {
+      id: spec.id,
+      name: spec.name,
+      expect: spec.expect,
+      causal: spec.causal,
+      expect_node: spec.node,
+      fixture: got.fixture,
+      status: got.status,
+      field: got.field,
+      missing: got.missing,
+      repairs: got.repairs,
+      node: got.node,
+      message: got.message,
+      module_ref: got.module_ref,
+      hash_nucleus: got.hash_nucleus,
+      intent: got.intent,
+    };
+    if (spec.name === 'semantic_duplicate') row.semantic_hash = semanticDupCheck(row);
+    rows.push(row);
+  }
+  return rows;
+}
+
+function casesHold(rows) {
+  return rows.every((r) => {
+    if (r.name === 'dependency_confusion') return r.status === 'DENIED' || r.status === 'REJECT';
+    return r.status === r.expect;
+  }) ? 1 : 0;
+}
+
 function compressionFields(rows, leftover) {
   const present = [];
   if (rows.some((r) => r.module_ref)) present.push('module_ref');
@@ -84,6 +151,7 @@ export function runClr001() {
   const repair = agentIr(path.join(root, clr.advDir(), 'repair_via_ir.json'));
   const ingest = [accept, deny];
   const adversarial = [oldCommit, broken, repair];
+  const cases = runCases(clr);
   const hypHolds = accept.status === 'ACCEPT' && deny.status === 'DENIED';
   return {
     id: clr.clrId(),
@@ -103,11 +171,20 @@ export function runClr001() {
       new_request: leftover.new_request,
     },
     ingest,
+    cases,
+    five_cases_hold: casesHold(cases),
+    registry_fields: String(clr.regFields()).split('|'),
+    registry_template: emptyRegistry(clr),
+    real_model_round: clr.realModelRound(),
+    ninerouter_block: clr.ninerouterBlock(),
+    deep_m006: clr.deepM006(),
+    hash_via: clr.hashVia(),
+    hash_impl: clr.hashImpl(),
     adversarial: {
       protocol: clr.advReset(),
       runs: adversarial,
     },
-    compression: compressionFields([...ingest, ...adversarial], leftover),
+    compression: compressionFields([...ingest, ...adversarial, ...cases], leftover),
     window_curve: { spec: clr.windowSpec(), measured: clr.windowMeasured() },
     hypothesis: clr.hyp(),
     falsify_if: clr.falsifyIf(),
@@ -120,6 +197,10 @@ function main() {
   const text = JSON.stringify(report, null, 2);
   if (text.includes('AI_DEVELOPMENT_SCORE') || /85\s*%/.test(text) || /35\s*%/.test(text)) {
     throw new Error('runner must not invent win scores');
+  }
+  const t = report.registry_template;
+  if (t.model || t.temperature || t.seed || t.result) {
+    throw new Error('registry template must stay empty until a real model key exists');
   }
   console.log(text);
 }
