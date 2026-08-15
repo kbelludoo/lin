@@ -45,7 +45,7 @@ const HOST_BUILTINS = /^(Math|JSON|Object|Array|String|Number|Boolean|Date|Error
 export function unsupported(fn) {
   const body = String(fn.body || '');
   const params = (fn.params || []).join(',');
-  if (/\b(async|await|yield)\b/.test(body)) return 'async_gen';
+  if (/\byield\b/.test(body)) return 'async_gen';
   if (/\.\.\./.test(params) || /[{[]/.test(params)) return 'complex_params';
   if (/<[A-Z]/.test(params)) return 'generics';
   // template literals: NOT skipped — emitter.desugarTemplateLiterals (peripheral) handles them
@@ -70,6 +70,8 @@ export function bindingsPrelude(bindings) {
   for (const [alias, obj] of Object.entries(bindings)) {
     if (obj && typeof obj === 'object' && obj.__lin_sym) {
       parts.push(`const ${alias}=Symbol.for(${JSON.stringify(obj.__lin_sym)});`);
+    } else if (obj && typeof obj === 'object' && obj.__lin_re) {
+      parts.push(`const ${alias}=${obj.__lin_re};`);
     } else {
       parts.push(`const ${alias}=${JSON.stringify(obj)};`);
     }
@@ -117,11 +119,16 @@ function stripExportImport(src) {
   return String(src || '').replace(/\bexport\s+default\b/g, '').replace(/\bexport\s+/g, '').replace(/\bimport\s+[^;]+;/g, '');
 }
 
+/** Peripheral: holdout runs sync; strip async/await so sibling/top-level await cannot fail load. */
+export function stripAsyncAwait(src) {
+  return String(src || '').replace(/\bawait\s+/g, '').replace(/\basync\s+/g, '');
+}
+
 /** Peripheral CLOSURE: same-file sibling fns as JS prelude (not LIN nucleus). */
 export function siblingsPrelude(siblings) {
   if (!siblings || !siblings.length) return '';
   return siblings.map((s) => {
-    const body = stripExportImport(stripJsComments(s.body || ''));
+    const body = stripAsyncAwait(stripExportImport(stripJsComments(s.body || '')));
     return `function ${s.name}(${(s.params || []).join(',')}){${body}}\n`;
   }).join('');
 }
@@ -242,7 +249,7 @@ process.stdout.write(JSON.stringify(__out));
 export function oracleFromFn(fn) {
   const hint = unsupported(fn);
   const prelude = `${bindingsPrelude(fn.bindings)}${siblingsPrelude(fn.siblings)}`;
-  const body = stripExportImport(stripJsComments(fn.body || ''));
+  const body = stripAsyncAwait(stripExportImport(stripJsComments(fn.body || '')));
   const raw = `${prelude}function ${fn.name}(${fn.params.join(',')}){${body}}`;
   const wrapped = `${raw}\nmodule.exports=${fn.name};\n`;
   const o = loadFn(wrapped, fn.name);
@@ -262,7 +269,7 @@ export function oracleFromFn(fn) {
     status: 'ok',
     name: fn.name,
     params: fn.params,
-    body: fn.body,
+    body,
     bindings: fn.bindings || null,
     siblings: fn.siblings || [],
     cases,
@@ -508,6 +515,17 @@ function resolveSymbols(text) {
   return bindings;
 }
 
+/** Peripheral: top-level `const id = /re/flags` so holdout can see module regexes. */
+function resolveRegexLiterals(text) {
+  const bindings = {};
+  const re = /(?:^|\n)\s*(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*=\s*(\/(?:\\\/|[^/\n])+\/[gimsuvy]*)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    bindings[m[1]] = { __lin_re: m[2] };
+  }
+  return bindings;
+}
+
 /** Peripheral CLOSURE: named imports of functions from relative modules. */
 function resolveNamedFnImports(filePath, text) {
   const extra = [];
@@ -543,6 +561,7 @@ export function extractFromFile(filePath) {
     ...resolveStarImports(filePath, text),
     ...resolveNamedImports(filePath, text),
     ...resolveSymbols(text),
+    ...resolveRegexLiterals(text),
   };
   const extracted = extractJsFunctions(text).map((f) => ({
     ...f,

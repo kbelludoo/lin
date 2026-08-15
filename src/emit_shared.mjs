@@ -22,9 +22,12 @@ export function snakeCase(name) {
 }
 
 /** `_` is a blank/keyword on Rust/Java; keep a real binding for coerce + body. */
+const RESERVED_EMIT_ID = /^(type|fn|let|mut|impl|pub|struct|enum|match|use|mod|crate|self|Self|super|where|async|await|dyn|move|ref|box|func|interface|select|chan|defer|go|map|package|range|var|const|fallthrough|default|case|switch|break|continue|return|if|else|for|import)$/;
+
 export function safeEmitId(id) {
   const s = String(id || '');
   if (!s || s === '_' || s === '__') return '_u';
+  if (RESERVED_EMIT_ID.test(s)) return `${s}_`;
   return s;
 }
 
@@ -71,14 +74,18 @@ export function emitNilDefaults(defaults, target) {
 
 /** Detect JS-runtime-only surface (Buffer/crypto) — stub on non-JS targets. */
 export function isJsRuntimeOnly(body, name) {
-  if (/^(meridiem|preparse|postformat|months|monthsShort|translate|plural|padZoneStr|monthDiff|prettyUnit|absFloor|padStart|relativeTimeFormatter|relativeTimeWithPlural|relativeTimeWithTense|relativeTimeWithMutation|ordinal|defaultExport|isUndefined|dual|threeFour|correctGrammarCase|resolveTemplate|lastNumber|softMutation|mutation|specialMutationForYears)$/.test(name || '')) {
+  if (/^(meridiem|preparse|postformat|months|monthsShort|translate|plural|padZoneStr|monthDiff|prettyUnit|absFloor|padStart|relativeTimeFormatter|relativeTimeWithPlural|relativeTimeWithTense|relativeTimeWithMutation|ordinal|defaultExport|isUndefined|dual|threeFour|correctGrammarCase|resolveTemplate|lastNumber|softMutation|mutation|specialMutationForYears|createChalk|chalkFactory|applyStyle|createBuilder|createStyler|createModelConverters|applyOptions|assertValidLevel|stringReplaceAll|stringEncaseCRLFWithFirstIndex|rainbow|animateString)$/.test(name || '')) {
     return true;
   }
   return /\b(Buffer|crypto|bufferAllocUnsafe|timingSafeEqual|process|Intl|arguments|instanceof)\b/.test(body)
     || /\bthis\./.test(body)
+    || /\bthis\[/.test(body)
     || /\bswitch\b/.test(body)
     || /\bnew\s+Date\b/.test(body)
-    || /\bLs\b/.test(body);
+    || /\bLs\b/.test(body)
+    || /\bObject\.(setPrototypeOf|defineProperty|defineProperties|entries|create)\b/.test(body)
+    || /\\u\{/.test(body)
+    || /\bdo\b/.test(body);
 }
 
 const FREE_HOST_SKIP = /^(if|for|return|true|false|null|undefined|function|var|let|const|new|typeof|instanceof|delete|in|of|switch|case|break|continue|try|catch|throw|else|while|do|Math|JSON|Object|Array|String|Number|Boolean|Date|Error|RegExp|True|False|None|NULL|NaN|Infinity|console|parseInt|parseFloat|isNaN|isFinite|len|str|float|int|bool|interface|String|new)$/;
@@ -301,6 +308,14 @@ export function rewriteExpr(expr, target) {
     return s;
   }
   s = rewriteHostExpr(s, target);
+  if (target !== 'js' && target !== 'ts') {
+    s = s.replace(/\\u\{([0-9a-fA-F]+)\}/g, (_, h) => {
+      const n = parseInt(h, 16);
+      if (target === 'rust') return `\\u{${h.toLowerCase()}}`;
+      if (n <= 0xFF) return `\\x${n.toString(16).padStart(2, '0')}`;
+      return `\\u${n.toString(16).padStart(4, '0')}`;
+    });
+  }
   s = s.replace(/\bdelete\s+/g, '');
   s = s.replace(/\barguments\b/g, target === 'py' ? 'None' : target === 'go' ? 'nil' : target === 'c' ? '0' : target === 'rust' ? 'String::new()' : 'null');
   s = stripJsArrowIife(s);

@@ -53,7 +53,17 @@ const host = oracleFromFn({
 assert.equal(host.status, 'fail');
 assert.notEqual(host.status, 'skip');
 
+const awaited = oracleFromFn({
+  name: 'rainbow',
+  params: ['string', 'offset'],
+  body: 'return string;',
+  bindings: {},
+  siblings: [{ name: 'animateString', params: ['string'], body: 'await delay(2);' }],
+});
+assert.equal(awaited.status, 'ok');
+
 assert.equal(isTypeOnlyModule('export type Foo = string;'), true);
 assert.equal(isTypeOnlyModule('function add(a,b){return a+b}'), false);
+assert.equal(isTypeOnlyModule('suite("x", () => { bench("y", () => {}); });'), true);
 
 console.log('ok clone_full_repo_gate');
