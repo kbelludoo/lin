@@ -153,8 +153,7 @@ export function siblingsPrelude(siblings) {
 }
 
 /** Deterministic crypto/Math + do not let clone CLI kill the harness. */
-const LIN_HARNESS = `var crypto={getRandomValues(a){for(let i=0;i<a.length;i++)a[i]=(i*17+3)&255;return a;}};
-globalThis.crypto=crypto;
+const LIN_HARNESS = `(function(){function _linUUID(){return '00000000-0000-4000-8000-000000000001';}function _linGRV(a){for(let i=0;i<a.length;i++)a[i]=(i*17+3)&255;return a;}var _lc={getRandomValues:_linGRV,randomUUID:_linUUID};try{Object.defineProperty(globalThis,'crypto',{value:_lc,configurable:true,writable:true});}catch(e){try{globalThis.crypto.randomUUID=_linUUID;}catch(e2){}try{globalThis.crypto.getRandomValues=_linGRV;}catch(e3){}}var crypto=_lc;})();
 let _lin_rs=1103515245;Math.random=function(){_lin_rs=(_lin_rs*1664525+1013904223)>>>0;return (_lin_rs>>>8)/16777216;};
 process.exit=function(c){throw new Error('LIN_HARNESS_EXIT:'+c);};
 try{Object.defineProperty(process,'pid',{value:4242,configurable:true});}catch(e){}

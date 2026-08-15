@@ -102,6 +102,7 @@ export function emitJava(liaText, opts = {}) {
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     let jName = safeEmitId(fn.name);
+    if (fileHosty) jName = `lin${jName}`;
     while (usedJava.has(jName)) jName = `${jName}U`;
     usedJava.add(jName);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
