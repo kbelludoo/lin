@@ -2,8 +2,8 @@
  * LIA → Go emitter (MVP: interface{} params, fmt.Sprint / len / byte index).
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
+import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, safeEmitId } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent, types) {
@@ -90,17 +90,24 @@ export function emitGo(liaText, opts = {}) {
     parts.push(`var K = map[string]int{${Object.entries(prog.consts).map(([k, v]) => `"${k}": ${v}`).join(', ')}}`);
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`var ${k} = ${v}`);
   }
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name));
+  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     const paramList = params.map((p) => `${p} interface{}`).join(', ');
+    const goName = safeEmitId(fn.name);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(
-        `func ${fn.name}(${paramList}) bool {\n\tpanic("LIA_EMIT_GO: JS-runtime-only (${fn.name})")\n}`,
+        `func ${goName}(${paramList}) bool {\n\tpanic("LIA_EMIT_GO: JS-runtime-only (${fn.name})")\n}`,
       );
       continue;
     }
-    const stmts = parseStmts(fn.body);
+    const stmts = tryParseStmts(fn.body);
+    if (!stmts) {
+      parts.push(
+        `func ${goName}(${paramList}) bool {\n\tpanic("LIA_EMIT_GO: JS-runtime-only (${fn.name})")\n}`,
+      );
+      continue;
+    }
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const inferredTypes = inferTypes(stmts);
     const cacheStub = /\bcache\b/.test(fn.body) ? ['\tcache := make([]string, 64)'] : [];
@@ -115,7 +122,7 @@ export function emitGo(liaText, opts = {}) {
     }
     const freeHost = emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'go');
     const bodyLines = [...cacheStub, ...freeHost, ...emitNilDefaults(defaults, 'go'), ...goDeclLocals(declLocals, inferredTypes, fn.body), ...keepUnused, ...emitted];
-    parts.push(`func ${fn.name}(${paramList}) ${retType} {\n${bodyLines.join('\n')}\n}`);
+    parts.push(`func ${goName}(${paramList}) ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   const helpers = `
 func _lia_instanceof(x interface{}) bool { return false }

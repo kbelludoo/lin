@@ -2,7 +2,7 @@
  * LIA → Rust emitter (MVP; ALWAYS_INSTALL rustc via ensure_toolchains).
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes, parseParamList, rewriteFnValues, safeEmitId, isNoopExpr, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
@@ -132,7 +132,7 @@ export function emitRust(liaText, opts = {}) {
   }
   const usedFn = new Set();
   const rustFnName = (raw) => {
-    let n = snakeCase(raw);
+    let n = safeEmitId(snakeCase(raw));
     if (usedFn.has(n) || (raw !== n && String(raw).toLowerCase() === n && usedFn.has(n))) {
       n = `${n}_u`;
     }
@@ -142,7 +142,7 @@ export function emitRust(liaText, opts = {}) {
   };
   const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, rustFnName(f.name)]));
   usedFn.clear();
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name));
+  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
   for (const fn of prog.fns) {
     const name = rustFnName(fn.name);
     const { names: params } = parseParamList(fn.params);
@@ -159,7 +159,7 @@ export function emitRust(liaText, opts = {}) {
       );
       continue;
     }
-    const bodyStmts = parseStmts(
+    const bodyStmts = tryParseStmts(
       rewriteSiblingCalls(
         rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'String::new()'),
         aliases,
@@ -167,6 +167,12 @@ export function emitRust(liaText, opts = {}) {
         .replace(/\bmatch\b/g, 'match_')
         .replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1.to_string()'),
     );
+    if (!bodyStmts) {
+      parts.push(
+        `pub fn ${name}(${paramList}) -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
+      );
+      continue;
+    }
     const forVars = new Set();
     const collectFor = (list) => {
       for (const st of list || []) {

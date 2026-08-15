@@ -1081,8 +1081,36 @@ function applySourceSigils(jsBody) {
   s = s.replace(/\belse\s+if\s*\(/g, ':(');
   s = s.replace(/\bif\s*\(/g, '?(');
   s = s.replace(/\bfor\s*\(/g, '#(');
-  // drop decl-only (`var memo;`) before stripping keywords (avoids bare `memo;`)
-  s = s.replace(/\b(?:var|let|const)\s+[A-Za-z_$][\w$]*\s*;/g, '');
+  // expand `var a=1, b, c=2` so comma decls are not leftover reads
+  s = s.replace(/\b(var|let|const)\s+([^;]+);/g, (full, kw, list, offset, src) => {
+    const before = src.slice(Math.max(0, offset - 10), offset);
+    if (/(?:#|\bfor)\(\s*$/.test(before)) return full;
+    const parts = [];
+    let buf = '';
+    let d = 0;
+    let q = null;
+    for (let i = 0; i < list.length; i++) {
+      const c = list[i];
+      if (q) {
+        if (c === '\\') { buf += c + (list[i + 1] || ''); i++; continue; }
+        buf += c;
+        if (c === q) q = null;
+        continue;
+      }
+      if (c === '"' || c === "'" || c === '`') { q = c; buf += c; continue; }
+      if (c === '(' || c === '{' || c === '[') d++;
+      else if (c === ')' || c === '}' || c === ']') d--;
+      if (c === ',' && d === 0) { parts.push(buf.trim()); buf = ''; continue; }
+      buf += c;
+    }
+    if (buf.trim()) parts.push(buf.trim());
+    if (parts.length <= 1) return full;
+    return parts.map((p) => (
+      /^[A-Za-z_$][\w$]*$/.test(p) ? `${kw} ${p}=undefined;` : `${kw} ${p};`
+    )).join('');
+  });
+  // decl-only becomes assign so compileLiaToJs emits `var id`
+  s = s.replace(/\b(?:var|let|const)\s+([A-Za-z_$][\w$]*)\s*;/g, '$1=undefined;');
   s = s.replace(/\bvar\s+/g, '');
   s = s.replace(/\blet\s+/g, '');
   s = s.replace(/\bconst\s+/g, '');

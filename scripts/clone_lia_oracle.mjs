@@ -64,10 +64,12 @@ export function unsupported(fn) {
 }
 
 /** Build `const Alias=...` prelude from resolved import / module literal bindings. */
-export function bindingsPrelude(bindings) {
+export function bindingsPrelude(bindings, reserved) {
   if (!bindings || !Object.keys(bindings).length) return '';
+  const skip = new Set(reserved || []);
   const parts = [];
   for (const [alias, obj] of Object.entries(bindings)) {
+    if (skip.has(alias)) continue;
     if (obj && typeof obj === 'object' && obj.__lin_sym) {
       parts.push(`const ${alias}=Symbol.for(${JSON.stringify(obj.__lin_sym)});`);
     } else if (obj && typeof obj === 'object' && obj.__lin_re) {
@@ -127,7 +129,10 @@ export function stripAsyncAwait(src) {
 /** Peripheral CLOSURE: same-file sibling fns as JS prelude (not LIN nucleus). */
 export function siblingsPrelude(siblings) {
   if (!siblings || !siblings.length) return '';
+  const seen = new Set();
   return siblings.map((s) => {
+    if (!s?.name || seen.has(s.name)) return '';
+    seen.add(s.name);
     const body = stripAsyncAwait(stripExportImport(stripJsComments(s.body || '')));
     return `function ${s.name}(${(s.params || []).join(',')}){${body}}\n`;
   }).join('');
@@ -248,7 +253,8 @@ process.stdout.write(JSON.stringify(__out));
 /** Build oracle from classic/arrow-extracted fn source body. */
 export function oracleFromFn(fn) {
   const hint = unsupported(fn);
-  const prelude = `${bindingsPrelude(fn.bindings)}${siblingsPrelude(fn.siblings)}`;
+  const reserved = [fn.name, ...((fn.siblings || []).map((s) => s.name))];
+  const prelude = `${bindingsPrelude(fn.bindings, reserved)}${siblingsPrelude(fn.siblings)}`;
   const body = stripAsyncAwait(stripExportImport(stripJsComments(fn.body || '')));
   const raw = `${prelude}function ${fn.name}(${fn.params.join(',')}){${body}}`;
   const wrapped = `${raw}\nmodule.exports=${fn.name};\n`;
@@ -281,7 +287,8 @@ export function oracleFromFn(fn) {
 
 /** Emit LIA → compile → exact hash vs oracle. */
 export function verifyFnAgainstOracle(oracle) {
-  const prelude = `${bindingsPrelude(oracle.bindings)}${siblingsPrelude(oracle.siblings)}`;
+  const reserved = [oracle.name, ...((oracle.siblings || []).map((s) => s.name))];
+  const prelude = `${bindingsPrelude(oracle.bindings, reserved)}${siblingsPrelude(oracle.siblings)}`;
   // Bindings stay as JS prelude outside LIN body; emit only the fn, then wrap for runtime.
   const classic = `function ${oracle.name}(${oracle.params.join(',')}){${oracle.body}}`;
   let lia;
@@ -588,7 +595,8 @@ export function walkLang(root, lang) {
     rust: /\.rs$/i,
   }[String(lang || 'javascript').toLowerCase()] || /\.(js|mjs|cjs|ts)$/i;
   const SKIP = /[\\/](\.git|node_modules|dist|build|coverage|test(s)?|vendor|docs?|\.husky|target|__pycache__|perf|benchmarks?)([\\/]|$)/i;
-  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$|\.config\.(js|ts|mjs|cjs)$|\.conf\.(js|ts|mjs|cjs)$|^karma\./i;
+  const SKIP_FILE = /\.(d\.ts)$|_test\.go$|_test\.rs$|test_.*\.py$|^(test|tests|spec)\.(js|mjs|cjs|ts)$|\.config\.(js|ts|mjs|cjs)$|\.conf\.(js|ts|mjs|cjs)$|^karma\.|^rollup\.|[\.-]min\.(js|mjs|cjs)$/i;
+  const SKIP_BUNDLE = /^(underscore|lodash)(-esm|-umd)?\.(js|mjs|cjs)$/i;
   const out = [];
   const stack = [root];
   while (stack.length) {
@@ -604,7 +612,8 @@ export function walkLang(root, lang) {
       if (e.isDirectory()) {
         if (!SKIP.test(p + path.sep)) stack.push(p);
       } else if (ext.test(e.name) && !SKIP.test(p) && !SKIP_FILE.test(e.name)
-        && !/\.(test|spec)\./i.test(e.name)) {
+        && !/\.(test|spec)\./i.test(e.name)
+        && !(SKIP_BUNDLE.test(e.name) && path.dirname(p) === root)) {
         out.push(p);
       }
     }

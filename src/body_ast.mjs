@@ -35,6 +35,14 @@ function parseBlockBody(s, openBrace) {
 /**
  * @returns {import('./emit_shared.mjs').Stmt[]}
  */
+export function tryParseStmts(body) {
+  try {
+    return parseStmts(body);
+  } catch {
+    return null;
+  }
+}
+
 export function parseStmts(body) {
   const s = String(body || '');
   const out = [];

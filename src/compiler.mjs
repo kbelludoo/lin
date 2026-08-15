@@ -100,7 +100,7 @@ function compileReturnSigils(s) {
     }
     const prev = out.length ? out[out.length - 1] : '';
     const next = s[i + 1] || '';
-    const prevOk = !prev || /[;{}\n,]/.test(prev);
+      const prevOk = !prev || /[;{}\n,:]/.test(prev);
     const nextOk = /[A-Za-z_$0-9(\[\-+!'"`{]/.test(next);
     if (prevOk && nextOk) {
       out += 'return ';
@@ -340,7 +340,7 @@ function firstUseIsRead(body, id) {
 
 function collectAssignedIds(body) {
   const ids = new Set();
-  const re = /(?:^|[;{])\s*([A-Za-z_$][\w$]*)\s*=/g;
+  const re = /(?:^|[;{,])\s*([A-Za-z_$][\w$]*)\s*=/g;
   let m;
   const s = `;${body}`;
   while ((m = re.exec(s)) !== null) {

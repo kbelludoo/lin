@@ -2,7 +2,7 @@
  * LIA → C emitter (peripheral; not nucleus).
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
@@ -87,14 +87,18 @@ export function emitC(liaText, opts = {}) {
     '}',
     '',
   ];
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name));
+  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(`long long ${fn.name}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
     }
-    const stmts = parseStmts(fn.body);
+    const stmts = tryParseStmts(fn.body);
+    if (!stmts) {
+      parts.push(`long long ${fn.name}(void) { return 0; /* JS-runtime-only */ }`);
+      continue;
+    }
     const assigned = collectAssignedIds(stmts);
     const stringish = new Set(
       params.filter((p) => !/^(len|n|i|idx|count|num|bytes|val)$/i.test(p)),

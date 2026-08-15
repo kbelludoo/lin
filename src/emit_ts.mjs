@@ -2,7 +2,7 @@
  * LIA → TypeScript emitter (typed wrappers over JS body semantics).
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { emitBanner, isJsRuntimeOnly, rewriteExpr, parseParamList } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
@@ -64,7 +64,13 @@ export function emitTs(liaText, opts = {}) {
       );
       continue;
     }
-    const stmts = parseStmts(fn.body);
+    const stmts = tryParseStmts(fn.body);
+    if (!stmts) {
+      parts.push(
+        `export function ${fn.name}(_a: unknown, _b: unknown): boolean {\n  throw new Error("LIA_EMIT_TS: JS-runtime-only (${fn.name})");\n}`,
+      );
+      continue;
+    }
     const { names: params, sigTs } = parseParamList(fn.params);
     const paramList = sigTs.join(', ');
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));

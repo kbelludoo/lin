@@ -2,7 +2,7 @@
  * LIA → Python emitter.
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, snakeCase, parseParamList, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 
@@ -128,7 +128,7 @@ export function emitPy(liaText, opts = {}) {
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`${k} = ${v}`);
   }
   const aliases = Object.fromEntries(prog.fns.map((f) => [f.name, snakeCase(f.name)]));
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name));
+  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
   for (const fn of prog.fns) {
     const name = snakeCase(fn.name);
     const { names: params, sigPy } = parseParamList(fn.params);
@@ -136,7 +136,11 @@ export function emitPy(liaText, opts = {}) {
       parts.push(`def ${name}(*_args, **_kwargs):\n    raise NotImplementedError("LIA_EMIT_PY: JS-runtime-only (${fn.name})")`);
       continue;
     }
-    const stmts = parseStmts(rewriteSiblingCalls(fn.body, aliases));
+    const stmts = tryParseStmts(rewriteSiblingCalls(fn.body, aliases)) || tryParseStmts(fn.body);
+    if (!stmts) {
+      parts.push(`def ${name}(*_args, **_kwargs):\n    raise NotImplementedError("LIA_EMIT_PY: JS-runtime-only (${fn.name})")`);
+      continue;
+    }
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const body = [];
     body.push(...emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'py'));

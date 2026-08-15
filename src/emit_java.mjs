@@ -2,7 +2,7 @@
  * LIA → Java emitter (peripheral; not nucleus).
  */
 import { parseLia } from './compiler.mjs';
-import { parseStmts, collectAssignedIds } from './body_ast.mjs';
+import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
 import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
@@ -96,16 +96,20 @@ export function emitJava(liaText, opts = {}) {
       parts.push(`  static final long ${k} = ${v}L;`);
     }
   }
-  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name));
+  const fileHosty = opts.stubRuntime !== false && prog.fns.some((f) => isJsRuntimeOnly(f.body, f.name) || !tryParseStmts(f.body));
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
-      parts.push(`  public static boolean ${fn.name}() { throw new RuntimeException("JS-runtime-only"); }`);
+      parts.push(`  public static boolean ${safeEmitId(fn.name)}() { throw new RuntimeException("JS-runtime-only"); }`);
       continue;
     }
-    const stmts = parseStmts(
+    const stmts = tryParseStmts(
       rewriteFnValues(fn.body, prog.fns.map((f) => f.name).filter((n) => n !== fn.name), 'null'),
-    );
+    ) || tryParseStmts(fn.body);
+    if (!stmts) {
+      parts.push(`  public static boolean ${safeEmitId(fn.name)}() { throw new RuntimeException("JS-runtime-only"); }`);
+      continue;
+    }
     const inferred = inferTypes(stmts);
     const assigned = collectAssignedIds(stmts).filter((id) => !params.includes(id) && id !== 'cache').map(safeEmitId);
     const paramList = params.map((p) => `${javaType(p, inferred)} ${safeEmitId(p)}`).join(', ');
@@ -121,7 +125,7 @@ export function emitJava(liaText, opts = {}) {
     }
     const freeHost = emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'java');
     const bodyLines = [...decls, ...freeHost, ...emitNilDefaults(defaults, 'java'), ...emitted];
-    parts.push(`  public static ${ret} ${fn.name}(${paramList}) {\n${bodyLines.join('\n')}\n  }`);
+    parts.push(`  public static ${ret} ${safeEmitId(fn.name)}(${paramList}) {\n${bodyLines.join('\n')}\n  }`);
   }
   parts.push('}');
   return { code: `${parts.join('\n')}\n`, program: prog, target: 'java' };
