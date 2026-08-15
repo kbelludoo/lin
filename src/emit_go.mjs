@@ -3,8 +3,9 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, safeEmitId } from './emit_shared.mjs';
-import { emitThrowLine } from './emit_rewrite.mjs';
+import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, safeEmitId, emitNameMap, isBoolFnName } from './emit_shared.mjs';
+import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
+import { isQualityFnSet, wantSafeCompareMain, formatQualityMain } from './emit_entry_main_load.mjs';
 
 function emitStmts(stmts, indent, types) {
   const pad = '\t'.repeat(indent);
@@ -91,36 +92,35 @@ export function emitGo(liaText, opts = {}) {
     parts.push(`var K = map[string]int{${Object.entries(prog.consts).map(([k, v]) => `"${k}": ${v}`).join(', ')}}`);
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`var ${k} = ${v}`);
   }
-  const usedGo = new Set();
+  const names = emitNameMap(prog.fns);
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
-    const paramList = params.map((p) => `${p} interface{}`).join(', ');
-    let goName = safeEmitId(fn.name);
-    while (usedGo.has(goName)) goName = `${goName}U`;
-    usedGo.add(goName);
+    const goName = names[fn.name];
+    const paramAlias = Object.fromEntries(params.map((p) => [p, safeEmitId(p)]));
+    const paramList = params.map((p) => `${safeEmitId(p)} interface{}`).join(', ');
+    const bodySrc = rewriteSiblingCalls(fn.body, { ...names, ...paramAlias });
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
-      const keep = params.map((p) => `\t_ = ${p}`).join('\n');
+      const keep = params.map((p) => `\t_ = ${safeEmitId(p)}`).join('\n');
       parts.push(
         `func ${goName}(${paramList}) bool {\n${keep ? `${keep}\n` : ''}\tpanic("LIA_EMIT_GO: JS-runtime-only (${fn.name})")\n}`,
       );
       continue;
     }
-    const stmts = tryParseStmts(fn.body);
+    const stmts = tryParseStmts(bodySrc) || tryParseStmts(fn.body);
     if (!stmts) {
       parts.push(
         `func ${goName}(${paramList}) bool {\n\tpanic("LIA_EMIT_GO: JS-runtime-only (${fn.name})")\n}`,
       );
       continue;
     }
-    const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
+    const safePs = params.map((p) => safeEmitId(p));
+    const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id) && !safePs.includes(id));
     const inferredTypes = inferTypes(stmts);
     const cacheStub = /\bcache\b/.test(fn.body) ? ['\tcache := make([]string, 64)'] : [];
     const declLocals = locals.filter((id) => id !== 'cache');
     const keepUnused = declLocals.map((id) => `\t_ = ${id}`);
     const emitted = emitStmts(stmts, 1, inferredTypes);
-    const retType = /is_|empty|startsWith|endsWith|contains|typeof|^safeCompare$/i.test(fn.name)
-      ? 'bool'
-      : 'interface{}';
+    const retType = isBoolFnName(fn.name) ? 'bool' : 'interface{}';
     if (!/\breturn\b/.test(emitted.join('\n'))) {
       emitted.push(retType === 'bool' ? '\treturn false' : '\treturn nil');
     }
@@ -244,10 +244,15 @@ func _lia_itoa(n int) string {
   parts.splice(parts.length > 2 ? 3 : 2, 0, helpers);
   const bodySoFar = parts.join('\n');
   const imports = [];
-  if (/fmt\./.test(bodySoFar) || /fmt\./.test(helpers) || opts.withMain !== false) imports.push('"fmt"');
+  const fnNames = prog.fns.map((f) => f.name);
+  const quality = isQualityFnSet(fnNames);
+  const safeMain = wantSafeCompareMain(opts.withMain, fnNames);
+  if (/fmt\./.test(bodySoFar) || /fmt\./.test(helpers) || quality || safeMain) imports.push('"fmt"');
   if (/strings\./.test(bodySoFar)) imports.push('"strings"');
   if (imports.length) parts.splice(2, 0, `import (${imports.map((x) => `\n\t${x}`).join('')}\n)`);
-  if (opts.withMain !== false) {
+  if (quality) {
+    parts.push(formatQualityMain('go', names));
+  } else if (safeMain) {
     const primary = prog.exports[0] || prog.fns[0]?.name || 'safeCompare';
     parts.push(`
 func main() {

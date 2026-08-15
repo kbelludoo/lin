@@ -3,7 +3,21 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { emitBanner, isJsRuntimeOnly, rewriteExpr, parseParamList } from './emit_shared.mjs';
+import { emitBanner, isJsRuntimeOnly, rewriteExpr, parseParamList, inferTypes, isNumishId } from './emit_shared.mjs';
+
+function tsType(id, inferred) {
+  if (inferred && inferred.get(id) === 'int') return 'number';
+  if (inferred && inferred.get(id) === 'bool') return 'boolean';
+  if (isNumishId(id)) return 'number';
+  return 'unknown';
+}
+
+function tsReturnType(fnName, inferred) {
+  if (/^is|^has|^can|Even$|^empty$|^startsWith$/.test(fnName)) return 'boolean';
+  if (inferred && inferred.get('__return') === 'int') return 'number';
+  if (inferred && inferred.get('__return') === 'bool') return 'boolean';
+  return 'any';
+}
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -72,13 +86,16 @@ export function emitTs(liaText, opts = {}) {
       );
       continue;
     }
+    const inferred = inferTypes(stmts);
     const { names: params, sigTs } = parseParamList(fn.params);
-    const paramList = sigTs.join(', ');
+    const typedParams = params.map((p) => `${p}: ${tsType(p, inferred)}`);
+    const paramList = typedParams.join(', ');
     const locals = collectAssignedIds(stmts).filter((id) => !params.includes(id));
     const bodyLines = [];
     if (locals.length) bodyLines.push(`  let ${locals.join(', ')};`);
     bodyLines.push(...emitStmts(stmts, 1));
-    parts.push(`export function ${fn.name}(${paramList}): boolean {\n${bodyLines.join('\n')}\n}`);
+    const retType = tsReturnType(fn.name, inferred);
+    parts.push(`export function ${fn.name}(${paramList}): ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   return { code: parts.join('\n'), program: prog, target: 'ts' };
 }

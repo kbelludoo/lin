@@ -3,8 +3,9 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes, parseParamList, rewriteFnValues, safeEmitId, isNoopExpr, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, snakeCase, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, inferTypes, parseParamList, rewriteFnValues, safeEmitId, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
+import { isQualityFnSet, wantSafeCompareMain, formatQualityMain } from './emit_entry_main_load.mjs';
 
 function emitStmts(stmts, indent, types, retType) {
   const pad = '    '.repeat(indent);
@@ -39,8 +40,14 @@ function emitStmts(stmts, indent, types, retType) {
     } else if (st.type === 'for') {
       const init = st.init.match(/^([A-Za-z_][\w]*)\s*=\s*(.+)$/);
       const stepInc = st.step.match(/^([A-Za-z_][\w]*)\+\+$/);
-      if (init && stepInc && /<\s*/.test(st.cond)) {
-        // for i in start..end when cond is i<n
+      if (init && stepInc) {
+        const le = st.cond.match(/^([A-Za-z_][\w]*)\s*<=\s*(.+)$/);
+        if (le && le[1] === init[1]) {
+          lines.push(`${pad}for ${init[1]} in ${rewriteExpr(init[2], 'rust')}..=${rewriteExpr(le[2], 'rust')} {`);
+          lines.push(...emitStmts(st.body, indent + 1, types, retType));
+          lines.push(`${pad}}`);
+          continue;
+        }
         const cm = st.cond.match(/^([A-Za-z_][\w]*)\s*<\s*(.+)$/);
         if (cm && cm[1] === init[1]) {
           lines.push(`${pad}for ${init[1]} in ${rewriteExpr(init[2], 'rust')}..${rewriteExpr(cm[2], 'rust')} {`);
@@ -91,12 +98,41 @@ function rustType(id, inferred) {
   return 'String';
 }
 
+function rustDefault(ty) {
+  if (ty === 'i64' || ty === 'int' || ty === 'i32') return '0';
+  if (ty === 'bool') return 'false';
+  return 'String::new()';
+}
+
 function rustLocals(locals, stmts) {
   const inferred = inferTypes(stmts);
   return locals.map((id) => {
     const sid = safeEmitId(id);
-    return `    let mut ${sid}: ${rustType(sid, inferred)};`;
+    const ty = rustType(sid, inferred);
+    return `    let mut ${sid}: ${ty} = ${rustDefault(ty)};`;
   });
+}
+
+function rustRetType(fn, stmts) {
+  if (isBoolFnName(fn.name)) return 'bool';
+  const inf = inferTypes(stmts);
+  const rets = [];
+  const walk = (list) => {
+    for (const st of list || []) {
+      if (st.type === 'return') rets.push(String(st.expr || '').trim());
+      if (st.then) walk(st.then);
+      if (st.else) walk(st.else);
+      if (st.body) walk(st.body);
+      for (const e of st.elseIf || []) walk(e.body);
+    }
+  };
+  walk(stmts);
+  if (!rets.length) return 'String';
+  const numeric = rets.every((t) => (
+    /^-?\d+$/.test(t) || inf.get(t) === 'int' || isNumishId(t)
+      || /^[A-Za-z_][\w]*(\s*[+\-*/%]\s*[A-Za-z_][\w]*)+$/.test(t)
+  ));
+  return numeric ? 'i64' : 'String';
 }
 
 export function emitRust(liaText, opts = {}) {
@@ -196,18 +232,19 @@ export function emitRust(liaText, opts = {}) {
     const cacheStub = /\bcache\b/.test(fn.body)
       ? ['    let mut cache: Vec<String> = vec![String::new(); 64];']
       : [];
-    const retType = /is_|empty|startsWith|endsWith|contains|typeof|^safeCompare$/i.test(fn.name)
-      ? 'bool'
-      : 'String';
+    const retType = rustRetType(fn, bodyStmts);
     const emitted = emitStmts(bodyStmts, 1, inferredTypes, retType);
     if (!/\breturn\b/.test(emitted.join('\n'))) {
-      emitted.push(retType === 'bool' ? '    false' : '    String::new()');
+      emitted.push(retType === 'bool' ? '    false' : retType === 'i64' ? '    0' : '    String::new()');
     }
     const freeHost = emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'rust');
     const bodyLines = [...coerce, ...cacheStub, ...freeHost, ...rustLocals(bodyLocals, bodyStmts), ...emitted];
     parts.push(`pub fn ${name}(${paramList}) -> ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
-  if (opts.withMain !== false) {
+  const fnNames = prog.fns.map((f) => f.name);
+  if (isQualityFnSet(fnNames)) {
+    parts.push(formatQualityMain('rust', aliases));
+  } else if (wantSafeCompareMain(opts.withMain, fnNames)) {
     const primary = snakeCase(prog.exports[0] || prog.fns[0]?.name || 'safeCompare');
     parts.push(`
 fn main() {
@@ -218,5 +255,5 @@ fn main() {
     println!("ok rust safe-compare");
 }`);
   }
-  return { code: parts.join('\n') + '\n', program: prog, target: 'rust', stub: true };
+  return { code: parts.join('\n') + '\n', program: prog, target: 'rust', stub: opts.stubRuntime !== false };
 }

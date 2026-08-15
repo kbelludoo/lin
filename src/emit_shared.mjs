@@ -78,6 +78,20 @@ export function safeEmitId(id) {
   return s;
 }
 
+/** Unique host-safe names for a LIN fn list. transform maps LIN name → host ident before reserve-rename. */
+export function emitNameMap(fns, transform = (n) => String(n || '')) {
+  const used = new Set();
+  const map = Object.create(null);
+  for (const fn of fns || []) {
+    const raw = String(fn.name || '');
+    let name = safeEmitId(transform(raw));
+    while (used.has(name)) name = `${name}_u`;
+    used.add(name);
+    map[raw] = name;
+  }
+  return map;
+}
+
 export function isNoopExpr(expr) {
   return /^(nil|null|None|0|""|'')(\(\))?$/.test(String(expr || '').trim());
 }
@@ -121,7 +135,6 @@ export function emitNilDefaults(defaults, target) {
 
 /** Detect JS-runtime-only surface (Buffer/crypto) — stub on non-JS targets. */
 export function isJsRuntimeOnly(body, name) {
-  if (body != null) return true;
   if (/^(meridiem|preparse|postformat|months|monthsShort|translate|plural|padZoneStr|monthDiff|prettyUnit|absFloor|padStart|relativeTimeFormatter|relativeTimeWithPlural|relativeTimeWithTense|relativeTimeWithMutation|ordinal|defaultExport|isUndefined|dual|threeFour|correctGrammarCase|resolveTemplate|lastNumber|softMutation|mutation|specialMutationForYears|createChalk|chalkFactory|applyStyle|createBuilder|createStyler|createModelConverters|applyOptions|assertValidLevel|stringReplaceAll|stringEncaseCRLFWithFirstIndex|rainbow|animateString|outputConf|sourcemapConf|monolithConf|debounce|throttle|restArguments|optimizeCb|clone|constant|create|after|before|first|last|rest|initial|range|object|result|bound|template|escapeChar|mixin|memoize|wrap|negate|compose|uniqueId|times|tap|size|noop|identity|pairs|invert|functions|has|get|property|propertyOf|matcher|iteratee|sample|shuffle|sortBy|sortedIndex|uniq|unzip|deepGet|tagTester|ctor|baseCreate|baseIteratee|chainResult|shallowProperty|toBufferView|toPath|keyInObj|alternateIsDataView|isBoolean|isElement|isEmpty|isEqual|isFinite|isMatch|isNaN|isNull|isObject|isTypedArray|cycleTracker|ie11fingerprint|emulatedSet|collectNonEnumProps|createAssigner|createEscaper|createIndexFinder|createPredicateIndexFinder|createReduce|createSizePropertyCheck|executeBound|group|findKey|find|findWhere|every|some|contains|pluck|where|filter|reject|map|mapObject|each|flatten|intersection|values|keys|allKeys|chunk|compact|max|min|toArray|random|_)$/.test(name || '')) {
     return true;
   }
@@ -145,15 +158,15 @@ export function isJsRuntimeOnly(body, name) {
     || /\?\?|\?\./.test(body)
     || /\bas\b/.test(body)
     || /:\s*[A-Z]/.test(body)
-    || /<[A-Za-z_$]/.test(body)
+    || /\b(Array|Vec|Option|Result|Box|Rc|RefCell|HashMap|BTreeMap|VecDeque)<[A-Za-z_$][\w$]*>/.test(body)
     || /`/.test(body)
     || /LIN_TS_ERASE/.test(body)
     || /=>/.test(body)
     || /\.\.\./.test(body)
     || /\btry\b|\bclass\b|\bthrow\b/.test(body)
-    || body.length > 120
+    || body.length > 2400
     || /\b(fs|path|os|url|http|https|net|child_process|util|stream|worker_threads|Bun|Deno)\b/.test(body)
-    || /\b(fileURLToPath|createHash|createRequire|spawnSync|execSync)\b/.test(body)
+    || /\b(fileURLToPath|createHash|createRequire|spawnSync|execSync|readFileSync|writeFileSync|process\.env|process\.argv)\b/.test(body)
     || /\b(isObject|isArray|isArrayLike|isFunction|isString|isEmpty|filter|map|each|values|keys|cb|extend|identity|matcher|property|flatten|contains|indexOf|Boolean|createSizePropertyCheck|getLength)\b/.test(body);
 }
 
@@ -202,11 +215,44 @@ export function isNumishId(id) {
   return /^(len|n|i|idx|count|num|ms|msAbs)$/i.test(String(id || ''));
 }
 
+export function isBoolFnName(name) {
+  return /^(is[A-Z]|safeCompare)|is_|empty|startsWith|endsWith|contains|typeof/i.test(String(name || ''));
+}
+
+function numericPlusOperand(t) {
+  let x = String(t || '').trim();
+  while (x.startsWith('(') && x.endsWith(')')) x = x.slice(1, -1).trim();
+  if (/^_lia_num\b/.test(x)) return true;
+  if (/^-?\d+$/.test(x)) return true;
+  return isNumishId(x) || /^(res|total|sum)$/i.test(x);
+}
+
+/** Keep numeric `+` (res+i, n+n); only cat when a side is a string/cat helper. */
+export function plusIsNumeric(a, b) {
+  const x = String(a || '').trim();
+  const y = String(b || '').trim();
+  if (/^["']/.test(x) || /^["']/.test(y)) return false;
+  if (/_lia_str|_lia_cat|String\.valueOf|_lia_sprintf/.test(x + y) && !/_lia_num/.test(x + y)) return false;
+  return numericPlusOperand(x) && numericPlusOperand(y);
+}
+
 export function inferTypes(stmts) {
   const types = new Map();
+  function allStmts(list) {
+    const out = [];
+    for (const st of list || []) {
+      out.push(st);
+      if (st.then) out.push(...allStmts(st.then));
+      for (const e of st.elseIf || []) out.push(...allStmts(e.body));
+      if (st.else) out.push(...allStmts(st.else));
+      if (st.body) out.push(...allStmts(st.body));
+    }
+    return out;
+  }
+  const all = allStmts(stmts);
   for (let pass = 0; pass < 4; pass++) {
     let changed = false;
-    for (const st of stmts || []) {
+    for (const st of all) {
       if (st.type === 'assign' && st.op === '=') {
         const rhs = String(st.expr || '').trim();
         let t = null;
@@ -215,7 +261,11 @@ export function inferTypes(stmts) {
         else if (/\/.+\/[gimsuy]*|\b_lia_re_exec\b/.test(rhs)) t = 'string';
         else if (/==|!=|<=|>=|<|>/.test(rhs)) t = 'bool';
         else if (/\b(length|len|is_empty|Math\.abs|Math\.round|_lia_abs|_lia_round|_lia_num|parseFloat)\b/.test(rhs)) t = 'int';
-        else if (/[+\-*/%]/.test(rhs) && !/~\(/.test(rhs)) t = 'int';
+        else if (/[a-zA-Z_$][\w$]*\s*[+\-*/]\s*[a-zA-Z_$][\w$]*(\[[^\]]+\])?/.test(rhs)) t = 'int';
+        else if (/[a-zA-Z_$][\w$]*\s*\+\+/.test(rhs)) t = 'int';
+        else if (/[a-zA-Z_$][\w$]*\s*[+\-*/%]\s*\d/.test(rhs)) t = 'int';
+        else if (/^\d+\s*[+\-*/]\s*[a-zA-Z_$][\w$]*/.test(rhs)) t = 'int';
+        else if (/^\d+$/.test(rhs)) t = 'int';
         else if (/^[A-Za-z_][\w]*$/.test(rhs) && types.has(rhs)) t = types.get(rhs);
         if (t && types.get(st.id) !== t) {
           types.set(st.id, t);
@@ -454,6 +504,10 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/\b([A-Za-z_][\w]*)\s*(<=|>=|<|>|==|!=)\s*(-?\d+)/g, '_lia_num($1) $2 $3');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*\/\s*([A-Za-z_][\w]*)\b/g, '_lia_num($1)/_lia_num($2)');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*\*\s*(\d+\.\d+)/g, '_lia_f64($1)*$2');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s*%\s*(-?\d+)/g, '_lia_num($1)%$2');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s*\*\s*([A-Za-z_][\w]*)\b/g, (m, a, b) => (
+      plusIsNumeric(a, b) || isNumishId(a) || isNumishId(b) ? `_lia_num(${a})*_lia_num(${b})` : m
+    ));
     s = s.replace(/\b([A-Za-z_][\w]*)\s*(<=|>=|<|>)\s*([A-Za-z_][\w]*)\b(?!\s*\()/g, '_lia_num($1) $2 _lia_num($3)');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*(<=|>=|<|>)\s*(_lia_f64\([^)]+\)\s*\*\s*\d+\.\d+)/g, '_lia_f64($1) $2 $3');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*==\s*("(?:\\.|[^"\\])*")/g, '_lia_str($1)==$2');
@@ -464,7 +518,10 @@ export function rewriteExpr(expr, target) {
       prevGo = s;
       s = s.replace(
         /((?:_lia_cat\([^()]*\)|_lia_str\([^)]+\)|_lia_round\([^)]+\)|\([^()]+\)|[A-Za-z_][\w]*\[[^\]]+\]|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))\s*\+\s*((?:_lia_cat\([^()]*\)|_lia_str\([^)]+\)|_lia_round\([^)]+\)|\([^()]+\)|[A-Za-z_][\w]*\[[^\]]+\]|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))/g,
-        '_lia_cat($1,$2)',
+        (m, a, b) => {
+          if (/_lia_num/.test(a) || /_lia_num/.test(b)) return m;
+          return plusIsNumeric(a, b) ? `_lia_num(${a})+_lia_num(${b})` : `_lia_cat(${a},${b})`;
+        },
       );
     } while (s !== prevGo);
     s = s.replace(
@@ -513,7 +570,7 @@ export function rewriteExpr(expr, target) {
       s = s.replace(
         /((?:String\.valueOf\([^)]+\)|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))\s*\+\s*((?:String\.valueOf\([^)]+\)|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))/g,
         (m, a, b) => (
-          isNumishId(a) || isNumishId(b) ? m : `String.valueOf(${a})+String.valueOf(${b})`
+          plusIsNumeric(a, b) || isNumishId(a) || isNumishId(b) ? m : `String.valueOf(${a})+String.valueOf(${b})`
         ),
       );
     } while (s !== prevJ);
@@ -546,7 +603,10 @@ export function rewriteExpr(expr, target) {
       prevC = s;
       s = s.replace(
         /((?:_lia_cat_c\([^()]*\)|[A-Za-z_][\w]*\[[^\]]+\]|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))\s*\+\s*((?:_lia_cat_c\([^()]*\)|[A-Za-z_][\w]*\[[^\]]+\]|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))/g,
-        '_lia_cat_c($1,$2)',
+        (m, a, b) => {
+          if (plusIsNumeric(a, b)) return m.includes(')+(') ? m : `(${a})+(${b})`;
+          return `_lia_cat_c(${a},${b})`;
+        },
       );
     } while (s !== prevC);
     return s;
@@ -598,7 +658,7 @@ export function rewriteExpr(expr, target) {
       prevRs = s;
       s = s.replace(
         /((?:_lia_cat\([^()]*\)|_lia_str\([^)]+\)|_lia_round\([^)]+\)|_lia_cache_get\([^)]+\)|\([^()]+\)|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))\s*\+\s*((?:_lia_cat\([^()]*\)|_lia_str\([^)]+\)|_lia_round\([^)]+\)|_lia_cache_get\([^)]+\)|\([^()]+\)|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))/g,
-        '_lia_cat(&$1,&$2)',
+        (m, a, b) => (plusIsNumeric(a, b) ? m.replace(/\s*\+\s*/, '+') : `_lia_cat(&${a},&${b})`),
       );
     } while (s !== prevRs);
     let prevRsFold;
@@ -613,7 +673,7 @@ export function rewriteExpr(expr, target) {
       /\(?(_lia_round\(_lia_num\([^)]+\)\s*\/\s*_lia_num\([^)]+\)\))\)?\s*\+\s*("(?:\\.|[^"\\])*")/g,
       '_lia_cat(&$1,&$2)',
     );
-    s = foldPlus(s, (a, b) => `_lia_cat(&(${a}),&(${b}))`);
+    s = foldPlus(s, (a, b) => (plusIsNumeric(a, b) ? null : `_lia_cat(&(${a}),&(${b}))`));
     return s;
   }
   return s;

@@ -3,8 +3,9 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId, collectFreeHostIds, emitFreeHostDecls } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
+import { isQualityFnSet, formatQualityMain } from './emit_entry_main_load.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '    '.repeat(indent);
@@ -123,13 +124,17 @@ export function emitJava(liaText, opts = {}) {
       return `    ${t} ${id} = ${init};`;
     });
     const emitted = emitStmts(stmts, 2);
-    const ret = /is_|empty|startsWith|typeof|safeCompare/i.test(fn.name) ? 'boolean' : 'Object';
+    const ret = isBoolFnName(fn.name) ? 'boolean' : 'Object';
     if (!/\breturn\b/.test(emitted.join('\n'))) {
       emitted.push(ret === 'boolean' ? '    return false;' : '    return null;');
     }
     const freeHost = emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'java');
     const bodyLines = [...decls, ...freeHost, ...emitNilDefaults(defaults, 'java'), ...emitted];
     parts.push(`  public static ${ret} ${safeEmitId(fn.name)}(${paramList}) {\n${bodyLines.join('\n')}\n  }`);
+  }
+  const javaNames = Object.fromEntries(prog.fns.map((f) => [f.name, safeEmitId(f.name)]));
+  if (isQualityFnSet(prog.fns.map((f) => f.name))) {
+    parts.push(formatQualityMain('java', javaNames));
   }
   parts.push('}');
   return { code: `${parts.join('\n')}\n`, program: prog, target: 'java' };

@@ -1,10 +1,10 @@
-@RULEL:LIN_EMIT_BENCHMARK:1.0.0
+@RULEL:LIN_EMIT_BENCHMARK:1.1.0
 ~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .p=path}
 .m{lang=LIN status=POLICY_NOW_PLUS_FUTURE repo="C:/Users/k/Documents/lia" now=prefer_ts future=bench_all_real_then_pick}
-.r{R0=WRITE=LIN R_NOW=compile_prefer_ts R_GATE=real_nucleus_only R_INTEL=never_false R_FUTURE=compile_all_real_then_benchmark_pick_best R_9R=failover_on_timeout_or_empty}
-.c{correctness_first=behavior_eq==1.0 then=speed!size!tokens pick=measured_host_lang_not_stub_not_fiction}
-.g{now_default=ts nucleus=ts!js!py!go!rust!c!java required=ts!js!py!go!rust!java c_skip=ok_iff_gcc_absent_after_retry stub=EXPERIMENTAL_NOT_PASS bench_eligible=nucleus_with_real_toolchain_only}
-.w{NOW=prefer_ts_until_real_bench FUTURE=all_real_targets_then_choose ts_not_permanent_winner_without_numbers}
-.f{stub_as_PASS auto_PASS_without_compile 20lang_fiction bench_on_stubs pick_from_INTEL_fiction gcc_absent_as_PASS mutate_nucleus Dicel_as_working_surface}
-.a{code=.lin|.lia rules=.rulel emit_now=ts emit_gate=ts!js!py!go!rust!c!java stub_emit=cs!lua!elixir!crystal!kotlin!hcl!julia!scala!haskell!prolog!zig!nim!asm}
-.p{gate_lin=src/clone_lin_full_repo_gate.lin loop_spec=spec/LIN_CLONE_LIN_LOOP.rulel cli=bin/lin.mjs}
+.r{R0=WRITE=LIN R_NOW=compile_prefer_ts R_GATE=real_nucleus_only R_INTEL=never_false R_FULL=compile_and_run R_FUTURE=compile_all_real_then_benchmark_pick_best R_9R=failover_on_timeout_or_empty}
+.c{correctness_first=behavior_eq==1.0 then=speed!size!tokens pick=measured_host_lang_not_stub_not_fiction FULL=compile_ok_AND_run_ok COMPILE_ONLY=not_done}
+.g{now_default=ts nucleus=ts!js!py!go!rust!c!java required=ts!js!py!go!rust!java c_skip=ok_iff_gcc_absent_after_retry stub=EXPERIMENTAL_NOT_PASS bench_eligible=nucleus_with_real_toolchain_only quality_bench=scripts/lin_target_quality_bench.mjs}
+.w{NOW=prefer_ts_until_real_bench FUTURE=all_real_targets_then_choose ts_not_permanent_winner_without_numbers QUALITY=7x_FULL_compile_run}
+.f{stub_as_PASS auto_PASS_without_compile INTEL_stub_auto_PASS COMPILE_ONLY_as_done 20lang_fiction bench_on_stubs pick_from_INTEL_fiction gcc_absent_as_PASS mutate_nucleus Dicel_as_working_surface node_-e_windows_paths go_tool_compile_GO111MODULE_off}
+.a{code=.lin|.lia rules=.rulel emit_now=ts emit_gate=ts!js!py!go!rust!c!java stub_emit=cs!lua!elixir!crystal!kotlin!hcl!julia!scala!haskell!prolog!zig!nim!asm entry_main=src/emit_entry_main.lin}
+.p{gate_lin=src/clone_lin_full_repo_gate.lin entry_main=src/emit_entry_main.lin loop_spec=spec/LIN_CLONE_LIN_LOOP.rulel cli=bin/lin.mjs bench=scripts/lin_target_quality_bench.mjs}

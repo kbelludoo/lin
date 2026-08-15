@@ -3,8 +3,9 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, safeEmitId } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, safeEmitId, emitNameMap } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
+import { isQualityFnSet, formatQualityMain } from './emit_entry_main_load.mjs';
 
 function emitStmts(stmts, indent) {
   const pad = '  '.repeat(indent);
@@ -88,19 +89,17 @@ export function emitC(liaText, opts = {}) {
     '',
   ];
   const fileHosty = opts.stubRuntime !== false;
-  const usedC = new Set();
+  const names = emitNameMap(prog.fns);
   for (const fn of prog.fns) {
     const { names: params, defaults } = parseParamList(fn.params);
-    let cName = safeEmitId(fn.name);
-    while (usedC.has(cName)) cName = `${cName}U`;
-    usedC.add(cName);
+    const cName = names[fn.name];
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       parts.push(`long long ${cName}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
     }
     const stmts = tryParseStmts(fn.body);
     if (!stmts) {
-      parts.push(`long long ${fn.name}(void) { return 0; /* JS-runtime-only */ }`);
+      parts.push(`long long ${cName}(void) { return 0; /* JS-runtime-only */ }`);
       continue;
     }
     const assigned = collectAssignedIds(stmts);
@@ -111,7 +110,7 @@ export function emitC(liaText, opts = {}) {
       params.forEach((p) => { if (!/bytes|val|n\b/i.test(p)) stringish.add(p); });
     }
     const paramList = params.length
-      ? params.map((p) => `${cTypeFor(p, params, stringish)} ${p}`).join(', ')
+      ? params.map((p) => `${cTypeFor(p, params, stringish)} ${safeEmitId(p)}`).join(', ')
       : 'void';
     const locals = assigned.filter((id) => !params.includes(id));
     const decls = locals.map((id) => {
@@ -124,9 +123,11 @@ export function emitC(liaText, opts = {}) {
       || fn.name.includes('to_string') || fn.name.includes('ToString')
       || /leftPad|pad|join|trim/i.test(fn.name);
     const ret = retIsStr ? 'const char *' : 'long long';
-    parts.push(`${ret} ${fn.name}(${paramList}) {\n${bodyLines.join('\n')}\n}`);
+    parts.push(`${ret} ${cName}(${paramList}) {\n${bodyLines.join('\n')}\n}`);
   }
-  if (opts.withMain === true) {
+  if (isQualityFnSet(prog.fns.map((f) => f.name))) {
+    parts.push(formatQualityMain('c', names));
+  } else if (opts.withMain === true) {
     const primary = prog.exports[0] || prog.fns[0]?.name || 'main_fn';
     parts.push(`int main(void) { printf("ok %s\\n", "${primary}"); return 0; }`);
   }

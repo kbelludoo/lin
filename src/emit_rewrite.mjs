@@ -159,7 +159,9 @@ export function foldPlus(s, wrap) {
     const hit = findPlus(t);
     if (!hit) break;
     if (/^-?\d/.test(hit.a.trim()) && /^-?\d/.test(hit.b.trim())) break;
-    t = t.slice(0, hit.left) + wrap(hit.a, hit.b) + t.slice(hit.right);
+    const out = wrap(hit.a, hit.b);
+    if (out == null) break;
+    t = t.slice(0, hit.left) + out + t.slice(hit.right);
   }
   while (wraps--) t = `(${t})`;
   return t;
@@ -352,7 +354,8 @@ export function rewriteHostExpr(s, target) {
     t = t.replace(/(\d+)\s*\*\s*([A-Za-z_][\w]*)/g, '$1*_lia_num($2)');
     t = t.replace(/\b([A-Za-z_][\w]*)\s*\|\s*0\b/g, '_lia_num($1)');
     t = t.replace(/\b([A-Za-z_][\w]*)--\s*>\s*0/g, '$1 > 0');
-    t = t.replace(/\b([A-Za-z_][\w]*)--/g, '$1 != 0');
+    // Do NOT rewrite standalone i-- here; let each emitter handle decrement steps
+    // t = t.replace(/\b([A-Za-z_][\w]*)--/g, '$1 != 0');
     t = dropRegexMethods(t);
     t = dropMethodsKeepRecv(t, ['slice', 'lastIndexOf', 'split', 'join', 'map', 'filter', 'substring', 'substr', 'evaluate', 'replaceWith']);
     t = t.replace(/([A-Za-z_][\w]*)\.includes\s*\(/g, '_lia_includes($1,');
