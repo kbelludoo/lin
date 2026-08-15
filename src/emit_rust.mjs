@@ -211,14 +211,19 @@ export function emitRust(liaText, opts = {}) {
   usedFn.clear();
   for (const fn of prog.fns) {
     const name = rustFnName(fn.name);
+    // Extract generic params from fn.generics like "<T>" or "<T,U>" if present
+    const genDecl = fn.generics ? fn.generics.slice(1, -1) : null; // "T" or "T,U"
     const rawNames = rawParamNames(fn.params);
     const { names: params } = parseParamList(fn.params);
+    // Build Rust generic param declaration for function signature
+    const genRust = genDecl ? `<${genDecl.split(',').map(g => g.trim()).filter(Boolean).join(', ')}>` : '';
     const paramList = params.map((p, i) => {
       const orig = rawNames[i] || p;
       if (isNumishId(orig) && !/^ms$/i.test(orig)) return `mut ${p}: i64`;
       if (isBoolishId(orig)) return `${p}: bool`;
       return `${p}: impl ToString`;
     }).join(', ');
+    const fullParamList = genDecl ? `${genRust}(${paramList})` : `(${paramList})`;
     const coerce = params
       .filter((p, i) => {
         const orig = rawNames[i] || p;
@@ -227,7 +232,7 @@ export function emitRust(liaText, opts = {}) {
       .map((p) => `    let mut ${p} = ${p}.to_string();`);
     if (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false) {
       parts.push(
-        `pub fn ${name}() -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
+        `pub fn ${name}${genRust}() -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
       );
       continue;
     }
@@ -244,7 +249,7 @@ export function emitRust(liaText, opts = {}) {
     );
     if (!bodyStmts) {
       parts.push(
-        `pub fn ${name}(${paramList}) -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
+        `pub fn ${name}${genRust}() -> bool {\n    panic!("LIA_EMIT_RUST: JS-runtime-only (${fn.name})");\n}`,
       );
       continue;
     }
@@ -278,7 +283,7 @@ export function emitRust(liaText, opts = {}) {
     }
     const freeHost = emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'rust');
     const bodyLines = [...coerce, ...cacheStub, ...freeHost, ...rustLocals(bodyLocals, bodyStmts), ...emitted];
-    parts.push(`pub fn ${name}(${paramList}) -> ${retType} {\n${bodyLines.join('\n')}\n}`);
+    parts.push(`pub fn ${name}${genRust}(${paramList}) -> ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   const fnNames = prog.fns.map((f) => f.name);
   if (isQualityFnSet(fnNames)) {
