@@ -1,0 +1,130 @@
+@RULEL:SEMANTIC_REPAIR_LOOP:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .d=design_principle .s=score}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-16 why=LIN_should_repair_not_just_reject}
+.d{P0=agent_native_first purpose=represent!infer!transform!verify}
+
+.r{R_REPAIR=semantic_mismatch_enters_repair_loop R_BUDGET=repair_has_limited_iterations_and_time R_ORACLE=oracle_and_contract_are_immutable R_CANDIDATE=only_candidate_implementation_may_change R_CLASSIFY=diagnose_mismatch_before_attempting_repair R_TERMINATE=terminate_on_budget_exhaustion}
+
+.c{
+  oracle_immutable="oracle, schema, expected_result, semantic_contract cannot be modified"
+  candidate_mutable="only candidate implementation may be changed"
+  max_repair_iterations=3
+  max_repair_time_seconds=60
+  max_semantic_failures=3
+}
+
+.g{
+  mismatch_detected=result_hash!=expected_result_hash
+  repair_budget_not_exhausted=iterations<max_repair_iterations AND time<max_repair_time_seconds
+  repair_success=result_hash==expected_result_hash
+  repair_exhausted=iterations>=max_repair_iterations OR time>=max_repair_time_seconds
+}
+
+.f{modify_oracle_to_make_hash_match relax_semantic_contract change_expected_result repair_indefinitely_without_budget}
+
+.w{
+SEMANTIC_REPAIR_LOOP=generate→verify→mismatch→diagnose→classify→repair→verify→...
+termination_states=[REPAIRED_AND_VERIFIED, REJECTED_AFTER_BUDGET, DIAGNOSTIC_ONLY]
+repair_budget={max_iterations: 3, max_time: 60s, max_failures: 3}
+}
+
+.x{
+1=GENERATE { produce_candidate_implementation }
+2=VERIFY { compute_result_hash compare_with_expected }
+3=MISMATCH_DETECTED { result_hash!=expected_result_hash }
+4=DIAGNOSTICAR { determine_type_of_mismatch }
+5=CLASSIFY { categorize_error_type }
+6=REPAIR { modify_candidate_implementation_to_fix_error }
+7=VERIFY_AGAIN { recompute_result_hash and compare }
+8=DECIDE { if match→BENCHMARK; if exhaust→REJECT }
+}
+
+.p{
+  kernel_candidate=spec/KERNEL_CANDIDATE_V1.rulel
+  knowledge=storage/lia_knowledge.dicel
+}
+
+.s{
+  mismatch_diagnosis={
+    error_type: enum{
+      whitespace_normalization,
+      unicode_normalization,
+      regex_semantics,
+      numeric_representation,
+      null_absence,
+      ordering,
+      hashing_algorithm,
+      encoding_differences,
+      floating_point_precision,
+      other
+    },
+    severity: enum{fixable, unfixable, uncertain},
+    repair_strategy: string
+  }
+}
+
+.s{
+  repair_state={
+    attempt: int,
+    initial_result_hash: string,
+    expected_result_hash: string,
+    current_result_hash: string,
+    diagnosis: mismatch_diagnosis,
+    repair_applied: string,
+    timestamp: timestamp,
+    elapsed_ms: float
+  }
+}
+
+.s{
+  repair_budget={
+    max_iterations: 3,
+    max_time_seconds: 60,
+    max_semantic_failures: 3
+  }
+}
+
+.s{
+  termination_state=enum{
+    INITIAL_PASS="semantic match on first attempt",
+    REPAIRED_AND_VERIFIED="semantic match after repair",
+    REJECTED_AFTER_BUDGET="exceeded repair budget, still mismatched",
+    DIAGNOSTIC_ONLY="semantic fail, performance is diagnostic only"
+  }
+}
+
+.s{
+  example_repair_flow={
+    attempt_1: {result: "MISMATCH", diagnosis: "hashing_algorithm", repair: "implement_same_hash"},
+    attempt_2: {result: "MATCH", diagnosis: none, repair: none},
+    termination: "REPAIRED_AND_VERIFIED",
+    benchmark_valid: true
+  }
+}
+
+.s{
+  example_exhausted_flow={
+    attempt_1: {result: "MISMATCH", diagnosis: "regex_semantics", repair: "fix_regex_groups"},
+    attempt_2: {result: "MISMATCH", diagnosis: "unicode_normalization", repair: "normalize_unicode"},
+    attempt_3: {result: "MISMATCH", diagnosis: "ordering", repair: "sort_keys"},
+    termination: "REJECTED_AFTER_BUDGET",
+    benchmark_valid: false
+  }
+}
+
+.s{
+  example_immutable_protection={
+    FORBIDDEN: [
+      "modify oracle to match candidate",
+      "change expected_result_hash",
+      "relax semantic_contract",
+      "skip verification step"
+    ],
+    ALLOWED: [
+      "modify candidate implementation",
+      "add repair logic to candidate",
+      "fix algorithm in candidate",
+      "adjust encoding in candidate"
+    ]
+  }
+}

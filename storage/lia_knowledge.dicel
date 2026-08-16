@@ -176,8 +176,8 @@
 
   @K020 {
     honesty: OBSERVED
-    fact: "semantic_equivalence = FAIL means performance comparison is diagnostic only, not valid ranking"
-    source: "END_TO_END_CRYSTAL_01"
+    fact: "semantic_equivalence = FAIL enters semantic_repair_loop; if repaired → benchmark valid; if budget exhausted → diagnostic only"
+    source: "SEMANTIC_REPAIR_LOOP"
     type: "methodological_rule"
   }
 
@@ -186,6 +186,20 @@
     fact: "LANGUAGE_DISCOVERY can find languages not in knowledge base, profile them, and produce evidence"
     source: "END_TO_END_CRYSTAL_01"
     type: "architectural_rule"
+  }
+
+  @K022 {
+    honesty: OBSERVED
+    fact: "Semantic repair loop: mismatch → diagnose → classify → repair → verify; oracle immutable, candidate mutable"
+    source: "SEMANTIC_REPAIR_LOOP"
+    type: "architectural_rule"
+  }
+
+  @K023 {
+    honesty: OBSERVED
+    fact: "Repair budget: max 3 iterations, max 60s time; terminate with REJECTED_AFTER_BUDGET if exceeded"
+    source: "SEMANTIC_REPAIR_LOOP"
+    type: "methodological_rule"
   }
 }
 }
