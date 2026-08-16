@@ -373,6 +373,28 @@
     source: "KNOWLEDGE_GAP_AUTOPRIORITY_01"
     type: "status_record"
   }
+
+  @K041 {
+    honesty: OBSERVED
+    fact: "Prioritizer learns from feedback: rank correlation improved from 0.9048 to 0.9524 after weight updates; architectural_relevance penalized, other dimensions boosted"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_02"
+    type: "learning_rule"
+    provenance: {
+      initial_weights: {impact: 0.25, uncertainty: 0.25, information_gain: 0.25, relevance: 0.25},
+      final_weights: {impact: 0.330, uncertainty: 0.330, information_gain: 0.330, relevance: 0.057},
+      rank_correlation_improvement: 0.0476,
+      priority_correlation_learning_rate: 0.0238,
+      weight_convergence: false,
+      confidence: "single_experiment"
+    }
+  }
+
+  @K042 {
+    honesty: OBSERVED
+    fact: "Binary accuracy metric insufficient for learning evaluation; rank correlation (Spearman's rho) captures finer-grained ranking improvements"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_02"
+    type: "methodological_rule"
+  }
 }
 }
 
