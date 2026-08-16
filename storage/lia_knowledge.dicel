@@ -343,6 +343,36 @@
       confidence: "controlled_experiment"
     }
   }
+
+  @K038 {
+    honesty: OBSERVED
+    fact: "LIN auto-prioritizer produces experiment rankings from knowledge gaps; PRIORITY_ACCURACY = 0.67 against independent oracle"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_01"
+    type: "methodological_rule"
+    provenance: {
+      system_top_3: ["GAP002_Nim", "GAP003_Zig", "GAP005_Cplusplus"],
+      oracle_top_3: ["GAP002_Nim", "GAP003_Zig", "GAP004_Lua"],
+      matches: 2,
+      total: 3,
+      priority_accuracy: 0.67,
+      discovery_yield: 0.38,
+      confidence: "single_experiment"
+    }
+  }
+
+  @K039 {
+    honesty: OBSERVED
+    fact: "LIN can generate its own experimental agenda from knowledge gaps, not just follow manually assigned experiments"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_01"
+    type: "architectural_rule"
+  }
+
+  @K040 {
+    honesty: OBSERVED
+    fact: "Current highest-priority knowledge gaps: Nim, Zig, Cplusplus (no evidence yet); Multi_target and Repair_Learning partially resolved"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_01"
+    type: "status_record"
+  }
 }
 }
 
