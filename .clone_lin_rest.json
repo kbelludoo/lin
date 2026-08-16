@@ -1,0 +1,108 @@
+{
+  "cycle": 1,
+  "queue_index": 7,
+  "attempt_on_repo": 3,
+  "slug": "is-number",
+  "source": "https://github.com/jonschlinkert/is-number.git",
+  "status": "PASS",
+  "pass": 1,
+  "fail": 0,
+  "skip": 0,
+  "pass_names": [
+    "defaultExport"
+  ],
+  "fail_names": [],
+  "skip_names": [],
+  "temp_cleaned": true,
+  "note_pt": "DONE 100% clone-lin-is-number: p=1 suite_rate=1.0; improve=positive_transfer:ok×1",
+  "done": true,
+  "published": true,
+  "suite_rate": 1,
+  "suite_total": 1,
+  "improve_lin": "positive_transfer:ok×1",
+  "clone_lin_local": "C:\\Users\\k\\Documents\\lia\\.clone_lin_publish\\clone-lin-is-number",
+  "clone_lin_url": "https://github.com/kbelludoo/clone-lin-is-number",
+  "intel": "C:\\Users\\k\\Documents\\lia\\INTEL_CLONE_LIN_is-number.dicel"
+}
+{
+  "cycle": 2,
+  "queue_index": 0,
+  "attempt_on_repo": 6,
+  "slug": "dayjs",
+  "source": "https://github.com/iamkun/dayjs.git",
+  "status": "PASS",
+  "pass": 5,
+  "fail": 0,
+  "skip": 0,
+  "pass_names": [
+    "padStart",
+    "padZoneStr",
+    "absFloor",
+    "prettyUnit",
+    "isUndefined"
+  ],
+  "fail_names": [],
+  "skip_names": [],
+  "temp_cleaned": true,
+  "note_pt": "DONE 100% clone-lin-dayjs: p=5 suite_rate=1.0; improve=positive_transfer:ok×5",
+  "done": true,
+  "published": true,
+  "suite_rate": 1,
+  "suite_total": 5,
+  "improve_lin": "positive_transfer:ok×5",
+  "clone_lin_local": "C:\\Users\\k\\Documents\\lia\\.clone_lin_publish\\clone-lin-dayjs",
+  "clone_lin_url": "https://github.com/kbelludoo/clone-lin-dayjs",
+  "intel": "C:\\Users\\k\\Documents\\lia\\INTEL_CLONE_LIN_dayjs.dicel"
+}
+{
+  "done": true,
+  "success_any_100": true,
+  "cycles_run": 2,
+  "stop": "cycles_exhausted",
+  "queue": [
+    "dayjs",
+    "underscore",
+    "ms",
+    "left-pad",
+    "nanoid",
+    "chalk",
+    "dedent",
+    "is-number"
+  ],
+  "queue_index": 1,
+  "current": "dayjs",
+  "repos_done": [
+    "dayjs",
+    "underscore",
+    "ms",
+    "left-pad",
+    "nanoid",
+    "chalk",
+    "dedent",
+    "is-number"
+  ],
+  "how_to_stop": "Ctrl+C | create --stop-file path",
+  "gate": "suite_rate==1.0 required to publish/advance",
+  "reports": [
+    {
+      "slug": "is-number",
+      "status": "PASS",
+      "suite_rate": 1,
+      "done": true,
+      "published": true,
+      "url": "https://github.com/kbelludoo/clone-lin-is-number",
+      "intel": "C:\\Users\\k\\Documents\\lia\\INTEL_CLONE_LIN_is-number.dicel",
+      "improve": "positive_transfer:ok×1"
+    },
+    {
+      "slug": "dayjs",
+      "status": "PASS",
+      "suite_rate": 1,
+      "done": true,
+      "published": true,
+      "url": "https://github.com/kbelludoo/clone-lin-dayjs",
+      "intel": "C:\\Users\\k\\Documents\\lia\\INTEL_CLONE_LIN_dayjs.dicel",
+      "improve": "positive_transfer:ok×5"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+[clone-lin] gate=suite_rate==1.0 sticky=true queue=dayjs→underscore→ms→left-pad→nanoid→chalk→dedent→is-number
+[clone-lin] start_index=5 stop=Ctrl+C|--stop-file|--cycles 1
+[clone-lin] attempt 1 → chalk (q=5, try#4)
+[clone-lin] chalk DONE 100% → next=dedent
