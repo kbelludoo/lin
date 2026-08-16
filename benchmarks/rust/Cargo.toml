@@ -15,6 +15,10 @@ path = "src/03_hashcons.rs"
 name = "04_content_hash"
 path = "src/04_content_hash.rs"
 
+[[bin]]
+name = "04_content_hash_v2"
+path = "src/04_content_hash_v2.rs"
+
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
