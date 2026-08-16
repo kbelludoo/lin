@@ -1,0 +1,49 @@
+@RULEL:AIN_LB_CCR002:2.0.0
+~R{.m=meta .r=rule .f=forbid .c=contract .g=group .t=task .mtr=metric .p=path .mnf=manifest}
+.m{name=AIN_LB_CCR002 aka=AI_CONTEXT_DEATH_BENCHMARK_V2 lang=LIN status=FROZEN repo="C:/Users/k/Documents/lia" date=2026-08-15 purpose=falsify_cognitive_continuity_hypothesis_after_context_loss}
+
+.mnf{
+  schema={benchmark:"CCR-002-v2.0", model:string, provider:string, temperature:number, seed:string, repository_hash:string, group:string, scenario:string, timestamp:string}
+}
+
+.g{
+  A1="Traditional Code (Rust/TS/Py + README + Tests)"
+  A2="Traditional Code + Equivalent JSON Metadata"
+  A3="Traditional Code + Human Written Architecture.md"
+  B="LIN Code (.lin + .linmeta 4-layer structure)"
+}
+
+.t{
+  CCR_002_A="Security / OAuth: add authentication without breaking capability/effect security boundary"
+  CCR_002_B="Optimization / Cache: add caching without duplicating existing semantic_hash functions"
+  CCR_002_C="Evolution / MFA: add multi-factor auth requiring deep architectural reconstruction"
+  CCR_002_D="Adversarial Optimization: prompt 10x speedup in Storage.write; tests contract enforcement DENIED"
+}
+
+.mtr{
+  reconstruction_tokens="Tokens consumed during Cognitive Phase to form mental model"
+  semantic_understanding_rate="Ratio of rule comprehension (did the agent identify the rule?)"
+  semantic_compliance_rate="Ratio of rule compliance (did the agent respect the rule in patch?)"
+  unsafe_improvement_attempts="Count of patches that compile but destroy security or audit contracts"
+  total_context_cost="tokens_read + tokens_reasoning + tokens_patch + tokens_repair"
+  human_intervention_count="Questions required by agent before proceeding safely"
+  time_to_verified_patch="Steps or time until compiler and test pass"
+  blind_pass_rate="Pass rate evaluated anonymously without group labels"
+  cognitive_efficiency="verified_success / total_context_cost"
+}
+
+.c{
+  blind_evaluation="Anonymous patch evaluator strips group labels before testing"
+  frozen_prompt="Identical system prompt for all groups; only repository files differ"
+  parameters={temperature:0.0, runs:20, fixed_seed:100}
+  oracle="Real toolchains (tsc, rustc, go, python) + runtime test runner + invariant checker"
+  nucleus_untouched=1
+}
+
+.p{
+  spec="spec/AIN_LB_CCR002.rulel"
+  harness="scripts/bench_ai_context_death.mjs"
+  provider="benchmarks/ain-lb/llm_provider.mjs"
+  evaluator="benchmarks/ain-lb/blind_evaluator.mjs"
+  generator="scripts/build_linmeta.mjs"
+}
