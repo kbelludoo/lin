@@ -2,6 +2,9 @@
 ~derived_from: K049, K050, K051
 ~goal: "Test whether LIN can be an autonomous engineering agent, not just a compiler"
 ~principle: "A compiler translates. An engineering agent understands, diagnoses, decides, and acts — or decides NOT to act."
+~status: FROZEN
+~frozen_date: "2026-08-16"
+~note: "Do NOT add capabilities during testing. Measure current behavior only."
 
 ## THE DISTINCTION
 
@@ -119,19 +122,42 @@ PHASE 5: VERIFY
   - performance delta
 ```
 
-## METRICS
+## METRICS (FROZEN)
 
 ```
-Architecture reconstruction accuracy (MODEL_ACCURACY)
-Bug/issue discovery precision (FINDING_PRECISION)
-Patch acceptance rate (BEHAVIOR_PRESERVATION)
-Regression rate
-Human intervention count
-Behavior preservation score
-Performance delta
-False optimization rate (FALSE_OPTIMIZATION_RATE)
-Uncertainty calibration (UNCERTAINTY_CALIBRATION)
+MODEL_ACCURACY
+FINDING_PRECISION
+BEHAVIOR_PRESERVATION
+FALSE_OPTIMIZATION_RATE
+UNCERTAINTY_CALIBRATION
+EXPLANATION_FIDELITY
 ```
+
+### 6th Metric: EXPLANATION_FIDELITY
+
+An engineer doesn't just decide; they must explain.
+
+Weak:
+```
+"optimize cache"
+```
+
+Strong:
+```
+Observation:
+95% of calls pass through same path.
+
+Evidence:
+trace X showed 84% repetition.
+
+Risk:
+invalidation not modeled.
+
+Decision:
+do NOT apply automatic cache.
+```
+
+The explanation is part of the intelligence.
 
 ### 5th Metric: UNCERTAINTY_CALIBRATION
 
