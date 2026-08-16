@@ -1,4 +1,4 @@
-@DICEL:lia_knowledge:0.2.0
+@DICEL:lia_knowledge:0.3.0
 ^status=ACTIVE
 ^honesty=[OBSERVED,INFERRED,UNKNOWN]
 
@@ -27,5 +27,99 @@
     honesty: OBSERVED
     fact: "Math.* must not classify as host_or_module_ref; only non-builtin Capitals (e.g. C.M)"
     source: "clone_lia_oracle unsupported()"
+  }
+
+  @K006 {
+    honesty: OBSERVED
+    fact: "Language fitness is contextual: MJS STRONG for string-heavy+regex-heavy workloads; Rust REJECTED for same"
+    source: "SELF-OPTIMIZE-01"
+    provenance: {
+      module: "content_hash"
+      workload_hash: "sha256:content_hash_10fns"
+      environment: "Node.js v24.19.0 / Windows x64"
+      benchmark_run: "2026-08-16"
+      semantic_hash_mjs: "313817cb68d86490"
+      semantic_hash_rust: "2c22aa13d84f2fc5"
+      semantic_equivalence: false
+      performance_mjs_us: 8.26
+      performance_rust_us: 110.89
+      confidence: "single_module_single_workload"
+    }
+  }
+
+  @K007 {
+    honesty: OBSERVED
+    fact: "Rust regex compilation overhead dominates string-heavy workloads; naive porting can be 13-48x slower than V8"
+    source: "SELF-OPTIMIZE-02"
+    provenance: {
+      module: "content_hash"
+      workload_type: "string_heavy + regex_heavy"
+      v1_naive_rust_us: 252.79
+      v2_optimized_rust_us: 110.89
+      mjs_baseline_us: 8.26
+      optimization_gain: "2.26x (v1→v2) but still 13x slower than MJS"
+    }
+  }
+
+  @K008 {
+    honesty: OBSERVED
+    fact: "WHEN workload: string_heavy AND regex_heavy THEN prefer candidates with strong text-processing evidence"
+    source: "SELF-OPTIMIZE-01+02 inductive"
+    type: "conditional_rule"
+  }
+
+  @K009 {
+    honesty: OBSERVED
+    fact: "Semantic equivalence must be verified BEFORE measuring performance; hash mismatch = immediate reject"
+    source: "SELF-OPTIMIZE-01"
+    type: "methodological_rule"
+  }
+}
+
+@LANGUAGE_FITNESS {
+  @MJS {
+    string_heavy: STRONG
+    regex_heavy: STRONG
+    CPU_bound: MEDIUM
+    graph_heavy: MEDIUM
+    numerical: MEDIUM
+    embedding: WEAK
+    evidence: [K006, K007]
+  }
+  @Rust {
+    string_heavy: REJECTED
+    regex_heavy: REJECTED
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: [K006, K007]
+  }
+  @Nim {
+    string_heavy: UNKNOWN
+    regex_heavy: UNKNOWN
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: []
+  }
+  @Cplusplus {
+    string_heavy: UNKNOWN
+    regex_heavy: UNKNOWN
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: []
+  }
+  @Lua {
+    string_heavy: UNKNOWN
+    regex_heavy: UNKNOWN
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: []
   }
 }

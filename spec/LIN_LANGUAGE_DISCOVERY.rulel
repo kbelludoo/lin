@@ -3,7 +3,7 @@
 .m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-16 why=LIN_must_discover_languages_not_just_use_known_ones}
 .d{P0=agent_native_first purpose=represent!infer!transform!verify}
 
-.r{R_DISCOVER=unknown_language_requires_empirical_discovery R_LEVELS=three_knowledge_levels_observed_documented_verified R_SAME=discovery_uses_same_protocol_for_all_languages R_EVIDENCE=profile_from_measurement_not_assumption}
+.r{R_DISCOVER=unknown_language_requires_empirical_discovery R_LEVELS=three_knowledge_levels_observed_documented_verified R_SAME=discovery_uses_same_protocol_for_all_languages R_EVIDENCE=profile_from_measurement_not_assumption R_CONTEXTUAL=fitness_is_contextual_to_workload_constraints_and_evidence R_PROVENANCE=knowledge_entry_must_carry_provenance_for_auditability R_CONDITIONAL=rules_are_conditional_on_workload_type_not_absolute}
 
 .c{
   discovered_property=empirically_observed_through_probing
@@ -26,6 +26,7 @@
 DISCOVERY_V1=discover→probe→model→generate→verify→benchmark→profile→remember
 knowledge_levels=OBSERVED→DOCUMENTED→VERIFIED
 self_optimize_extension=unknown_language→discover→profile→consider_for_migration
+contextual_fitness=fitness_is_conditional_on_workload_type_NOT_absolute_property
 }
 
 .x{
@@ -87,6 +88,22 @@ self_optimize_extension=unknown_language→discover→profile→consider_for_mig
     evidence_level: enum{OBSERVED, DOCUMENTED, VERIFIED},
     last_verified: timestamp,
     uses_for_lin: [string]
+  }
+}
+
+.s{
+  workload_fitness_entry={
+    language: string,
+    workload_type: enum{string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, IO_bound, embedding, concurrency},
+    fitness: enum{STRONG, MEDIUM, WEAK, REJECTED, UNKNOWN},
+    evidence: [string],
+    provenance: {
+      module: string,
+      workload_hash: string,
+      environment: string,
+      benchmark_run: string,
+      confidence: string
+    }
   }
 }
 
