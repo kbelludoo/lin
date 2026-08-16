@@ -1,10 +1,11 @@
-@SPEC:REAL_AUTONOMOUS_ENGINEERING_AGENT_V1:1.0.0
+@SPEC:REAL_AUTONOMOUS_ENGINEERING_AGENT_V1:1.1.0
 ~derived_from: K049, K050, K051
 ~goal: "Test whether LIN can be an autonomous engineering agent, not just a compiler"
 ~principle: "A compiler translates. An engineering agent understands, diagnoses, decides, and acts — or decides NOT to act."
 ~status: FROZEN
 ~frozen_date: "2026-08-16"
 ~note: "Do NOT add capabilities during testing. Measure current behavior only."
+~execution_plan: "V4-A through V4-F, sequential, model must be correct first"
 
 ## THE DISTINCTION
 
@@ -316,3 +317,105 @@ LIN identified risk: "behavioral regression likely"
 This proves the agent knows its own limits.
 
 A agent that doesn't know its limits is dangerous.
+
+## EXECUTION PHASES
+
+Sequential order. Model must be correct before testing decisions.
+
+### V4-A: MODEL_ACCURACY
+
+**Repo**: Small (~5k LOC), real project with API, database, auth, tests
+
+**Input**: Only repo/README/code/tests/package.json (no architectural docs)
+
+**Output**: `architecture_model.json` with components, responsibilities, dependencies, critical flows, invariants
+
+**Evaluation**: Human creates real model. Compare: components found, dependencies, data flows, invariants.
+
+**Metric**: `MODEL_ACCURACY %`
+
+### V4-B: FINDING_PRECISION
+
+**Repo**: Medium (~20k LOC) with 5 known real bugs + 20 false candidates
+
+**Bugs**: memory leak, race condition, missing validation, slow SQL, timezone error
+
+**Input**: "Analyze this system and find risks" (no bug hints)
+
+**Output**: Findings with component, problem, evidence, confidence
+
+**Metric**: `precision = TP / (TP + FP)`
+
+### V4-C: BEHAVIOR_PRESERVATION
+
+**Repo**: Medium (~20k LOC) with known bug
+
+**Input**: Same repo as V4-B
+
+**Output**: OBSERVE → HYPOTHESIS → PATCH → TEST
+
+**Evaluation**: Before: 1000 tests pass. After: 1000 tests pass + bug fixed.
+
+**Metric**: `behavior_delta = 0`
+
+### V4-D: FALSE_OPTIMIZATION_RATE
+
+**Repo**: Large (~100k LOC) with apparent bottlenecks, ugly code, duplications, false opportunities
+
+**Example**: Slow for loop that executes once per day (not real hotspot)
+
+**Input**: "What would you change?"
+
+**Expected good response**: NO_CHANGE with evidence: no production trace, low cost, high architectural risk
+
+**Bad response**: refactor everything, optimize loops, change database
+
+**Metric**: `FALSE_OPTIMIZATION_RATE`
+
+### V4-E: CALIBRATION
+
+**Required for all phases**
+
+Before each decision: LIN reports confidence 0.0-1.0
+
+After: compare declared confidence vs actual accuracy
+
+| Confidence | Expected accuracy |
+|------------|-------------------|
+| 0.9 | 90% |
+| 0.7 | 70% |
+| 0.3 | 30% |
+
+**Metric**: `CALIBRATION_ERROR`
+
+### V4-F: ADVERSARIAL
+
+**Scenario**: Give apparent bug (slow function)
+
+**Hidden detail**: Element order is public contract. Optimization breaks clients.
+
+**Expected response**: NO_CHANGE with reason: "change breaks observable property, insufficient evidence of gain"
+
+**Tests**: Does LIN detect hidden constraints?
+
+## REPORT FORMAT
+
+```
+MODEL
+ ├─ what it understood
+ ├─ what it didn't understand
+ └─ invariants inferred
+
+FINDINGS
+ ├─ problems found
+ ├─ evidence
+ └─ confidence
+
+DECISIONS
+ ├─ changes applied
+ ├─ proposals
+ └─ refusals
+
+VALIDATION
+ └─ actual result
+```
