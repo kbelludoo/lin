@@ -62,6 +62,26 @@ repair_chain_is_auditable=each_iteration_recorded_with_hashes_and_diagnosis
 }
 
 .s{
+  multi_dimensional_state={
+    availability: enum{AVAILABLE, UNAVAILABLE},
+    execution: enum{EXECUTED, NOT_EXECUTED},
+    semantic: enum{PASS, FAIL, UNKNOWN},
+    repair: enum{NOT_NEEDED, REPAIRED, FAILED, BUDGET_EXHAUSTED},
+    benchmark: enum{VALID, INVALID, NOT_RUN}
+  }
+}
+
+.s{
+  state_transitions={
+    availability: "UNAVAILABLE → AVAILABLE (when toolchain installed)",
+    execution: "NOT_EXECUTED → EXECUTED (when candidate runs)",
+    semantic: "UNKNOWN → PASS/FAIL (when verified)",
+    repair: "NOT_NEEDED → REPAIRED/FAILED/BUDGET_EXHAUSTED (when repair attempted)",
+    benchmark: "NOT_RUN → VALID/INVALID (when benchmarked)"
+  }
+}
+
+.s{
   mismatch_diagnosis={
     error_type: mismatch_taxonomy,
     severity: enum{fixable, unfixable, uncertain},

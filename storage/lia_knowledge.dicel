@@ -296,6 +296,13 @@
     source: "REPAIR_LEARNING_02"
     type: "architectural_rule"
   }
+
+  @K034 {
+    honesty: OBSERVED
+    fact: "Multi-dimensional state structure prevents false conclusions: availability × execution × semantic × repair × benchmark"
+    source: "REPAIR_LEARNING_02"
+    type: "methodological_rule"
+  }
 }
 }
 
