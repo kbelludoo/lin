@@ -221,3 +221,23 @@
 !clr005Modules(){^'Auth|Storage|Transfer|Audit|FX|CountryLimits'}
 !clr005FieldCount(){^14}
 =ex{clr005Id,clr005Name,clr005Status,clr005FixtureDir,clr005RunnerPath,clr005TestPath,clr005GraphSource,clr005ArtifactPath,clr005Task,clr005AmbiguityClasses,clr005DecisionPolicy,clr005CausalGraph,clr005ProposalIds,clr005ExpectedOutcomes,clr005RecordFields,clr005ApprovalRule,clr005AnalyzerScope,clr005Limitation,clr005NoScores,clr005NoLlm,clr005NoDicel,clr005M006Paused,clr005Nucleus,clr005HashVia,clr005Modules,clr005FieldCount}
+!clr006Id(){^'CLR-006'}
+!clr006Name(){^'autonomous_design_choice'}
+!clr006Status(){^'ACTIVE_DETERMINISTIC_PROTOCOL_EXTERNAL_AGENT_INPUT'}
+!clr006FixtureDir(){^'tests/ain_lb/fixtures/clr006'}
+!clr006RunnerPath(){^'tests/ain_lb/clr006_runner.mjs'}
+!clr006TestPath(){^'tests/ain_lb/clr006_autonomous_design.test.mjs'}
+!clr006Task(){^'system is becoming slow; improve performance while preserving contract'}
+!clr006GraphSource(){^'CLR-004_real_six_module_graph_and_CLR-005_artifacts'}
+!clr006Contract(){^'preserve_declared_contracts;effects=pure|memory;caps=memory|cpu;forbid=io|storage;architecture_delta_requires_approval'}
+!clr006Policy(){^'external_agent_proposal->artifact_load->CLR-005_policy_and_gates->causal_result'}
+!clr006CausalGraph(){^'intent->hypothesis->affected_modules->effects->caps->performance_contract->proof->decision'}
+!clr006ProposalIds(){^'baseline|cache_memory|index_algorithm|parallelism|persistent_cache'}
+!clr006RecordFields(){^'proposal_id|hypothesis|semantic_distance|affected_modules|constraints_preserved|violations|repairs|proof_status|approval_required|attempts|tokens_input|tokens_output|time_ms|agent_unobserved|model_runs|decision|causal_result'}
+!clr006NoScores(){^1}
+!clr006NoLlm(){^1}
+!clr006AgentUnobserved(){^1}
+!clr006ModelRuns(){^0}
+!clr006M006Paused(){^1}
+!clr006Nucleus(){^'UNTOUCHED_existing_semantic_hash_verifier_behavior_eq_LIN_gate'}
+=ex{clr006Id,clr006Name,clr006Status,clr006FixtureDir,clr006RunnerPath,clr006TestPath,clr006Task,clr006GraphSource,clr006Contract,clr006Policy,clr006CausalGraph,clr006ProposalIds,clr006RecordFields,clr006NoScores,clr006NoLlm,clr006AgentUnobserved,clr006ModelRuns,clr006M006Paused,clr006Nucleus}

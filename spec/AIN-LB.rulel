@@ -95,6 +95,30 @@
   CLR002_PAUSE=C1-C5_and_M006_paused;no_LLM;no_new_Dicel
 }
 
+.clr006{
+  id=CLR-006
+  name=autonomous_design_choice
+  status=ACTIVE_DETERMINISTIC_PROTOCOL_EXTERNAL_AGENT_INPUT
+  task="system is becoming slow; improve performance while preserving contract"
+  graph=CLR004_real_six_module_graph_plus_CLR005_artifacts
+  input=external_agent_IR_or_proposal
+  policy=artifact_load_then_CLR005_policy_and_gates
+  causal=intent->hypothesis->affected_modules->effects->caps->performance_contract->proof->decision
+  contract=preserve_declared_contracts;effects=pure|memory;caps=memory|cpu;forbid=io|storage
+  proposals=baseline!cache_memory!index_algorithm!parallelism!persistent_cache
+  decisions=ACCEPT!DENIED!CONDITIONAL
+  accept=proof_verified AND constraints_preserved AND no_violations AND no_approval_pending
+  conditional=zero_hard_violations AND approval_or_proof_pending
+  denied=hard_violation
+  records=proposal_id!hypothesis!semantic_distance!affected_modules!constraints_preserved!violations!repairs!proof_status!approval_required!attempts!tokens_input!tokens_output!time_ms!agent_unobserved!model_runs!decision!causal_result
+  no_fake_scores=1
+  agent_unobserved=true
+  model_runs=0
+  limitation=deterministic_runner_proves_judge_and_protocol_only;does_not_claim_best_design_discovery
+  nucleus=UNTOUCHED
+  M006=PAUSED
+}
+
 .s{
   score=AI_DEVELOPMENT_SCORE
   weights=reliability_0.30+first_pass_0.20+context_efficiency_0.20+semantic_recovery_0.20+regression_stability_0.10
