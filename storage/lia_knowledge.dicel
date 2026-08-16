@@ -258,7 +258,7 @@
 
   @K030 {
     honesty: OBSERVED
-    fact: "Crystal SHA-256 canonicalization strategy successfully applied to Python AND TypeScript; portability score 0.67 (2/3 targets)"
+    fact: "Crystal SHA-256 canonicalization strategy successfully applied to Python AND TypeScript; transfer_success_rate = 1.00 (2/2 tested); portability_coverage = 0.67 (2/3 total)"
     source: "REPAIR_LEARNING_02"
     type: "learning_rule"
     provenance: {
@@ -266,19 +266,35 @@
       target_languages: ["Python", "TypeScript", "Rust"],
       strategy: "implement SHA-256 canonicalization matching MJS algorithm",
       mismatch_class: "hashing_algorithm",
-      python_match: true,
-      typescript_match: true,
-      rust_compilation_failed: true,
-      portability_score: 0.67,
+      tested_targets: 2,
+      successful_transfers: 2,
+      transfer_success_rate: 1.00,
+      blocked_targets: 1,
+      blocked_reason: "TOOLCHAIN_UNAVAILABLE",
+      portability_coverage: 0.67,
       confidence: "multi_target_single_workload"
     }
   }
 
   @K031 {
     honesty: OBSERVED
-    fact: "Repair strategy from hashing_algorithm mismatch is language-independent for interpreted/scripted languages (Python, TypeScript); compilation required for native languages (Rust)"
+    fact: "Repair strategy SHA-256 canonicalization transferred successfully to Python and TypeScript; Rust transfer not established due to toolchain unavailability"
     source: "REPAIR_LEARNING_02"
     type: "conditional_rule"
+  }
+
+  @K032 {
+    honesty: OBSERVED
+    fact: "BLOCKED_BY_ENVIRONMENT is distinct from REPAIR_FAILED; toolchain unavailability does not indicate semantic incapacity"
+    source: "REPAIR_LEARNING_02"
+    type: "methodological_rule"
+  }
+
+  @K033 {
+    honesty: OBSERVED
+    fact: "Repair knowledge begins to decouple from source language: SHA-256 canonicalization is a causal semantic transformation, not a Crystal-specific repair"
+    source: "REPAIR_LEARNING_02"
+    type: "architectural_rule"
   }
 }
 }
