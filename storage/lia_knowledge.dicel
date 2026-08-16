@@ -92,12 +92,44 @@
   @K011 {
     honesty: OBSERVED
     fact: "Performance ranking for string-heavy+regex-heavy: MJS > Python > Rust"
-    source: "SELF-OPTIMIZE-03"
+    source: "SELF_OPTIMIZE-03"
+    type: "conditional_rule"
+  }
+
+  @K012 {
+    honesty: OBSERVED
+    fact: "TypeScript with Node.js v24 strip-types is FASTER than MJS for string-heavy workloads"
+    source: "SELF_OPTIMIZE-04"
+    provenance: {
+      module: "content_hash"
+      workload_type: "string_heavy + regex_heavy"
+      typescript_us: 5.51
+      mjs_baseline_us: 8.26
+      speedup: "1.5x"
+      semantic_match: true
+      confidence: "single_module_single_workload"
+    }
+  }
+
+  @K013 {
+    honesty: OBSERVED
+    fact: "Updated ranking: TypeScript > MJS > Python > Rust for string-heavy+regex-heavy"
+    source: "SELF_OPTIMIZE-04"
     type: "conditional_rule"
   }
 }
+}
 
 @LANGUAGE_FITNESS {
+  @TypeScript {
+    string_heavy: STRONG
+    regex_heavy: STRONG
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: [K012, K013]
+  }
   @MJS {
     string_heavy: STRONG
     regex_heavy: STRONG
