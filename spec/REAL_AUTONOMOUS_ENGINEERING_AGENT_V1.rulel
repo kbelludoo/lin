@@ -122,15 +122,84 @@ PHASE 5: VERIFY
 ## METRICS
 
 ```
-Architecture reconstruction accuracy
-Bug/issue discovery precision
-Patch acceptance rate
+Architecture reconstruction accuracy (MODEL_ACCURACY)
+Bug/issue discovery precision (FINDING_PRECISION)
+Patch acceptance rate (BEHAVIOR_PRESERVATION)
 Regression rate
 Human intervention count
 Behavior preservation score
 Performance delta
-False optimization rate
+False optimization rate (FALSE_OPTIMIZATION_RATE)
+Uncertainty calibration (UNCERTAINTY_CALIBRATION)
 ```
+
+### 5th Metric: UNCERTAINTY_CALIBRATION
+
+An engineering agent must know:
+
+```
+Strong evidence → act
+Partial evidence → propose
+Weak evidence → do not change
+```
+
+Ideal output:
+
+```json
+{
+  "decision": "NO_CHANGE",
+  "confidence": 0.32,
+  "reason": [
+    "performance hotspot not confirmed",
+    "behavior contract incomplete",
+    "risk > expected gain"
+  ]
+}
+```
+
+This is closer to a senior engineer than a compiler.
+
+## TEST REPOSITORIES
+
+Each repo tests a different capability:
+
+### Small (~5k LOC)
+
+Objective: validate understanding
+
+Metric: MODEL_ACCURACY
+
+Questions:
+- identifies modules?
+- understands flow?
+- finds dependencies?
+
+### Medium (~20k LOC)
+
+Objective: diagnosis
+
+Test: insert
+- hidden real bug
+- bottleneck
+- architectural debt
+
+Expected:
+- correct finding
+- causal explanation
+
+### Large (~100k LOC)
+
+Objective: limitation
+
+Do NOT require patches.
+
+Require:
+- architectural model
+- prioritization
+- risk assessment
+- proposal
+
+Because in large systems, changing without context is dangerous.
 
 ## REALISTIC SUCCESS CRITERIA
 
@@ -141,19 +210,32 @@ NOT:
 100% success
 ```
 
-This would be suspicious.
+This would be suspicious — indicates an aggressive agent.
 
 BUT:
 ```
-5 repos analyzed
-3 improvements applied
-1 improvement rejected by LIN itself (insufficient evidence)
-1 proposal detected as incorrect by verifier
-Behavior preservation: 100%
-Human intervention: 0 during execution
+5 findings correct
+
+2 changes applied
+
+2 proposals rejected by LIN itself (risk too high)
+
+1 case correctly marked as inconclusive
 ```
 
-This would be convincing.
+This demonstrates judgment.
+
+The most interesting result is NOT success.
+
+It is:
+
+```
+LIN attempted architectural change
+LIN rejected change: "insufficient evidence"
+LIN identified risk: "behavioral regression likely"
+```
+
+This proves the agent knows its own limits.
 
 ## THE K045 PATTERN
 
@@ -183,6 +265,7 @@ Based on current state (K048):
 | Problem discovery | LOW | No evidence yet |
 | Architectural change | LOW | No evidence yet |
 | Knowing when not to change | UNKNOWN | Critical capability, completely untested |
+| Uncertainty calibration | UNKNOWN | No evidence yet |
 
 Expected V4 result:
 ```
@@ -190,7 +273,7 @@ LIN TODAY: Smart Transpiler++
 AFTER V4: Characterization of engineering agent gaps
 ```
 
-The V4 result will likely show that LIN currently lacks capabilities 2-4. This is not a failure — it is a precise specification of what needs to be built.
+The V4 result will likely show that LIN currently lacks capabilities 2-5. This is not a failure — it is a precise specification of what needs to be built.
 
 ## THE REAL TEST
 

@@ -525,7 +525,7 @@
 
   @K051 {
     honesty: INFERRED
-    fact: "An engineering agent must prove 4 separate capabilities: (1) codebase understanding MODEL_ACCURACY, (2) problem discovery without explicit task, (3) architectural change with behavior_delta=0, (4) knowing when NOT to change FALSE_OPTIMIZATION_RATE."
+    fact: "An engineering agent must prove 5 separate capabilities: (1) codebase understanding MODEL_ACCURACY, (2) problem discovery without explicit task FINDING_PRECISION, (3) architectural change with behavior_delta=0 BEHAVIOR_PRESERVATION, (4) knowing when NOT to change FALSE_OPTIMIZATION_RATE, (5) uncertainty calibration UNCERTAINTY_CALIBRATION."
     source: "K049 analysis"
     type: "capability_framework"
     capabilities: {
@@ -534,24 +534,36 @@
         metric: "MODEL_ACCURACY"
         input: "repo without documentation"
         output: "ARCHITECTURE_MODEL with modules, dependencies, data flows, critical points, invariants, risks"
+        test_repo: "small (~5k LOC)"
       }
       capability_2: {
         name: "problem_discovery"
         metric: "FINDING_PRECISION"
         input: "analyze this system (no explicit task)"
         output: "structured findings with component, problem, evidence, proposal"
+        test_repo: "medium (~20k LOC) with hidden bugs/bottlenecks"
       }
       capability_3: {
         name: "architectural_change"
         metric: "BEHAVIOR_PRESERVATION"
         constraint: "behavior_delta = 0"
         test: "introduce abstraction layer while preserving all tests"
+        test_repo: "medium (~20k LOC)"
       }
       capability_4: {
         name: "knowing_when_not_to_change"
         metric: "FALSE_OPTIMIZATION_RATE"
         test: "agent must reject changes when evidence insufficient"
         importance: "most important capability — bad agents always optimize"
+        test_repo: "large (~100k LOC)"
+      }
+      capability_5: {
+        name: "uncertainty_calibration"
+        metric: "UNCERTAINTY_CALIBRATION"
+        test: "agent must output confidence levels and reasons for decisions"
+        output_format: "{decision, confidence, reason[]}"
+        importance: "closer to senior engineer than compiler"
+        test_repo: "all repos"
       }
     }
   }
