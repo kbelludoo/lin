@@ -16,6 +16,7 @@ SELF_OPTIMIZE_V1=observe→hypothesize→select→generate→verify→benchmark�
 class_A=micro_optimizations_mechanical→automatable
 class_B=semantic_equivalent_refactors→generate+verify+benchmark
 class_C=architectural_changes→propose+test+require_approval
+unknown_language→discover→probe→model→generate→verify→benchmark→profile→remember
 }
 
 .x{

@@ -1,0 +1,119 @@
+@RULEL:LIN_LANGUAGE_DISCOVERY:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .d=design_principle .s=score}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-16 why=LIN_must_discover_languages_not_just_use_known_ones}
+.d{P0=agent_native_first purpose=represent!infer!transform!verify}
+
+.r{R_DISCOVER=unknown_language_requires_empirical_discovery R_LEVELS=three_knowledge_levels_observed_documented_verified R_SAME=discovery_uses_same_protocol_for_all_languages R_EVIDENCE=profile_from_measurement_not_assumption}
+
+.c{
+  discovered_property=empirically_observed_through_probing
+  documented_property=obtained_from_spec_or_documentation
+  verified_property=proven_by_test_or_formal_proof
+  language_profile=persisted_in_knowledge_base_for_future_use
+}
+
+.g{
+  discover=exists_compiler_or_interpreter AND can_execute_hello_world
+  probe=hello_world AND arithmetic AND loops AND arrays AND maps AND functions AND recursion AND errors
+  model=execution_model AND memory_model AND typing AND GC_or_ownership AND compilation AND interoperability
+  benchmark=standardized_workload_and_measurement
+  profile=language_capability_scores_from_empirical_data
+}
+
+.f{assume_semantics_from_examples claim_documented_without_testing skip_probe_phase use_unknown_language_in_production_without_verification}
+
+.w{
+DISCOVERY_V1=discover→probe→model→generate→verify→benchmark→profile→remember
+knowledge_levels=OBSERVED→DOCUMENTED→VERIFIED
+self_optimize_extension=unknown_language→discover→profile→consider_for_migration
+}
+
+.x{
+1=DISCOVER { check_executable_exists try_hello_world confirm_interpreter_or_compiler }
+2=PROBE { hello_world arithmetic loops arrays maps functions recursion errors }
+3=MODEL { execution_model memory_model typing GC_or_ownership compilation interop }
+4=GENERATE { produce_variant_in_unknown_language keeping_same_workload same_oracle same_semantics }
+5=VERIFY { semantic_equivalence=result_hash_match regression_tests=all_pass }
+6=BENCHMARK { controlled_measurement wall_clock RSS CPU throughput }
+7=PROFILE { compute_capability_scores CPU AST symbolic embedding startup }
+8=REMEMBER { persist_language_profile_to_knowledge_base record_evidence_level }
+}
+
+.p{
+  self_optimize=spec/LIN_SELF_OPTIMIZE.rulel
+  arch=spec/LIN_CORE_ARCH.rulel
+  autonomy=spec/LIA_AUTONOMY.dicel
+  knowledge=storage/lia_knowledge.dicel
+}
+
+.s{
+  discovery_record={
+    language_name: string,
+    executable_found: bool,
+    interpreter: bool,
+    compiler: bool,
+    probe_results: {
+      hello_world: bool,
+      arithmetic: bool,
+      loops: bool,
+      arrays: bool,
+      maps: bool,
+      functions: bool,
+      recursion: bool,
+      errors: bool
+    },
+    model: {
+      execution_model: string,
+      memory_model: string,
+      typing: string,
+      GC_or_ownership: string,
+      compilation: string,
+      interoperability: string
+    },
+    knowledge_level: enum{OBSERVED, DOCUMENTED, VERIFIED}
+  }
+}
+
+.s{
+  language_profile={
+    language_name: string,
+    capability_scores: {
+      B1_CPU: enum{poor, medium, strong},
+      B2_AST: enum{poor, medium, strong},
+      B8_SYMBOLIC: enum{poor, medium, strong},
+      startup: enum{poor, excellent},
+      embedding: enum{poor, excellent}
+    },
+    evidence_level: enum{OBSERVED, DOCUMENTED, VERIFIED},
+    last_verified: timestamp,
+    uses_for_lin: [string]
+  }
+}
+
+.s{
+  example_lua_discovery={
+    language_name: "Lua",
+    executable_found: true,
+    interpreter: true,
+    compiler: false,
+    probe_results: {
+      hello_world: true,
+      arithmetic: true,
+      loops: true,
+      arrays: true,
+      maps: true,
+      functions: true,
+      recursion: true,
+      errors: true
+    },
+    model: {
+      execution_model: "interpreted",
+      memory_model: "GC",
+      typing: "dynamic",
+      GC_or_ownership: "GC",
+      compilation: "bytecode",
+      interoperability: "C FFI"
+    },
+    knowledge_level: "OBSERVED"
+  }
+}
