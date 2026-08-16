@@ -201,6 +201,34 @@
     source: "SEMANTIC_REPAIR_LOOP"
     type: "methodological_rule"
   }
+
+  @K024 {
+    honesty: OBSERVED
+    fact: "Repair chain is fully auditable: each iteration records candidate_hash_before, repair_applied, candidate_hash_after, semantic_hash_after, repair_diff_hash"
+    source: "SEMANTIC_REPAIR_LOOP v1.1"
+    type: "architectural_rule"
+  }
+
+  @K025 {
+    honesty: OBSERVED
+    fact: "Repair chain includes environment_hash and oracle_version_hash for cross-environment reproducibility"
+    source: "SEMANTIC_REPAIR_LOOP v1.1"
+    type: "architectural_rule"
+  }
+
+  @K026 {
+    honesty: OBSERVED
+    fact: "Repair iterations form a verifiable chain via parent_iteration_hash linking"
+    source: "SEMANTIC_REPAIR_LOOP v1.1"
+    type: "architectural_rule"
+  }
+
+  @K027 {
+    honesty: OBSERVED
+    fact: "Mismatch taxonomy enables learning repair strategies by error class: whitespace→normalize, ordering→sort, regex→dialect compatibility"
+    source: "SEMANTIC_REPAIR_LOOP v1.1"
+    type: "knowledge_rule"
+  }
 }
 }
 

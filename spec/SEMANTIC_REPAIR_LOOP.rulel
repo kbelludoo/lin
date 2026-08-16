@@ -73,6 +73,7 @@ repair_chain_is_auditable=each_iteration_recorded_with_hashes_and_diagnosis
 .s{
   repair_iteration={
     iteration: int,
+    parent_iteration_hash: string,
     timestamp: timestamp,
     elapsed_ms: float,
     diagnosis: mismatch_diagnosis,
@@ -90,6 +91,8 @@ repair_chain_is_auditable=each_iteration_recorded_with_hashes_and_diagnosis
     language: string,
     module: string,
     workload: string,
+    environment_hash: string,
+    oracle_version_hash: string,
     initial_candidate_hash: string,
     expected_result_hash: string,
     iterations: [repair_iteration],
