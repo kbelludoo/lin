@@ -1,0 +1,124 @@
+REAL_AUTONOMOUS_ENGINEERING_V5 {
+
+    id: V5_AUTONOMOUS_SYSTEM_MODELING
+    version: 1.0.0
+    status: ACTIVE
+    protocol_frozen: true
+
+    parent: V4_C_UNKNOWN_FLOW_GENERALIZATION
+
+    objective: autonomous_system_modeling
+
+    description: >
+        V4 proved: "Given a sufficiently rich model, the agent can reason
+        and generalize." V5 tests the prior claim: "Can the agent build
+        that model autonomously?"
+
+        The agent receives ONLY:
+        - A repository URL
+        - No trust model
+        - No source/sink labels
+        - No vulnerability classes
+        - No oracle
+
+        The agent must discover:
+        - Components and their responsibilities
+        - Data flows from input to output
+        - Trust boundaries (where untrusted crosses trusted)
+        - Invariants that should hold
+        - Potential failure modes
+
+        This separates an advanced analyzer from an autonomous
+        engineering agent.
+
+    frozen_protocol:
+        repository: "pillarjs/send@0.18.0"
+        no_given:
+            - vulnerability_classes
+            - trust_model
+            - source_sink_labels
+            - oracle
+            - probe_rules
+        forbidden:
+            - searching for "CVE-2024-43799"
+            - searching for "XSS"
+            - searching for "path traversal"
+            - any vulnerability-specific analysis
+            - asking the user for hints
+
+    repository:
+        name: send
+        version: 0.18.0
+        url: https://github.com/pillarjs/send
+        loc: ~1143 (index.js only)
+        path: benchmarks/v5_send
+        description: "Static file serving with range requests, caching, and redirects. Used by serve-static and Express."
+
+    analysis_phases:
+
+        PHASE_1:
+            name: autonomous_discovery
+            action: >
+                Read the repository. Discover:
+                - What does this software do? (purpose)
+                - What are the main components? (modules, classes, functions)
+                - What data enters the system? (inputs, requests, options)
+                - What data leaves the system? (responses, files, errors)
+                - What transforms happen to data? (parsing, validation, path resolution)
+                - What are the trust boundaries? (where does untrusted input cross into privileged operations?)
+            output: system_model.json
+            metrics:
+                - completeness: "are all major components identified?"
+                - accuracy: "are trust boundaries correctly placed?"
+                - insight: "does the model reveal non-obvious attack surfaces?"
+
+        PHASE_2:
+            name: invariant_extraction
+            action: >
+                From the system model, extract invariants:
+                - What properties should ALWAYS be true?
+                - What properties should NEVER be true?
+                - What are the security-critical invariants?
+                - What happens when invariants are violated?
+            output: invariants.json
+            metrics:
+                - coverage: "are security-relevant invariants identified?"
+                - precision: "are invariants actually enforced in code?"
+
+        PHASE_3:
+            name: failure_mode_analysis
+            action: >
+                For each invariant, analyze:
+                - Can it be violated by user input?
+                - What is the impact of violation?
+                - Is there a guard? Is it sufficient?
+            output: failure_modes.json
+            metrics:
+                - discovery: "are real failure modes found?"
+                - accuracy: "are false positives correctly identified?"
+
+    metrics:
+        model_quality:
+            components_discovered: "major components identified / total major components"
+            trust_boundaries_discovered: "security-relevant boundaries / total security-relevant boundaries"
+            invariants_extracted: "useful invariants / total useful invariants"
+        downstream_detection:
+            bugs_found: "real bugs discovered through model analysis"
+            false_positives: "incorrectly flagged issues"
+            novel_classes: "vulnerability classes not seen in V4"
+        autonomy_score:
+            formula: "quality_without_given_labels / quality_with_given_labels"
+            purpose: "How much capability is retained when labels are removed?"
+
+    acceptance_criteria:
+        model_quality: ">= 0.80 (model captures essential architecture)"
+        bugs_found: ">= 1 (model enables real vulnerability detection)"
+        false_positive_rate: "<= 0.30"
+        autonomy_score: ">= 0.70"
+
+    diagnostic_interpretation:
+        high_model_quality_low_detection: "Good model, weak reasoning — model doesn't enable bug finding"
+        low_model_quality_high_detection: "Weak model, pattern matching — not truly autonomous"
+        high_model_quality_high_detection: "True autonomous engineering agent"
+        low_model_quality_low_detection: "Neither modeling nor reasoning — fundamental limitation"
+}

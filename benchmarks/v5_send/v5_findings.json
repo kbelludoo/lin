@@ -1,0 +1,392 @@
+{
+  "id": "V5_FINDINGS",
+  "version": "1.0.0",
+  "system_model": {
+    "purpose": "Static file serving library for Node.js HTTP servers. Resolves a request path against a configured root directory and streams file contents to the HTTP response with proper headers (Content-Type, ETag, Cache-Control), Range request support, conditional GET (304), dotfile policy enforcement, index file resolution, and error handling. Used as the file-serving backbone of Express.js via serve-static.",
+    "components": [
+      {
+        "name": "send(req, path, options)",
+        "type": "factory",
+        "description": "Creates and returns a new SendStream instance"
+      },
+      {
+        "name": "SendStream constructor",
+        "type": "constructor",
+        "description": "Initializes stream with options: root, dotfiles, hidden, extensions, index, maxAge, etag, lastModified, acceptRanges, cacheControl, immutable"
+      },
+      {
+        "name": "SendStream.prototype.pipe(res)",
+        "type": "entry_point",
+        "description": "Main orchestration: URL-decodes path, rejects null bytes, normalizes against root, checks UP_PATH_REGEXP for traversal, checks dotfile policy, dispatches to sendIndex or sendFile"
+      },
+      {
+        "name": "SendStream.prototype.sendFile(path)",
+        "type": "internal",
+        "description": "Stats the resolved path via fs.stat; on ENOENT tries extension fallbacks (self._extensions); if directory calls redirect(); otherwise calls send()"
+      },
+      {
+        "name": "SendStream.prototype.send(path, stat)",
+        "type": "internal",
+        "description": "Sets response headers via setHeader/type, handles conditional GET (If-None-Match/If-Modified-Since -> 304), processes Range header with range-parser, adjusts offset/len, calls stream()"
+      },
+      {
+        "name": "SendStream.prototype.stream(path, options)",
+        "type": "internal",
+        "description": "Creates fs.createReadStream and pipes to response; sets up cleanup via on-finished and stream error handler"
+      },
+      {
+        "name": "SendStream.prototype.sendIndex(path)",
+        "type": "internal",
+        "description": "Iterates through index file names, stats each, sends first found file"
+      },
+      {
+        "name": "SendStream.prototype.redirect(path)",
+        "type": "response",
+        "description": "Sends 301 redirect with Location header and HTML body for directory requests; uses encodeUrl + escapeHtml + CSP + nosniff"
+      },
+      {
+        "name": "SendStream.prototype.error(status, err)",
+        "type": "response",
+        "description": "If error listeners exist, emits HttpError; otherwise sends HTML error page with CSP + nosniff; calls clearHeaders then setHeaders from err.headers"
+      },
+      {
+        "name": "SendStream.prototype.setHeader(path, stat)",
+        "type": "headers",
+        "description": "Emits 'headers' event, sets Accept-Ranges, Cache-Control, Last-Modified, ETag"
+      },
+      {
+        "name": "SendStream.prototype.type(path)",
+        "type": "headers",
+        "description": "Sets Content-Type via mime.lookup() if not already set"
+      },
+      {
+        "name": "decode(path)",
+        "type": "helper",
+        "description": "Wraps decodeURIComponent; returns -1 on encoding errors"
+      },
+      {
+        "name": "containsDotFile(parts)",
+        "type": "helper",
+        "description": "Checks if any path component starts with '.' and has length > 1"
+      },
+      {
+        "name": "collapseLeadingSlashes(str)",
+        "type": "helper",
+        "description": "Collapses multiple leading '/' into a single '/'"
+      },
+      {
+        "name": "UP_PATH_REGEXP",
+        "type": "constant",
+        "description": "Regex /(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)/ matching '..' at path boundaries"
+      },
+      {
+        "name": "setHeaders(res, headers)",
+        "type": "helper",
+        "description": "Sets arbitrary headers from an object onto response (called only from error() with err.headers)"
+      }
+    ],
+    "data_flows": [
+      {
+        "name": "Path Resolution Pipeline",
+        "input": "this.path (raw URL path from developer, typically req.url)",
+        "steps": [
+          "1. decodeURIComponent (decode function)",
+          "2. Null byte check (\\0)",
+          "3. Normalize with './' prefix: normalize('.' + sep + path)",
+          "4. UP_PATH_REGEXP traversal check",
+          "5. Split into parts for dotfile check",
+          "6. Join with root: normalize(join(root, path))"
+        ],
+        "output": "Resolved absolute filesystem path within root"
+      },
+      {
+        "name": "File Content Pipeline",
+        "input": "Resolved filesystem path + stat object",
+        "steps": [
+          "1. setHeader: Cache-Control, Last-Modified, ETag, Accept-Ranges",
+          "2. type: Content-Type via mime.lookup",
+          "3. Conditional GET check (If-None-Match/If-Modified-Since -> 304)",
+          "4. Range processing (Range header -> offset/len adjustment)",
+          "5. fs.createReadStream -> pipe to response"
+        ],
+        "output": "HTTP response with file content and headers"
+      },
+      {
+        "name": "Error Response Pipeline",
+        "input": "HTTP status code + optional error object",
+        "steps": [
+          "1. If error listeners: emit HttpError event",
+          "2. Otherwise: clearHeaders, createHtmlDocument with escapeHtml(msg)",
+          "3. setHeaders from err.headers (if present)",
+          "4. Set Content-Type, Content-Length, CSP, nosniff"
+        ],
+        "output": "HTML error page with security headers"
+      },
+      {
+        "name": "Redirect Response Pipeline",
+        "input": "this.path (raw) + directory detection",
+        "steps": [
+          "1. encodeUrl(collapseLeadingSlashes(this.path + '/'))",
+          "2. createHtmlDocument with escapeHtml(loc) for both href and text",
+          "3. Set Location header, CSP, nosniff"
+        ],
+        "output": "301 redirect with HTML body and security headers"
+      }
+    ],
+    "trust_boundaries": [
+      {
+        "name": "URL Path -> Decoded Path",
+        "location": "decode() function at line 997-1003",
+        "description": "decodeURIComponent converts URL-encoded characters; returns -1 on failure; catches malformed URI sequences"
+      },
+      {
+        "name": "Decoded Path -> Normalized Path",
+        "location": "pipe() at lines 528-531",
+        "description": "path.normalize with './' prefix converts relative path segments; consumed 'foo/../bar' -> 'bar'"
+      },
+      {
+        "name": "Normalized Path -> Traversal Check",
+        "location": "pipe() at lines 533-538 (with root) and 547-551 (without root)",
+        "description": "UP_PATH_REGEXP tests for '..' at path boundaries after normalization"
+      },
+      {
+        "name": "Validated Path -> Filesystem Access",
+        "location": "sendFile() at line 717, stream() at line 790",
+        "description": "fs.stat and fs.createReadStream access the filesystem with the resolved path"
+      },
+      {
+        "name": "HTTP Headers -> Caching/Range Logic",
+        "location": "send() at lines 626-683",
+        "description": "If-None-Match, If-Modified-Since, Range, If-Range headers influence response generation"
+      },
+      {
+        "name": "File Path -> HTTP Response Headers",
+        "location": "type() at line 825, setHeader() at line 852",
+        "description": "File extension determines Content-Type via mime library; stat determines ETag/Last-Modified"
+      },
+      {
+        "name": "this.path -> Redirect Location Header",
+        "location": "redirect() at line 484",
+        "description": "Raw (non-decoded) path used in Location header and HTML body; encoded via encodeUrl and escaped via escapeHtml"
+      },
+      {
+        "name": "err.headers -> Response Headers",
+        "location": "error() at lines 281-283, setHeaders() at line 1136",
+        "description": "Arbitrary headers from error object set on response; currently only Content-Range in 416 case; security headers override afterward"
+      }
+    ]
+  },
+  "invariants": [
+    {
+      "id": "INV-1",
+      "name": "Path Containment",
+      "description": "When root is set, the final resolved filesystem path MUST be within or equal to root",
+      "security_critical": true
+    },
+    {
+      "id": "INV-2",
+      "name": "No Directory Traversal",
+      "description": ".. path components MUST NOT cause the resolved path to escape the root directory",
+      "security_critical": true
+    },
+    {
+      "id": "INV-3",
+      "name": "Null Byte Rejection",
+      "description": "Paths containing null bytes (\\0) MUST be rejected with 400",
+      "security_critical": true
+    },
+    {
+      "id": "INV-4",
+      "name": "Dotfile Policy Enforcement",
+      "description": "Files/directories starting with '.' MUST be handled per the configured dotfiles policy (ignore/deny/allow)",
+      "security_critical": true
+    },
+    {
+      "id": "INV-5",
+      "name": "No XSS in Error/Redirect HTML",
+      "description": "User-controlled data in HTML responses MUST be escaped via escapeHtml and URLs via encodeUrl",
+      "security_critical": true
+    },
+    {
+      "id": "INV-6",
+      "name": "CSP on Error/Redirect",
+      "description": "Error and redirect HTML responses MUST include Content-Security-Policy: default-src 'none'",
+      "security_critical": true
+    },
+    {
+      "id": "INV-7",
+      "name": "No Header Injection",
+      "description": "User-controlled data MUST NOT be used unsanitized in response headers (Location, Content-Type, etc.)",
+      "security_critical": true
+    },
+    {
+      "id": "INV-8",
+      "name": "nosniff on Error/Redirect",
+      "description": "Error and redirect responses MUST include X-Content-Type-Options: nosniff",
+      "security_critical": false
+    },
+    {
+      "id": "INV-9",
+      "name": "304 Content Header Stripping",
+      "description": "304 responses MUST remove Content-Encoding, Content-Language, Content-Length, Content-Range, Content-Type",
+      "security_critical": false
+    },
+    {
+      "id": "INV-10",
+      "name": "Range Bounding",
+      "description": "Range requests MUST be bounded to valid byte ranges of the file; unsatisfiable ranges return 416",
+      "security_critical": false
+    },
+    {
+      "id": "INV-11",
+      "name": "Content-Length Accuracy",
+      "description": "Content-Length MUST accurately reflect the number of bytes being sent",
+      "security_critical": false
+    },
+    {
+      "id": "INV-12",
+      "name": "HEAD No Body",
+      "description": "HEAD requests MUST return all headers but no response body",
+      "security_critical": false
+    }
+  ],
+  "failure_modes": [
+    {
+      "invariant": "INV-1/INV-2",
+      "attack_vector": "Path traversal via encoded or normalized '..' sequences in URL path",
+      "analysis": "The pipe() method normalizes the path with './' prefix, then tests UP_PATH_REGEXP (/(?:^|[\\\\/])\\.\\.(?:[\\\\/]|$)/) to catch '..' at path boundaries. Only AFTER passing this check is the path joined with root. Since normalize() consumes '..' relative to '.' (not root), any '..' that would escape is caught by the regex before joining. Tested scenarios: '/../etc/passwd', '/foo/../../bar', '/%2e%2e/etc/passwd', '/foo/..%2fbar' - all blocked.",
+      "guard": "UP_PATH_REGEXP test on normalized path + null byte rejection + decodeURIComponent error handling",
+      "guard_sufficient": true,
+      "classification": "FALSE_POSITIVE"
+    },
+    {
+      "invariant": "INV-3",
+      "attack_vector": "Null byte injection to truncate file path (e.g., /etc/passwd%00.html)",
+      "analysis": "The pipe() method checks for null bytes after URL decoding at line 521: if (~path.indexOf('\\0')). This catches both literal null bytes and decoded %00 sequences. Returns 400.",
+      "guard": "indexOf('\\0') check after decodeURIComponent",
+      "guard_sufficient": true,
+      "classification": "FALSE_POSITIVE"
+    },
+    {
+      "invariant": "INV-5",
+      "attack_vector": "XSS via unescaped content in error HTML pages or redirect HTML pages",
+      "analysis": "error() uses escapeHtml(msg) where msg is statuses.message[status] or String(status) - both safe. redirect() uses escapeHtml(loc) for both href attribute and text content, where loc = encodeUrl(collapseLeadingSlashes(this.path + '/')). CSP default-src 'none' provides defense-in-depth. All user-influenced content in HTML is escaped.",
+      "guard": "escapeHtml() on all dynamic content + encodeUrl() on URL + CSP default-src 'none'",
+      "guard_sufficient": true,
+      "classification": "FALSE_POSITIVE"
+    },
+    {
+      "invariant": "INV-7",
+      "attack_vector": "HTTP header injection via Location header in redirect responses",
+      "analysis": "The redirect() method builds Location from encodeUrl(collapseLeadingSlashes(this.path + '/')). encodeUrl encodes characters unsafe for URLs (including non-ASCII). Node.js HTTP parser rejects header values containing \\r or \\n (CRLF injection). The collapseLeadingSlashes function prevents protocol-relative URLs (//evil.com -> /evil.com).",
+      "guard": "encodeUrl() + Node.js CRLF protection + collapseLeadingSlashes",
+      "guard_sufficient": true,
+      "classification": "FALSE_POSITIVE"
+    },
+    {
+      "invariant": "INV-7",
+      "attack_vector": "Response header injection via err.headers in error() method's setHeaders() call",
+      "analysis": "The error() method calls setHeaders(res, err.headers) which allows setting arbitrary headers. However, (1) err.headers is only set internally in the 416 case with {Content-Range: ...}, (2) security headers (CSP, nosniff, Content-Type) are set AFTER setHeaders and override any conflicting headers, (3) for Error instances from fs, the http-errors library does not copy custom properties. The only external caller is onStatError with fs errors which lack headers property.",
+      "guard": "Internal-only err.headers values + security headers set after setHeaders",
+      "guard_sufficient": true,
+      "classification": "FALSE_POSITIVE"
+    },
+    {
+      "invariant": "INV-5",
+      "attack_vector": "XSS via javascript: URI in redirect href when this.path contains javascript protocol",
+      "analysis": "If this.path = 'javascript:alert(1)', collapseLeadingSlashes does not modify it (no leading slashes), encodeUrl encodes ( and ) to %28 and %29, and escapeHtml escapes special characters. The resulting HTML has encoded characters in the href. Additionally, CSP default-src 'none' blocks javascript: navigation in modern browsers. In practice, this.path comes from req.url which would never contain a scheme.",
+      "guard": "encodeUrl() + escapeHtml() + CSP + browser behavior",
+      "guard_sufficient": true,
+      "classification": "FALSE_POSITIVE"
+    },
+    {
+      "invariant": "INV-8",
+      "attack_vector": "MIME-type sniffing on successful file responses",
+      "analysis": "The send() method sets Content-Type via mime.lookup(path) but does NOT set X-Content-Type-Options: nosniff on successful responses. This header IS set on error() and redirect() responses (lines 290, 493). Missing nosniff on success responses is a defense-in-depth gap - a browser could potentially sniff and execute a mislabeled file. However, the Content-Type is determined by the file extension via the mime library, which is generally accurate.",
+      "guard": "Content-Type set via mime.lookup() but no nosniff header",
+      "guard_sufficient": false,
+      "classification": "NEEDS_REVIEW"
+    },
+    {
+      "invariant": "INV-4",
+      "attack_vector": "Serving files inside dotfile directories when using legacy hidden option",
+      "analysis": "When dotfiles option is undefined (legacy mode) and hidden is false (default), the dotfile check at line 564-568 only examines the LAST path component. If the path is /.git/config, containsDotFile returns true (both .git and config... wait, config doesn't start with dot). Actually: .git/config splits to ['.git', 'config'], containsDotFile checks each: '.git' matches (length > 1, starts with '.'). In legacy mode, access = parts[parts.length-1][0] === '.' ? (hidden ? 'allow' : 'ignore') : 'allow'. Since 'config'[0] !== '.', access = 'allow'. So files INSIDE dotfile directories are served even when hidden:false. This is intentional backward compatibility (confirmed by test 'should allow file within dotfile directory for back-compat') but could be a footgun for developers who don't migrate to dotfiles option.",
+      "guard": "Legacy behavior is intentional; modern dotfiles option provides proper enforcement",
+      "guard_sufficient": "depends on developer choosing dotfiles over hidden",
+      "classification": "NEEDS_REVIEW"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F-001",
+      "title": "Path traversal protection via UP_PATH_REGEXP is robust",
+      "classification": "FALSE_POSITIVE",
+      "invariants": ["INV-1", "INV-2"],
+      "evidence": "pipe() normalizes path with './' prefix (line 530), then tests UP_PATH_REGEXP (line 534) BEFORE joining with root (line 544). The regex catches '..' at all path boundaries. Multiple attack vectors tested: encoded %2e%2e (decoded to ..), nested traversal /foo/../../bar, leading traversal /../etc/passwd - all blocked with 403.",
+      "risk": "none"
+    },
+    {
+      "id": "F-002",
+      "title": "XSS in error pages is prevented by escapeHtml + CSP + nosniff",
+      "classification": "FALSE_POSITIVE",
+      "invariants": ["INV-5", "INV-6", "INV-8"],
+      "evidence": "error() at line 275: createHtmlDocument('Error', escapeHtml(msg)). msg is statuses.message[status] (standard HTTP phrases) or String(status) (numeric). CSP set at line 289. nosniff set at line 290. All security headers applied after clearHeaders.",
+      "risk": "none"
+    },
+    {
+      "id": "F-003",
+      "title": "XSS in redirect pages is prevented by escapeHtml + encodeUrl + CSP",
+      "classification": "FALSE_POSITIVE",
+      "invariants": ["INV-5", "INV-6", "INV-7"],
+      "evidence": "redirect() at line 484-486: loc = encodeUrl(collapseLeadingSlashes(this.path + '/')). Both href attribute and text content use escapeHtml(loc). CSP set at line 492. collapseLeadingSlashes prevents protocol-relative URLs (//pets -> /pets). Tested in test suite line 372-377.",
+      "risk": "none"
+    },
+    {
+      "id": "F-004",
+      "title": "Null byte injection is properly rejected",
+      "classification": "FALSE_POSITIVE",
+      "invariants": ["INV-3"],
+      "evidence": "pipe() at line 521: if (~path.indexOf('\\0')) returns 400. This runs after decodeURIComponent, so both literal null bytes and %00-encoded sequences are caught. Test at line 60-64 confirms.",
+      "risk": "none"
+    },
+    {
+      "id": "F-005",
+      "title": "Header injection via Location is prevented by encodeUrl + Node.js CRLF protection",
+      "classification": "FALSE_POSITIVE",
+      "invariants": ["INV-7"],
+      "evidence": "redirect() uses encodeUrl(collapseLeadingSlashes(this.path + '/')) for Location header. encodeUrl encodes non-ASCII and URI-unsafe characters. Node.js HTTP parser rejects \\r\\n in header values. Test confirms //pets redirects to /pets/ not protocol-relative.",
+      "risk": "none"
+    },
+    {
+      "id": "F-006",
+      "title": "err.headers in error() cannot be influenced by user input",
+      "classification": "FALSE_POSITIVE",
+      "invariants": ["INV-7"],
+      "evidence": "setHeaders(res, err.headers) is only reached when no error listeners exist. err.headers is only set in the 416 case (line 667) with {Content-Range: res.getHeader('Content-Range')}, which is library-generated. For fs Error instances, http-errors does not copy custom properties. Security headers set after override any conflicts.",
+      "risk": "none"
+    },
+    {
+      "id": "F-007",
+      "title": "Missing X-Content-Type-Options: nosniff on successful file responses",
+      "classification": "NEEDS_REVIEW",
+      "invariants": ["INV-8"],
+      "evidence": "error() sets nosniff at line 290. redirect() sets nosniff at line 493. But send() (line 602) and setHeader() (line 852) do NOT set nosniff on successful file responses. A file served with an ambiguous Content-Type (e.g., application/octet-stream for unknown extensions, or text/plain for .txt containing HTML) could be sniffed by the browser. Defense-in-depth gap.",
+      "risk": "low - Content-Type is set via mime library which is generally accurate; nosniff would provide defense-in-depth against browser MIME sniffing"
+    },
+    {
+      "id": "F-008",
+      "title": "Legacy hidden option allows serving files inside dotfile directories",
+      "classification": "NEEDS_REVIEW",
+      "invariants": ["INV-4"],
+      "evidence": "pipe() lines 564-568: when dotfiles is undefined (legacy mode), only the LAST path component is checked for dotfile status. For path /.git/config, containsDotFile(['.git', 'config']) returns true, but legacy access check sees 'config'[0] !== '.' and sets access = 'allow'. This serves the file despite it being inside a dotfile directory. Intentional for backward compatibility (test line 1084) but developers using the deprecated hidden option may not realize files inside .git, .svn, .env directories are served.",
+      "risk": "medium - Developers using deprecated hidden:true/false instead of dotfiles option may inadvertently serve sensitive files from dotfile directories (e.g., .env, .git/config). The library correctly documents this as legacy behavior and recommends using the dotfiles option."
+    }
+  ],
+  "summary": {
+    "confirmed": 0,
+    "false_positives": 6,
+    "needs_review": 2,
+    "total_findings": 8,
+    "analysis_notes": "pillarjs/send@0.18.0 is a mature, well-audited static file serving library with strong security measures. Path traversal protection via UP_PATH_REGEXP is comprehensive. XSS in error/redirect responses is prevented by escapeHtml + CSP + nosniff. The two NEEDS_REVIEW findings are defense-in-depth gaps (missing nosniff on success responses) and a backward-compatibility footgun (legacy hidden option allows serving files inside dotfile directories). No confirmed exploitable vulnerabilities were found through autonomous code analysis. The codebase demonstrates security-conscious design: input validation at every trust boundary crossing, defense-in-depth headers, and proper separation of concerns between library defaults and application error handling."
+  }
+}

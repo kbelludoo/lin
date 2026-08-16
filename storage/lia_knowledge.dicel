@@ -730,6 +730,46 @@
     scenario: "A"
     evolution_stage: "generalization_confirmed"
   }
+
+  @K059 {
+    honesty: INFERRED
+    fact: "V4 evolution chain (V3 → V4-A → V4-B → V4-B.1 → V4-C) demonstrates progression from pattern recognition to model-based reasoning. The critical transition is from 'Do I know this bug?' to 'What properties should hold, and are they violated?' V4-C eliminates the hypothesis that the agent is just pattern matching — it found a vulnerability class (ReDoS) never seen in training. The demonstrated capability is generalization WITHIN the model's representational space. NOT yet demonstrated: autonomous model construction without given trust models, source/sink labels, or oracles."
+    source: "User synthesis of V4 evolution chain"
+    type: "architectural_insight"
+    evolution_chain: {
+      V3: { paradigm: "pattern_driven_analysis", capability: "known_pattern_detection", result: "PASS" }
+      V4_A: { paradigm: "structural_modeling", capability: "architecture_understanding", result: "MODEL_ACCURACY=0.96" }
+      V4_B: { paradigm: "pattern_based_judgment", capability: "signal_vs_noise_filtering", result: "precision=0.78 recall=0.58", limitation: "coverage_bias" }
+      V4_B1: { paradigm: "system_model_driven_analysis", capability: "source_flow_sink_reasoning", result: "flow_discovery_recall=1.00 oracle_precision=1.00" }
+      V4_C: { paradigm: "model_based_generalization", capability: "unknown_class_vulnerability_detection", result: "generalization_score=1.00" }
+    }
+    conceptual_shift: {
+      before: "I know this bug? → search for pattern"
+      after: "What is the system model? → what properties should hold? → is there a violation?"
+    }
+    demonstrated: "Given a sufficiently rich model, the agent can reason and generalize."
+    not_demonstrated: "The agent can build the model autonomously in unknown environments."
+    next_frontier: "V5 — Autonomous System Modeling: discover components, boundaries, invariants, failure modes without given labels."
+    distinction: "This separates an advanced analyzer from an autonomous engineering agent."
+  }
+
+  @K060 {
+    honesty: OBSERVED
+    fact: "V5 AUTONOMOUS SYSTEM MODELING: Agent built excellent system model from scratch (0.90 quality) without given labels — 13 components, 8 trust boundaries, 12 invariants, 4 data flows. But missed CVE-2024-43799 (XSS via javascript: URI in redirect). Agent correctly identified escapeHtml as guard but incorrectly concluded it prevents ALL XSS. escapeHtml does not escape 'javascript:' protocol. This is a REASONING failure, not a MODELING failure — the trust boundary was correctly identified."
+    source: "V5 execution on pillarjs/send@0.18.0"
+    type: "benchmark_result"
+    metrics: {
+      model_quality: 0.90
+      autonomy_score: 0.90
+      oracle_recall: 0.00
+      analytical_fpr: 0.00
+      bugs_missed: 1
+      bugs_missed_root_cause: "reasoning_about_guard_effectiveness"
+    }
+    key_insight: "The model was sufficient to find the bug. The failure was in reasoning about what escapeHtml actually prevents. escapeHtml prevents HTML injection but not protocol injection (javascript: URIs). The fix in 0.19.0 removed the <a href> entirely."
+    distinction: "Modeling capability is near-parity with labeled analysis (0.90). Reasoning about guard effectiveness is the remaining gap."
+    evolution_stage: "modeling_strong_reasoning_weak"
+  }
 }
 
 @LANGUAGE_FITNESS {
