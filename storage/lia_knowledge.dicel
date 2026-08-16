@@ -74,6 +74,27 @@
     source: "SELF-OPTIMIZE-01"
     type: "methodological_rule"
   }
+
+  @K010 {
+    honesty: OBSERVED
+    fact: "Python achieves semantic equivalence with MJS for content_hash; 1.3-3.8x slower but acceptable"
+    source: "SELF-OPTIMIZE-03"
+    provenance: {
+      module: "content_hash"
+      workload_type: "string_heavy + regex_heavy"
+      mjs_baseline_us: 8.26
+      python_us: 10.96
+      semantic_match: true
+      confidence: "single_module_single_workload"
+    }
+  }
+
+  @K011 {
+    honesty: OBSERVED
+    fact: "Performance ranking for string-heavy+regex-heavy: MJS > Python > Rust"
+    source: "SELF-OPTIMIZE-03"
+    type: "conditional_rule"
+  }
 }
 
 @LANGUAGE_FITNESS {
@@ -94,6 +115,15 @@
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: [K006, K007]
+  }
+  @Python {
+    string_heavy: MEDIUM
+    regex_heavy: MEDIUM
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: [K010, K011]
   }
   @Nim {
     string_heavy: UNKNOWN
