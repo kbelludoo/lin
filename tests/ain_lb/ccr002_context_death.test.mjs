@@ -7,6 +7,7 @@ assert.ok(data.summary.B, 'Group B summary must exist');
 assert.ok(data.summary.A1, 'Group A1 summary must exist');
 assert.ok(data.summary.A2, 'Group A2 summary must exist');
 assert.ok(data.summary.A3, 'Group A3 summary must exist');
+assert.ok(data.summary.A4, 'Group A4 summary must exist');
 
 // Verify that Group B (LIN + .linmeta) outperforms traditional representations on cognitive efficiency & human inquiries
 assert.ok(

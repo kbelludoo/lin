@@ -670,3 +670,5 @@
 @E{t="2026-08-16T00:52:57.071Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msv3c8rx.rulel" nucleus=untouched}
 
 @E{t="2026-08-16T01:18:03.734Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msv48jbo.rulel" nucleus=untouched}
+
+@E{t="2026-08-16T14:40:00.000Z" kind=ccr002_v21_signal thesis="verifiable_cognitive_continuity_layer" a4=just_metadata_competitor metric=ignored_semantic_signal mock_proves=architecture mock_does_not_prove=real_models ccr003=long_horizon_evolution nucleus=untouched}
