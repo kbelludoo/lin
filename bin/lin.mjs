@@ -178,6 +178,13 @@ if (cmd === 'ain-lb-clr' || cmd === 'ain_lb_clr') {
   process.exit(r.status ?? 1);
 }
 
+if (cmd === 'build-meta' || cmd === 'build_meta') {
+  const { buildLinmeta } = await import('../scripts/build_linmeta.mjs');
+  const targetDir = path.resolve(rest[0] || '.');
+  buildLinmeta(targetDir);
+  process.exit(0);
+}
+
 if (cmd === 'rulel-check') {
   const file = rest[0];
   if (!file) usage();

@@ -37,6 +37,7 @@ function checkPairs(fn) {
     .replace(/^export /gm, '')
     .replace(/: unknown/g, '')
     .replace(/: boolean/g, '')
+    .replace(/: any/g, '')
     .replace(/: Record<string, number>/g, '')
     .replace(/const \$K/g, 'var $K');
   code += '\nmodule.exports = safeCompare;\n';

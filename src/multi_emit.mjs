@@ -5,6 +5,7 @@
 import fs from 'node:fs';
 import { parseLia } from './compiler.mjs';
 import { assertDivProof } from './lin_refine_div_load.mjs';
+import { runFormalGate } from './formal_gate.mjs';
 import { emitJs } from './emit_js.mjs';
 import { emitTs } from './emit_ts.mjs';
 import { emitPy } from './emit_py.mjs';
@@ -27,13 +28,21 @@ export function compileLia(liaText, opts = {}) {
   if (opts.skipRefineProof !== true) {
     assertDivProof(liaText, parseLia(liaText));
   }
-  if (target === 'ts') return emitTs(liaText, opts);
-  if (target === 'js') return emitJs(liaText, opts);
-  if (target === 'py') return emitPy(liaText, opts);
-  if (target === 'go') return emitGo(liaText, opts);
-  if (target === 'c') return emitC(liaText, opts);
-  if (target === 'java') return emitJava(liaText, opts);
-  return emitRust(liaText, opts);
+  // M006-A Formal Semantic Gate: verify invariants BEFORE any lowering/emission.
+  let formalReport = null;
+  if (opts.formalGate !== false) {
+    formalReport = runFormalGate(parseLia(liaText), { strict: opts.formalStrict === true });
+  }
+  let result;
+  if (target === 'ts') result = emitTs(liaText, opts);
+  else if (target === 'js') result = emitJs(liaText, opts);
+  else if (target === 'py') result = emitPy(liaText, opts);
+  else if (target === 'go') result = emitGo(liaText, opts);
+  else if (target === 'c') result = emitC(liaText, opts);
+  else if (target === 'java') result = emitJava(liaText, opts);
+  else result = emitRust(liaText, opts);
+  if (formalReport) result = { ...result, formalReport };
+  return result;
 }
 
 export function compileLiaToTargetFile(liaPath, outPath = null, opts = {}) {

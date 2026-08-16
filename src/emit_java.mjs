@@ -93,7 +93,7 @@ export function emitJava(liaText, opts = {}) {
     '  static String[] cache = new String[64];',
     '',
   ];
-  const fileHosty = opts.stubRuntime !== false;
+  const fileHosty = opts.stubRuntime === true || opts.fileHosty === true;
   if (prog.consts && !fileHosty) {
     for (const [k, v] of Object.entries(prog.consts)) {
       parts.push(`  static final long ${k} = ${v}L;`);

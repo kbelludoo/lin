@@ -106,6 +106,11 @@ function emitStmts(stmts, indent, types, retType) {
   return lines;
 }
 
+/** Clean a LIN type annotation for Rust: map int/bool and strip refinement braces (int{!=0} -> i64). */
+function cleanRustType(rawT) {
+  return String(rawT || '').replace(/\{[^}]*\}/g, '').replace(/\bint\b/g, 'i64').replace(/\bbool\b/g, 'bool').trim();
+}
+
 function rustType(id, inferred) {
   if (inferred && inferred.has(id)) {
     const t = inferred.get(id);
@@ -137,7 +142,7 @@ function rustLocals(locals, stmts) {
 
 function rustRetType(fn, stmts) {
   if (fn && fn.returnType) {
-    return fn.returnType;
+    return cleanRustType(fn.returnType);
   }
   if (isBoolFnName(fn.name)) return 'bool';
   const inf = inferTypes(stmts);
@@ -208,7 +213,7 @@ export function emitRust(liaText, opts = {}) {
     '    if u < cache.len() { cache[u].clone() } else { String::new() }',
     '}',
   ];
-  const fileHosty = opts.stubRuntime !== false;
+  const fileHosty = opts.stubRuntime === true || opts.fileHosty === true;
   if (prog.consts && !fileHosty) {
     for (const [k, v] of Object.entries(prog.consts)) parts.push(`const ${k}: i64 = ${v};`);
   }
@@ -247,7 +252,7 @@ export function emitRust(liaText, opts = {}) {
       const orig = rawNames[i] || p;
       const cleanName = cleanParamNames[i];
       if (orig.includes(':')) {
-        const typePart = orig.split(':')[1].trim();
+        const typePart = cleanRustType(orig.split(':')[1].trim());
         return `${cleanName}: ${typePart}`;
       }
       if (genDecl && genDecl.split(',').map(g=>g.trim()).includes(fn.returnType)) {
@@ -324,7 +329,7 @@ export function emitRust(liaText, opts = {}) {
       (prog.enums || []).flatMap((e) => (e.variants || []).map((v) => v.name))
     );
     const bodyLocals = collectAssignedIds(bodyStmts).filter(
-      (id) => !cleanParamNames.includes(id) && !forVars.has(id) && !patternVars.has(id) && !enumVariantNames.has(id) && id !== 'cache' && !/^[A-Z]/.test(id),
+      (id) => !cleanParamNames.includes(id) && !forVars.has(id) && !patternVars.has(id) && !enumVariantNames.has(id) && id !== 'cache',
     );
     const inferredTypes = inferTypes(bodyStmts);
     const cacheStub = /\bcache\b/.test(fn.body)

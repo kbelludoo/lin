@@ -475,3 +475,25 @@
 @E{t="2026-08-15T18:40:10.985Z" class=HARVEST corpus=clone-lin-open-design note="observe:none_new×0|autogen=createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:COMPILE_OK_NO_ORACLE" fix_target=compiler_outside_nucleus}
 
 @E{t="2026-08-15T18:40:44.014Z" class=HARVEST corpus=clone-lin-open-design note="observe:none_new×0|autogen=createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:STUB_NOT_PASS" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T20:52:49.137Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T21:09:58.936Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T21:30:15.144Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T21:47:27.116Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T22:33:25.903Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T23:10:17.912Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-15T23:44:40.429Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-16T00:11:21.032Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-16T00:28:05.857Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-16T00:52:57.072Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}
+
+@E{t="2026-08-16T01:18:03.735Z" class=HARVEST corpus=clone-lin-dayjs note="positive_transfer:ok×292" fix_target=compiler_outside_nucleus}

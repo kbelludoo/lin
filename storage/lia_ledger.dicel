@@ -648,3 +648,25 @@
 @E{t="2026-08-15T18:40:10.983Z" kind=improve_lin_from_clone slug=open-design harvest="observe:none_new×0" autogen="createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:COMPILE_OK_NO_ORACLE" candidate="CLONE_open-design_msuq0uzc.rulel" nucleus=untouched}
 
 @E{t="2026-08-15T18:40:44.012Z" kind=improve_lin_from_clone slug=open-design harvest="observe:none_new×0" autogen="createArtifactParser:COMPILE_OK_NO_ORACLE|randomUuid:BEHAVIOR_EQ_FAIL|createTerminalService:STUB_NOT_PASS" candidate="CLONE_open-design_msuq1kgt.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T20:52:49.136Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msuurfjj.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T21:09:58.935Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msuvdi52.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T21:30:15.143Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msuw3kkm.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T21:47:27.115Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msuwpouh.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T22:33:25.902Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msuyctjh.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T23:10:17.911Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msuzo8c5.rulel" nucleus=untouched}
+
+@E{t="2026-08-15T23:44:40.427Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msv0wfsa.rulel" nucleus=untouched}
+
+@E{t="2026-08-16T00:11:21.031Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msv1uqth.rulel" nucleus=untouched}
+
+@E{t="2026-08-16T00:28:05.855Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msv2ga59.rulel" nucleus=untouched}
+
+@E{t="2026-08-16T00:52:57.071Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msv3c8rx.rulel" nucleus=untouched}
+
+@E{t="2026-08-16T01:18:03.734Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msv48jbo.rulel" nucleus=untouched}

@@ -64,7 +64,7 @@ function emitStmts(stmts, indent) {
 export function emitTs(liaText, opts = {}) {
   const prog = parseLia(liaText);
   const parts = [emitBanner('ts').replace('/*', '//').replace('*/', '')];
-  const fileHosty = opts.stubRuntime !== false;
+  const fileHosty = opts.stubRuntime === true || opts.fileHosty === true;
   if (prog.consts && !fileHosty) {
     const obj = Object.entries(prog.consts)
       .map(([k, v]) => `${JSON.stringify(k)}: ${v}`)

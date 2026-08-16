@@ -510,7 +510,7 @@ export function rewriteExpr(expr, target) {
     s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, '_lia_len($1)');
     s = s.replace(/\b([A-Za-z_][\w]*)\s*-\s*_lia_len\(/g, '_lia_num($1)-_lia_len(');
     s = s.replace(/([A-Za-z_][\w]*)\.trim\s*\(\s*\)/g, '_lia_str($1)');
-    s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, 'int($1[$2])');
+    s = s.replace(/([A-Za-z_][\w]*)\.charCodeAt\(([^)]+)\)/g, '_lia_code_at($1,$2)');
     s = s.replace(/\btrue\b/g, 'true').replace(/\bfalse\b/g, 'false');
     s = s.replace(/\bcache\[([^\]]+)\]/g, 'cache[_lia_num($1)]');
     s = s.replace(/\b([A-Za-z_][\w]*)\[([^\]]+)\]/g, '_lia_at($1,$2)');
