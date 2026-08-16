@@ -1,6 +1,8 @@
 /**
  * Benchmark Harness for AIN-LB / CCR-002 v2.0 AI Context Death Benchmark.
- * Compares Groups A1, A2, A3, and B across scenarios CCR-002-A, CCR-002-B, CCR-002-C, and CCR-002-D.
+ * Compares Groups A1, A2, A3, A4, and B across scenarios CCR-002-A, CCR-002-B, CCR-002-C, and CCR-002-D.
+ * A4 is the "just metadata" competitor. ignored_semantic_signal is wired before any 9router run.
+ * Mock proves representation, not that real models will comply.
  * Implements N >= 20 statistical runs, anonymous blind evaluation, and run_manifest exports.
  */
 import fs from 'node:fs';
@@ -10,6 +12,7 @@ import { MockAgent, PERSONALITIES } from '../benchmarks/ain-lb/mock_agent.mjs';
 import { evaluatePatchAnonymous } from '../benchmarks/ain-lb/blind_evaluator.mjs';
 import { computeRepoHash } from '../benchmarks/ain-lb/llm_provider.mjs';
 import { compileLiaToJs } from '../src/compiler.mjs';
+import { getCcr002Signal } from '../src/lin_ccr002_signal_load.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const fixturesDir = path.join(root, 'tests', 'ain_lb', 'fixtures', 'ccr002');
@@ -25,6 +28,7 @@ const GROUPS = [
   { id: 'A1', name: 'Group A1 (Code + README + Tests)', path: path.join(fixturesDir, 'group_a1'), tokens: 12000 },
   { id: 'A2', name: 'Group A2 (Code + JSON Metadata)', path: path.join(fixturesDir, 'group_a2'), tokens: 9500 },
   { id: 'A3', name: 'Group A3 (Code + Human Architecture.md)', path: path.join(fixturesDir, 'group_a3'), tokens: 14000 },
+  { id: 'A4', name: 'Group A4 (Code + schema + rules + docs)', path: path.join(fixturesDir, 'group_a4'), tokens: 15500 },
   { id: 'B', name: 'Group B (LIN + .linmeta 4-layer)', path: path.join(fixturesDir, 'group_b'), tokens: 4200 },
 ];
 
@@ -97,6 +101,7 @@ export function runCcr002BenchmarkV2(opts = {}) {
     const avgCompliance = Number((gResults.reduce((a, b) => a + b.complianceRate, 0) / gResults.length).toFixed(2));
     const totalWrongAssumptions = gResults.reduce((a, b) => a + b.wrongAssumptions, 0);
     const totalUnsafeAttempts = gResults.reduce((a, b) => a + b.unsafeAttempt, 0);
+    const totalIgnoredSignal = gResults.reduce((a, b) => a + b.ignoredSemanticSignal, 0);
     const totalHumanInquiries = gResults.reduce((a, b) => a + b.humanInquiryCount, 0);
     const blindPassCount = gResults.filter((r) => r.blindPass).length;
     const passRate = Number(((blindPassCount / gResults.length) * 100).toFixed(1));
@@ -109,28 +114,42 @@ export function runCcr002BenchmarkV2(opts = {}) {
       avgCompliance,
       totalWrongAssumptions,
       totalUnsafeAttempts,
+      totalIgnoredSignal,
       totalHumanInquiries,
       passRate,
       avgCognitiveEfficiency,
     };
   }
 
-  return { rawResults, summary, manifests };
+  const proto = getCcr002Signal();
+  const claimBrake = {
+    mockProves: proto.mockProves(),
+    mockDoesNotProve: proto.mockDoesNotProve(),
+    noMockConclusion: proto.noMockConclusion() === 1,
+    thesis: proto.thesisNow(),
+    question: proto.questionNow(),
+    realPhase: proto.realPhase(),
+    modelUnobserved: proto.modelUnobserved() === 1,
+  };
+
+  return { rawResults, summary, manifests, claimBrake };
 }
 
 function printReportV2(data) {
   console.log('\n==================================================================================================');
-  console.log('                 AIN-LB / CCR-002 v2.0: AI CONTEXT DEATH BENCHMARK REPORT                         ');
+  console.log('                 AIN-LB / CCR-002 v2.1: AI CONTEXT DEATH (CLAIM BRAKE)                              ');
   console.log('==================================================================================================\n');
 
-  console.log('| Group | Description                 | Total Cost | Underst % | Compl % | Unsafe Att | Human Inq | Pass Rate | Cog Efficiency |');
-  console.log('|-------|-----------------------------|------------|-----------|---------|------------|-----------|-----------|----------------|');
+  console.log('| Group | Description                 | Total Cost | Underst % | Compl % | Unsafe Att | Ignored Sig | Human Inq | Pass Rate | Cog Efficiency |');
+  console.log('|-------|-----------------------------|------------|-----------|---------|------------|-------------|-----------|-----------|----------------|');
 
   for (const [gid, s] of Object.entries(data.summary)) {
     console.log(
-      `| ${gid.padEnd(5)} | ${s.groupName.slice(0, 27).padEnd(27)} | ${String(s.avgTotalCost).padStart(10)} | ${(s.avgUnderstanding * 100 + '%').padStart(9)} | ${(s.avgCompliance * 100 + '%').padStart(7)} | ${String(s.totalUnsafeAttempts).padStart(10)} | ${String(s.totalHumanInquiries).padStart(9)} | ${(s.passRate + '%').padStart(9)} | ${String(s.avgCognitiveEfficiency).padStart(14)} |`
+      `| ${gid.padEnd(5)} | ${s.groupName.slice(0, 27).padEnd(27)} | ${String(s.avgTotalCost).padStart(10)} | ${(s.avgUnderstanding * 100 + '%').padStart(9)} | ${(s.avgCompliance * 100 + '%').padStart(7)} | ${String(s.totalUnsafeAttempts).padStart(10)} | ${String(s.totalIgnoredSignal).padStart(11)} | ${String(s.totalHumanInquiries).padStart(9)} | ${(s.passRate + '%').padStart(9)} | ${String(s.avgCognitiveEfficiency).padStart(14)} |`
     );
   }
+  console.log('\nClaim brake: mock proves architecture can represent rules; it does not prove real models will use them.');
+  console.log(`Thesis: ${data.claimBrake.thesis}`);
   console.log('\n==================================================================================================\n');
 }
 
