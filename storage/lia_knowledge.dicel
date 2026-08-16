@@ -562,6 +562,46 @@
       }
     }
   }
+
+  @K052 {
+    honesty: OBSERVED
+    fact: "V4-B FINDING_PRECISION: precision=0.78 (target >= 0.80), recall=0.58, FPR=0.20. Failure mode = coverage_bias, not decision error. Agent found 7/12 bugs: strong on prototype_pollution (5/6), weak on ssrf (0/1), header_injection (0/1), input_validation (0/1), resource_exhaustion (0/1). Zero high-impact false positives. Zero unsupported fix proposals."
+    source: "V4-B evaluation on axios@v1.14.0"
+    type: "benchmark_result"
+    metrics: {
+      precision: 0.78
+      recall: 0.58
+      false_positive_rate: 0.20
+      escalation_rate: 0.10
+      high_impact_false_positives: 0
+      unsupported_fix_proposals: 0
+    }
+    failure_mode: "coverage_bias"
+    diagnosis: "Agent over-indexed on prototype pollution pattern and neglected data flow analysis through external inputs (URLs, headers, events). The agent did not say wrong things — it missed paths."
+    key_insight: "Precision alone can hide blindness. A scanner that finds 7/12 bugs with 0 FP is less useful than one that finds 10/12 with 2 FP."
+    evolution_stage: "decision_conservative"
+  }
+
+  @K053 {
+    honesty: INFERRED
+    fact: "The transition from pattern-driven to system-model-driven analysis is required to close the coverage gap. Pattern-driven: file → pattern match → finding. System-model-driven: repository_model → entry_points → trust_boundaries → data_flows → candidate_risks → probe_evaluation. The probe changes from detector to hypothesis verifier."
+    source: "V4-B diagnosis + V4-B.1 spec"
+    type: "architectural_insight"
+    transition: {
+      before: "pattern_matching"
+      after: "semantic_flow_reasoning"
+    }
+    probe_role_change: {
+      before: "detector"
+      after: "hypothesis_verifier_generated_by_model"
+    }
+    required_artifacts: [
+      "trust_boundary_model",
+      "data_flow_graph",
+      "coverage_metrics"
+    ]
+    evolution_stage: "first_step_toward_engineering_judgment"
+  }
 }
 }
 
