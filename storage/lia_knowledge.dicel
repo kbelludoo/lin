@@ -498,7 +498,7 @@
     fact: "Next decisive test: not more translation (Python→Rust already explored), but autonomous architecture modification on unknown real repo. Test: unknown real repo → LIN discovers model → LIN modifies architecture → humans only approve → tests prove equivalence."
     source: "K048 analysis"
     type: "milestone_definition"
-    test_description: "REAL_REPO_AUTONOMOUS_ARCHITECTURE_V1"
+    test_description: "REAL_AUTONOMOUS_ENGINEERING_AGENT_V1"
     separates: "advanced compiler FROM autonomous engineering agent"
     requires: [
       "implicit requirement discovery",
@@ -506,6 +506,54 @@
       "large codebase navigation",
       "semantic decisions without written contracts"
     ]
+  }
+
+  @K050 {
+    honesty: OBSERVED
+    fact: "Evolution cycle discovered in K045: failure_found → contract_created → benchmark_updated → capability_increased. This is the same pattern needed for K049. Each failure makes LIN stronger, not weaker."
+    source: "K045→K047→V3 pattern analysis"
+    type: "meta_pattern"
+    cycle: {
+      step_1: "failure_found (e.g. round(-1.5) divergence)",
+      step_2: "contract_created (e.g. OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED)",
+      step_3: "benchmark_updated (e.g. V3 reverse validation)",
+      step_4: "capability_increased (e.g. drift_score=0.00)"
+    }
+    applies_to: "K049 engineering agent development"
+    insight: "Each discovered limit becomes a new contract, which becomes a new benchmark, which increases capability. Failures are features."
+  }
+
+  @K051 {
+    honesty: INFERRED
+    fact: "An engineering agent must prove 4 separate capabilities: (1) codebase understanding MODEL_ACCURACY, (2) problem discovery without explicit task, (3) architectural change with behavior_delta=0, (4) knowing when NOT to change FALSE_OPTIMIZATION_RATE."
+    source: "K049 analysis"
+    type: "capability_framework"
+    capabilities: {
+      capability_1: {
+        name: "codebase_understanding"
+        metric: "MODEL_ACCURACY"
+        input: "repo without documentation"
+        output: "ARCHITECTURE_MODEL with modules, dependencies, data flows, critical points, invariants, risks"
+      }
+      capability_2: {
+        name: "problem_discovery"
+        metric: "FINDING_PRECISION"
+        input: "analyze this system (no explicit task)"
+        output: "structured findings with component, problem, evidence, proposal"
+      }
+      capability_3: {
+        name: "architectural_change"
+        metric: "BEHAVIOR_PRESERVATION"
+        constraint: "behavior_delta = 0"
+        test: "introduce abstraction layer while preserving all tests"
+      }
+      capability_4: {
+        name: "knowing_when_not_to_change"
+        metric: "FALSE_OPTIMIZATION_RATE"
+        test: "agent must reject changes when evidence insufficient"
+        importance: "most important capability — bad agents always optimize"
+      }
+    }
   }
 }
 }
