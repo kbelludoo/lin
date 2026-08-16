@@ -98,7 +98,7 @@
 
   @K012 {
     honesty: OBSERVED
-    fact: "TypeScript with Node.js v24 strip-types is FASTER than MJS for string-heavy workloads"
+    fact: "TypeScript variant faster than MJS under Node.js v24 for string-heavy workload"
     source: "SELF_OPTIMIZE-04"
     provenance: {
       module: "content_hash"
@@ -107,6 +107,7 @@
       mjs_baseline_us: 8.26
       speedup: "1.5x"
       semantic_match: true
+      causal_explanation: "UNKNOWN — may be V8 optimization, parsing, JIT, or other factors"
       confidence: "single_module_single_workload"
     }
   }
@@ -121,6 +122,8 @@
 }
 
 @LANGUAGE_FITNESS {
+  description: "Contextual fitness based on empirical evidence. UNKNOWN = no evidence yet. REJECTED = evidence against."
+  
   @TypeScript {
     string_heavy: STRONG
     regex_heavy: STRONG
@@ -129,24 +132,19 @@
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: [K012, K013]
+    tested_workloads: [string_heavy, regex_heavy]
+    untested_workloads: [CPU_bound, graph_heavy, numerical, embedding]
   }
   @MJS {
     string_heavy: STRONG
     regex_heavy: STRONG
-    CPU_bound: MEDIUM
-    graph_heavy: MEDIUM
-    numerical: MEDIUM
-    embedding: WEAK
-    evidence: [K006, K007]
-  }
-  @Rust {
-    string_heavy: REJECTED
-    regex_heavy: REJECTED
     CPU_bound: UNKNOWN
     graph_heavy: UNKNOWN
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: [K006, K007]
+    tested_workloads: [string_heavy, regex_heavy]
+    untested_workloads: [CPU_bound, graph_heavy, numerical, embedding]
   }
   @Python {
     string_heavy: MEDIUM
@@ -156,6 +154,32 @@
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: [K010, K011]
+    tested_workloads: [string_heavy, regex_heavy]
+    untested_workloads: [CPU_bound, graph_heavy, numerical, embedding]
+  }
+  @Rust {
+    string_heavy: REJECTED
+    regex_heavy: REJECTED
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: [K006, K007]
+    tested_workloads: [string_heavy, regex_heavy]
+    untested_workloads: [CPU_bound, graph_heavy, numerical, embedding]
+    rejection_reason: "semantic_mismatch + performance_regression"
+  }
+  @Crystal {
+    string_heavy: UNKNOWN
+    regex_heavy: UNKNOWN
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: []
+    tested_workloads: []
+    untested_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding]
+    note: "lin_crystal/ binary exists but not benchmarked"
   }
   @Nim {
     string_heavy: UNKNOWN
@@ -165,6 +189,21 @@
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: []
+    tested_workloads: []
+    untested_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding]
+    note: "compiler not installed"
+  }
+  @Zig {
+    string_heavy: UNKNOWN
+    regex_heavy: UNKNOWN
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: []
+    tested_workloads: []
+    untested_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding]
+    note: "compiler not installed"
   }
   @Cplusplus {
     string_heavy: UNKNOWN
@@ -174,6 +213,9 @@
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: []
+    tested_workloads: []
+    untested_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding]
+    note: "build toolchain not configured"
   }
   @Lua {
     string_heavy: UNKNOWN
@@ -183,6 +225,21 @@
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: []
+    tested_workloads: []
+    untested_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding]
+    note: "interpreter not installed"
+  }
+  @OCaml {
+    string_heavy: UNKNOWN
+    regex_heavy: UNKNOWN
+    CPU_bound: UNKNOWN
+    graph_heavy: UNKNOWN
+    numerical: UNKNOWN
+    embedding: UNKNOWN
+    evidence: []
+    tested_workloads: []
+    untested_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding]
+    note: "compiler not installed"
   }
 }
 
@@ -190,12 +247,13 @@
   description: "UNKNOWN entries that could reduce uncertainty through experimentation"
   
   @GAP001 {
-    language: "Lua",
+    language: "Crystal",
     unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
     priority: "HIGH",
-    reason: "Embedding-friendly language with potential for specific workloads",
-    proposed_experiment: "DISCOVERY-01",
-    estimated_cost: "LOW (interpreter available)"
+    reason: "lin_crystal/ exists in repo; compile-to-native with strong string processing",
+    proposed_experiment: "EXPAND_CRYSTAL_01",
+    estimated_cost: "LOW (binary already exists)",
+    installation: "lin_crystal/lin_cli already available"
   }
   
   @GAP002 {
@@ -203,17 +261,39 @@
     unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
     priority: "MEDIUM",
     reason: "Compile-to-C with metaprogramming; no evidence yet",
-    proposed_experiment: "DISCOVERY-02",
-    estimated_cost: "MEDIUM (compiler install)"
+    proposed_experiment: "EXPAND_NIM_01",
+    estimated_cost: "MEDIUM (compiler install required)",
+    installation: "nimble install nim OR choco install nim"
   }
   
   @GAP003 {
+    language: "Zig",
+    unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
+    priority: "MEDIUM",
+    reason: "Comptime + manual memory management; interesting for systems workloads",
+    proposed_experiment: "EXPAND_ZIG_01",
+    estimated_cost: "MEDIUM (compiler install required)",
+    installation: "zig download from ziglang.org"
+  }
+  
+  @GAP004 {
+    language: "Lua",
+    unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
+    priority: "LOW",
+    reason: "Embedding-friendly but limited standard library",
+    proposed_experiment: "DISCOVERY_01",
+    estimated_cost: "LOW (interpreter install)",
+    installation: "choco install lua OR luajit from luajit.org"
+  }
+  
+  @GAP005 {
     language: "Cplusplus",
     unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
     priority: "LOW",
     reason: "Industrial-grade but complex; defer until specific need",
-    proposed_experiment: "DISCOVERY-03",
-    estimated_cost: "HIGH (complex build)"
+    proposed_experiment: "EXPAND_CPP_01",
+    estimated_cost: "HIGH (complex build toolchain)",
+    installation: "Visual Studio Build Tools or MinGW"
   }
 }
 
@@ -233,10 +313,44 @@
   @EXP002 {
     id: "SELF_OPTIMIZE-03",
     type: "PARALLEL_CANDIDATE",
-    status: "PLANNED",
+    status: "COMPLETED",
     trigger: "after DISCOVERY-01 completes",
     module: "content_hash",
     candidates: ["MJS", "Nim", "Lua"],
     expected_outcome: "evidence-based comparison with baseline included"
+  }
+  
+  @EXP003 {
+    id: "TRANSFER_TEST_01",
+    type: "KNOWLEDGE_TRANSFER",
+    status: "PLANNED",
+    trigger: "after SELF_OPTIMIZE-04 completes",
+    description: "Test if LIN can use prior knowledge to select candidates for new module",
+    new_module: "lin_effects (string_heavy + regex_heavy workload)",
+    prior_knowledge: "TypeScript > MJS > Python > Rust for string_heavy + regex_heavy",
+    expected_outcome: "LIN selects TypeScript as first candidate without re-discovery"
+  }
+}
+
+@KNOWLEDGE_TRANSFER {
+  description: "Mechanism for using prior experimental knowledge in new decisions"
+  
+  @TRANSFER_RULE_001 {
+    condition: "new_module has similar workload_type to previously tested module"
+    action: "retrieve prior ranking from @LANGUAGE_FITNESS"
+    selection: "top_ranked_language_with_STRONG_fitness as first candidate"
+    confidence: "proportional to number of prior experiments supporting ranking"
+  }
+  
+  @TRANSFER_RULE_002 {
+    condition: "new_module has UNKNOWN workload_type"
+    action: "schedule LANGUAGE_DISCOVERY before SELF_OPTIMIZE"
+    selection: "no transfer — must discover from scratch"
+  }
+  
+  @TRANSFER_RULE_003 {
+    condition: "prior evidence shows REJECTED for relevant workload"
+    action: "exclude rejected language from candidate set"
+    selection: "skip directly to next-ranked candidate"
   }
 }
