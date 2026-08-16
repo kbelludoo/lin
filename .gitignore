@@ -1,20 +1,30 @@
 ```
-# Build artifacts and compiled files
-*.rlib
-*.compiled.js
-*.stderr
-*.stdout
-*.lia
-generated.rs
+# Compiled and build artifacts
+*.o
+*.obj
+*.pyc
+__pycache__/
 
-# Rust-specific
+# Executables
+test_fib
+test_hello
+lin_crystal/lin_cli
+benchmarks/nim/src/fibonacci
+benchmarks/zig/01_fibonacci
+
+# Build directories
+build/
+dist/
 target/
-**/target/
-Cargo.lock
+*.out
 
 # Dependencies
 node_modules/
-**/node_modules/
+venv/
+.venv/
+.env
+.env.local
+*.env.*
 
 # Logs and temporary files
 *.log
@@ -25,12 +35,12 @@ node_modules/
 .vscode/
 .idea/
 
-# System files
+# Coverage
+coverage/
+htmlcov/
+.coverage
+
+# OS
 .DS_Store
 Thumbs.db
-
-# Environment
-.env
-.env.local
-*.env.*
 ```
