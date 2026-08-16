@@ -3,7 +3,7 @@
 .m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-16 why=parallel_candidate_exploration_not_single_hypothesis}
 .d{P0=agent_native_first purpose=represent!infer!transform!verify}
 
-.r{R_EVIDENCE=decision_requires_benchmark_plus_semantic_verification R_NO_OPINION=no_migration_without_measured_evidence R_NUCLEUS=nucleus_mutable_classes_A_B_only R_CLASS_C=architectural_changes_require_human_approval R_MULTI=target_selection_per_module_not_per_project R_SAME=oracle_workload_semantics_must_be_identical_across_variants R_BASELINE=baseline_language_must_be_in_comparison R_PARALLEL=explore_multiple_candidates_in_parallel R_PROFILE=language_selection_from_workload_profile_not_prior_belief}
+.r{R_EVIDENCE=decision_requires_benchmark_plus_semantic_verification R_NO_OPINION=no_migration_without_measured_evidence R_NUCLEUS=nucleus_mutable_classes_A_B_only R_CLASS_C=architectural_changes_require_human_approval R_MULTI=target_selection_per_module_not_per_project R_SAME=oracle_workload_semantics_must_be_identical_across_variants R_BASELINE=baseline_language_must_be_in_comparison R_PARALLEL=explore_multiple_candidates_in_parallel R_PROFILE=language_selection_from_workload_profile_not_prior_belief R_KNOWLEDGE_GAP=unknown_fitness_triggers_discovery_experiment R_FITNESS_HYPOTHESIS=fitness_is_hypothesis_not_decision_updateable_with_evidence}
 
 .c{semantic_equivalence=result_hash_variant==result_hash_original regression_tests=all_existing_pass performance_delta=measured_above_threshold resource_constraints=RSS_CPU_within_limits auto_accept=semantic_equivalence AND regression_tests AND performance_delta AND resource_constraints}
 
@@ -19,18 +19,22 @@ class_A=micro_optimizations_mechanical→automatable
 class_B=semantic_equivalent_refactors→generate+verify+benchmark
 class_C=architectural_changes→propose+test+require_approval
 unknown_language→discover→probe→model→generate→verify→benchmark→profile→remember
+knowledge_gap→UNKNOWN_fitness→schedule_discovery→reduce_uncertainty
+fitness_update=new_evidence→update_fitness→refine_conditional_rules
 }
 
 .x{
 1=OBSERVE { analyze_codebase AST effects dependencies runtime_traces hotspots }
 2=CLASSIFY { workload_type regex_heavy string_heavy CPU_bound graph_heavy numerical embedding }
 3=DISCOVER { candidate_languages from LANGUAGE_KNOWLEDGE + workload_profile + past_benchmarks }
-4=SCREEN { rank_candidates by_expected_fitness select_top_3_to_5 }
-5=GENERATE { parallel_variant_creation for_each_candidate same_workload same_oracle same_semantics }
-6=VERIFY { semantic_equivalence=result_hash_match for_each_variant }
-7=BENCHMARK { controlled_measurement wall_clock RSS CPU for_each_variant }
-8=RANK { sort_by_evidence semantic_pass first then performance_delta }
-9=DECIDE { KEEP if baseline_wins or no_improvement_above_threshold MIGRATE if_clear_winner HYBRID if_different_modules_benefit_different_languages }
+4=IDENTIFY_GAPS { unknown_fitness_for_relevant_workloads → schedule_discovery }
+5=SCREEN { rank_candidates by_expected_fitness select_top_3_to_5 }
+6=GENERATE { parallel_variant_creation for_each_candidate same_workload same_oracle same_semantics }
+7=VERIFY { semantic_equivalence=result_hash_match for_each_variant }
+8=BENCHMARK { controlled_measurement wall_clock RSS CPU for_each_variant }
+9=RANK { sort_by_evidence semantic_pass first then performance_delta }
+10=DECIDE { KEEP if baseline_wins or no_improvement_above_threshold MIGRATE if_clear_winner HYBRID if_different_modules_benefit_different_languages }
+11=UPDATE_KNOWLEDGE { fitness_update provenance record knowledge_gap_reduction }
 }
 
 .p{

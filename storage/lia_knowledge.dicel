@@ -1,4 +1,4 @@
-@DICEL:lia_knowledge:0.3.0
+@DICEL:lia_knowledge:0.4.0
 ^status=ACTIVE
 ^honesty=[OBSERVED,INFERRED,UNKNOWN]
 
@@ -121,5 +121,60 @@
     numerical: UNKNOWN
     embedding: UNKNOWN
     evidence: []
+  }
+}
+
+@KNOWLEDGE_GAPS {
+  description: "UNKNOWN entries that could reduce uncertainty through experimentation"
+  
+  @GAP001 {
+    language: "Lua",
+    unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
+    priority: "HIGH",
+    reason: "Embedding-friendly language with potential for specific workloads",
+    proposed_experiment: "DISCOVERY-01",
+    estimated_cost: "LOW (interpreter available)"
+  }
+  
+  @GAP002 {
+    language: "Nim",
+    unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
+    priority: "MEDIUM",
+    reason: "Compile-to-C with metaprogramming; no evidence yet",
+    proposed_experiment: "DISCOVERY-02",
+    estimated_cost: "MEDIUM (compiler install)"
+  }
+  
+  @GAP003 {
+    language: "Cplusplus",
+    unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
+    priority: "LOW",
+    reason: "Industrial-grade but complex; defer until specific need",
+    proposed_experiment: "DISCOVERY-03",
+    estimated_cost: "HIGH (complex build)"
+  }
+}
+
+@EXPERIMENT_SCHEDULE {
+  description: "Ordered list of experiments to reduce knowledge gaps"
+  
+  @EXP001 {
+    id: "DISCOVERY-01",
+    language: "Lua",
+    type: "LANGUAGE_DISCOVERY",
+    status: "PLANNED",
+    trigger: "knowledge_gap GAP001",
+    expected_outcome: "language_profile + fitness for string_heavy workload",
+    depends_on: []
+  }
+  
+  @EXP002 {
+    id: "SELF_OPTIMIZE-03",
+    type: "PARALLEL_CANDIDATE",
+    status: "PLANNED",
+    trigger: "after DISCOVERY-01 completes",
+    module: "content_hash",
+    candidates: ["MJS", "Nim", "Lua"],
+    expected_outcome: "evidence-based comparison with baseline included"
   }
 }
