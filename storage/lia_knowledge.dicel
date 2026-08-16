@@ -673,6 +673,45 @@
     scenario: "A"
     evolution_stage: "modeling_complete_reasoning_tested"
   }
+
+  @K056 {
+    honesty: OBSERVED
+    fact: "FPR in V4-B.1 is inflated by mixing three distinct categories: (1) analytical_fp = risk declared without evidence (true error), (2) exploration_candidate = flow found, risk discarded (correct classification), (3) benign_flow = legitimate behavior modeled (correct classification). Categories 2 and 3 are not errors — they are the agent correctly identifying that a flow is safe. A human engineer also finds paths that are not bugs."
+    source: "User analysis of V4-B.1 FPR=0.33"
+    type: "metric_refinement"
+    fp_split: {
+      analytical_fp: "risk declared without evidence — true error"
+      exploration_candidate: "flow found, risk discarded — correct classification"
+      benign_flow: "legitimate behavior modeled — correct classification"
+    }
+    implication: "Standard precision/FPR metrics conflate 'I was wrong' with 'I found something safe'. For model-based agents, FPR should exclude exploration_candidate and benign_flow."
+    v4_b1_reclassification: {
+      analytical_fp: 0
+      exploration_candidate: 3
+      benign_flow: 5
+      adjusted_fpr: "0.00 (no analytical errors)"
+    }
+  }
+
+  @K057 {
+    honesty: INFERRED
+    fact: "The V4-B → V4-B.1 jump shows the bottleneck was not reasoning capacity but absence of adequate intermediate representation. Pattern detection cannot discover flows it doesn't trace. System model provides the missing representation. This suggests future metrics should measure System Understanding, not just bug detection."
+    source: "User analysis of V4-B vs V4-B.1 architecture"
+    type: "architectural_insight"
+    proposed_metric: {
+      name: "System_Understanding_Score"
+      components: {
+        flow_reconstruction: "discovered_expected_flows / oracle_expected_flows"
+        risk_classification: "correctly_classified_flows / analyzed_flows"
+        intervention_quality: "accepted_actions / proposed_actions"
+      }
+    }
+    baseline_architecture: {
+      v4_b: "pattern_detection → finding → decision"
+      v4_b1: "system_model → source/sink/trust_boundary_graph → flow_analysis → risk_classification → decision"
+    }
+    conclusion: "V4-B.1 demonstrates the agent transitioned from pattern matching to model-based analysis. The next test is whether the model supports generalization to unseen vulnerability classes."
+  }
 }
 
 @LANGUAGE_FITNESS {
@@ -887,6 +926,15 @@
     scope: "IR_fidelity_test"
     enforcement: "If Intent(P) ≠ Intent(recovered(P)), LIN is a transpiler, not a semantic compiler. Drift must be measured, not just detected."
     metric: "SEMANTIC_DRIFT_SCORE = distance(original_intent, recovered_intent)"
+  }
+
+  @INV004 {
+    id: "FALSE_POSITIVE_DECOMPOSITION"
+    derived_from: "K056 analysis"
+    statement: "For model-based agents, FPR must decompose into: (1) analytical_fp (true error), (2) exploration_candidate (correct safety classification), (3) benign_flow (correct behavior modeling). Only analytical_fp counts as agent error. Standard FPR conflates 'I was wrong' with 'I found something safe'."
+    scope: "metric_design"
+    enforcement: "When evaluating model-based analysis agents, report analytical_fpr separately from exploration_fpr. Acceptance criteria should target analytical_fpr, not total_fpr."
+    metric: "ANALYTICAL_FPR = analytical_fp / (confirmed + analytical_fp)"
   }
 }
 
