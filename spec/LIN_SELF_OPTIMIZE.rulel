@@ -1,0 +1,77 @@
+@RULEL:LIN_SELF_OPTIMIZE:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .d=design_principle .s=score}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-16 why=evidence_based_self_architecture_not_opinion}
+.d{P0=agent_native_first purpose=represent!infer!transform!verify}
+
+.r{R_EVIDENCE=decision_requires_benchmark_plus_semantic_verification R_NO_OPINION=no_migration_without_measured_evidence R_NUCLEUS=nucleus_mutable_classes_A_B_only R_CLASS_C=architectural_changes_require_human_approval R_MULTI=target_selection_per_module_not_per_project R_SAME=oracle_workload_semantics_must_be_identical_across_variants}
+
+.c{semantic_equivalence=result_hash_variant==result_hash_original regression_tests=all_existing_pass performance_delta=measured_above_threshold resource_constraints=RSS_CPU_within_limits auto_accept=semantic_equivalence AND regression_tests AND performance_delta AND resource_constraints}
+
+.g{observe=profile_hotspots_and_dependencies hypothesize=propose_up_to_3_target_languages verify=semantic_equivalence_AND_regression_tests benchmark=controlled_same_workload oracle decide=evidence_based_accept_or_reject}
+
+.f{auto_accept_without_evidence migrate_without_profiling change_nucleus_without_approval rewrite_core_freely skip_semantic_verification assume_migration_is_better}
+
+.w{
+SELF_OPTIMIZE_V1=observe→hypothesize→select→generate→verify→benchmark→decide
+class_A=micro_optimizations_mechanical→automatable
+class_B=semantic_equivalent_refactors→generate+verify+benchmark
+class_C=architectural_changes→propose+test+require_approval
+}
+
+.x{
+1=OBSERVE { analyze_MJS_codebase AST effects dependencies runtime_traces hotspots }
+2=PROFILE { identify_allocation_hotspots graph_traversal CPU_bound memory_pressure }
+3=HYPOTHESIZE { for_each_hotspot propose_up_to_3_target_languages justify_with_observed_properties }
+4=SELECT { Rust OCaml Nim Zig C++ Julia Fortran based_on_hotspot_type }
+5=GENERATE { produce_variant keeping_same_workload same_oracle same_semantics }
+6=VERIFY { semantic_equivalence=result_hash_match regression_tests=all_pass }
+7=BENCHMARK { controlled_measurement wall_clock RSS CPU throughput }
+8=DECIDE { if_auto_accept_criteria_met→accept else→reject_and_record }
+}
+
+.p{
+  arch=spec/LIN_CORE_ARCH.rulel
+  ir_cross=spec/LIN_IR_CROSS_BACKEND.rulel
+  bench=spec/LIN_EMIT_BENCHMARK.rulel
+  autonomy=spec/LIA_AUTONOMY.dicel
+  b6=spec/B6_LOGIC_SPEC_V2.rulel
+  b9=spec/B9_AGENT_REAL_SPEC_V1.rulel
+}
+
+.s{
+  hypothesis_record={
+    module_id: string,
+    current_language: string,
+    hotspot_type: enum{allocation,graph_traversal,cpu_bound,memory_pressure,io_bound,concurrency},
+    proposed_languages: [string],
+    justification: [string],
+    expected: { latency: delta, rss: delta, safety: delta },
+    evidence_required: { same_workload: true, same_oracle: true, same_semantics: true }
+  }
+}
+
+.s{
+  optimization_record={
+    module_id: string,
+    original_language: string,
+    variant_language: string,
+    original_result_hash: string,
+    variant_result_hash: string,
+    semantic_equivalence: bool,
+    regression_tests: bool,
+    performance_delta: float,
+    resource_constraints: bool,
+    decision: enum{accept, reject, defer},
+    class: enum{A, B, C}
+  }
+}
+
+.s{
+  partition_example={
+    CLI_orchestration: TypeScript,
+    semantic_reasoning: Rust_or_OCaml_or_Prolog_inspired,
+    compile_time_transform: Nim,
+    numerical_kernel: Julia_or_C_or_Fortran,
+    low_level_runtime: Rust
+  }
+}
