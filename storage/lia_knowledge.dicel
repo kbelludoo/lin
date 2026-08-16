@@ -474,6 +474,39 @@
       emitter Responsibility: "map canonical form to target-native implementation"
     }
   }
+
+  @K048 {
+    honesty: OBSERVED
+    fact: "LIN current state: Semantic IR + Contract-Carrying Transpiler. NOT universal autonomous compiler. Evidence: AST ingestion ✅, structural preservation ✅, type/contract extraction partial ✅, cross-language emission ✅ in controlled cases, runtime semantic preservation 🟡 beginning, autonomous architecture change 🟡 needs evidence, general software evolution ❌ not proven."
+    source: "V3 + all prior benchmarks"
+    type: "state_assessment"
+    maturity_map: {
+      ast_ingestion: "STRONG"
+      structural_preservation: "STRONG"
+      type_contract_extraction: "PARTIAL"
+      cross_language_emission: "STRONG_controlled_cases"
+      runtime_semantic_preservation: "BEGINNING"
+      autonomous_architecture_change: "UNPROVEN"
+      general_software_evolution: "UNPROVEN"
+    }
+    honest_position: "Semantic IR + Contract-Carrying Transpiler"
+    not_yet_proven: "Autonomous software engineering agent"
+  }
+
+  @K049 {
+    honesty: INFERRED
+    fact: "Next decisive test: not more translation (Python→Rust already explored), but autonomous architecture modification on unknown real repo. Test: unknown real repo → LIN discovers model → LIN modifies architecture → humans only approve → tests prove equivalence."
+    source: "K048 analysis"
+    type: "milestone_definition"
+    test_description: "REAL_REPO_AUTONOMOUS_ARCHITECTURE_V1"
+    separates: "advanced compiler FROM autonomous engineering agent"
+    requires: [
+      "implicit requirement discovery",
+      "emergent architecture",
+      "large codebase navigation",
+      "semantic decisions without written contracts"
+    ]
+  }
 }
 }
 
