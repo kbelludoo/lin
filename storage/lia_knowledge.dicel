@@ -255,6 +255,31 @@
     source: "REPAIR_LEARNING_01"
     type: "architectural_rule"
   }
+
+  @K030 {
+    honesty: OBSERVED
+    fact: "Crystal SHA-256 canonicalization strategy successfully applied to Python AND TypeScript; portability score 0.67 (2/3 targets)"
+    source: "REPAIR_LEARNING_02"
+    type: "learning_rule"
+    provenance: {
+      source_language: "Crystal",
+      target_languages: ["Python", "TypeScript", "Rust"],
+      strategy: "implement SHA-256 canonicalization matching MJS algorithm",
+      mismatch_class: "hashing_algorithm",
+      python_match: true,
+      typescript_match: true,
+      rust_compilation_failed: true,
+      portability_score: 0.67,
+      confidence: "multi_target_single_workload"
+    }
+  }
+
+  @K031 {
+    honesty: OBSERVED
+    fact: "Repair strategy from hashing_algorithm mismatch is language-independent for interpreted/scripted languages (Python, TypeScript); compilation required for native languages (Rust)"
+    source: "REPAIR_LEARNING_02"
+    type: "conditional_rule"
+  }
 }
 }
 
