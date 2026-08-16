@@ -1,6 +1,6 @@
 {
   "id": "V4_B1_COVERAGE_METRICS",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Extended metrics for V4-B.1 that go beyond precision to measure reasoning coverage",
 
   "metrics": {
@@ -26,6 +26,19 @@
       "v4_b_result": "4/7 = 0.57",
       "v4_b1_target": "<= 0.20",
       "purpose": "Measures systemic blindness — are entire categories of bugs invisible?"
+    },
+
+    "flow_discovery_recall": {
+      "formula": "discovered_flows / oracle_flows",
+      "description": "Did the agent discover the data flows from source to sink? This separates discovery failure from reasoning failure.",
+      "v4_b_result": "N/A (V4-B did not produce flow graphs)",
+      "v4_b1_target": ">= 0.80",
+      "purpose": "Distinguish modeling problem from reasoning problem",
+      "diagnostic": {
+        "low_fdr": "modeling problem — agent doesn't discover flows",
+        "high_fdr_low_finding_recall": "reasoning problem — agent discovers flows but misclassifies risk",
+        "high_fdr_high_finding_recall": "agent is both modeler and judge — target state"
+      }
     },
 
     "flow_completion_rate": {
@@ -57,7 +70,7 @@
     "intervention_precision": 0.78,
     "risk_surface_coverage": 0.29,
     "blind_zone_rate": 0.57,
-    "flow_completion_rate": "N/A",
+    "flow_discovery_recall": "N/A (V4-B did not produce flow graphs)",
     "source_diversity": 0.29,
     "sink_diversity": 0.17,
     "note": "V4-B was a pattern-driven scanner. These metrics expose what precision alone hides."
@@ -65,9 +78,9 @@
 
   "v4_b1_targets": {
     "intervention_precision": ">= 0.80",
+    "flow_discovery_recall": ">= 0.80",
     "risk_surface_coverage": ">= 0.80",
     "blind_zone_rate": "<= 0.20",
-    "flow_completion_rate": ">= 0.90",
     "source_diversity": ">= 0.70",
     "sink_diversity": ">= 0.60",
     "note": "V4-B.1 is a system-model-driven analyzer. These metrics measure whether the model is complete."
@@ -100,7 +113,10 @@
     },
     "V4_B1": {
       "role": "first_step_engineering_judgment",
-      "metrics_applicable": ["intervention_precision", "risk_surface_coverage", "blind_zone_rate", "flow_completion_rate", "source_diversity", "sink_diversity"]
+      "metrics_applicable": ["intervention_precision", "flow_discovery_recall", "risk_surface_coverage", "blind_zone_rate", "source_diversity", "sink_diversity"],
+      "phase_1_metric": "flow_discovery_recall",
+      "phase_2_metric": "intervention_precision",
+      "phase_3_metric": "finding_recall"
     }
   }
 }

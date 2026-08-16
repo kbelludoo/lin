@@ -602,6 +602,48 @@
     ]
     evolution_stage: "first_step_toward_engineering_judgment"
   }
+
+  @K054 {
+    honesty: INFERRED
+    fact: "Flow Discovery Recall separates discovery failure from reasoning failure. Discovery failure: source → ??? → sink (agent didn't find the flow). Reasoning failure: source → transform → sink (agent found the flow but didn't classify as risk). Low FDR = modeling problem. High FDR + low Finding Recall = reasoning problem."
+    source: "V4-B.1 protocol design"
+    type: "diagnostic_framework"
+    metric: {
+      name: "flow_discovery_recall"
+      formula: "discovered_flows / oracle_flows"
+      purpose: "Distinguish 'agent can't see the flow' from 'agent sees the flow but misjudges the risk'"
+    }
+    diagnostic_interpretation: {
+      low_fdr: "modeling problem — agent doesn't discover flows"
+      high_fdr_low_finding_recall: "reasoning problem — agent discovers flows but misclassifies risk"
+      high_fdr_high_finding_recall: "agent is both modeler and judge — target state"
+    }
+    execution_phases: {
+      phase_1: {
+        name: "system_model_construction"
+        output: "sources, sinks, flows, trust boundaries"
+        metric: "flow_discovery_recall"
+      }
+      phase_2: {
+        name: "probe_execution_on_graph"
+        output: "risk candidates with path, boundary, missing guard"
+        metric: "intervention_precision"
+      }
+      phase_3: {
+        name: "intervention_decision"
+        output: "CONFIRMED / FALSE_POSITIVE / NEEDS_REVIEW"
+        metric: "finding_recall"
+      }
+    }
+    frozen_protocol: {
+      repository: "axios@v1.14.0"
+      oracle: "v4_b_oracle.json"
+      vulnerability_classes: "7 classes"
+      trust_model_schema: "v4_b1_trust_boundary_model.json"
+      forbidden: "adding_bug_specific_rules"
+    }
+    evolution_stage: "operational_model_before_intervention"
+  }
 }
 }
 
