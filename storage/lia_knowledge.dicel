@@ -149,8 +149,9 @@
 
   @K018 {
     honesty: OBSERVED
-    fact: "Crystal semantic hash algorithm differs from MJS; semantic_equivalence = false for content_hash"
+    fact: "Crystal semantic hash algorithm differs from MJS; semantic_equivalence = false; performance comparison is diagnostic only, not valid ranking"
     source: "END_TO_END_CRYSTAL_01"
+    type: "methodological_rule"
     provenance: {
       module: "content_hash"
       workload_hash: "sha256:content_hash_10fns"
@@ -161,15 +162,30 @@
       semantic_equivalence: false
       performance_crystal_us: 49039.74
       performance_typescript_us: 5.51
+      interpretation: "semantic_fail_blocks_valid_ranking; performance is diagnostic_only"
       confidence: "single_module_single_workload"
     }
   }
 
   @K019 {
     honesty: OBSERVED
-    fact: "Crystal REJECTED for string_heavy + regex_heavy: 8900x slower than TypeScript, semantic mismatch"
+    fact: "Crystal REJECTED for string_heavy + regex_heavy: semantic mismatch blocks valid ranking; 8,900x slower is diagnostic only"
     source: "END_TO_END_CRYSTAL_01"
     type: "conditional_rule"
+  }
+
+  @K020 {
+    honesty: OBSERVED
+    fact: "semantic_equivalence = FAIL means performance comparison is diagnostic only, not valid ranking"
+    source: "END_TO_END_CRYSTAL_01"
+    type: "methodological_rule"
+  }
+
+  @K021 {
+    honesty: OBSERVED
+    fact: "LANGUAGE_DISCOVERY can find languages not in knowledge base, profile them, and produce evidence"
+    source: "END_TO_END_CRYSTAL_01"
+    type: "architectural_rule"
   }
 }
 }
