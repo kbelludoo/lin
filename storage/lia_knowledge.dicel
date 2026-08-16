@@ -452,6 +452,28 @@
       benchmark_run: "2026-08-16"
     }
   }
+
+  @K046 {
+    honesty: INFERRED
+    fact: "Semantic IR requires runtime contracts. AST equivalente ≠ comportamento equivalente. ROUND(x) must carry strategy, tie_behavior, overflow_behavior, target_runtime_constraints."
+    source: "K045 + analysis"
+    type: "design_constraint"
+    implication: "LIN-IR cannot be AST-level. It must be semantic-graph-level with explicit runtime contract annotations."
+  }
+
+  @K047 {
+    honesty: INFERRED
+    fact: "Cross-language compilation requires operator normalization layer. Without it, LIN produces code that is syntactically correct but semantically divergent."
+    source: "K045 + K046"
+    type: "architecture_requirement"
+    invariant: "OPERATOR_NORMALIZATION_LAYER_REQUIRED"
+    detail: {
+      problem: "round(-1.5) in Python becomes Math.round(-1.5) in JS — same AST, different semantics"
+      solution: "LIN must normalize operators to canonical semantic form before emitting to target"
+      canonical_form: "ROUND(value, strategy=EXPLICIT)"
+      emitter Responsibility: "map canonical form to target-native implementation"
+    }
+  }
 }
 }
 
@@ -650,6 +672,22 @@
     statement: "LIN must represent operator semantics explicitly with runtime contracts. ROUND(x) must specify strategy=bankers|ieee754|toward_positive_infinity. LIN cannot assume identical operator behavior across target runtimes."
     scope: "all_cross_language_compilation"
     enforcement: "LIN-IR must reject operators without explicit semantic_contract annotation when emitting to multiple targets"
+  }
+
+  @INV002 {
+    id: "OPERATOR_NORMALIZATION_LAYER_REQUIRED"
+    derived_from: "K047"
+    statement: "LIN must normalize operators to canonical semantic form before emitting to target. round(-1.5) in Python must become ROUND(value, strategy=bankers) in LIN, then emit as Python-native round() or JS-native custom function depending on target."
+    scope: "cross_language_emission"
+    enforcement: "LIN emitter must map canonical operator to target-native implementation; cannot blindly copy AST"
+  }
+
+  @INV003 {
+    id: "REVERSE_VALIDATION_REQUIRED"
+    derived_from: "K045 analysis"
+    statement: "A true semantic IR must survive round-trip through foreign runtime. Python → LIN → TypeScript → LIN → Python must preserve semantic intent, not just syntax."
+    scope: "IR_fidelity_test"
+    enforcement: "If reverse round-trip loses semantic intent, LIN is a transpiler, not a semantic compiler"
   }
 }
 
