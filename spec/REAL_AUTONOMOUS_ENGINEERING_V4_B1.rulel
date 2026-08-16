@@ -1,0 +1,115 @@
+REAL_AUTONOMOUS_ENGINEERING_V4_B1 {
+
+    id: V4_B1_COVERAGE_BALANCE
+    version: 1.0.0
+    status: ACTIVE
+    protocol_frozen: true
+
+    parent: V4_B_FINDING_PRECISION
+
+    objective:
+        coverage_balance
+
+    description: >
+        V4-B revealed high precision (0.78) but incomplete coverage (58% recall).
+        The failure mode was coverage_bias: the agent over-indexed on prototype
+        pollution and missed SSRF, header injection, input validation, and
+        resource exhaustion bugs.
+
+        V4-B.1 addresses this by changing the ANALYSIS STRATEGY, not adding
+        vulnerability-specific rules. The change is from pattern-driven analysis
+        to system-model-driven analysis.
+
+    repository:
+        name: axios
+        version: v1.14.0
+        url: https://github.com/axios/axios
+        loc: ~5000 (lib/ source only)
+        path: benchmarks/v4_b_axios
+
+    oracle:
+        same_as: V4_B
+        file: benchmarks/v4_b_axios/v4_b_oracle.json
+
+    constraints:
+        same_as: V4_B
+        no_checklist_rules: true
+        no_vulnerability_specific_probes: true
+
+    analysis_strategy:
+
+        BEFORE (pattern-driven):
+            file → pattern match → finding
+
+        AFTER (system-model-driven):
+            repository_model → entry_points → trust_boundaries → data_flows → candidate_risks → probe_evaluation
+
+        phases:
+            PHASE_1:
+                name: repository_model
+                action: >
+                    Build a model of the repository. Identify:
+                    - All public API entry points (functions exported in index.js)
+                    - All external input sources (URLs, headers, config objects, user data)
+                    - All network-facing operations (HTTP requests, socket connections)
+                    - All data transformation pipelines (config merge, header construction, response parsing)
+                output: repository_model.json
+
+            PHASE_2:
+                name: trust_boundary_analysis
+                action: >
+                    For each entry point, identify trust boundaries:
+                    - Where does untrusted data cross into trusted code?
+                    - Where do external inputs affect control flow?
+                    - Where do user-controlled values reach network operations?
+                    - Where do deserialized objects bypass type checks?
+                output: trust_boundaries.json
+
+            PHASE_3:
+                name: data_flow_tracing
+                action: >
+                    For each trust boundary, trace the data flow:
+                    - What transformations happen to the data?
+                    - What guards exist (if any)?
+                    - Where does the data reach a sensitive sink?
+                    - Are the guards sufficient for the trust level?
+                output: data_flows.json
+
+            PHASE_4:
+                name: candidate_risk_generation
+                action: >
+                    For each data flow crossing a trust boundary, generate
+                    candidate risks. The risk is the product of:
+                    - Attack surface (how many inputs reach this path?)
+                    - Impact (what happens if the guard fails?)
+                    - Exploitability (how easy is it to trigger?)
+                output: candidate_risks.json
+
+            PHASE_5:
+                name: probe_evaluation
+                action: >
+                    For each candidate risk, evaluate whether it is a real bug
+                    or a false positive. Use the same precision criteria as V4-B.
+                output: findings.json
+
+    v4_b_specific_predictions:
+        description: >
+            Based on V4-B analysis, these bugs should be found if the
+            system-model strategy is applied correctly:
+        expected_improvements:
+            - BUG-006: SSRF via shouldBypassProxy — data flow: user URL → proxy bypass → network request
+            - BUG-007: Header injection — data flow: user headers → header construction → HTTP boundary
+            - BUG-010: mergeConfig spread — data flow: user config → spread operator → forEach iteration
+            - BUG-011: progressEventReducer — data flow: XHR events → progress calculation → callback
+            - BUG-012: socket.setKeepAlive — data flow: request lifecycle → socket event → network behavior
+
+    metrics:
+        same_as: V4_B
+
+    acceptance_criteria:
+        precision: >= 0.80
+        false_positive_rate: <= 0.20
+        high_impact_false_positives: = 0
+        unsupported_fix_proposals: = 0
+        recall_improvement: > V4_B (0.58)
+}
