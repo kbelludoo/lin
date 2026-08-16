@@ -712,6 +712,24 @@
     }
     conclusion: "V4-B.1 demonstrates the agent transitioned from pattern matching to model-based analysis. The next test is whether the model supports generalization to unseen vulnerability classes."
   }
+
+  @K058 {
+    honesty: OBSERVED
+    fact: "V4-C UNKNOWN FLOW GENERALIZATION: Agent found ReDoS (CVE-2024-45296) in path-to-regexp@6.3.0 — a vulnerability class NEVER seen in V4-B training. Generalization score = 1.00. The agent identified the root cause (negative lookahead + lazy quantifier = exponential backtracking) through pure system model analysis without any vulnerability-specific rules. This confirms the agent transitioned from pattern matching to model-based analysis."
+    source: "V4-C execution on path-to-regexp@6.3.0"
+    type: "benchmark_result"
+    metrics: {
+      generalization_score: 1.00
+      oracle_recall: 1.00
+      analytical_precision: 1.00
+      analytical_fpr: 0.00
+      novel_vulnerability_class: "redos"
+      overlap_with_v4b: "NONE"
+    }
+    key_finding: "Agent identified TB-1 (path → regex structure) and TB-2 (pathname → regex execution time) as critical trust boundaries. Missing guard: safePattern() does not analyze computational complexity of generated regex."
+    scenario: "A"
+    evolution_stage: "generalization_confirmed"
+  }
 }
 
 @LANGUAGE_FITNESS {
