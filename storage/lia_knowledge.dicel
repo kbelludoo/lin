@@ -229,6 +229,32 @@
     source: "SEMANTIC_REPAIR_LOOP v1.1"
     type: "knowledge_rule"
   }
+
+  @K028 {
+    honesty: OBSERVED
+    fact: "Repair strategy from Crystal (hashing_algorithm → SHA-256 canonicalization) successfully applied to Python; cross-language strategy reuse validated"
+    source: "REPAIR_LEARNING_01"
+    type: "learning_rule"
+    provenance: {
+      source_language: "Crystal",
+      target_language: "Python",
+      mismatch_class: "hashing_algorithm",
+      strategy: "implement SHA-256 canonicalization matching MJS algorithm",
+      initial_result_hash: "526c5da276d5cb73",
+      expected_result_hash: "8e590c4638786070",
+      final_result_hash: "8e590c4638786070",
+      semantic_match: true,
+      iterations_used: 1,
+      confidence: "single_case_single_workload"
+    }
+  }
+
+  @K029 {
+    honesty: OBSERVED
+    fact: "Repair strategy learning is reusable across languages: strategy extracted from one language can repair another language's implementation"
+    source: "REPAIR_LEARNING_01"
+    type: "architectural_rule"
+  }
 }
 }
 
