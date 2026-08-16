@@ -1,0 +1,17 @@
+{
+  "queueIndex": 2,
+  "done": [
+    "ecc",
+    "ponytail",
+    "gstack"
+  ],
+  "current": "dayjs",
+  "attempts": {
+    "ecc": 4,
+    "ponytail": 38,
+    "gstack": 2114,
+    "open-design": 6,
+    "dayjs": 11
+  },
+  "note": "year-star 2026: ecc DONE 100% published; next=ponytail"
+}

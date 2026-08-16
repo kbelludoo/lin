@@ -139,6 +139,38 @@
     source: "KERNEL_CANDIDATE_V1"
     type: "architectural_rule"
   }
+
+  @K017 {
+    honesty: OBSERVED
+    fact: "Crystal discovered via environment scan; binary exists as ELF (Linux), recompiled for Windows"
+    source: "END_TO_END_CRYSTAL_01"
+    type: "discovery_record"
+  }
+
+  @K018 {
+    honesty: OBSERVED
+    fact: "Crystal semantic hash algorithm differs from MJS; semantic_equivalence = false for content_hash"
+    source: "END_TO_END_CRYSTAL_01"
+    provenance: {
+      module: "content_hash"
+      workload_hash: "sha256:content_hash_10fns"
+      environment: "Node.js v24.19.0 / Crystal 1.21.0 / Windows x64"
+      benchmark_run: "2026-08-16"
+      semantic_hash_crystal: "86b480eb51280f0a"
+      semantic_hash_mjs: "313817cb68d86490"
+      semantic_equivalence: false
+      performance_crystal_us: 49039.74
+      performance_typescript_us: 5.51
+      confidence: "single_module_single_workload"
+    }
+  }
+
+  @K019 {
+    honesty: OBSERVED
+    fact: "Crystal REJECTED for string_heavy + regex_heavy: 8900x slower than TypeScript, semantic mismatch"
+    source: "END_TO_END_CRYSTAL_01"
+    type: "conditional_rule"
+  }
 }
 }
 
@@ -191,16 +223,16 @@
     rejection_reason: "semantic_mismatch + performance_regression"
   }
   @Crystal {
-    string_heavy: UNKNOWN
-    regex_heavy: UNKNOWN
+    string_heavy: REJECTED
+    regex_heavy: REJECTED
     CPU_bound: UNKNOWN
     graph_heavy: UNKNOWN
     numerical: UNKNOWN
     embedding: UNKNOWN
-    evidence: []
-    tested_workloads: []
-    untested_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding]
-    note: "lin_crystal/ binary exists but not benchmarked"
+    evidence: [K018, K019]
+    tested_workloads: [string_heavy, regex_heavy]
+    untested_workloads: [CPU_bound, graph_heavy, numerical, embedding]
+    note: "Semantic hash algorithm differs; 8900x slower than TypeScript for content_hash"
   }
   @Nim {
     string_heavy: UNKNOWN
@@ -269,12 +301,12 @@
   
   @GAP001 {
     language: "Crystal",
-    unknown_workloads: [string_heavy, regex_heavy, CPU_bound, graph_heavy, numerical, embedding],
-    priority: "HIGH",
-    reason: "lin_crystal/ exists in repo; compile-to-native with strong string processing",
-    proposed_experiment: "EXPAND_CRYSTAL_01",
-    estimated_cost: "LOW (binary already exists)",
-    installation: "lin_crystal/lin_cli already available"
+    unknown_workloads: [CPU_bound, graph_heavy, numerical, embedding],
+    priority: "LOW",
+    reason: "REJECTED for string_heavy + regex_heavy; semantic mismatch; 8900x slower than TypeScript",
+    proposed_experiment: "EXPAND_CRYSTAL_02",
+    estimated_cost: "MEDIUM (need to fix semantic hash algorithm)",
+    installation: "lin_crystal/lin_cli_win.exe already available"
   }
   
   @GAP002 {

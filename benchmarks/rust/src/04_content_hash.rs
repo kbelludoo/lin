@@ -10,7 +10,7 @@ struct Fn {
     body: String,
 }
 
-fn canonicalize(fn_name: &str, params: &str, body: &str) -> String {
+fn canonicalize(_fn_name: &str, params: &str, body: &str) -> String {
     let mut canon = body.trim().to_string();
     // Collapse whitespace
     let ws_re = Regex::new(r"\s+").unwrap();
