@@ -420,6 +420,38 @@
     source: "REAL_REPO_TRANSLATION_AND_OPTIMIZATION_V1"
     type: "compilation_rule"
   }
+
+  @K045 {
+    honesty: OBSERVED
+    fact: "Cross-language semantic divergence detected: round(-1.5) = -1 in JS (toward +∞), -2 in Python (bankers rounding). Parse: 17/17 PASS. Format: 9/10 PASS (96.3%). The 1 FAIL is a runtime semantic divergence, not a bug."
+    source: "REAL_REPO_CROSS_LANGUAGE_V1"
+    type: "semantic_divergence_discovery"
+    invariant: "OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED"
+    detail: {
+      operation: "ROUND"
+      input: -1.5
+      python_result: -2
+      python_semantics: "bankers_round ties_to_even"
+      javascript_result: -1
+      javascript_semantics: "round_toward_positive_infinity"
+      impact: "LIN cannot assume identical operator semantics across runtimes"
+      required_action: "LIN must carry explicit runtime semantic contracts, not just AST"
+    }
+    provenance: {
+      module: "ms_library"
+      source_language: "TypeScript (ms by vercel)"
+      target_languages: ["Python", "TypeScript"]
+      test_cases_total: 27
+      parse_matches: 17
+      format_matches: 9
+      divergence_category: "runtime_semantic"
+      performance_python_parse_us: 1.40
+      performance_ts_parse_us: 0.26
+      performance_python_format_us: 0.72
+      performance_ts_format_us: 0.02
+      benchmark_run: "2026-08-16"
+    }
+  }
 }
 }
 
@@ -596,6 +628,28 @@
     proposed_experiment: "EXPAND_CPP_01",
     estimated_cost: "HIGH (complex build toolchain)",
     installation: "Visual Studio Build Tools or MinGW"
+  }
+
+  @GAP006 {
+    category: "runtime_semantic_contracts",
+    unknown_operators: ["ROUND", "INTEGER_DIVISION", "OVERFLOW", "UNICODE_NORMALIZATION", "TIMEZONE", "REGEX", "EXCEPTIONS", "FLOAT_NAN", "MAP_ORDERING"],
+    priority: "HIGH",
+    reason: "K045 discovered round() divergence; other operators likely diverge too",
+    proposed_experiment: "REAL_REPO_CROSS_LANGUAGE_V2",
+    estimated_cost: "HIGH (requires systematic operator-by-operator testing across runtimes)",
+    invariant_triggered: "OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED"
+  }
+}
+
+@INVARIANTS {
+  description: "Invariants derived from experimental evidence. These are mandatory constraints on LIN design."
+
+  @INV001 {
+    id: "OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED"
+    derived_from: "K045"
+    statement: "LIN must represent operator semantics explicitly with runtime contracts. ROUND(x) must specify strategy=bankers|ieee754|toward_positive_infinity. LIN cannot assume identical operator behavior across target runtimes."
+    scope: "all_cross_language_compilation"
+    enforcement: "LIN-IR must reject operators without explicit semantic_contract annotation when emitting to multiple targets"
   }
 }
 
