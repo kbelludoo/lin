@@ -303,6 +303,33 @@
     source: "REPAIR_LEARNING_02"
     type: "methodological_rule"
   }
+
+  @K035 {
+    honesty: OBSERVED
+    fact: "Crypto call is the dominant factor in content_hash: ~2.5 µs out of ~4.5 µs total (55-60%)"
+    source: "EXPLANATION_TS_MJS_V1"
+    type: "performance_rule"
+    provenance: {
+      workload: "content_hash",
+      components: {
+        crypto_call: {cjs: 2.54, mjs: 2.54, ts: 2.62},
+        regex_execution: {cjs: 1.12, mjs: 1.22, ts: 1.19},
+        serialization: {cjs: 0.34, mjs: 0.32, ts: 0.35},
+        buffer_conversion: {cjs: 0.31, mjs: 0.38, ts: 0.31},
+        string_creation: {cjs: 0.21, mjs: 0.19, ts: 0.20}
+      },
+      full_pipeline: {cjs: 4.43, mjs: 4.93, ts: 4.28},
+      dominant_factor: "crypto_call",
+      confidence: "controlled_experiment"
+    }
+  }
+
+  @K036 {
+    honesty: OBSERVED
+    fact: "TypeScript vs MJS performance difference is smaller than previously observed when workload is controlled (TS 4.28µs vs MJS 4.93µs = 15% difference)"
+    source: "EXPLANATION_TS_MJS_V1"
+    type: "correction_rule"
+  }
 }
 }
 
