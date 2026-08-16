@@ -124,12 +124,72 @@ This is the definitive test of whether LIN is a semantic IR.
 
 ## SCORING
 
-| Result | Meaning |
-|--------|---------|
-| IDENTICAL | Semantic intent fully preserved through round-trip |
-| DIVERGENT_RECOVERABLE | Intent lost but recoverable with explicit contracts |
-| DIVERGENT_UNRECOVERABLE | Intent permanently lost — LIN is a transpiler |
-| PARTIAL | Some semantics preserved, others lost |
+### Semantic Drift Score
+
+Not boolean. Distance metric.
+
+```text
+Original Intent:
+{
+  operator: ROUND,
+  strategy: BANKERS,
+  overflow: UNBOUNDED_INT,
+  unicode: NFC
+}
+
+After round-trip:
+{
+  operator: ROUND,
+  strategy: UNKNOWN,      ← DRIFT
+  overflow: IEEE_NUMBER,  ← DRIFT
+  unicode: UNKNOWN        ← DRIFT
+}
+
+SEMANTIC_DRIFT = distance(original, recovered)
+```
+
+Three cases:
+
+| Case | Example | Expected Drift |
+|------|---------|----------------|
+| Explicit semantics | `lin.round(x, strategy="bankers")` | 0 |
+| Implicit semantics | `round(x)` | LIN detects runtime-dependent operator, generates contract `ROUND(strategy=PYTHON_DEFAULT)` |
+| Uninferable semantics | `regex.match(...)` | LIN reports `UNKNOWN_RUNTIME_SEMANTIC`, does not invent equivalence |
+
+A reliable semantic compiler must know when to say: "I don't have enough information."
+
+### Maturity Map
+
+The most valuable result is NOT 100%. It is a category breakdown:
+
+```text
+Primitive operators:      ??%
+State machines:           ??%
+Data contracts:           ??%
+Runtime behavior:         ??%
+```
+
+This creates the LIN maturity map.
+
+## HYPOTHESIS
+
+Based on current state:
+
+| Category | Expected | Reasoning |
+|----------|----------|-----------|
+| AST → LIN | STRONG | Well-tested |
+| Contracts → LIN | STRONG | Explicit in spec |
+| Types → LIN | MEDIUM-STRONG | Partial evidence |
+| Runtime semantics | BEGINNING | K045 just discovered the gap |
+
+Expected V3 result:
+
+```text
+LIN today: Smart Transpiler++
+Next evolution: Semantic Runtime Contract Engine
+```
+
+This is a more defensible position than claiming "universal compiler."
 
 ## HYPOTHESIS
 

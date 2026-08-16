@@ -683,11 +683,12 @@
   }
 
   @INV003 {
-    id: "REVERSE_VALIDATION_REQUIRED"
+    id: "ROUND_TRIP_SEMANTIC_CONSERVATION"
     derived_from: "K045 analysis"
-    statement: "A true semantic IR must survive round-trip through foreign runtime. Python → LIN → TypeScript → LIN → Python must preserve semantic intent, not just syntax."
+    statement: "Given source program P: Transform P → LIN → Target → LIN. Requirement: Intent(P) == Intent(recovered(P)). A true semantic IR conserves intent through foreign runtime passage."
     scope: "IR_fidelity_test"
-    enforcement: "If reverse round-trip loses semantic intent, LIN is a transpiler, not a semantic compiler"
+    enforcement: "If Intent(P) ≠ Intent(recovered(P)), LIN is a transpiler, not a semantic compiler. Drift must be measured, not just detected."
+    metric: "SEMANTIC_DRIFT_SCORE = distance(original_intent, recovered_intent)"
   }
 }
 

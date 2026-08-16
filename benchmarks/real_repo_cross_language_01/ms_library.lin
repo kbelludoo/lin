@@ -1,0 +1,57 @@
+
+// LIN REPRESENTATION: ms_library
+// Source: Python ms_library.py
+// Semantic contracts: EXPLICIT
+
+@MODULE ms_library {
+  @CONSTANTS {
+    S = 1000
+    M = 60000
+    H = 3600000
+    D = 86400000
+    W = 604800000
+    Y = 31557600000
+    MO = 2629800000
+  }
+
+  @OPERATOR_CONTRACTS {
+    ROUND: {
+      strategy: BANKERS,
+      ties_to_even: true,
+      runtime: PYTHON
+    }
+    INT_DIVISION: {
+      mode: FLOOR,
+      negative_behavior: FLOOR
+    }
+    OVERFLOW: {
+      behavior: ARBITRARY_PRECISION,
+      max_int: UNBOUNDED
+    }
+  }
+
+  @FUNCTION parse {
+    INPUT: string
+    OUTPUT: float_ms
+    SEMANTIC: {
+      accepts: [int_with_unit, float_with_unit, bare_number, long_form]
+      edge_cases: {
+        empty_string: ERROR
+        too_long: ERROR (>100 chars)
+        invalid_unit: ERROR
+        NaN: float('nan')
+      }
+    }
+  }
+
+  @FUNCTION format_ms {
+    INPUT: float_ms
+    OUTPUT: string
+    SEMANTIC: {
+      pluralization: "ms_abs >= n * 1.5 → plural"
+      rounding: BANKERS (strategy=PYTHON_DEFAULT)
+      short_form: true
+      long_form: true
+    }
+  }
+}
