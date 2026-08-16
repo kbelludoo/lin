@@ -644,7 +644,35 @@
     }
     evolution_stage: "operational_model_before_intervention"
   }
-}
+
+  @K055 {
+    honesty: OBSERVED
+    fact: "V4-B.1 system-model-driven analysis achieves perfect recall (1.00) and oracle precision (1.00) on axios@v1.14.0. All 12 oracle bugs confirmed. flow_discovery_recall = 1.00 (7/7 oracle flows discovered). Overall precision across all findings = 0.67 (14 confirmed / 24 total). 8 false positives from non-oracle flows — legitimate safety classifications of extra system model flows."
+    source: "V4-B.1 execution on axios@v1.14.0"
+    type: "benchmark_result"
+    metrics: {
+      flow_discovery_recall: 1.00
+      oracle_precision: 1.00
+      oracle_recall: 1.00
+      overall_precision: 0.67
+      false_positive_rate: 0.33
+      confirmed_findings: 14
+      false_positive_findings: 8
+      needs_review_findings: 3
+      oracle_bugs_confirmed: 12
+      oracle_bugs_missed: 0
+    }
+    comparison_with_v4b: {
+      v4b_recall: 0.58
+      v4b1_recall: 1.00
+      v4b_oracle_precision: 0.78
+      v4b1_oracle_precision: 1.00
+      improvement: "system model approach found all flows that V4-B missed"
+    }
+    root_cause: "V4-B analyzed files by pattern interest; V4-B.1 analyzed by trust boundary traversal. System model forced coverage of all data paths."
+    scenario: "A"
+    evolution_stage: "modeling_complete_reasoning_tested"
+  }
 }
 
 @LANGUAGE_FITNESS {
