@@ -118,6 +118,27 @@
     source: "SELF_OPTIMIZE-04"
     type: "conditional_rule"
   }
+
+  @K014 {
+    honesty: OBSERVED
+    fact: "Rust is a Tier-1 candidate, not a proven winner; backend selection must be empirical"
+    source: "KERNEL_CANDIDATE_V1"
+    type: "architectural_rule"
+  }
+
+  @K015 {
+    honesty: OBSERVED
+    fact: "Language Discovery is a prerequisite for Kernel Candidate; environment scan before assumption"
+    source: "LIN_LANGUAGE_DISCOVERY v1.1"
+    type: "architectural_rule"
+  }
+
+  @K016 {
+    honesty: OBSERVED
+    fact: "Multi-backend architecture is a valid and potentially optimal outcome"
+    source: "KERNEL_CANDIDATE_V1"
+    type: "architectural_rule"
+  }
 }
 }
 
