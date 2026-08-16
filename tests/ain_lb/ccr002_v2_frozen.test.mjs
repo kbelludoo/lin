@@ -7,10 +7,11 @@ assert.ok(data.summary.B, 'Group B summary must exist');
 assert.ok(data.summary.A1, 'Group A1 summary must exist');
 assert.ok(data.summary.A2, 'Group A2 summary must exist');
 assert.ok(data.summary.A3, 'Group A3 summary must exist');
+assert.ok(data.summary.A4, 'Group A4 summary must exist');
 
 // 1. Verify Manifest Generation
 assert.ok(data.manifests.length >= 160, 'Must produce manifests for N=20 runs across tasks and groups');
-assert.equal(data.manifests[0].benchmark, 'CCR-002-v2.0');
+assert.equal(data.manifests[0].benchmark, 'CCR-002-v2.1');
 assert.equal(data.manifests[0].temperature, 0.0);
 
 // 2. Verify Adversarial & Safety Enforcement Metrics
