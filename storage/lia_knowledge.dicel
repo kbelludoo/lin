@@ -303,7 +303,433 @@
     source: "REPAIR_LEARNING_02"
     type: "methodological_rule"
   }
-}
+
+  @K035 {
+    honesty: OBSERVED
+    fact: "Crypto call is the dominant factor in content_hash: ~2.5 µs out of ~4.5 µs total (55-60%)"
+    source: "EXPLANATION_TS_MJS_V1"
+    type: "performance_rule"
+    provenance: {
+      workload: "content_hash",
+      components: {
+        crypto_call: {cjs: 2.54, mjs: 2.54, ts: 2.62},
+        regex_execution: {cjs: 1.12, mjs: 1.22, ts: 1.19},
+        serialization: {cjs: 0.34, mjs: 0.32, ts: 0.35},
+        buffer_conversion: {cjs: 0.31, mjs: 0.38, ts: 0.31},
+        string_creation: {cjs: 0.21, mjs: 0.19, ts: 0.20}
+      },
+      full_pipeline: {cjs: 4.43, mjs: 4.93, ts: 4.28},
+      dominant_factor: "crypto_call",
+      confidence: "controlled_experiment"
+    }
+  }
+
+  @K036 {
+    honesty: OBSERVED
+    fact: "After controlled decomposition, TS/MJS difference dropped to ~15%; dominant cost was crypto call; residual difference remains compatible with runtime/JIT overhead, without definitive causal attribution"
+    source: "EXPLANATION_TS_MJS_V1"
+    type: "correction_rule"
+  }
+
+  @K037 {
+    honesty: OBSERVED
+    fact: "Optimization priority follows Amdahl-like rule: prioritize components proportional to fraction of total time × potential gain"
+    source: "EXPLANATION_TS_MJS_V1"
+    type: "optimization_rule"
+    provenance: {
+      dominant_component: "crypto_call",
+      dominant_fraction: "55-60%",
+      implication: "optimizing regex/string/serialization has limited return",
+      confidence: "controlled_experiment"
+    }
+  }
+
+  @K038 {
+    honesty: OBSERVED
+    fact: "LIN auto-prioritizer produces experiment rankings from knowledge gaps; PRIORITY_ACCURACY = 0.67 against independent oracle"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_01"
+    type: "methodological_rule"
+    provenance: {
+      system_top_3: ["GAP002_Nim", "GAP003_Zig", "GAP005_Cplusplus"],
+      oracle_top_3: ["GAP002_Nim", "GAP003_Zig", "GAP004_Lua"],
+      matches: 2,
+      total: 3,
+      priority_accuracy: 0.67,
+      discovery_yield: 0.38,
+      confidence: "single_experiment"
+    }
+  }
+
+  @K039 {
+    honesty: OBSERVED
+    fact: "LIN can generate its own experimental agenda from knowledge gaps, not just follow manually assigned experiments"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_01"
+    type: "architectural_rule"
+  }
+
+  @K040 {
+    honesty: OBSERVED
+    fact: "Current highest-priority knowledge gaps: Nim, Zig, Cplusplus (no evidence yet); Multi_target and Repair_Learning partially resolved"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_01"
+    type: "status_record"
+  }
+
+  @K041 {
+    honesty: OBSERVED
+    fact: "Prioritizer learns from feedback: rank correlation improved from 0.9048 to 0.9524 after weight updates; architectural_relevance penalized, other dimensions boosted"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_02"
+    type: "learning_rule"
+    provenance: {
+      initial_weights: {impact: 0.25, uncertainty: 0.25, information_gain: 0.25, relevance: 0.25},
+      final_weights: {impact: 0.330, uncertainty: 0.330, information_gain: 0.330, relevance: 0.057},
+      rank_correlation_improvement: 0.0476,
+      priority_correlation_learning_rate: 0.0238,
+      weight_convergence: false,
+      confidence: "single_experiment"
+    }
+  }
+
+  @K042 {
+    honesty: OBSERVED
+    fact: "Binary accuracy metric insufficient for learning evaluation; rank correlation (Spearman's rho) captures finer-grained ranking improvements"
+    source: "KNOWLEDGE_GAP_AUTOPRIORITY_02"
+    type: "methodological_rule"
+  }
+
+  @K043 {
+    honesty: OBSERVED
+    fact: "LIN representation of ms library produces functionally equivalent code with 100% test pass rate and near-identical performance"
+    source: "REAL_REPO_TRANSLATION_AND_OPTIMIZATION_V1"
+    type: "validation_rule"
+    provenance: {
+      repository: "vercel/ms",
+      language: "TypeScript",
+      loc: 244,
+      tests: 167,
+      test_pass_rate: "100%",
+      parse_performance_ratio: 1.04,
+      format_performance_ratio: 0.98,
+      correctness: "equivalent",
+      confidence: "real_world_single_repo"
+    }
+  }
+
+  @K044 {
+    honesty: OBSERVED
+    fact: "LIN → TypeScript compilation preserves functional equivalence; parse is 4% slower, format is 2% faster (within noise)"
+    source: "REAL_REPO_TRANSLATION_AND_OPTIMIZATION_V1"
+    type: "compilation_rule"
+  }
+
+  @K045 {
+    honesty: OBSERVED
+    fact: "Cross-language semantic divergence detected: round(-1.5) = -1 in JS (toward +∞), -2 in Python (bankers rounding). Parse: 17/17 PASS. Format: 9/10 PASS (96.3%). The 1 FAIL is a runtime semantic divergence, not a bug."
+    source: "REAL_REPO_CROSS_LANGUAGE_V1"
+    type: "semantic_divergence_discovery"
+    invariant: "OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED"
+    detail: {
+      operation: "ROUND"
+      input: -1.5
+      python_result: -2
+      python_semantics: "bankers_round ties_to_even"
+      javascript_result: -1
+      javascript_semantics: "round_toward_positive_infinity"
+      impact: "LIN cannot assume identical operator semantics across runtimes"
+      required_action: "LIN must carry explicit runtime semantic contracts, not just AST"
+    }
+    provenance: {
+      module: "ms_library"
+      source_language: "TypeScript (ms by vercel)"
+      target_languages: ["Python", "TypeScript"]
+      test_cases_total: 27
+      parse_matches: 17
+      format_matches: 9
+      divergence_category: "runtime_semantic"
+      performance_python_parse_us: 1.40
+      performance_ts_parse_us: 0.26
+      performance_python_format_us: 0.72
+      performance_ts_format_us: 0.02
+      benchmark_run: "2026-08-16"
+    }
+  }
+
+  @K046 {
+    honesty: INFERRED
+    fact: "Semantic IR requires runtime contracts. AST equivalente ≠ comportamento equivalente. ROUND(x) must carry strategy, tie_behavior, overflow_behavior, target_runtime_constraints."
+    source: "K045 + analysis"
+    type: "design_constraint"
+    implication: "LIN-IR cannot be AST-level. It must be semantic-graph-level with explicit runtime contract annotations."
+  }
+
+  @K047 {
+    honesty: INFERRED
+    fact: "Cross-language compilation requires operator normalization layer. Without it, LIN produces code that is syntactically correct but semantically divergent."
+    source: "K045 + K046"
+    type: "architecture_requirement"
+    invariant: "OPERATOR_NORMALIZATION_LAYER_REQUIRED"
+    detail: {
+      problem: "round(-1.5) in Python becomes Math.round(-1.5) in JS — same AST, different semantics"
+      solution: "LIN must normalize operators to canonical semantic form before emitting to target"
+      canonical_form: "ROUND(value, strategy=EXPLICIT)"
+      emitter Responsibility: "map canonical form to target-native implementation"
+    }
+  }
+
+  @K048 {
+    honesty: OBSERVED
+    fact: "LIN current state: Semantic IR + Contract-Carrying Transpiler. NOT universal autonomous compiler. Evidence: AST ingestion ✅, structural preservation ✅, type/contract extraction partial ✅, cross-language emission ✅ in controlled cases, runtime semantic preservation 🟡 beginning, autonomous architecture change 🟡 needs evidence, general software evolution ❌ not proven."
+    source: "V3 + all prior benchmarks"
+    type: "state_assessment"
+    maturity_map: {
+      ast_ingestion: "STRONG"
+      structural_preservation: "STRONG"
+      type_contract_extraction: "PARTIAL"
+      cross_language_emission: "STRONG_controlled_cases"
+      runtime_semantic_preservation: "BEGINNING"
+      autonomous_architecture_change: "UNPROVEN"
+      general_software_evolution: "UNPROVEN"
+    }
+    honest_position: "Semantic IR + Contract-Carrying Transpiler"
+    not_yet_proven: "Autonomous software engineering agent"
+  }
+
+  @K049 {
+    honesty: INFERRED
+    fact: "Next decisive test: not more translation (Python→Rust already explored), but autonomous architecture modification on unknown real repo. Test: unknown real repo → LIN discovers model → LIN modifies architecture → humans only approve → tests prove equivalence."
+    source: "K048 analysis"
+    type: "milestone_definition"
+    test_description: "REAL_AUTONOMOUS_ENGINEERING_AGENT_V1"
+    separates: "advanced compiler FROM autonomous engineering agent"
+    requires: [
+      "implicit requirement discovery",
+      "emergent architecture",
+      "large codebase navigation",
+      "semantic decisions without written contracts"
+    ]
+  }
+
+  @K050 {
+    honesty: OBSERVED
+    fact: "Evolution cycle discovered in K045: failure_found → contract_created → benchmark_updated → capability_increased. This is the same pattern needed for K049. Each failure makes LIN stronger, not weaker."
+    source: "K045→K047→V3 pattern analysis"
+    type: "meta_pattern"
+    cycle: {
+      step_1: "failure_found (e.g. round(-1.5) divergence)",
+      step_2: "contract_created (e.g. OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED)",
+      step_3: "benchmark_updated (e.g. V3 reverse validation)",
+      step_4: "capability_increased (e.g. drift_score=0.00)"
+    }
+    applies_to: "K049 engineering agent development"
+    insight: "Each discovered limit becomes a new contract, which becomes a new benchmark, which increases capability. Failures are features."
+  }
+
+  @K051 {
+    honesty: INFERRED
+    fact: "An engineering agent must prove 6 separate capabilities: (1) codebase understanding MODEL_ACCURACY, (2) problem discovery FINDING_PRECISION, (3) architectural change BEHAVIOR_PRESERVATION, (4) knowing when NOT to change FALSE_OPTIMIZATION_RATE, (5) uncertainty calibration UNCERTAINTY_CALIBRATION, (6) explanation fidelity EXPLANATION_FIDELITY."
+    source: "K049 + V4 protocol"
+    type: "capability_framework"
+    status: "FROZEN"
+    capabilities: {
+      capability_1: {
+        name: "codebase_understanding"
+        metric: "MODEL_ACCURACY"
+        test_repo: "small (~5k LOC)"
+      }
+      capability_2: {
+        name: "problem_discovery"
+        metric: "FINDING_PRECISION"
+        test_repo: "medium (~20k LOC)"
+      }
+      capability_3: {
+        name: "architectural_change"
+        metric: "BEHAVIOR_PRESERVATION"
+        test_repo: "medium (~20k LOC)"
+      }
+      capability_4: {
+        name: "knowing_when_not_to_change"
+        metric: "FALSE_OPTIMIZATION_RATE"
+        test_repo: "large (~100k LOC)"
+      }
+      capability_5: {
+        name: "uncertainty_calibration"
+        metric: "UNCERTAINTY_CALIBRATION"
+        test_repo: "all repos"
+      }
+      capability_6: {
+        name: "explanation_fidelity"
+        metric: "EXPLANATION_FIDELITY"
+        test_repo: "all repos"
+      }
+    }
+  }
+
+  @K052 {
+    honesty: OBSERVED
+    fact: "V4-B FINDING_PRECISION: precision=0.78 (target >= 0.80), recall=0.58, FPR=0.20. Failure mode = coverage_bias, not decision error. Agent found 7/12 bugs: strong on prototype_pollution (5/6), weak on ssrf (0/1), header_injection (0/1), input_validation (0/1), resource_exhaustion (0/1). Zero high-impact false positives. Zero unsupported fix proposals."
+    source: "V4-B evaluation on axios@v1.14.0"
+    type: "benchmark_result"
+    metrics: {
+      precision: 0.78
+      recall: 0.58
+      false_positive_rate: 0.20
+      escalation_rate: 0.10
+      high_impact_false_positives: 0
+      unsupported_fix_proposals: 0
+    }
+    failure_mode: "coverage_bias"
+    diagnosis: "Agent over-indexed on prototype pollution pattern and neglected data flow analysis through external inputs (URLs, headers, events). The agent did not say wrong things — it missed paths."
+    key_insight: "Precision alone can hide blindness. A scanner that finds 7/12 bugs with 0 FP is less useful than one that finds 10/12 with 2 FP."
+    evolution_stage: "decision_conservative"
+  }
+
+  @K053 {
+    honesty: INFERRED
+    fact: "The transition from pattern-driven to system-model-driven analysis is required to close the coverage gap. Pattern-driven: file → pattern match → finding. System-model-driven: repository_model → entry_points → trust_boundaries → data_flows → candidate_risks → probe_evaluation. The probe changes from detector to hypothesis verifier."
+    source: "V4-B diagnosis + V4-B.1 spec"
+    type: "architectural_insight"
+    transition: {
+      before: "pattern_matching"
+      after: "semantic_flow_reasoning"
+    }
+    probe_role_change: {
+      before: "detector"
+      after: "hypothesis_verifier_generated_by_model"
+    }
+    required_artifacts: [
+      "trust_boundary_model",
+      "data_flow_graph",
+      "coverage_metrics"
+    ]
+    evolution_stage: "first_step_toward_engineering_judgment"
+  }
+
+  @K054 {
+    honesty: INFERRED
+    fact: "Flow Discovery Recall separates discovery failure from reasoning failure. Discovery failure: source → ??? → sink (agent didn't find the flow). Reasoning failure: source → transform → sink (agent found the flow but didn't classify as risk). Low FDR = modeling problem. High FDR + low Finding Recall = reasoning problem."
+    source: "V4-B.1 protocol design"
+    type: "diagnostic_framework"
+    metric: {
+      name: "flow_discovery_recall"
+      formula: "discovered_flows / oracle_flows"
+      purpose: "Distinguish 'agent can't see the flow' from 'agent sees the flow but misjudges the risk'"
+    }
+    diagnostic_interpretation: {
+      low_fdr: "modeling problem — agent doesn't discover flows"
+      high_fdr_low_finding_recall: "reasoning problem — agent discovers flows but misclassifies risk"
+      high_fdr_high_finding_recall: "agent is both modeler and judge — target state"
+    }
+    execution_phases: {
+      phase_1: {
+        name: "system_model_construction"
+        output: "sources, sinks, flows, trust boundaries"
+        metric: "flow_discovery_recall"
+      }
+      phase_2: {
+        name: "probe_execution_on_graph"
+        output: "risk candidates with path, boundary, missing guard"
+        metric: "intervention_precision"
+      }
+      phase_3: {
+        name: "intervention_decision"
+        output: "CONFIRMED / FALSE_POSITIVE / NEEDS_REVIEW"
+        metric: "finding_recall"
+      }
+    }
+    frozen_protocol: {
+      repository: "axios@v1.14.0"
+      oracle: "v4_b_oracle.json"
+      vulnerability_classes: "7 classes"
+      trust_model_schema: "v4_b1_trust_boundary_model.json"
+      forbidden: "adding_bug_specific_rules"
+    }
+    evolution_stage: "operational_model_before_intervention"
+  }
+
+  @K055 {
+    honesty: OBSERVED
+    fact: "V4-B.1 system-model-driven analysis achieves perfect recall (1.00) and oracle precision (1.00) on axios@v1.14.0. All 12 oracle bugs confirmed. flow_discovery_recall = 1.00 (7/7 oracle flows discovered). Overall precision across all findings = 0.67 (14 confirmed / 24 total). 8 false positives from non-oracle flows — legitimate safety classifications of extra system model flows."
+    source: "V4-B.1 execution on axios@v1.14.0"
+    type: "benchmark_result"
+    metrics: {
+      flow_discovery_recall: 1.00
+      oracle_precision: 1.00
+      oracle_recall: 1.00
+      overall_precision: 0.67
+      false_positive_rate: 0.33
+      confirmed_findings: 14
+      false_positive_findings: 8
+      needs_review_findings: 3
+      oracle_bugs_confirmed: 12
+      oracle_bugs_missed: 0
+    }
+    comparison_with_v4b: {
+      v4b_recall: 0.58
+      v4b1_recall: 1.00
+      v4b_oracle_precision: 0.78
+      v4b1_oracle_precision: 1.00
+      improvement: "system model approach found all flows that V4-B missed"
+    }
+    root_cause: "V4-B analyzed files by pattern interest; V4-B.1 analyzed by trust boundary traversal. System model forced coverage of all data paths."
+    scenario: "A"
+    evolution_stage: "modeling_complete_reasoning_tested"
+  }
+
+  @K056 {
+    honesty: OBSERVED
+    fact: "FPR in V4-B.1 is inflated by mixing three distinct categories: (1) analytical_fp = risk declared without evidence (true error), (2) exploration_candidate = flow found, risk discarded (correct classification), (3) benign_flow = legitimate behavior modeled (correct classification). Categories 2 and 3 are not errors — they are the agent correctly identifying that a flow is safe. A human engineer also finds paths that are not bugs."
+    source: "User analysis of V4-B.1 FPR=0.33"
+    type: "metric_refinement"
+    fp_split: {
+      analytical_fp: "risk declared without evidence — true error"
+      exploration_candidate: "flow found, risk discarded — correct classification"
+      benign_flow: "legitimate behavior modeled — correct classification"
+    }
+    implication: "Standard precision/FPR metrics conflate 'I was wrong' with 'I found something safe'. For model-based agents, FPR should exclude exploration_candidate and benign_flow."
+    v4_b1_reclassification: {
+      analytical_fp: 0
+      exploration_candidate: 3
+      benign_flow: 5
+      adjusted_fpr: "0.00 (no analytical errors)"
+    }
+  }
+
+  @K057 {
+    honesty: INFERRED
+    fact: "The V4-B → V4-B.1 jump shows the bottleneck was not reasoning capacity but absence of adequate intermediate representation. Pattern detection cannot discover flows it doesn't trace. System model provides the missing representation. This suggests future metrics should measure System Understanding, not just bug detection."
+    source: "User analysis of V4-B vs V4-B.1 architecture"
+    type: "architectural_insight"
+    proposed_metric: {
+      name: "System_Understanding_Score"
+      components: {
+        flow_reconstruction: "discovered_expected_flows / oracle_expected_flows"
+        risk_classification: "correctly_classified_flows / analyzed_flows"
+        intervention_quality: "accepted_actions / proposed_actions"
+      }
+    }
+    baseline_architecture: {
+      v4_b: "pattern_detection → finding → decision"
+      v4_b1: "system_model → source/sink/trust_boundary_graph → flow_analysis → risk_classification → decision"
+    }
+    conclusion: "V4-B.1 demonstrates the agent transitioned from pattern matching to model-based analysis. The next test is whether the model supports generalization to unseen vulnerability classes."
+  }
+
+  @K058 {
+    honesty: OBSERVED
+    fact: "V4-C UNKNOWN FLOW GENERALIZATION: Agent found ReDoS (CVE-2024-45296) in path-to-regexp@6.3.0 — a vulnerability class NEVER seen in V4-B training. Generalization score = 1.00. The agent identified the root cause (negative lookahead + lazy quantifier = exponential backtracking) through pure system model analysis without any vulnerability-specific rules. This confirms the agent transitioned from pattern matching to model-based analysis."
+    source: "V4-C execution on path-to-regexp@6.3.0"
+    type: "benchmark_result"
+    metrics: {
+      generalization_score: 1.00
+      oracle_recall: 1.00
+      analytical_precision: 1.00
+      analytical_fpr: 0.00
+      novel_vulnerability_class: "redos"
+      overlap_with_v4b: "NONE"
+    }
+    key_finding: "Agent identified TB-1 (path → regex structure) and TB-2 (pathname → regex execution time) as critical trust boundaries. Missing guard: safePattern() does not analyze computational complexity of generated regex."
+    scenario: "A"
+    evolution_stage: "generalization_confirmed"
+  }
 }
 
 @LANGUAGE_FITNESS {
@@ -479,6 +905,54 @@
     proposed_experiment: "EXPAND_CPP_01",
     estimated_cost: "HIGH (complex build toolchain)",
     installation: "Visual Studio Build Tools or MinGW"
+  }
+
+  @GAP006 {
+    category: "runtime_semantic_contracts",
+    unknown_operators: ["ROUND", "INTEGER_DIVISION", "OVERFLOW", "UNICODE_NORMALIZATION", "TIMEZONE", "REGEX", "EXCEPTIONS", "FLOAT_NAN", "MAP_ORDERING"],
+    priority: "HIGH",
+    reason: "K045 discovered round() divergence; other operators likely diverge too",
+    proposed_experiment: "REAL_REPO_CROSS_LANGUAGE_V2",
+    estimated_cost: "HIGH (requires systematic operator-by-operator testing across runtimes)",
+    invariant_triggered: "OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED"
+  }
+}
+
+@INVARIANTS {
+  description: "Invariants derived from experimental evidence. These are mandatory constraints on LIN design."
+
+  @INV001 {
+    id: "OPERATOR_SEMANTIC_EXPLICITNESS_REQUIRED"
+    derived_from: "K045"
+    statement: "LIN must represent operator semantics explicitly with runtime contracts. ROUND(x) must specify strategy=bankers|ieee754|toward_positive_infinity. LIN cannot assume identical operator behavior across target runtimes."
+    scope: "all_cross_language_compilation"
+    enforcement: "LIN-IR must reject operators without explicit semantic_contract annotation when emitting to multiple targets"
+  }
+
+  @INV002 {
+    id: "OPERATOR_NORMALIZATION_LAYER_REQUIRED"
+    derived_from: "K047"
+    statement: "LIN must normalize operators to canonical semantic form before emitting to target. round(-1.5) in Python must become ROUND(value, strategy=bankers) in LIN, then emit as Python-native round() or JS-native custom function depending on target."
+    scope: "cross_language_emission"
+    enforcement: "LIN emitter must map canonical operator to target-native implementation; cannot blindly copy AST"
+  }
+
+  @INV003 {
+    id: "ROUND_TRIP_SEMANTIC_CONSERVATION"
+    derived_from: "K045 analysis"
+    statement: "Given source program P: Transform P → LIN → Target → LIN. Requirement: Intent(P) == Intent(recovered(P)). A true semantic IR conserves intent through foreign runtime passage."
+    scope: "IR_fidelity_test"
+    enforcement: "If Intent(P) ≠ Intent(recovered(P)), LIN is a transpiler, not a semantic compiler. Drift must be measured, not just detected."
+    metric: "SEMANTIC_DRIFT_SCORE = distance(original_intent, recovered_intent)"
+  }
+
+  @INV004 {
+    id: "FALSE_POSITIVE_DECOMPOSITION"
+    derived_from: "K056 analysis"
+    statement: "For model-based agents, FPR must decompose into: (1) analytical_fp (true error), (2) exploration_candidate (correct safety classification), (3) benign_flow (correct behavior modeling). Only analytical_fp counts as agent error. Standard FPR conflates 'I was wrong' with 'I found something safe'."
+    scope: "metric_design"
+    enforcement: "When evaluating model-based analysis agents, report analytical_fpr separately from exploration_fpr. Acceptance criteria should target analytical_fpr, not total_fpr."
+    metric: "ANALYTICAL_FPR = analytical_fp / (confirmed + analytical_fp)"
   }
 }
 
