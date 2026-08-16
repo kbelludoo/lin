@@ -395,6 +395,31 @@
     source: "KNOWLEDGE_GAP_AUTOPRIORITY_02"
     type: "methodological_rule"
   }
+
+  @K043 {
+    honesty: OBSERVED
+    fact: "LIN representation of ms library produces functionally equivalent code with 100% test pass rate and near-identical performance"
+    source: "REAL_REPO_TRANSLATION_AND_OPTIMIZATION_V1"
+    type: "validation_rule"
+    provenance: {
+      repository: "vercel/ms",
+      language: "TypeScript",
+      loc: 244,
+      tests: 167,
+      test_pass_rate: "100%",
+      parse_performance_ratio: 1.04,
+      format_performance_ratio: 0.98,
+      correctness: "equivalent",
+      confidence: "real_world_single_repo"
+    }
+  }
+
+  @K044 {
+    honesty: OBSERVED
+    fact: "LIN → TypeScript compilation preserves functional equivalence; parse is 4% slower, format is 2% faster (within noise)"
+    source: "REAL_REPO_TRANSLATION_AND_OPTIMIZATION_V1"
+    type: "compilation_rule"
+  }
 }
 }
 
