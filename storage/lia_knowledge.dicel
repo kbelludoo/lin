@@ -326,9 +326,22 @@
 
   @K036 {
     honesty: OBSERVED
-    fact: "TypeScript vs MJS performance difference is smaller than previously observed when workload is controlled (TS 4.28µs vs MJS 4.93µs = 15% difference)"
+    fact: "After controlled decomposition, TS/MJS difference dropped to ~15%; dominant cost was crypto call; residual difference remains compatible with runtime/JIT overhead, without definitive causal attribution"
     source: "EXPLANATION_TS_MJS_V1"
     type: "correction_rule"
+  }
+
+  @K037 {
+    honesty: OBSERVED
+    fact: "Optimization priority follows Amdahl-like rule: prioritize components proportional to fraction of total time × potential gain"
+    source: "EXPLANATION_TS_MJS_V1"
+    type: "optimization_rule"
+    provenance: {
+      dominant_component: "crypto_call",
+      dominant_fraction: "55-60%",
+      implication: "optimizing regex/string/serialization has limited return",
+      confidence: "controlled_experiment"
+    }
   }
 }
 }
