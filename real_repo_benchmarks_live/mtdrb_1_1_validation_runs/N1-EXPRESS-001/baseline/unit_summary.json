@@ -1,0 +1,78 @@
+{
+  "verified": true,
+  "cycles_count": 2,
+  "tokens_until_verified": 5335,
+  "telemetry_accounting_verified": true,
+  "cycles": [
+    {
+      "cycle_metadata": {
+        "model_id": "gemini-1.5-pro-002",
+        "provider": "google-vertex",
+        "request_id": "chatcmpl-9ce644d9-3548-46bf-ae61-aefe4960379c",
+        "seed": 42,
+        "repo_id": "repo_08_express",
+        "mutation_id": "N1-EXPRESS-001",
+        "tier": "N1",
+        "cycle_number": 1,
+        "arm": "baseline",
+        "timestamp_utc": "2026-08-18T01:33:54.500Z",
+        "latency_ms": 0
+      },
+      "token_accounting": {
+        "source": "provider_usage",
+        "prompt_tokens": 2577,
+        "completion_tokens": 110,
+        "cached_tokens": 0,
+        "total_tokens": 2687,
+        "mathematical_integrity_valid": true
+      },
+      "accumulated_tokens": 2687,
+      "cryptographic_hashes": {
+        "prompt_sha256": "33af849285bf3586ea2fd8122a810f17fe1f810f71c1abbff14c674d7371d087",
+        "diagnostic_sha256": "0d1dd2b0dd0e02d02402657cff3f9eef440bd460fbd5b4539c8c93bbb53906cf",
+        "response_sha256": "9ad01487be67692d84074779c1c5c803dbf6d0a175de262154449c3453942d4f",
+        "patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "failure_signature": "7db77f540215c04f48f01a7bf15309e8698780b72b3018c6daea417ffb4f239c"
+      },
+      "oracle": {
+        "result": "FAIL",
+        "t_old_pass": false
+      }
+    },
+    {
+      "cycle_metadata": {
+        "model_id": "gemini-1.5-pro-002",
+        "provider": "google-vertex",
+        "request_id": "chatcmpl-ca0f138e-bad6-49ac-9cbc-bb97f9ce2697",
+        "seed": 42,
+        "repo_id": "repo_08_express",
+        "mutation_id": "N1-EXPRESS-001",
+        "tier": "N1",
+        "cycle_number": 2,
+        "arm": "baseline",
+        "timestamp_utc": "2026-08-18T01:33:54.502Z",
+        "latency_ms": 0
+      },
+      "token_accounting": {
+        "source": "provider_usage",
+        "prompt_tokens": 2538,
+        "completion_tokens": 110,
+        "cached_tokens": 0,
+        "total_tokens": 2648,
+        "mathematical_integrity_valid": true
+      },
+      "accumulated_tokens": 5335,
+      "cryptographic_hashes": {
+        "prompt_sha256": "e8e0b60b707df002e52107cb487cd103eca0db192c2a62005ac302d9134c57f9",
+        "diagnostic_sha256": "2329692d811b1faaa7bf272ccfc802c6161ffb22044b2d377210ce71d2d0c9d5",
+        "response_sha256": "9ad01487be67692d84074779c1c5c803dbf6d0a175de262154449c3453942d4f",
+        "patch_sha256": "c12eabb0fbb92baf6961ba5106e5e336e912ead494d4ae66be9a22b6e2d2b895",
+        "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "oracle": {
+        "result": "PASS",
+        "t_old_pass": true
+      }
+    }
+  ]
+}

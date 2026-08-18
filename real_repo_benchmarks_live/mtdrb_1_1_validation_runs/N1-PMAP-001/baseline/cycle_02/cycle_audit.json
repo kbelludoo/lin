@@ -1,0 +1,35 @@
+{
+  "cycle_metadata": {
+    "model_id": "gemini-1.5-pro-002",
+    "provider": "google-vertex",
+    "request_id": "chatcmpl-9bf1c718-13ee-4388-aaa1-2a12409ba74f",
+    "seed": 42,
+    "repo_id": "repo_02_p_map",
+    "mutation_id": "N1-PMAP-001",
+    "tier": "N1",
+    "cycle_number": 2,
+    "arm": "baseline",
+    "timestamp_utc": "2026-08-18T01:33:51.296Z",
+    "latency_ms": 1
+  },
+  "token_accounting": {
+    "source": "provider_usage",
+    "prompt_tokens": 2537,
+    "completion_tokens": 110,
+    "cached_tokens": 0,
+    "total_tokens": 2647,
+    "mathematical_integrity_valid": true
+  },
+  "accumulated_tokens": 5330,
+  "cryptographic_hashes": {
+    "prompt_sha256": "5b22759b15d37e11bfffee375503dfe8f0213be97be6353449e26855b8b3f2a2",
+    "diagnostic_sha256": "581b35a26ba8e8efe9faac3b99b4d6c139ac6c730c27550a4a7c5c05957fd1e5",
+    "response_sha256": "9ad01487be67692d84074779c1c5c803dbf6d0a175de262154449c3453942d4f",
+    "patch_sha256": "0e69e3c475a16e211b2b734ec5bbaf8704cec990532d3e631da34e30c6f8e1f7",
+    "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "oracle": {
+    "result": "PASS",
+    "t_old_pass": true
+  }
+}
