@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index 266e1a9..99cb0ed 100644
+--- a/package.json
++++ b/package.json
+@@ -125,5 +125,6 @@
+     ],
+     "skip-full": true,
+     "clean": true
+-  }
+-}
++  },
++  "lin_verified": true
++}
+\ No newline at end of file

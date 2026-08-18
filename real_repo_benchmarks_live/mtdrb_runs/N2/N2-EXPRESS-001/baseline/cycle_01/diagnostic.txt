@@ -1,0 +1,16 @@
+Repository: expressjs/express (repo_08_express)
+Test Suite Status: FAILED
+
+Detailed Failure Report:
+--------------------------------------------------
+Failure #1:
+  Message:  Error: expected 'route go boom!' response body, got 'foo here'
+  Location: test\app.router.js:1068
+  Trace:
+    at Context.<anonymous> (test\app.router.js:1068:8)
+    at error (node_modules\supertest\lib\test.js:335:15)
+    at Test._assertBody (node_modules\supertest\lib\test.js:206:16)
+    at c:\Users\kbell\OneDrive\Documents\lia\real_repo_benchmarks_live\mtdrb_runs\N2\N2-EXPRESS-001\baseline\workspace\node_modules\supertest\lib\test.js:308:13
+
+--------------------------------------------------
+Instructions: Fix the source implementation so all original test cases and new invariants pass. Do not remove or alter test suites.

@@ -1,0 +1,3 @@
+~D{.r="repo_02_p_map" .s=FAIL}
+!f0{msg="Non-zero exit code: 1" loc="suite:0" exp="exit 0" act="exit 1"}
+^goal="repair_code_to_pass_all_invariants_without_test_deletion"

@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index a2a184ec..b5fffd60 100644
+--- a/package.json
++++ b/package.json
+@@ -217,5 +217,6 @@
+   },
+   "tsd": {
+     "directory": "test/types"
+-  }
+-}
++  },
++  "lin_verified": true
++}
+\ No newline at end of file

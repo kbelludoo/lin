@@ -1,0 +1,136 @@
+{
+  "manifest_version": "GATE_0_PREFLIGHT_V1",
+  "timestamp_utc": "2026-08-17T23:56:04.082Z",
+  "environment": {
+    "os": "win32",
+    "arch": "x64",
+    "node": "v24.19.0",
+    "cwd": "c:\\Users\\kbell\\OneDrive\\Documents\\lia",
+    "timestamp_utc": "2026-08-17T23:47:10.693Z"
+  },
+  "total_manifest_repositories": 10,
+  "admissible_sample_size": 2,
+  "incompatible_sample_size": 8,
+  "entries": [
+    {
+      "repo_id": "repo_01_ms",
+      "repo_name": "vercel/ms",
+      "ecosystem": "JAVASCRIPT",
+      "target_commit_ref": "v2.1.3",
+      "actual_commit_sha": "4ff48cec099f0514c3e9bbca18706c9c21122bfb",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": false,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Build/dependencies failed"
+    },
+    {
+      "repo_id": "repo_02_p_map",
+      "repo_name": "sindresorhus/p-map",
+      "ecosystem": "JAVASCRIPT",
+      "target_commit_ref": "v7.0.3",
+      "actual_commit_sha": "2ba3a002acac080c60c47ca1dfa2fad3e17f5b7c",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": true,
+      "status": "HEALTHY_ADMISSIBLE",
+      "incompatibility_reason": null
+    },
+    {
+      "repo_id": "repo_03_execa",
+      "repo_name": "sindresorhus/execa",
+      "ecosystem": "JAVASCRIPT",
+      "target_commit_ref": "v9.5.2",
+      "actual_commit_sha": "99d1741d2525eca71b986282148bbf2983356428",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Test suite failed (exit code: 1)"
+    },
+    {
+      "repo_id": "repo_04_got",
+      "repo_name": "sindresorhus/got",
+      "ecosystem": "TYPESCRIPT",
+      "target_commit_ref": "v14.4.5",
+      "actual_commit_sha": "a7b5aec57a0245cafbd21696d52cd6bd6c95628a",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Test suite failed (exit code: 2)"
+    },
+    {
+      "repo_id": "repo_05_nanoid",
+      "repo_name": "ai/nanoid",
+      "ecosystem": "JAVASCRIPT",
+      "target_commit_ref": "5.0.9",
+      "actual_commit_sha": "65a38ac63a0709c420b9de30b15511b84e87c423",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Test suite failed (exit code: 1)"
+    },
+    {
+      "repo_id": "repo_06_axios",
+      "repo_name": "axios/axios",
+      "ecosystem": "JAVASCRIPT",
+      "target_commit_ref": "v1.7.9",
+      "actual_commit_sha": "b2cb45d5a533a5465c99559b16987e4d5fc08cbc",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Test suite failed (exit code: 1)"
+    },
+    {
+      "repo_id": "repo_07_fastify",
+      "repo_name": "fastify/fastify",
+      "ecosystem": "JAVASCRIPT",
+      "target_commit_ref": "v5.2.1",
+      "actual_commit_sha": "eafe0aa25ced21033310ae708b33e645ffb0d532",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Test suite failed (exit code: 1)"
+    },
+    {
+      "repo_id": "repo_08_express",
+      "repo_name": "expressjs/express",
+      "ecosystem": "JAVASCRIPT",
+      "target_commit_ref": "4.21.2",
+      "actual_commit_sha": "1faf228935aa0a13111f92c28ee795be64ce3f0f",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": true,
+      "status": "HEALTHY_ADMISSIBLE",
+      "incompatibility_reason": null
+    },
+    {
+      "repo_id": "repo_09_bytecount",
+      "repo_name": "BurntSushi/bytecount",
+      "ecosystem": "RUST",
+      "target_commit_ref": "0.6.8",
+      "actual_commit_sha": null,
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": false,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Directory does not exist or clone was missing"
+    },
+    {
+      "repo_id": "repo_10_requests",
+      "repo_name": "psf/requests",
+      "ecosystem": "PYTHON",
+      "target_commit_ref": "v2.32.3",
+      "actual_commit_sha": "0e322af87745eff34caffe4df68456ebc20d9068",
+      "environment_hash": "9501b4a1383533561ac19f47fded9c09b94e327ee39b95276c1b4ac810941daa",
+      "baseline_build_pass": true,
+      "baseline_tests_pass": false,
+      "status": "INCOMPATIBLE_WITH_PROTOCOL",
+      "incompatibility_reason": "Test suite failed (exit code: 1)"
+    }
+  ]
+}

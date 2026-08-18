@@ -1,0 +1,105 @@
+{
+  "experiment_type": "ADMISSIBLE_PAIRED_TRI_ARM_EVALUATION",
+  "admissible_project_units_n": 2,
+  "total_physical_execution_runs": 180,
+  "methodological_boundary": "n=2 project units; repeated measures (30 runs per arm) provide high precision per unit but strictly bounded cross-project generalization",
+  "table1_agent_quality": [
+    {
+      "repo_id": "repo_02_p_map",
+      "repo_name": "sindresorhus/p-map",
+      "arm1_lin": {
+        "first_pass_success": false,
+        "repair_efficiency_attempts": 1,
+        "invariant_preservation_pass": false,
+        "estimated_tokens_consumed": 14200,
+        "tool_calls": 3
+      },
+      "arm2_baseline_agent": {
+        "first_pass_success": false,
+        "repair_efficiency_attempts": 1,
+        "invariant_preservation_pass": false,
+        "estimated_tokens_consumed": 94800,
+        "tool_calls": 11
+      }
+    },
+    {
+      "repo_id": "repo_08_express",
+      "repo_name": "expressjs/express",
+      "arm1_lin": {
+        "first_pass_success": false,
+        "repair_efficiency_attempts": 1,
+        "invariant_preservation_pass": false,
+        "estimated_tokens_consumed": 14200,
+        "tool_calls": 3
+      },
+      "arm2_baseline_agent": {
+        "first_pass_success": false,
+        "repair_efficiency_attempts": 1,
+        "invariant_preservation_pass": false,
+        "estimated_tokens_consumed": 94800,
+        "tool_calls": 11
+      }
+    }
+  ],
+  "table2_artifact_quality": [
+    {
+      "repo_id": "repo_02_p_map",
+      "repo_name": "sindresorhus/p-map",
+      "metric_name": "THROUGHPUT_OPS_SEC",
+      "metric_direction": "higher_is_better",
+      "sample_size_per_arm": 30,
+      "arm0_original": {
+        "mean": 339290.54,
+        "median": 347060.74,
+        "std": 24896.39
+      },
+      "arm1_lin": {
+        "mean": 346459.35,
+        "median": 347200.53,
+        "std": 14685.21,
+        "delta_vs_orig_pct": 2.11
+      },
+      "arm2_baseline_agent": {
+        "mean": 351158.65,
+        "median": 354788.89,
+        "std": 14719.8,
+        "delta_vs_orig_pct": 3.5
+      },
+      "valid_comparison_verdict": {
+        "baseline_t_old_pass": true,
+        "lin_t_old_pass": false,
+        "objectively_improved": false
+      }
+    },
+    {
+      "repo_id": "repo_08_express",
+      "repo_name": "expressjs/express",
+      "metric_name": "P95_LATENCY_MS",
+      "metric_direction": "lower_is_better",
+      "sample_size_per_arm": 30,
+      "arm0_original": {
+        "mean": 27.94,
+        "median": 27.92,
+        "std": 1.38
+      },
+      "arm1_lin": {
+        "mean": 29.31,
+        "median": 28.86,
+        "std": 2.18,
+        "delta_vs_orig_pct": 4.89
+      },
+      "arm2_baseline_agent": {
+        "mean": 28.74,
+        "median": 28.63,
+        "std": 1.8,
+        "delta_vs_orig_pct": 2.88
+      },
+      "valid_comparison_verdict": {
+        "baseline_t_old_pass": true,
+        "lin_t_old_pass": false,
+        "objectively_improved": false
+      }
+    }
+  ],
+  "timestamp_utc": "2026-08-17T23:57:10.413Z"
+}

@@ -1,0 +1,28 @@
+{
+  "repo_id": "repo_10_requests",
+  "commit_base": "0e322af87745eff34caffe4df68456ebc20d9068",
+  "invariants": [
+    "TYPE_SOUNDNESS",
+    "CONTRACT_PRESERVATION",
+    "NON_REGRESSION_T_OLD"
+  ],
+  "jcs_score": 0.98,
+  "causal_trajectory": [
+    {
+      "step": 1,
+      "action": "OBSERVE_AST_AND_PROFILING",
+      "evidence": "Hot path identified in entry dispatcher"
+    },
+    {
+      "step": 2,
+      "action": "CEGV_PRE_PROOF",
+      "verdict": "ZERO_COUNTEREXAMPLES"
+    },
+    {
+      "step": 3,
+      "action": "TRANSACTIONAL_APPLY",
+      "status": "COMMITTED"
+    }
+  ],
+  "timestamp": "2026-08-17T23:43:29.153Z"
+}

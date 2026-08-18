@@ -1,0 +1,92 @@
+[
+  {
+    "id": "repo_01_ms",
+    "name": "vercel/ms",
+    "git_url": "https://github.com/vercel/ms.git",
+    "frozen_commit": "v2.1.3",
+    "ecosystem": "JAVASCRIPT",
+    "primary_metric": "THROUGHPUT_OPS_SEC",
+    "metric_direction": "higher_is_better"
+  },
+  {
+    "id": "repo_02_p_map",
+    "name": "sindresorhus/p-map",
+    "git_url": "https://github.com/sindresorhus/p-map.git",
+    "frozen_commit": "v7.0.3",
+    "ecosystem": "JAVASCRIPT",
+    "primary_metric": "THROUGHPUT_OPS_SEC",
+    "metric_direction": "higher_is_better"
+  },
+  {
+    "id": "repo_03_execa",
+    "name": "sindresorhus/execa",
+    "git_url": "https://github.com/sindresorhus/execa.git",
+    "frozen_commit": "v9.5.2",
+    "ecosystem": "JAVASCRIPT",
+    "primary_metric": "P95_LATENCY_MS",
+    "metric_direction": "lower_is_better"
+  },
+  {
+    "id": "repo_04_got",
+    "name": "sindresorhus/got",
+    "git_url": "https://github.com/sindresorhus/got.git",
+    "frozen_commit": "v14.4.5",
+    "ecosystem": "TYPESCRIPT",
+    "primary_metric": "PEAK_MEMORY_BYTES",
+    "metric_direction": "lower_is_better"
+  },
+  {
+    "id": "repo_05_nanoid",
+    "name": "ai/nanoid",
+    "git_url": "https://github.com/ai/nanoid.git",
+    "frozen_commit": "5.0.9",
+    "ecosystem": "JAVASCRIPT",
+    "primary_metric": "THROUGHPUT_OPS_SEC",
+    "metric_direction": "higher_is_better"
+  },
+  {
+    "id": "repo_06_axios",
+    "name": "axios/axios",
+    "git_url": "https://github.com/axios/axios.git",
+    "frozen_commit": "v1.7.9",
+    "ecosystem": "JAVASCRIPT",
+    "primary_metric": "THROUGHPUT_OPS_SEC",
+    "metric_direction": "higher_is_better"
+  },
+  {
+    "id": "repo_07_fastify",
+    "name": "fastify/fastify",
+    "git_url": "https://github.com/fastify/fastify.git",
+    "frozen_commit": "v5.2.1",
+    "ecosystem": "JAVASCRIPT",
+    "primary_metric": "THROUGHPUT_OPS_SEC",
+    "metric_direction": "higher_is_better"
+  },
+  {
+    "id": "repo_08_express",
+    "name": "expressjs/express",
+    "git_url": "https://github.com/expressjs/express.git",
+    "frozen_commit": "4.21.2",
+    "ecosystem": "JAVASCRIPT",
+    "primary_metric": "P95_LATENCY_MS",
+    "metric_direction": "lower_is_better"
+  },
+  {
+    "id": "repo_09_bytecount",
+    "name": "BurntSushi/bytecount",
+    "git_url": "https://github.com/BurntSushi/bytecount.git",
+    "frozen_commit": "0.6.8",
+    "ecosystem": "RUST",
+    "primary_metric": "THROUGHPUT_OPS_SEC",
+    "metric_direction": "higher_is_better"
+  },
+  {
+    "id": "repo_10_requests",
+    "name": "psf/requests",
+    "git_url": "https://github.com/psf/requests.git",
+    "frozen_commit": "v2.32.3",
+    "ecosystem": "PYTHON",
+    "primary_metric": "P95_LATENCY_MS",
+    "metric_direction": "lower_is_better"
+  }
+]

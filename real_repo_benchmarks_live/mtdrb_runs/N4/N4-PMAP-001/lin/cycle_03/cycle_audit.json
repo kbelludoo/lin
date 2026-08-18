@@ -1,0 +1,15 @@
+{
+  "cycle_number": 3,
+  "arm": "lin",
+  "tier": "N4",
+  "mutation_id": "N4-PMAP-001",
+  "t_old_pass": false,
+  "exit_code": 1,
+  "failures_count": 21,
+  "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+  "diagnostic_sha256": "73f0e4cbc433559a55f83bde3d305550c090b36fe1c8e07ed7636d581a57ef45",
+  "patch_applied_sha256": "a8a9f9cc2e94bb66007e153e5b6525fcd823828fc404fa2a7b82ad3722ccc3fe",
+  "cycle_tokens": 986,
+  "accumulated_tokens": 2958,
+  "timestamp": "2026-08-18T00:26:47.831Z"
+}

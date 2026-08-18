@@ -1,0 +1,152 @@
+{
+  "experiment_type": "BROWNFIELD_REPAIR_STRESS_K5",
+  "max_cycles": 5,
+  "timestamp_start": "2026-08-18T00:15:02.886Z",
+  "mutations_evaluated": [
+    {
+      "mutation_id": "MUTATION-001-PMAP-RESOLVE",
+      "mutation_sha256": "db50aacd0828bec9ebe239a86e5765080cf27199825362470396c4f6ba6f9b05",
+      "repo_id": "repo_02_p_map",
+      "repo_name": "sindresorhus/p-map",
+      "target_file": "index.js",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 407,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 0,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "mutation_id": "MUTATION-001-PMAP-RESOLVE",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "6d3af0abc2dc22bed0cf951c9e0c225ec88647d64edaa8fb92d1dff23369a7b3",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 407,
+              "accumulated_tokens": 407,
+              "timestamp": "2026-08-18T00:15:40.403Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 2537,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 0,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "mutation_id": "MUTATION-001-PMAP-RESOLVE",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "581b35a26ba8e8efe9faac3b99b4d6c139ac6c730c27550a4a7c5c05957fd1e5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2537,
+              "accumulated_tokens": 2537,
+              "timestamp": "2026-08-18T00:16:15.035Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 6.23,
+        "lin_repair_iterations": 1,
+        "baseline_repair_iterations": 1,
+        "symmetric_mutation_sha256": "db50aacd0828bec9ebe239a86e5765080cf27199825362470396c4f6ba6f9b05"
+      }
+    },
+    {
+      "mutation_id": "MUTATION-001-EXPRESS-ROUTER",
+      "mutation_sha256": "5c76cea0fba24b05f05c08b218c2a2c9ddacafc4e3b1931e49fd7cdf79017c11",
+      "repo_id": "repo_08_express",
+      "repo_name": "expressjs/express",
+      "target_file": "lib/router/layer.js",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 408,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 0,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "mutation_id": "MUTATION-001-EXPRESS-ROUTER",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "783c22f022df8ebb851281c6a12ee91f41689b4eb0fdabcd1a8d6aa083fb7f31",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 408,
+              "accumulated_tokens": 408,
+              "timestamp": "2026-08-18T00:16:41.590Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 2,
+          "tokens_until_verified": 5243,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 1,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "mutation_id": "MUTATION-001-EXPRESS-ROUTER",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "795cccb7bfa0e4ab3291f1482c5b191f6526c9c785373a26b4de6855844cd5e4",
+              "diagnostic_sha256": "487b045f3a621493d9b9ae57c45d9665ce56ec4729de6a601f679e5a71a85c08",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2705,
+              "accumulated_tokens": 2705,
+              "timestamp": "2026-08-18T00:17:03.113Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "baseline",
+              "mutation_id": "MUTATION-001-EXPRESS-ROUTER",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "2329692d811b1faaa7bf272ccfc802c6161ffb22044b2d377210ce71d2d0c9d5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2538,
+              "accumulated_tokens": 5243,
+              "timestamp": "2026-08-18T00:17:12.137Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 12.85,
+        "lin_repair_iterations": 1,
+        "baseline_repair_iterations": 2,
+        "symmetric_mutation_sha256": "5c76cea0fba24b05f05c08b218c2a2c9ddacafc4e3b1931e49fd7cdf79017c11"
+      }
+    }
+  ],
+  "timestamp_end": "2026-08-18T00:17:12.141Z"
+}

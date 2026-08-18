@@ -1,0 +1,16 @@
+Repository: expressjs/express (repo_08_express)
+Test Suite Status: FAILED
+
+Detailed Failure Report:
+--------------------------------------------------
+Failure #1:
+  Message:  Error: expected "Set-Cookie" of "sid=; Max-Age=10; Path=/; Expires=Tue, 18 Aug 2026 00:17:12 GMT", got "sid=; Max-Age=10; Path=/; Expires=Tue, 18 Aug 2026 00:17:13 GMT"
+  Location: test\res.clearCookie.js:64
+  Trace:
+    at Context.<anonymous> (test\res.clearCookie.js:64:8)
+    at Test._assertHeader (node_modules\supertest\lib\test.js:236:14)
+    at c:\Users\kbell\OneDrive\Documents\lia\real_repo_benchmarks_live\repair_stress_runs\repo_08_express\MUTATION-001-EXPRESS-ROUTER\baseline\workspace\node_modules\supertest\lib\test.js:308:13
+    at Test._assertFunction (node_modules\supertest\lib\test.js:285:13)
+
+--------------------------------------------------
+Instructions: Fix the source implementation so all original test cases and new invariants pass. Do not remove or alter test suites.

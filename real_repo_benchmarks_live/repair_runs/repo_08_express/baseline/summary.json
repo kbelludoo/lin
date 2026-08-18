@@ -1,0 +1,21 @@
+{
+  "first_verified_patch": true,
+  "repair_iterations": 1,
+  "tokens_until_verified": 2488,
+  "total_tokens_consumed": 2488,
+  "causal_efficiency_resolved_ratio": 1,
+  "invariant_preservation": true,
+  "human_intervention": 0,
+  "cycles": [
+    {
+      "cycle_number": 1,
+      "arm": "baseline",
+      "t_old_pass": true,
+      "failures_detected": 0,
+      "prompt_tokens_estimated": 2488,
+      "accumulated_tokens": 2488,
+      "diagnostic_payload_size_bytes": 333,
+      "timestamp": "2026-08-18T00:13:00.606Z"
+    }
+  ]
+}

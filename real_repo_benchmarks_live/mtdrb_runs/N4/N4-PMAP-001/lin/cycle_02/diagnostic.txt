@@ -1,0 +1,23 @@
+~D{.r="repo_02_p_map" .s=FAIL}
+!f0{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f1{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f2{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f3{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f4{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f5{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f6{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f7{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f8{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f9{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f10{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f11{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f12{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f13{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f14{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f15{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f16{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f17{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f18{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f19{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+!f20{msg="Error: Promise returned by test never resolved" loc="unknown:0" exp="PASS" act="FAIL"}
+^goal="repair_code_to_pass_all_invariants_without_test_deletion"

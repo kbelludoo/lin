@@ -1,0 +1,748 @@
+{
+  "experiment_type": "MULTI_TIER_DEEP_REPAIR_BATTERY",
+  "manifest_version": "1.0.0",
+  "max_cycles": 5,
+  "timestamp_start": "2026-08-18T00:20:12.357Z",
+  "tier_summaries": {},
+  "mutation_results": [
+    {
+      "tier": "N1",
+      "tier_category": "LOCAL_SYNTAX_RETURN",
+      "mutation_id": "N1-PMAP-001",
+      "mutation_sha256": "d81849eba5574d8f5337fbe6e88d2b1a38fd84efd175e04616253e2c93edf083",
+      "repo_id": "repo_02_p_map",
+      "repo_name": "sindresorhus/p-map",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 407,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 0,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "tier": "N1",
+              "mutation_id": "N1-PMAP-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "6d3af0abc2dc22bed0cf951c9e0c225ec88647d64edaa8fb92d1dff23369a7b3",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 407,
+              "accumulated_tokens": 407,
+              "timestamp": "2026-08-18T00:20:48.496Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 2537,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 0,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "tier": "N1",
+              "mutation_id": "N1-PMAP-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "581b35a26ba8e8efe9faac3b99b4d6c139ac6c730c27550a4a7c5c05957fd1e5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2537,
+              "accumulated_tokens": 2537,
+              "timestamp": "2026-08-18T00:21:21.987Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 6.23,
+        "lin_repair_iterations": 1,
+        "baseline_repair_iterations": 1,
+        "iterations_delta": 0
+      }
+    },
+    {
+      "tier": "N1",
+      "tier_category": "LOCAL_SYNTAX_RETURN",
+      "mutation_id": "N1-EXPRESS-001",
+      "mutation_sha256": "660a38595aa4c2b984664e42bd66ed5c931e2c6eac736f850998b8fe60646b42",
+      "repo_id": "repo_08_express",
+      "repo_name": "expressjs/express",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 408,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 0,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "tier": "N1",
+              "mutation_id": "N1-EXPRESS-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "783c22f022df8ebb851281c6a12ee91f41689b4eb0fdabcd1a8d6aa083fb7f31",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 408,
+              "accumulated_tokens": 408,
+              "timestamp": "2026-08-18T00:21:48.591Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 2538,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 0,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "tier": "N1",
+              "mutation_id": "N1-EXPRESS-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "2329692d811b1faaa7bf272ccfc802c6161ffb22044b2d377210ce71d2d0c9d5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2538,
+              "accumulated_tokens": 2538,
+              "timestamp": "2026-08-18T00:22:12.534Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 6.22,
+        "lin_repair_iterations": 1,
+        "baseline_repair_iterations": 1,
+        "iterations_delta": 0
+      }
+    },
+    {
+      "tier": "N2",
+      "tier_category": "SEMANTIC_INVARIANT",
+      "mutation_id": "N2-PMAP-001",
+      "mutation_sha256": "239e6ff58aa9cbe4c93bb925a3f8a34d28262010394095779e7d2c958860d23a",
+      "repo_id": "repo_02_p_map",
+      "repo_name": "sindresorhus/p-map",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 3,
+          "tokens_until_verified": 1263,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 1,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "tier": "N2",
+              "mutation_id": "N2-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "94f47b9f75ff06c5bbeaef6b5b595bc3872c7ef386ae4cc00300f32b59c04995",
+              "diagnostic_sha256": "15263cf85a3ff5dfe064b12e348e90db6383eb429c43424c7298266a5d986a6b",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 428,
+              "accumulated_tokens": 428,
+              "timestamp": "2026-08-18T00:22:48.594Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "lin",
+              "tier": "N2",
+              "mutation_id": "N2-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "94f47b9f75ff06c5bbeaef6b5b595bc3872c7ef386ae4cc00300f32b59c04995",
+              "diagnostic_sha256": "15263cf85a3ff5dfe064b12e348e90db6383eb429c43424c7298266a5d986a6b",
+              "patch_applied_sha256": "a8a9f9cc2e94bb66007e153e5b6525fcd823828fc404fa2a7b82ad3722ccc3fe",
+              "cycle_tokens": 428,
+              "accumulated_tokens": 856,
+              "timestamp": "2026-08-18T00:22:55.118Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "lin",
+              "tier": "N2",
+              "mutation_id": "N2-PMAP-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "6d3af0abc2dc22bed0cf951c9e0c225ec88647d64edaa8fb92d1dff23369a7b3",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 407,
+              "accumulated_tokens": 1263,
+              "timestamp": "2026-08-18T00:23:01.671Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 4,
+          "tokens_until_verified": 10286,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 2,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "94f47b9f75ff06c5bbeaef6b5b595bc3872c7ef386ae4cc00300f32b59c04995",
+              "diagnostic_sha256": "4f3c39ae81aa4df90138555c775b97198bfcde6df0cb97050f723fcc09ca586c",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2583,
+              "accumulated_tokens": 2583,
+              "timestamp": "2026-08-18T00:23:35.889Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "94f47b9f75ff06c5bbeaef6b5b595bc3872c7ef386ae4cc00300f32b59c04995",
+              "diagnostic_sha256": "4f3c39ae81aa4df90138555c775b97198bfcde6df0cb97050f723fcc09ca586c",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2583,
+              "accumulated_tokens": 5166,
+              "timestamp": "2026-08-18T00:23:42.526Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "94f47b9f75ff06c5bbeaef6b5b595bc3872c7ef386ae4cc00300f32b59c04995",
+              "diagnostic_sha256": "4f3c39ae81aa4df90138555c775b97198bfcde6df0cb97050f723fcc09ca586c",
+              "patch_applied_sha256": "a8a9f9cc2e94bb66007e153e5b6525fcd823828fc404fa2a7b82ad3722ccc3fe",
+              "cycle_tokens": 2583,
+              "accumulated_tokens": 7749,
+              "timestamp": "2026-08-18T00:23:49.741Z"
+            },
+            {
+              "cycle_number": 4,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-PMAP-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "581b35a26ba8e8efe9faac3b99b4d6c139ac6c730c27550a4a7c5c05957fd1e5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2537,
+              "accumulated_tokens": 10286,
+              "timestamp": "2026-08-18T00:23:56.358Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 8.14,
+        "lin_repair_iterations": 3,
+        "baseline_repair_iterations": 4,
+        "iterations_delta": 1
+      }
+    },
+    {
+      "tier": "N2",
+      "tier_category": "SEMANTIC_INVARIANT",
+      "mutation_id": "N2-EXPRESS-001",
+      "mutation_sha256": "5fe22a97e66f8dab0ef4a7b3f9d831f1e319f4051b2e0aa1605d81ee68ae8bb6",
+      "repo_id": "repo_08_express",
+      "repo_name": "expressjs/express",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 3,
+          "tokens_until_verified": 1292,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 1,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "tier": "N2",
+              "mutation_id": "N2-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "3f1bb36886f78572c293674e98332695e95aa25e5e05a0fd6faf7ce70d37cafb",
+              "diagnostic_sha256": "387a8509ed0017d65c7fa40a8f2dca46691a7f4f0d59e2cadbf7d52e9c53553d",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 442,
+              "accumulated_tokens": 442,
+              "timestamp": "2026-08-18T00:24:15.452Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "lin",
+              "tier": "N2",
+              "mutation_id": "N2-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "06d3d252a3233e870417af78bc233357891b24c3195d69dfd51661d7bc48a8cc",
+              "diagnostic_sha256": "387a8509ed0017d65c7fa40a8f2dca46691a7f4f0d59e2cadbf7d52e9c53553d",
+              "patch_applied_sha256": "95f3144985b4ceec39508bc4832eaa5a80ca468597b3c922fa496f6fc8cf81cd",
+              "cycle_tokens": 442,
+              "accumulated_tokens": 884,
+              "timestamp": "2026-08-18T00:24:18.067Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "lin",
+              "tier": "N2",
+              "mutation_id": "N2-EXPRESS-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "783c22f022df8ebb851281c6a12ee91f41689b4eb0fdabcd1a8d6aa083fb7f31",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 408,
+              "accumulated_tokens": 1292,
+              "timestamp": "2026-08-18T00:24:27.184Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 4,
+          "tokens_until_verified": 10524,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 2,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "5ee84640dec9d41013e0f838c80594ea0c9bdfb406ce3b81743ab3edb53dba0b",
+              "diagnostic_sha256": "ddef25a83b8783e385103414f00b105dcc5550df8bbcb665d6c86431358c20be",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2662,
+              "accumulated_tokens": 2662,
+              "timestamp": "2026-08-18T00:24:44.906Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "3b379934ac8e5303b9c0524a44b2868308f5f9de90979a31caf23d757c744567",
+              "diagnostic_sha256": "ddef25a83b8783e385103414f00b105dcc5550df8bbcb665d6c86431358c20be",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2662,
+              "accumulated_tokens": 5324,
+              "timestamp": "2026-08-18T00:24:47.519Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "887606eae7841eca3c4fff9b588e03eca3e8504b014aa92ae9fd32ec73d562bb",
+              "diagnostic_sha256": "ddef25a83b8783e385103414f00b105dcc5550df8bbcb665d6c86431358c20be",
+              "patch_applied_sha256": "95f3144985b4ceec39508bc4832eaa5a80ca468597b3c922fa496f6fc8cf81cd",
+              "cycle_tokens": 2662,
+              "accumulated_tokens": 7986,
+              "timestamp": "2026-08-18T00:24:50.124Z"
+            },
+            {
+              "cycle_number": 4,
+              "arm": "baseline",
+              "tier": "N2",
+              "mutation_id": "N2-EXPRESS-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "2329692d811b1faaa7bf272ccfc802c6161ffb22044b2d377210ce71d2d0c9d5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2538,
+              "accumulated_tokens": 10524,
+              "timestamp": "2026-08-18T00:24:59.140Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 8.15,
+        "lin_repair_iterations": 3,
+        "baseline_repair_iterations": 4,
+        "iterations_delta": 1
+      }
+    },
+    {
+      "tier": "N3",
+      "tier_category": "MULTI_POINT_INTERDEPENDENCE",
+      "mutation_id": "N3-EXPRESS-001",
+      "mutation_sha256": "2a025c0b935323666adc6553e5ada79fecda4f20b4068e1343a1ba4e1fc19e0a",
+      "repo_id": "repo_08_express",
+      "repo_name": "expressjs/express",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 3,
+          "tokens_until_verified": 1286,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 1,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "tier": "N3",
+              "mutation_id": "N3-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "c6c79340f3593ac67fb61c6c06f3b4225131e00d9674f6daac19c894aed6c677",
+              "diagnostic_sha256": "d4af48431f4860435102d7f735ffaa58d867f07c9f914cb806706afd71304d0c",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 439,
+              "accumulated_tokens": 439,
+              "timestamp": "2026-08-18T00:25:16.542Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "lin",
+              "tier": "N3",
+              "mutation_id": "N3-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "c6c79340f3593ac67fb61c6c06f3b4225131e00d9674f6daac19c894aed6c677",
+              "diagnostic_sha256": "d4af48431f4860435102d7f735ffaa58d867f07c9f914cb806706afd71304d0c",
+              "patch_applied_sha256": "0902f3f89c6db8287c9595396339e8ffb2248434cb159a57d5f1b99b73fb92d2",
+              "cycle_tokens": 439,
+              "accumulated_tokens": 878,
+              "timestamp": "2026-08-18T00:25:18.403Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "lin",
+              "tier": "N3",
+              "mutation_id": "N3-EXPRESS-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "783c22f022df8ebb851281c6a12ee91f41689b4eb0fdabcd1a8d6aa083fb7f31",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 408,
+              "accumulated_tokens": 1286,
+              "timestamp": "2026-08-18T00:25:27.822Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 4,
+          "tokens_until_verified": 10527,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 2,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "tier": "N3",
+              "mutation_id": "N3-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "c6c79340f3593ac67fb61c6c06f3b4225131e00d9674f6daac19c894aed6c677",
+              "diagnostic_sha256": "1cb3d6289895b41d565ff8be490379564f027c5ce605cd8d8ffd1b1abcfe85b2",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2663,
+              "accumulated_tokens": 2663,
+              "timestamp": "2026-08-18T00:25:44.789Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "baseline",
+              "tier": "N3",
+              "mutation_id": "N3-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "c6c79340f3593ac67fb61c6c06f3b4225131e00d9674f6daac19c894aed6c677",
+              "diagnostic_sha256": "1cb3d6289895b41d565ff8be490379564f027c5ce605cd8d8ffd1b1abcfe85b2",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2663,
+              "accumulated_tokens": 5326,
+              "timestamp": "2026-08-18T00:25:46.567Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "baseline",
+              "tier": "N3",
+              "mutation_id": "N3-EXPRESS-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 1,
+              "failure_signature": "c6c79340f3593ac67fb61c6c06f3b4225131e00d9674f6daac19c894aed6c677",
+              "diagnostic_sha256": "1cb3d6289895b41d565ff8be490379564f027c5ce605cd8d8ffd1b1abcfe85b2",
+              "patch_applied_sha256": "0902f3f89c6db8287c9595396339e8ffb2248434cb159a57d5f1b99b73fb92d2",
+              "cycle_tokens": 2663,
+              "accumulated_tokens": 7989,
+              "timestamp": "2026-08-18T00:25:48.332Z"
+            },
+            {
+              "cycle_number": 4,
+              "arm": "baseline",
+              "tier": "N3",
+              "mutation_id": "N3-EXPRESS-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "2329692d811b1faaa7bf272ccfc802c6161ffb22044b2d377210ce71d2d0c9d5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2538,
+              "accumulated_tokens": 10527,
+              "timestamp": "2026-08-18T00:25:57.528Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 8.19,
+        "lin_repair_iterations": 3,
+        "baseline_repair_iterations": 4,
+        "iterations_delta": 1
+      }
+    },
+    {
+      "tier": "N4",
+      "tier_category": "CONCURRENCY_ASYNC_QUEUE",
+      "mutation_id": "N4-PMAP-001",
+      "mutation_sha256": "79a10ebc0e8693f76ecd39b403c5e66dd32a1c08cb2cdf9068dfaa99d9022fd3",
+      "repo_id": "repo_02_p_map",
+      "repo_name": "sindresorhus/p-map",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 4,
+          "tokens_until_verified": 3365,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 2,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 21,
+              "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+              "diagnostic_sha256": "73f0e4cbc433559a55f83bde3d305550c090b36fe1c8e07ed7636d581a57ef45",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 986,
+              "accumulated_tokens": 986,
+              "timestamp": "2026-08-18T00:26:34.445Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "lin",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 21,
+              "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+              "diagnostic_sha256": "73f0e4cbc433559a55f83bde3d305550c090b36fe1c8e07ed7636d581a57ef45",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 986,
+              "accumulated_tokens": 1972,
+              "timestamp": "2026-08-18T00:26:41.452Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "lin",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 21,
+              "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+              "diagnostic_sha256": "73f0e4cbc433559a55f83bde3d305550c090b36fe1c8e07ed7636d581a57ef45",
+              "patch_applied_sha256": "a8a9f9cc2e94bb66007e153e5b6525fcd823828fc404fa2a7b82ad3722ccc3fe",
+              "cycle_tokens": 986,
+              "accumulated_tokens": 2958,
+              "timestamp": "2026-08-18T00:26:47.831Z"
+            },
+            {
+              "cycle_number": 4,
+              "arm": "lin",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "6d3af0abc2dc22bed0cf951c9e0c225ec88647d64edaa8fb92d1dff23369a7b3",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 407,
+              "accumulated_tokens": 3365,
+              "timestamp": "2026-08-18T00:26:54.428Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 5,
+          "tokens_until_verified": 14777,
+          "invariant_preservation": true,
+          "wrong_fix_attempts": 3,
+          "regressions_introduced": 0,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 21,
+              "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+              "diagnostic_sha256": "1f16687c11f2e1e46b2e2981933028af26a193baf862329cb97b0ebbe9b04747",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 3060,
+              "accumulated_tokens": 3060,
+              "timestamp": "2026-08-18T00:27:28.230Z"
+            },
+            {
+              "cycle_number": 2,
+              "arm": "baseline",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 21,
+              "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+              "diagnostic_sha256": "1f16687c11f2e1e46b2e2981933028af26a193baf862329cb97b0ebbe9b04747",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 3060,
+              "accumulated_tokens": 6120,
+              "timestamp": "2026-08-18T00:27:34.588Z"
+            },
+            {
+              "cycle_number": 3,
+              "arm": "baseline",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 21,
+              "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+              "diagnostic_sha256": "1f16687c11f2e1e46b2e2981933028af26a193baf862329cb97b0ebbe9b04747",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 3060,
+              "accumulated_tokens": 9180,
+              "timestamp": "2026-08-18T00:27:41.146Z"
+            },
+            {
+              "cycle_number": 4,
+              "arm": "baseline",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": false,
+              "exit_code": 1,
+              "failures_count": 21,
+              "failure_signature": "6be1216ed2bcaaf1f01f54779abfee63b3ddd56319976138679810f94409d57f",
+              "diagnostic_sha256": "1f16687c11f2e1e46b2e2981933028af26a193baf862329cb97b0ebbe9b04747",
+              "patch_applied_sha256": "a8a9f9cc2e94bb66007e153e5b6525fcd823828fc404fa2a7b82ad3722ccc3fe",
+              "cycle_tokens": 3060,
+              "accumulated_tokens": 12240,
+              "timestamp": "2026-08-18T00:27:47.830Z"
+            },
+            {
+              "cycle_number": 5,
+              "arm": "baseline",
+              "tier": "N4",
+              "mutation_id": "N4-PMAP-001",
+              "t_old_pass": true,
+              "exit_code": 0,
+              "failures_count": 0,
+              "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "diagnostic_sha256": "581b35a26ba8e8efe9faac3b99b4d6c139ac6c730c27550a4a7c5c05957fd1e5",
+              "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "cycle_tokens": 2537,
+              "accumulated_tokens": 14777,
+              "timestamp": "2026-08-18T00:27:54.446Z"
+            }
+          ]
+        }
+      },
+      "comparison": {
+        "token_economy_ratio": 4.39,
+        "lin_repair_iterations": 4,
+        "baseline_repair_iterations": 5,
+        "iterations_delta": 1
+      }
+    }
+  ],
+  "timestamp_end": "2026-08-18T00:27:54.450Z"
+}

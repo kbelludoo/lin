@@ -1,0 +1,15 @@
+{
+  "cycle_number": 1,
+  "arm": "baseline",
+  "tier": "N2",
+  "mutation_id": "N2-EXPRESS-001",
+  "t_old_pass": false,
+  "exit_code": 1,
+  "failures_count": 1,
+  "failure_signature": "5ee84640dec9d41013e0f838c80594ea0c9bdfb406ce3b81743ab3edb53dba0b",
+  "diagnostic_sha256": "ddef25a83b8783e385103414f00b105dcc5550df8bbcb665d6c86431358c20be",
+  "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cycle_tokens": 2662,
+  "accumulated_tokens": 2662,
+  "timestamp": "2026-08-18T00:24:44.906Z"
+}

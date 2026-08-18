@@ -1,0 +1,78 @@
+{
+  "manifest_version": "1.0.0",
+  "battery": "MULTI_TIER_DEEP_REPAIR_BATTERY",
+  "tiers": [
+    {
+      "tier": "N1",
+      "category": "LOCAL_SYNTAX_RETURN",
+      "mutations": [
+        {
+          "id": "N1-PMAP-001",
+          "repo_id": "repo_02_p_map",
+          "target_file": "index.js",
+          "description": "Corrupt array return indexing in iterator resolver",
+          "broken_pattern": "output[index] = await element;",
+          "mutated_pattern": "output[index + 1] = await element;"
+        },
+        {
+          "id": "N1-EXPRESS-001",
+          "repo_id": "repo_08_express",
+          "target_file": "lib/router/layer.js",
+          "description": "Corrupt layer match star boolean return flag",
+          "broken_pattern": "return Boolean(this.regexp.fast_star)",
+          "mutated_pattern": "return !Boolean(this.regexp.fast_star)"
+        }
+      ]
+    },
+    {
+      "tier": "N2",
+      "category": "SEMANTIC_INVARIANT",
+      "mutations": [
+        {
+          "id": "N2-PMAP-001",
+          "repo_id": "repo_02_p_map",
+          "target_file": "index.js",
+          "description": "Violate stopOnError invariant by dropping AggregateError reject on multiple errors",
+          "broken_pattern": "reject(new AggregateError(errors));",
+          "mutated_pattern": "resolve(result);"
+        },
+        {
+          "id": "N2-EXPRESS-001",
+          "repo_id": "repo_08_express",
+          "target_file": "lib/router/route.js",
+          "description": "Violate route dispatch error bubbling invariant by discarding error argument in next()",
+          "broken_pattern": "if (err) {",
+          "mutated_pattern": "if (false && err) {"
+        }
+      ]
+    },
+    {
+      "tier": "N3",
+      "category": "MULTI_POINT_INTERDEPENDENCE",
+      "mutations": [
+        {
+          "id": "N3-EXPRESS-001",
+          "repo_id": "repo_08_express",
+          "target_files": ["lib/router/index.js", "lib/router/layer.js"],
+          "description": "Desynchronize param handling between router prototype process_params and layer handle_request",
+          "broken_pattern": "layer.handle_request(req, res, next);",
+          "mutated_pattern": "layer.handle_error(new Error('desync'), req, res, next);"
+        }
+      ]
+    },
+    {
+      "tier": "N4",
+      "category": "CONCURRENCY_ASYNC_QUEUE",
+      "mutations": [
+        {
+          "id": "N4-PMAP-001",
+          "repo_id": "repo_02_p_map",
+          "target_file": "index.js",
+          "description": "Introduce race condition in resolvingCount decrement before next item fetch",
+          "broken_pattern": "resolvingCount--;\n\t\t\t\t\tawait next();",
+          "mutated_pattern": "await next();\n\t\t\t\t\tresolvingCount--;"
+        }
+      ]
+    }
+  ]
+}

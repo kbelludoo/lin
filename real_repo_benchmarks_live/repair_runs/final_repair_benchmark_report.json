@@ -1,0 +1,116 @@
+{
+  "experiment_type": "BROWNFIELD_REPAIR_LOOP_K5",
+  "max_cycles": 5,
+  "timestamp_start": "2026-08-18T00:10:42.713Z",
+  "repositories": [
+    {
+      "id": "repo_02_p_map",
+      "name": "sindresorhus/p-map",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 377,
+          "total_tokens_consumed": 377,
+          "causal_efficiency_resolved_ratio": 1,
+          "invariant_preservation": true,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "t_old_pass": true,
+              "failures_detected": 0,
+              "prompt_tokens_estimated": 377,
+              "accumulated_tokens": 377,
+              "diagnostic_payload_size_bytes": 95,
+              "timestamp": "2026-08-18T00:11:24.887Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 2487,
+          "total_tokens_consumed": 2487,
+          "causal_efficiency_resolved_ratio": 1,
+          "invariant_preservation": true,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "t_old_pass": true,
+              "failures_detected": 0,
+              "prompt_tokens_estimated": 2487,
+              "accumulated_tokens": 2487,
+              "diagnostic_payload_size_bytes": 332,
+              "timestamp": "2026-08-18T00:11:59.128Z"
+            }
+          ]
+        }
+      },
+      "comparison_analysis": {
+        "token_economy_ratio": 6.6,
+        "lin_iterations_to_verify": 1,
+        "baseline_iterations_to_verify": 1,
+        "verified_symmetry_preserved": true
+      }
+    },
+    {
+      "id": "repo_08_express",
+      "name": "expressjs/express",
+      "arms": {
+        "lin": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 378,
+          "total_tokens_consumed": 378,
+          "causal_efficiency_resolved_ratio": 1,
+          "invariant_preservation": true,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "lin",
+              "t_old_pass": true,
+              "failures_detected": 0,
+              "prompt_tokens_estimated": 378,
+              "accumulated_tokens": 378,
+              "diagnostic_payload_size_bytes": 97,
+              "timestamp": "2026-08-18T00:12:35.183Z"
+            }
+          ]
+        },
+        "baseline": {
+          "first_verified_patch": true,
+          "repair_iterations": 1,
+          "tokens_until_verified": 2488,
+          "total_tokens_consumed": 2488,
+          "causal_efficiency_resolved_ratio": 1,
+          "invariant_preservation": true,
+          "human_intervention": 0,
+          "cycles": [
+            {
+              "cycle_number": 1,
+              "arm": "baseline",
+              "t_old_pass": true,
+              "failures_detected": 0,
+              "prompt_tokens_estimated": 2488,
+              "accumulated_tokens": 2488,
+              "diagnostic_payload_size_bytes": 333,
+              "timestamp": "2026-08-18T00:13:00.606Z"
+            }
+          ]
+        }
+      },
+      "comparison_analysis": {
+        "token_economy_ratio": 6.58,
+        "lin_iterations_to_verify": 1,
+        "baseline_iterations_to_verify": 1,
+        "verified_symmetry_preserved": true
+      }
+    }
+  ],
+  "timestamp_end": "2026-08-18T00:13:00.608Z"
+}

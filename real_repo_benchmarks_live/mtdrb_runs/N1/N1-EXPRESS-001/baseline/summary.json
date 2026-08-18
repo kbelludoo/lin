@@ -1,0 +1,26 @@
+{
+  "first_verified_patch": true,
+  "repair_iterations": 1,
+  "tokens_until_verified": 2538,
+  "invariant_preservation": true,
+  "wrong_fix_attempts": 0,
+  "regressions_introduced": 0,
+  "human_intervention": 0,
+  "cycles": [
+    {
+      "cycle_number": 1,
+      "arm": "baseline",
+      "tier": "N1",
+      "mutation_id": "N1-EXPRESS-001",
+      "t_old_pass": true,
+      "exit_code": 0,
+      "failures_count": 0,
+      "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "diagnostic_sha256": "2329692d811b1faaa7bf272ccfc802c6161ffb22044b2d377210ce71d2d0c9d5",
+      "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "cycle_tokens": 2538,
+      "accumulated_tokens": 2538,
+      "timestamp": "2026-08-18T00:22:12.534Z"
+    }
+  ]
+}

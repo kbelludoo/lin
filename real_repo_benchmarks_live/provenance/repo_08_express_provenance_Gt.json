@@ -1,0 +1,28 @@
+{
+  "repo_id": "repo_08_express",
+  "commit_base": "1faf228935aa0a13111f92c28ee795be64ce3f0f",
+  "invariants": [
+    "TYPE_SOUNDNESS",
+    "CONTRACT_PRESERVATION",
+    "NON_REGRESSION_T_OLD"
+  ],
+  "jcs_score": 0.98,
+  "causal_trajectory": [
+    {
+      "step": 1,
+      "action": "OBSERVE_AST_AND_PROFILING",
+      "evidence": "Hot path identified in entry dispatcher"
+    },
+    {
+      "step": 2,
+      "action": "CEGV_PRE_PROOF",
+      "verdict": "ZERO_COUNTEREXAMPLES"
+    },
+    {
+      "step": 3,
+      "action": "TRANSACTIONAL_APPLY",
+      "status": "COMMITTED"
+    }
+  ],
+  "timestamp": "2026-08-17T23:43:02.081Z"
+}

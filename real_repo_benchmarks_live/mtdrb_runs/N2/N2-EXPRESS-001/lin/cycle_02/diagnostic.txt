@@ -1,0 +1,3 @@
+~D{.r="repo_08_express" .s=FAIL}
+!f0{msg="Error: expected route go boom response body got foo here" loc="test\app.router.js:1068" exp="PASS" act="FAIL"}
+^goal="repair_code_to_pass_all_invariants_without_test_deletion"

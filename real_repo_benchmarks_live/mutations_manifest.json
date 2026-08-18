@@ -1,0 +1,18 @@
+{
+  "mutations": [
+    {
+      "mutation_id": "MUTATION-001-PMAP-RESOLVE",
+      "repo_id": "repo_02_p_map",
+      "target_file": "index.js",
+      "description": "Corrupt Promise.all resolution return order by reversing array indexing in async resolver",
+      "patch_diff": "--- a/index.js\n+++ b/index.js\n@@ -107,1 +107,1 @@\n-\t\t\t\t\toutput[index] = await element;\n+\t\t\t\t\toutput[index + 1] = await element;\n"
+    },
+    {
+      "mutation_id": "MUTATION-001-EXPRESS-ROUTER",
+      "repo_id": "repo_08_express",
+      "target_file": "lib/router/layer.js",
+      "description": "Corrupt layer path matching regex checking by strictly inverting match return flag",
+      "patch_diff": "--- a/lib/router/layer.js\n+++ b/lib/router/layer.js\n@@ -140,1 +140,1 @@\n-  return Boolean(this.regexp.fast_star)\n+  return !Boolean(this.regexp.fast_star)\n"
+    }
+  ]
+}

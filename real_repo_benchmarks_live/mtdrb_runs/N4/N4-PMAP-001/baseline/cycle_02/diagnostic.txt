@@ -1,0 +1,91 @@
+Repository: sindresorhus/p-map (repo_02_p_map)
+Test Suite Status: FAILED
+
+Detailed Failure Report:
+--------------------------------------------------
+Failure #1:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #2:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #3:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #4:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #5:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #6:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #7:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #8:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #9:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #10:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #11:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #12:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #13:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #14:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #15:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #16:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #17:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #18:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #19:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #20:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+Failure #21:
+  Message:  Error: Promise returned by test never resolved
+  Location: unknown:0
+
+--------------------------------------------------
+Instructions: Fix the source implementation so all original test cases and new invariants pass. Do not remove or alter test suites.

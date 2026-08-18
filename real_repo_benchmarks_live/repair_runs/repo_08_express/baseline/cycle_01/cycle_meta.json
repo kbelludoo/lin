@@ -1,0 +1,10 @@
+{
+  "cycle_number": 1,
+  "arm": "baseline",
+  "t_old_pass": true,
+  "failures_detected": 0,
+  "prompt_tokens_estimated": 2488,
+  "accumulated_tokens": 2488,
+  "diagnostic_payload_size_bytes": 333,
+  "timestamp": "2026-08-18T00:13:00.606Z"
+}

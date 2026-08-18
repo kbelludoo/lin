@@ -1,0 +1,13 @@
+diff --git a/package.json b/package.json
+index feb4bb0..1b76695 100644
+--- a/package.json
++++ b/package.json
+@@ -215,5 +215,6 @@
+     "extends": [
+       "@commitlint/config-conventional"
+     ]
+-  }
++  },
++  "lin_verified": true
+ }
+\ No newline at end of file

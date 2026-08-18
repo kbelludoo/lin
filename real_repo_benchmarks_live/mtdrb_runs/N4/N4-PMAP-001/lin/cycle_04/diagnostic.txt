@@ -1,0 +1,2 @@
+~D{.r="repo_02_p_map" .s=FAIL}
+^goal="repair_code_to_pass_all_invariants_without_test_deletion"

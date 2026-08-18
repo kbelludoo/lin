@@ -1,0 +1,14 @@
+{
+  "cycle_number": 1,
+  "arm": "lin",
+  "mutation_id": "MUTATION-001-EXPRESS-ROUTER",
+  "t_old_pass": true,
+  "exit_code": 0,
+  "failures_count": 0,
+  "failure_signature": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "diagnostic_sha256": "783c22f022df8ebb851281c6a12ee91f41689b4eb0fdabcd1a8d6aa083fb7f31",
+  "patch_applied_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "cycle_tokens": 408,
+  "accumulated_tokens": 408,
+  "timestamp": "2026-08-18T00:16:41.590Z"
+}

@@ -1,0 +1,10 @@
+{
+  "cycle_number": 1,
+  "arm": "lin",
+  "t_old_pass": true,
+  "failures_detected": 0,
+  "prompt_tokens_estimated": 377,
+  "accumulated_tokens": 377,
+  "diagnostic_payload_size_bytes": 95,
+  "timestamp": "2026-08-18T00:11:24.887Z"
+}
