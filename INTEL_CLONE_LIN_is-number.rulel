@@ -1,0 +1,5 @@
+@RULEL:INTEL_CLONE_LIN:1.4.0
+~R{.m=meta .g=gate .c=compare}
+.m{slug=is-number lang=LIN status=PASS done=true published=true source="https://github.com/jonschlinkert/is-number.git" url="" nucleus=js!ts!py!go!rust!c!java}
+.g{publish=full_repo_100_hash_eq skip_eq_fail=true behavior_eq=1.0 suite_rate=1 pass=1 fail=0 skip=0 files_ok=1 files_total=1 stub_not_suite=true c_skip=ok_iff_gcc_absent_after_retry}
+.c{pass="index.js:defaultExport" fail="" multi="js:P1/S0/F0 ts:P1/S0/F0 py:P1/S0/F0 go:P1/S0/F0 rust:P1/S0/F0 c:P1/S0/F0 java:P1/S0/F0" stub="EXPERIMENTAL_NOT_PASS cs,lua,elixir,crystal,kotlin,hcl,julia,scala,haskell,prolog,zig,nim,asm no_toolchain_no_oracle" learn=none improve=loop_mode_no_improve note="DONE real-nucleus 7-lang clone-lin-is-number: p=1 multi=js:P1/S0/F0 ts:P1/S0/F0 py:P1/S0/F0 go:P1/S0/F0 rust:P1/S0/F0 c:P1/S0/F0 java:P1/S0/F0 ; size lin/src=0.8054; tok src=103 lin=83"}
