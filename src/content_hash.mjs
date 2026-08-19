@@ -75,12 +75,91 @@ function collectBodyIdentifiers(body) {
 }
 
 /**
+ * Recursively collect all identifier usages from AST statements.
+ * Used = any reference in any context (return, condition, RHS, expr, match arm, etc.)
+ */
+function collectUsedIds(stmts) {
+  const ids = new Set();
+  const walk = (list) => {
+    for (const st of list || []) {
+      switch (st.type) {
+        case 'assign':
+          for (const id of collectBodyIdentifiers(st.expr || '')) ids.add(id);
+          break;
+        case 'return':
+        case 'throw':
+          for (const id of collectBodyIdentifiers(st.expr || '')) ids.add(id);
+          break;
+        case 'expr':
+          for (const id of collectBodyIdentifiers(st.expr || '')) ids.add(id);
+          break;
+        case 'if':
+          for (const id of collectBodyIdentifiers(st.cond || '')) ids.add(id);
+          walk(st.then);
+          for (const e of st.elseIf || []) { for (const id of collectBodyIdentifiers(e.cond || '')) ids.add(id); walk(e.body); }
+          if (st.else) walk(st.else);
+          break;
+        case 'for':
+          for (const id of collectBodyIdentifiers(st.init || '')) ids.add(id);
+          for (const id of collectBodyIdentifiers(st.cond || '')) ids.add(id);
+          for (const id of collectBodyIdentifiers(st.step || '')) ids.add(id);
+          walk(st.body);
+          break;
+        case 'while':
+          for (const id of collectBodyIdentifiers(st.cond || '')) ids.add(id);
+          walk(st.body);
+          break;
+        case 'match':
+          for (const id of collectBodyIdentifiers(st.expr || '')) ids.add(id);
+          for (const arm of st.arms || []) walk(arm.body);
+          break;
+      }
+    }
+  };
+  walk(stmts);
+  return ids;
+}
+
+/**
+ * Recursively collect all top-level and nested assignments as { id, op, expr }.
+ * Only collects simple assignments (op === '='), not compound or property.
+ */
+function collectAllAssigns(stmts) {
+  const assigns = [];
+  const walk = (list) => {
+    for (const st of list || []) {
+      switch (st.type) {
+        case 'assign':
+          assigns.push({ id: st.id, op: st.op, expr: st.expr });
+          break;
+        case 'if':
+          walk(st.then);
+          for (const e of st.elseIf || []) walk(e.body);
+          if (st.else) walk(st.else);
+          break;
+        case 'for':
+          walk(st.body);
+          break;
+        case 'while':
+          walk(st.body);
+          break;
+        case 'match':
+          for (const arm of st.arms || []) walk(arm.body);
+          break;
+      }
+    }
+  };
+  walk(stmts);
+  return assigns;
+}
+
+/**
  * Find dead assignments in a LIN function body.
  * A dead assignment is `x = expr` where:
- *   1. x is never referenced anywhere else in the body
+ *   1. x is never referenced anywhere else in the body (including nested control flow)
  *   2. expr is pure (no function calls, IO, throw, native)
  *
- * Returns an array of { id, pattern } objects for each dead assignment.
+ * Returns an array of { id } objects for each dead assignment.
  */
 function findDeadAssignments(body) {
   const s = String(body || '');
@@ -89,38 +168,15 @@ function findDeadAssignments(body) {
     const stmts = tryParseStmts(s);
     if (!stmts) return dead;
 
-    // Collect all identifiers used in non-assignment contexts + in RHS of assignments
-    const usedIds = new Set();
-    for (const st of stmts) {
-      if (st.type === 'assign') {
-        // RHS identifiers are "used"
-        for (const id of collectBodyIdentifiers(st.expr || '')) usedIds.add(id);
-      } else {
-        // All identifiers in non-assignment statements are "used"
-        const raw = stmtToRaw(st);
-        for (const id of collectBodyIdentifiers(raw)) usedIds.add(id);
-      }
-    }
+    const usedIds = collectUsedIds(stmts);
+    const assigns = collectAllAssigns(stmts);
 
-    // Identify dead assignments
-    for (const st of stmts) {
-      if (st.type !== 'assign') continue;
-      const id = st.id;
-      // Skip compound assignments (x += ..., x.prop = ...) — they read x
-      if (st.op && st.op !== '=') continue;
-      // Skip property assignments (x.y = ...) — side effect on object
-      if (String(id).includes('.') || /\[/.test(String(id))) continue;
-      // LHS must not be used anywhere else
-      if (usedIds.has(id)) continue;
-      // RHS must be pure
-      if (!isPureRHS(st.expr)) continue;
-      // Build a regex to match this assignment in the raw text
-      dead.push({
-        id,
-        pattern: new RegExp(
-          `(?:^|[;{])\\s*${escapeRe(id)}\\s*=\\s*${escapeRegexForBody(st.expr || '')}\\s*;?`,
-        ),
-      });
+    for (const a of assigns) {
+      if (a.op && a.op !== '=') continue;
+      if (String(a.id).includes('.') || /\[/.test(String(a.id))) continue;
+      if (usedIds.has(a.id)) continue;
+      if (!isPureRHS(a.expr)) continue;
+      dead.push({ id: a.id });
     }
   } catch {
     // Parsing failed — conservative: no eliminations
@@ -146,11 +202,6 @@ function stmtToRaw(st) {
     case 'match': return 'match(' + st.expr + '){' + (st.arms || []).map(a => a.pat + '=>' + a.body.map(stmtToRaw).join(';')).join(',') + '}';
     default: return '';
   }
-}
-
-function escapeRegexForBody(expr) {
-  // Escape the expression for use in a regex, but allow flexible whitespace around operators
-  return escapeRe(String(expr || '').trim()).replace(/\\([+\-*/%&|^<>])/g, '\\s*$1\\s*');
 }
 
 /**
