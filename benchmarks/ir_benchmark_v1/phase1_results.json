@@ -1,0 +1,282 @@
+{
+  "benchmark": "IR_BENCHMARK_V1",
+  "phase": 1,
+  "timestamp": "2026-08-19T03:10:57.625Z",
+  "gate11FrozenAt": "ff17f11",
+  "config": {
+    "noDAE": true,
+    "noLLM": true,
+    "deterministic": true,
+    "canonicalSubset": "literals, identifiers, let/const/var, assignments, arithmetic, comparisons, logical, function calls, return, if/else, for, while, functions, basic TS types"
+  },
+  "summary": {
+    "totalFunctions": 22,
+    "totalTsTokens": 711,
+    "totalLinTokens": 711,
+    "overallIRRatio": 1,
+    "semanticEqPass": 0,
+    "semanticEqFail": 22,
+    "semanticEqSkip": 1,
+    "semanticEqRate": 0
+  },
+  "byCategory": {
+    "predicate": {
+      "count": 3,
+      "tsTokens": 26,
+      "linTokens": 24,
+      "irRatio": 1.0833333333333333
+    },
+    "arithmetic": {
+      "count": 5,
+      "tsTokens": 86,
+      "linTokens": 82,
+      "irRatio": 1.048780487804878
+    },
+    "string": {
+      "count": 5,
+      "tsTokens": 178,
+      "linTokens": 177,
+      "irRatio": 1.0056497175141244
+    },
+    "array": {
+      "count": 3,
+      "tsTokens": 110,
+      "linTokens": 109,
+      "irRatio": 1.0091743119266054
+    },
+    "control": {
+      "count": 2,
+      "tsTokens": 140,
+      "linTokens": 150,
+      "irRatio": 0.9333333333333333
+    },
+    "realworld": {
+      "count": 4,
+      "tsTokens": 171,
+      "linTokens": 169,
+      "irRatio": 1.0118343195266273
+    }
+  },
+  "functions": [
+    {
+      "name": "isNegative",
+      "category": "predicate",
+      "tsCanon": "function isNegative(n) { return n < 0; }",
+      "linBody": "^n < 0",
+      "tsTokens": 5,
+      "linTokens": 4,
+      "ratio": 1.25,
+      "semanticEq": false
+    },
+    {
+      "name": "isEmpty",
+      "category": "predicate",
+      "tsCanon": "function isEmpty(s) { return s.length == 0; }",
+      "linBody": "^s.length === 0",
+      "tsTokens": 8,
+      "linTokens": 8,
+      "ratio": 1,
+      "semanticEq": false
+    },
+    {
+      "name": "clamp",
+      "category": "predicate",
+      "tsCanon": "function clamp(value, min, max) { if (value max) { return max; } return value; }",
+      "linBody": "?(value max){^max};^value",
+      "tsTokens": 13,
+      "linTokens": 12,
+      "ratio": 1.0833333333333333,
+      "semanticEq": false
+    },
+    {
+      "name": "add",
+      "category": "arithmetic",
+      "tsCanon": "function add(a, b) { return a + b; }",
+      "linBody": "^a + b",
+      "tsTokens": 5,
+      "linTokens": 4,
+      "ratio": 1.25,
+      "semanticEq": false
+    },
+    {
+      "name": "multiply",
+      "category": "arithmetic",
+      "tsCanon": "function multiply(a, b) { return a * b; }",
+      "linBody": "^a * b",
+      "tsTokens": 5,
+      "linTokens": 4,
+      "ratio": 1.25,
+      "semanticEq": false
+    },
+    {
+      "name": "abs",
+      "category": "arithmetic",
+      "tsCanon": "function abs(n) { if (n < 0) { return -n; } return n; }",
+      "linBody": "?(n < 0){^-n};^n",
+      "tsTokens": 15,
+      "linTokens": 14,
+      "ratio": 1.0714285714285714,
+      "semanticEq": false
+    },
+    {
+      "name": "factorial",
+      "category": "arithmetic",
+      "tsCanon": "function factorial(n) { if (n <= 1) { return 1; } return n * factorial(n - 1); }",
+      "linBody": "?(n <= 1){^1};^n * factorial(n - 1)",
+      "tsTokens": 22,
+      "linTokens": 21,
+      "ratio": 1.0476190476190477,
+      "semanticEq": false
+    },
+    {
+      "name": "fibonacci",
+      "category": "arithmetic",
+      "tsCanon": "function fibonacci(n) { if (n <= 0) { return 0; } if (n == 1) { return 1; } return fibonacci(n - 1) + fibonacci(n - 2); }",
+      "linBody": "?(n <= 0){^0};?(n === 1){^1};^fibonacci(n - 1) + fibonacci(n - 2)",
+      "tsTokens": 39,
+      "linTokens": 39,
+      "ratio": 1,
+      "semanticEq": false
+    },
+    {
+      "name": "repeat",
+      "category": "string",
+      "tsCanon": "function repeat(s, n) { let result = \"\"; for (let i = 0; i < n; i++) { result = result + s; } return result; }",
+      "linBody": "let result = \"\";#(let i = 0;i < n;i++){result=result + s};^result",
+      "tsTokens": 31,
+      "linTokens": 30,
+      "ratio": 1.0333333333333334,
+      "semanticEq": false
+    },
+    {
+      "name": "reverse",
+      "category": "string",
+      "tsCanon": "function reverse(s) { let result = \"\"; for (let i = s.length - 1; i >= 0; i--) { result = result + s[i]; } return result; }",
+      "linBody": "let result = \"\";#(let i = s.length - 1;i >= 0;i--){result=result + s[i]};^result",
+      "tsTokens": 39,
+      "linTokens": 38,
+      "ratio": 1.0263157894736843,
+      "semanticEq": false
+    },
+    {
+      "name": "capitalize",
+      "category": "string",
+      "tsCanon": "function capitalize(s) { if (s.length == 0) { return s; } return s[0].toUpperCase() + s.slice(1); }",
+      "linBody": "?(s.length === 0){^s};^s[0].toUpperCase() + s.slice(1)",
+      "tsTokens": 31,
+      "linTokens": 31,
+      "ratio": 1,
+      "semanticEq": false
+    },
+    {
+      "name": "truncate",
+      "category": "string",
+      "tsCanon": "function truncate(s, max) { if (s.length <= max) { return s; } return s.slice(0, max) + \"...\"; }",
+      "linBody": "?(s.length <= max){^s};^s.slice(0, max) + \"...\"",
+      "tsTokens": 26,
+      "linTokens": 25,
+      "ratio": 1.04,
+      "semanticEq": false
+    },
+    {
+      "name": "isPalindrome",
+      "category": "string",
+      "tsCanon": "function isPalindrome(s) { let left = 0; let right = s.length - 1; while (left < right) { if (s[left] != s[right]) { return false; } left++; right--; } return true; }",
+      "linBody": "let left = 0;let right = s.length - 1;#(;left < right;){?(s[left] !== s[right]){^false};left++;right--};^true",
+      "tsTokens": 51,
+      "linTokens": 53,
+      "ratio": 0.9622641509433962,
+      "semanticEq": false
+    },
+    {
+      "name": "sum",
+      "category": "array",
+      "tsCanon": "function sum(arr: number[]) { let total = 0; for (let i = 0; i < arr.length; i++) { total = total + arr[i]; } return total; }",
+      "linBody": "let total = 0;#(let i = 0;i < arr.length;i++){total=total + arr[i]};^total",
+      "tsTokens": 36,
+      "linTokens": 35,
+      "ratio": 1.0285714285714285,
+      "semanticEq": false
+    },
+    {
+      "name": "findMax",
+      "category": "array",
+      "tsCanon": "function findMax(arr: number[]) { let max = arr[0]; for (let i = 1; i max) { max = arr[i]; } } return max; }",
+      "linBody": "let max = arr[0];#(let i = 1;i max;){max=arr[i]};} return max",
+      "tsTokens": 31,
+      "linTokens": 31,
+      "ratio": 1,
+      "semanticEq": false
+    },
+    {
+      "name": "count",
+      "category": "array",
+      "tsCanon": "function count(arr: number[], target) { let n = 0; for (let i = 0; i < arr.length; i++) { if (arr[i] == target) { n++; } } return n; }",
+      "linBody": "let n = 0;#(let i = 0;i < arr.length;i++){?(arr[i] === target){n++}};^n",
+      "tsTokens": 43,
+      "linTokens": 43,
+      "ratio": 1,
+      "semanticEq": false
+    },
+    {
+      "name": "classify",
+      "category": "control",
+      "tsCanon": "function classify(score) { if (score >= 90) { return \"A\"; } else if (score >= 80) { return \"B\"; } else if (score >= 70) { return \"C\"; } else if (score >= 60) { return \"D\"; } else { return \"F\"; } }",
+      "linBody": "?(score >= 90){^\"A\"}:{?(score >= 80){^\"B\"}:{?(score >= 70){^\"C\"}:{?(score >= 60){^\"D\"}:{^\"F\"}}}}",
+      "tsTokens": 57,
+      "linTokens": 58,
+      "ratio": 0.9827586206896551,
+      "semanticEq": false
+    },
+    {
+      "name": "dayOfWeek",
+      "category": "control",
+      "tsCanon": "function dayOfWeek(n) { if (n == 0) { return \"Sun\"; } else if (n == 1) { return \"Mon\"; } else if (n == 2) { return \"Tue\"; } else if (n == 3) { return \"Wed\"; } else if (n == 4) { return \"Thu\"; } else if (n == 5) { return \"Fri\"; } else { return \"Sat\"; } }",
+      "linBody": "?(n === 0){^\"Sun\"}:{?(n === 1){^\"Mon\"}:{?(n === 2){^\"Tue\"}:{?(n === 3){^\"Wed\"}:{?(n === 4){^\"Thu\"}:{?(n === 5){^\"Fri\"}:{^\"Sat\"}}}}}}",
+      "tsTokens": 83,
+      "linTokens": 92,
+      "ratio": 0.9021739130434783,
+      "semanticEq": false
+    },
+    {
+      "name": "absFloor",
+      "category": "realworld",
+      "tsCanon": "function absFloor(n) { if (n < 0) { return Math.ceil(n) || 0; } return Math.floor(n); }",
+      "linBody": "?(n < 0){^Math.ceil(n) || 0};^Math.floor(n)",
+      "tsTokens": 27,
+      "linTokens": 26,
+      "ratio": 1.0384615384615385,
+      "semanticEq": false
+    },
+    {
+      "name": "padStart",
+      "category": "realworld",
+      "tsCanon": "function padStart(s, target, fill) { while (s.length < target) { s = fill + s; } return s; }",
+      "linBody": "#(;s.length < target;){s=fill + s};^s",
+      "tsTokens": 19,
+      "linTokens": 20,
+      "ratio": 0.95,
+      "semanticEq": false
+    },
+    {
+      "name": "debounce",
+      "category": "realworld",
+      "tsCanon": "function debounce(fn, wait) { let timeout = null; return function(this, ...args: any[]) { if (timeout) { clearTimeout(timeout); } timeout = setTimeout(() => { fn.apply(this, args); }, wait); }; }",
+      "linBody": "let timeout = null;^function(this, ...args: any[]) { if (timeout) { clearTimeout(timeout); } timeout = setTimeout(() => { fn.apply(this, args); }, wait); }",
+      "tsTokens": 56,
+      "linTokens": 55,
+      "ratio": 1.018181818181818,
+      "semanticEq": false
+    },
+    {
+      "name": "memoize",
+      "category": "realworld",
+      "tsCanon": "function memoize(fn) { const cache = {}; return function(this, ...args: any[]) { const key = JSON.stringify(args); if (key in cache) { return cache[key]; } const result = fn.apply(this, args); cache[key] = result; return result; }; }",
+      "linBody": "const cache = {};^function(this, ...args: any[]) { const key = JSON.stringify(args); if (key in cache) { return cache[key]; } const result = fn.apply(this, args); cache[key] = result; return result; }",
+      "tsTokens": 69,
+      "linTokens": 68,
+      "ratio": 1.0147058823529411,
+      "semanticEq": false
+    }
+  ]
+}

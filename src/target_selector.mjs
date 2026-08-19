@@ -34,7 +34,7 @@ export function evaluateTargets(liaCode, profile = PROFILES.PERFORMANCE, opts = 
 
       // Metric Adjustments based on profile
       if (profile === PROFILES.PERFORMANCE) {
-        if (['rust', 'c'].includes(target)) score += 50;
+        if (['rust', 'c', 'zig'].includes(target)) score += 50;
         else if (['go', 'crystal', 'julia'].includes(target)) score += 30;
         else if (['java', 'cs', 'kotlin', 'scala'].includes(target)) score += 15;
       } else if (profile === PROFILES.AI_DATA) {

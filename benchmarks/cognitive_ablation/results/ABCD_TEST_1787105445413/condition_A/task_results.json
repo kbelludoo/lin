@@ -1,0 +1,86 @@
+[
+  {
+    "task_id": "T003",
+    "family": "logic_state",
+    "difficulty": "medium",
+    "failure_class": "ORACLE_FAILURE",
+    "compile_pass": true,
+    "oracle_pass": false,
+    "prompt_tokens": 132,
+    "completion_tokens": 128,
+    "total_tokens": 260,
+    "total_latency_ms": 6507,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "7935569ca78556f5",
+        "candidate_code": "function solve(input) {\n    let { stack, action, value, history } = input;\n\n    if (action === \"push\") {\n        history.push([...stack, value]);\n        stack = [...stack, value];\n    } else if (action === \"pop\") {\n        if (stack.length > 0) {\n            history.push([...stack]);\n            stack = stack.slice(0, -1);\n        }\n    } else if (action === \"rollback\") {\n        if (history.length > 0) {\n            stack = history.pop();\n        }\n    }\n\n    return { stack, history };\n}",
+        "prompt_tokens": 132,
+        "completion_tokens": 128,
+        "tokens": 260,
+        "latency_ms": 6507,
+        "verifier_passed": true,
+        "oracle_executed": true,
+        "oracle_passed": false,
+        "failure_class": "ORACLE_FAILURE",
+        "condition": "TS_BASELINE"
+      }
+    ]
+  },
+  {
+    "task_id": "T002",
+    "family": "logic_state",
+    "difficulty": "medium",
+    "failure_class": "INVALID_LIN",
+    "compile_pass": false,
+    "oracle_pass": false,
+    "prompt_tokens": 133,
+    "completion_tokens": 46,
+    "total_tokens": 179,
+    "total_latency_ms": 1843,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "c54825ce410c0bdf",
+        "candidate_code": "function solve(input) {\n    const { buffer, item } = input;\n    buffer.push(item);\n    if (buffer.length > 3) {\n        buffer.shift();\n    }\n    return buffer;\n}",
+        "prompt_tokens": 133,
+        "completion_tokens": 46,
+        "tokens": 179,
+        "latency_ms": 1843,
+        "verifier_passed": false,
+        "oracle_executed": false,
+        "oracle_passed": false,
+        "failure_class": "INVALID_LIN",
+        "condition": "TS_BASELINE"
+      }
+    ]
+  },
+  {
+    "task_id": "T001",
+    "family": "logic_state",
+    "difficulty": "easy",
+    "failure_class": "PASS",
+    "compile_pass": true,
+    "oracle_pass": true,
+    "prompt_tokens": 133,
+    "completion_tokens": 57,
+    "total_tokens": 190,
+    "total_latency_ms": 2112,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "244bc97f4e7cd452",
+        "candidate_code": "function solve(input) {\n    switch (input) {\n        case \"RED\":\n            return \"GREEN\";\n        case \"GREEN\":\n            return \"YELLOW\";\n        case \"YELLOW\":\n            return \"RED\";\n        default:\n            return \"ERROR\";\n    }\n}",
+        "prompt_tokens": 133,
+        "completion_tokens": 57,
+        "tokens": 190,
+        "latency_ms": 2112,
+        "verifier_passed": true,
+        "oracle_executed": true,
+        "oracle_passed": true,
+        "failure_class": "PASS",
+        "condition": "TS_BASELINE"
+      }
+    ]
+  }
+]

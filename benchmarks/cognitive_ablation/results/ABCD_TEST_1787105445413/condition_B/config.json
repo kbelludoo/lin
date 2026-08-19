@@ -1,0 +1,12 @@
+{
+  "condition_id": "B",
+  "name": "LIN Minimal Grammar",
+  "mode": "LIN_MINIMAL",
+  "model_config": {
+    "baseUrl": "http://localhost:11434",
+    "provider": "ollama",
+    "model": "qwen2.5-coder:7b",
+    "temperature": 0,
+    "seed": 42
+  }
+}

@@ -1,0 +1,524 @@
+{
+  "timestamp": "2026-08-19T02:20:52.429Z",
+  "model": "qwen2.5-coder:7b",
+  "tasks": [
+    "T002",
+    "T003"
+  ],
+  "conditions": [
+    {
+      "id": "A",
+      "name": "TS Baseline (1 attempt)",
+      "maxAttempts": 1,
+      "feedbackMode": "NONE"
+    },
+    {
+      "id": "B",
+      "name": "LIN Minimal (1 attempt)",
+      "maxAttempts": 1,
+      "feedbackMode": "NONE"
+    },
+    {
+      "id": "D",
+      "name": "LIN Constrained (1 attempt)",
+      "maxAttempts": 1,
+      "feedbackMode": "NONE"
+    },
+    {
+      "id": "E",
+      "name": "LIN + Verifier + Trauma (3 attempts)",
+      "maxAttempts": 3,
+      "feedbackMode": "TRAUMA"
+    }
+  ],
+  "results": [
+    {
+      "condition_id": "A",
+      "condition_name": "TS Baseline (1 attempt)",
+      "prompt_mode": "NATURAL_JS",
+      "max_attempts": 1,
+      "feedback_mode": "NONE",
+      "summary": {
+        "compile_pass_rate": 0.5,
+        "oracle_pass_rate": 0,
+        "invalid_lin_rate": 0.5,
+        "model_failure_rate": 0,
+        "timeout_rate": 0,
+        "counts": {
+          "PASS": 0,
+          "INVALID_LIN": 1,
+          "COMPILATION_FAILURE": 0,
+          "ORACLE_FAILURE": 1,
+          "MODEL_FAILURE": 0,
+          "TIMEOUT": 0
+        },
+        "total_tasks": 2,
+        "total_tokens": 439,
+        "total_prompt_tokens": 265,
+        "total_completion_tokens": 174,
+        "total_latency_ms": 8496,
+        "avg_tokens_per_task": 219.5,
+        "avg_prompt_tokens_per_task": 132.5,
+        "avg_completion_tokens_per_task": 87,
+        "avg_latency_per_task": 4248,
+        "initial_pass_rate": 0,
+        "recovered_pass_rate": 0,
+        "rsr": 0,
+        "initial_passes": 0,
+        "recovered_passes": 0
+      },
+      "task_results": [
+        {
+          "task_id": "T002",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "INVALID_LIN",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "INVALID_LIN"
+          ],
+          "prompt_tokens": 133,
+          "completion_tokens": 46,
+          "total_tokens": 179,
+          "total_latency_ms": 4588,
+          "attempts_count": 1,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "c54825ce410c0bdf",
+              "candidate_code": "function solve(input) {\n    const { buffer, item } = input;\n    buffer.push(item);\n    if (buffer.length > 3) {\n        buffer.shift();\n    }\n    return buffer;\n}",
+              "prompt_tokens": 133,
+              "completion_tokens": 46,
+              "tokens": 179,
+              "latency_ms": 4588,
+              "verifier_passed": false,
+              "verifier_stage": "EFFECT_CHECK",
+              "violation_class": "FORBIDDEN_MUTATION",
+              "oracle_executed": false,
+              "oracle_passed": false,
+              "failure_class": "INVALID_LIN"
+            }
+          ]
+        },
+        {
+          "task_id": "T003",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "ORACLE_FAILURE",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "ORACLE_FAILURE"
+          ],
+          "prompt_tokens": 132,
+          "completion_tokens": 128,
+          "total_tokens": 260,
+          "total_latency_ms": 3908,
+          "attempts_count": 1,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "7935569ca78556f5",
+              "candidate_code": "function solve(input) {\n    let { stack, action, value, history } = input;\n\n    if (action === \"push\") {\n        history.push([...stack, value]);\n        stack = [...stack, value];\n    } else if (action === \"pop\") {\n        if (stack.length > 0) {\n            history.push([...stack]);\n            stack = stack.slice(0, -1);\n        }\n    } else if (action === \"rollback\") {\n        if (history.length > 0) {\n            stack = history.pop();\n        }\n    }\n\n    return { stack, history };\n}",
+              "prompt_tokens": 132,
+              "completion_tokens": 128,
+              "tokens": 260,
+              "latency_ms": 3908,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "condition_id": "B",
+      "condition_name": "LIN Minimal (1 attempt)",
+      "prompt_mode": "LIN_ZERO_SHOT",
+      "max_attempts": 1,
+      "feedback_mode": "NONE",
+      "summary": {
+        "compile_pass_rate": 1,
+        "oracle_pass_rate": 0,
+        "invalid_lin_rate": 0,
+        "model_failure_rate": 0,
+        "timeout_rate": 0,
+        "counts": {
+          "PASS": 0,
+          "INVALID_LIN": 0,
+          "COMPILATION_FAILURE": 0,
+          "ORACLE_FAILURE": 2,
+          "MODEL_FAILURE": 0,
+          "TIMEOUT": 0
+        },
+        "total_tasks": 2,
+        "total_tokens": 665,
+        "total_prompt_tokens": 407,
+        "total_completion_tokens": 258,
+        "total_latency_ms": 10560,
+        "avg_tokens_per_task": 332.5,
+        "avg_prompt_tokens_per_task": 203.5,
+        "avg_completion_tokens_per_task": 129,
+        "avg_latency_per_task": 5280,
+        "initial_pass_rate": 0,
+        "recovered_pass_rate": 0,
+        "rsr": 0,
+        "initial_passes": 0,
+        "recovered_passes": 0
+      },
+      "task_results": [
+        {
+          "task_id": "T002",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "ORACLE_FAILURE",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "ORACLE_FAILURE"
+          ],
+          "prompt_tokens": 205,
+          "completion_tokens": 108,
+          "total_tokens": 313,
+          "total_latency_ms": 6019,
+          "attempts_count": 1,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "f4c2cd0406039fd3",
+              "candidate_code": "!solve(input){ \n    var buffer = input.buffer; \n    var item = input.item; \n    var len = buffer.length; \n    if (len < 3) { \n        buffer[len] = item; \n    } else { \n        for (var i = 0; i < len - 1; i++) { \n            buffer[i] = buffer[i + 1]; \n        } \n        buffer[len - 1] = item; \n    } \n    return buffer; \n}",
+              "prompt_tokens": 205,
+              "completion_tokens": 108,
+              "tokens": 313,
+              "latency_ms": 6019,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            }
+          ]
+        },
+        {
+          "task_id": "T003",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "ORACLE_FAILURE",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "ORACLE_FAILURE"
+          ],
+          "prompt_tokens": 202,
+          "completion_tokens": 150,
+          "total_tokens": 352,
+          "total_latency_ms": 4541,
+          "attempts_count": 1,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "536f8615c0217d9e",
+              "candidate_code": "!solve(input){ \n    let { stack, action, value, history } = input;\n    if (action === \"push\") {\n        history.push({ stack: [...stack], action: \"push\", value });\n        stack = [...stack, value];\n    } else if (action === \"pop\") {\n        if (stack.length > 0) {\n            history.push({ stack: [...stack], action: \"pop\" });\n            stack = stack.slice(0, -1);\n        }\n    } else if (action === \"rollback\") {\n        if (history.length > 0) {\n            let lastAction = history.pop();\n            stack = lastAction.stack;\n        }\n    }\n    return { stack, history };\n}",
+              "prompt_tokens": 202,
+              "completion_tokens": 150,
+              "tokens": 352,
+              "latency_ms": 4541,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "condition_id": "D",
+      "condition_name": "LIN Constrained (1 attempt)",
+      "prompt_mode": "LIN_TRAUMA",
+      "max_attempts": 1,
+      "feedback_mode": "NONE",
+      "summary": {
+        "compile_pass_rate": 1,
+        "oracle_pass_rate": 0,
+        "invalid_lin_rate": 0,
+        "model_failure_rate": 0,
+        "timeout_rate": 0,
+        "counts": {
+          "PASS": 0,
+          "INVALID_LIN": 0,
+          "COMPILATION_FAILURE": 0,
+          "ORACLE_FAILURE": 2,
+          "MODEL_FAILURE": 0,
+          "TIMEOUT": 0
+        },
+        "total_tasks": 2,
+        "total_tokens": 665,
+        "total_prompt_tokens": 407,
+        "total_completion_tokens": 258,
+        "total_latency_ms": 10747,
+        "avg_tokens_per_task": 332.5,
+        "avg_prompt_tokens_per_task": 203.5,
+        "avg_completion_tokens_per_task": 129,
+        "avg_latency_per_task": 5373.5,
+        "initial_pass_rate": 0,
+        "recovered_pass_rate": 0,
+        "rsr": 0,
+        "initial_passes": 0,
+        "recovered_passes": 0
+      },
+      "task_results": [
+        {
+          "task_id": "T002",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "ORACLE_FAILURE",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "ORACLE_FAILURE"
+          ],
+          "prompt_tokens": 205,
+          "completion_tokens": 108,
+          "total_tokens": 313,
+          "total_latency_ms": 6205,
+          "attempts_count": 1,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "f4c2cd0406039fd3",
+              "candidate_code": "!solve(input){ \n    var buffer = input.buffer; \n    var item = input.item; \n    var len = buffer.length; \n    if (len < 3) { \n        buffer[len] = item; \n    } else { \n        for (var i = 0; i < len - 1; i++) { \n            buffer[i] = buffer[i + 1]; \n        } \n        buffer[len - 1] = item; \n    } \n    return buffer; \n}",
+              "prompt_tokens": 205,
+              "completion_tokens": 108,
+              "tokens": 313,
+              "latency_ms": 6205,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            }
+          ]
+        },
+        {
+          "task_id": "T003",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "ORACLE_FAILURE",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "ORACLE_FAILURE"
+          ],
+          "prompt_tokens": 202,
+          "completion_tokens": 150,
+          "total_tokens": 352,
+          "total_latency_ms": 4542,
+          "attempts_count": 1,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "536f8615c0217d9e",
+              "candidate_code": "!solve(input){ \n    let { stack, action, value, history } = input;\n    if (action === \"push\") {\n        history.push({ stack: [...stack], action: \"push\", value });\n        stack = [...stack, value];\n    } else if (action === \"pop\") {\n        if (stack.length > 0) {\n            history.push({ stack: [...stack], action: \"pop\" });\n            stack = stack.slice(0, -1);\n        }\n    } else if (action === \"rollback\") {\n        if (history.length > 0) {\n            let lastAction = history.pop();\n            stack = lastAction.stack;\n        }\n    }\n    return { stack, history };\n}",
+              "prompt_tokens": 202,
+              "completion_tokens": 150,
+              "tokens": 352,
+              "latency_ms": 4542,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "condition_id": "E",
+      "condition_name": "LIN + Verifier + Trauma (3 attempts)",
+      "prompt_mode": "LIN_TRAUMA",
+      "max_attempts": 3,
+      "feedback_mode": "TRAUMA",
+      "summary": {
+        "compile_pass_rate": 0.5,
+        "oracle_pass_rate": 0,
+        "invalid_lin_rate": 0.5,
+        "model_failure_rate": 0,
+        "timeout_rate": 0,
+        "counts": {
+          "PASS": 0,
+          "INVALID_LIN": 1,
+          "COMPILATION_FAILURE": 0,
+          "ORACLE_FAILURE": 1,
+          "MODEL_FAILURE": 0,
+          "TIMEOUT": 0
+        },
+        "total_tasks": 2,
+        "total_tokens": 2594,
+        "total_prompt_tokens": 1590,
+        "total_completion_tokens": 1004,
+        "total_latency_ms": 32298,
+        "avg_tokens_per_task": 1297,
+        "avg_prompt_tokens_per_task": 795,
+        "avg_completion_tokens_per_task": 502,
+        "avg_latency_per_task": 16149,
+        "initial_pass_rate": 0,
+        "recovered_pass_rate": 0,
+        "rsr": 0,
+        "initial_passes": 0,
+        "recovered_passes": 0
+      },
+      "task_results": [
+        {
+          "task_id": "T002",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "INVALID_LIN",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "ORACLE_FAILURE",
+            "INVALID_LIN",
+            "INVALID_LIN"
+          ],
+          "prompt_tokens": 802,
+          "completion_tokens": 208,
+          "total_tokens": 1010,
+          "total_latency_ms": 10019,
+          "attempts_count": 3,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "f4c2cd0406039fd3",
+              "candidate_code": "!solve(input){ \n    var buffer = input.buffer; \n    var item = input.item; \n    var len = buffer.length; \n    if (len < 3) { \n        buffer[len] = item; \n    } else { \n        for (var i = 0; i < len - 1; i++) { \n            buffer[i] = buffer[i + 1]; \n        } \n        buffer[len - 1] = item; \n    } \n    return buffer; \n}",
+              "prompt_tokens": 205,
+              "completion_tokens": 108,
+              "tokens": 313,
+              "latency_ms": 6199,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            },
+            {
+              "attempt": 2,
+              "candidate_hash": "f81fd2ac55cb6d5a",
+              "candidate_code": "!solve(input){ var buffer = input.buffer; var item = input.item; var len = buffer.length; if (len < 3) { buffer.push(item); } else { buffer.shift(); buffer.push(item); } return buffer; }",
+              "prompt_tokens": 296,
+              "completion_tokens": 50,
+              "tokens": 346,
+              "latency_ms": 1919,
+              "verifier_passed": false,
+              "verifier_stage": "EFFECT_CHECK",
+              "violation_class": "FORBIDDEN_MUTATION",
+              "oracle_executed": false,
+              "oracle_passed": false,
+              "failure_class": "INVALID_LIN"
+            },
+            {
+              "attempt": 3,
+              "candidate_hash": "e5d96ed2537cb065",
+              "candidate_code": "!solve(input){ let buffer = input.buffer; let item = input.item; let len = buffer.length; if (len < 3) { buffer.push(item); } else { buffer.shift(); buffer.push(item); } return buffer; }",
+              "prompt_tokens": 301,
+              "completion_tokens": 50,
+              "tokens": 351,
+              "latency_ms": 1901,
+              "verifier_passed": false,
+              "verifier_stage": "EFFECT_CHECK",
+              "violation_class": "FORBIDDEN_MUTATION",
+              "oracle_executed": false,
+              "oracle_passed": false,
+              "failure_class": "INVALID_LIN"
+            }
+          ]
+        },
+        {
+          "task_id": "T003",
+          "family": "logic_state",
+          "difficulty": "medium",
+          "failure_class": "ORACLE_FAILURE",
+          "passed_on_attempt": null,
+          "initial_pass": false,
+          "recovered_pass": false,
+          "failure_class_transition": [
+            "ORACLE_FAILURE",
+            "ORACLE_FAILURE",
+            "ORACLE_FAILURE"
+          ],
+          "prompt_tokens": 788,
+          "completion_tokens": 796,
+          "total_tokens": 1584,
+          "total_latency_ms": 22279,
+          "attempts_count": 3,
+          "attempts": [
+            {
+              "attempt": 1,
+              "candidate_hash": "536f8615c0217d9e",
+              "candidate_code": "!solve(input){ \n    let { stack, action, value, history } = input;\n    if (action === \"push\") {\n        history.push({ stack: [...stack], action: \"push\", value });\n        stack = [...stack, value];\n    } else if (action === \"pop\") {\n        if (stack.length > 0) {\n            history.push({ stack: [...stack], action: \"pop\" });\n            stack = stack.slice(0, -1);\n        }\n    } else if (action === \"rollback\") {\n        if (history.length > 0) {\n            let lastAction = history.pop();\n            stack = lastAction.stack;\n        }\n    }\n    return { stack, history };\n}",
+              "prompt_tokens": 202,
+              "completion_tokens": 150,
+              "tokens": 352,
+              "latency_ms": 4532,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            },
+            {
+              "attempt": 2,
+              "candidate_hash": "33deaa84ba3e88b7",
+              "candidate_code": "!solve(input){\n  var stack = input.stack;\n  var action = input.action;\n  var value = input.value;\n  var history = input.history;\n\n  if (action == \"push\") {\n    var newStack = [...stack, value];\n    history = [...history, { action: \"push\", value: value }];\n    return ^{ stack: newStack, history: history };\n  } else if (action == \"pop\") {\n    if (stack.length > 0) {\n      var newStack = stack.slice(0, -1);\n      history = [...history, { action: \"pop\", value: stack[stack.length - 1] }];\n      return ^{ stack: newStack, history: history };\n    } else {\n      return ^{ stack: stack, history: history };\n    }\n  } else if (action == \"rollback\") {\n    if (history.length > 0) {\n      var lastAction = history[history.length - 1];\n      if (lastAction.action == \"push\") {\n        var newStack = stack.slice(0, -1);\n        history = history.slice(0, -1);\n        return ^{ stack: newStack, history: history };\n      } else if (lastAction.action == \"pop\") {\n        var newStack = [...stack, lastAction.value];\n        history = history.slice(0, -1);\n        return ^{ stack: newStack, history: history };\n      }\n    }\n    return ^{ stack: stack, history: history };\n  }\n}",
+              "prompt_tokens": 293,
+              "completion_tokens": 323,
+              "tokens": 616,
+              "latency_ms": 8906,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            },
+            {
+              "attempt": 3,
+              "candidate_hash": "33deaa84ba3e88b7",
+              "candidate_code": "!solve(input){\n  var stack = input.stack;\n  var action = input.action;\n  var value = input.value;\n  var history = input.history;\n\n  if (action == \"push\") {\n    var newStack = [...stack, value];\n    history = [...history, { action: \"push\", value: value }];\n    return ^{ stack: newStack, history: history };\n  } else if (action == \"pop\") {\n    if (stack.length > 0) {\n      var newStack = stack.slice(0, -1);\n      history = [...history, { action: \"pop\", value: stack[stack.length - 1] }];\n      return ^{ stack: newStack, history: history };\n    } else {\n      return ^{ stack: stack, history: history };\n    }\n  } else if (action == \"rollback\") {\n    if (history.length > 0) {\n      var lastAction = history[history.length - 1];\n      if (lastAction.action == \"push\") {\n        var newStack = stack.slice(0, -1);\n        history = history.slice(0, -1);\n        return ^{ stack: newStack, history: history };\n      } else if (lastAction.action == \"pop\") {\n        var newStack = [...stack, lastAction.value];\n        history = history.slice(0, -1);\n        return ^{ stack: newStack, history: history };\n      }\n    }\n    return ^{ stack: stack, history: history };\n  }\n}",
+              "prompt_tokens": 293,
+              "completion_tokens": 323,
+              "tokens": 616,
+              "latency_ms": 8841,
+              "verifier_passed": true,
+              "verifier_stage": "VERIFY_OK",
+              "violation_class": null,
+              "oracle_executed": true,
+              "oracle_passed": false,
+              "failure_class": "ORACLE_FAILURE"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

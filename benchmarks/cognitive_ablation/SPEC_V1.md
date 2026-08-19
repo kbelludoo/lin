@@ -124,3 +124,72 @@ benchmarks/cognitive_ablation/
    - Se $RSR(E) \le RSR(D)$, a hipótese de que o **Trauma Estruturado** melhora a capacidade de auto-correção é rejeitada.
 3. **Hipótese de Eficiência do Modelo Pequeno ($F \text{ vs } B$):**
    - Se $\text{pass@k}(F) \ge \text{pass@1}(B)$ com $\text{tokens}(F) \le \text{tokens}(B)$, a hipótese de que a Camada Cognitiva LIN permite que modelos pequenos superem modelos maiores em tarefas estruturadas é preliminarmente aceita para a Fase B.
+
+---
+
+## 9. Resultados do Protocolo — LIN_MINIMAL_V1 (IMUTÁVEL)
+
+> **Status:** EXECUTADO
+> **Data:** 2026-08-18
+> **Modelo:** Qwen2.5-Coder-7B (Ollama)
+> **Dataset:** T001, T002, T003 (logic_state family)
+> **Artefatos:** `results/MICRO_ABLATION_1787105985584/`, `results/ABCD_TEST_1787105445413/`
+
+### 9.1. Resultado por Hipótese
+
+| Hipótese | Critério (§8) | Dado | Status |
+|----------|---------------|------|--------|
+| **H_COG-01** (Representação) | pass@1(C) ≤ pass@1(B) - 5% | pass@1(C)=0% < pass@1(B)=33.3% | **REJECTED** |
+| **H_COG-02** (Recuperação) | RSR(E) ≤ RSR(D) | RSR(E)=0.00, RSR(D)=0.00 | **REJECTED** |
+| **H_COG-03** (Eficiência) | pass@k(F) ≥ pass@1(B) ∧ tokens(F) ≤ tokens(B) | Não executado (F não testado) | PENDING |
+
+### 9.2. Dados Primários
+
+**Ablação A/B/C/D (1 tentativa, T001-T003):**
+
+| Cond | pass@1 | tokens | Pareto |
+|------|--------|--------|--------|
+| A (TS baseline) | 33.3% | 210 | Dominant |
+| B (LIN minimal) | 33.3% | 308 | Dominated |
+| C (LIN few-shot) | 0.0% | 666 | Dominated |
+| D (LIN constrained) | 33.3% | 753 | Dominated |
+
+**Ablação Micro-diagnóstica A/B/D/E (T002/T003):**
+
+| Task | A | B | E (3att + trauma) |
+|------|---|---|-------------------|
+| T002 | INVALID_LIN | ORACLE_FAILURE | ORACLE_FAILURE → INVALID_LIN → INVALID_LIN |
+| T003 | ORACLE_FAILURE | ORACLE_FAILURE | ORACLE_FAILURE ×3 |
+
+**RSR(E) = 0.00.** Nenhuma recuperação observada.
+
+### 9.3. Oracle Audit
+
+Canonical TS e LIN passam todos os 4 pipelines para T001 e T003. Oráculos validados como corretos.
+
+### 9.4. Conclusão Formal
+
+> No Qwen2.5-Coder-7B e no protocolo LIN_MINIMAL_V1, a integração LIN não produziu ganho semântico nem recuperação pós-rejeição; o overhead de representação superou os ganhos de saída. Os resultados sustentam o uso do LIN como IR, linguagem-alvo e camada de verificação, mas não sustentam a hipótese de aumento de capacidade cognitiva do modelo.
+
+### 9.5. Evidência Preservada
+
+| Artefato | Caminho | Conteúdo |
+|----------|---------|----------|
+| A/B/C/D results | `results/ABCD_TEST_*/COMPARISON.json` | Métricas por condição, Pareto,效率 |
+| Micro-ablation | `results/MICRO_ABLATION_*/RESULTS.json` | Transições de falha, RSR, tokens |
+| Oracle audit | `harness/oracle_audit.mjs` | Script de validação de oráculos |
+| Results report | `results/milestones/LIN_MINIMAL_V1_RESULTS.md` | Relatório consolidado |
+
+### 9.6. Dados NÃO Demonstrados
+
+- LIN não aumentou a capacidade semântica do Qwen 7B
+- LIN + verifier + trauma não aumentou recuperação
+- A representação LIN minimalista não apresentou vantagem de eficiência end-to-end
+
+### 9.7. Dados Demonstrados
+
+- Qwen 7B consegue aprender a emitir LIN válido com instrução apropriada
+- LIN pode fornecer restrições sintáticas/efeitos úteis (B: 100% compile vs A: 66.7%)
+- O compilador/verifier consegue impor propriedades que o modelo pode violar
+- O custo de ensinar LIN ao modelo pode superar a economia da saída
+- A arquitetura verifier → trauma → retry não mostrou ganho cognitivo neste experimento

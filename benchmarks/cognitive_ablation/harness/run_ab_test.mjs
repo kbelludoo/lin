@@ -312,12 +312,15 @@ function buildComparison(results) {
       model_failure_rate: r.summary.model_failure_rate,
       timeout_rate: r.summary.timeout_rate,
       avg_tokens_per_task: r.summary.avg_tokens_per_task,
+      avg_prompt_tokens_per_task: r.summary.avg_prompt_tokens_per_task,
+      avg_completion_tokens_per_task: r.summary.avg_completion_tokens_per_task,
       avg_latency_per_task: r.summary.avg_latency_per_task,
       avg_tokens_per_pass: r.summary.avg_tokens_per_pass,
       counts: r.summary.counts,
     })),
     deltas: {},
     efficiency: {},
+    pareto_frontier: [],
   };
 
   // Calcular deltas entre condições
@@ -370,6 +373,15 @@ function buildComparison(results) {
       };
     }
   }
+
+  // Pareto frontier: (avg_tokens, oracle_pass_rate) per condition
+  comparison.pareto_frontier = conditions.map(c => ({
+    id: c.id,
+    avg_tokens: c.avg_tokens_per_task,
+    oracle_pass_rate: c.oracle_pass_rate,
+    prompt_tokens: c.avg_prompt_tokens_per_task,
+    completion_tokens: c.avg_completion_tokens_per_task,
+  }));
 
   return comparison;
 }
@@ -669,6 +681,12 @@ async function main() {
     path.join(RUNS_DIR, currentRunDir, 'INVARIANTS.json'),
     JSON.stringify({ timestamp: new Date().toISOString(), all_passed: allPassed, checks: invariantResults }, null, 2)
   );
+
+  // Pareto frontier
+  console.log('\n📈 PARETO FRONTIER (tokens → oracle_pass_rate)');
+  for (const p of comparison.pareto_frontier) {
+    console.log(`  ${p.id}: ${p.avg_tokens.toFixed(0)} tok → ${(p.oracle_pass_rate * 100).toFixed(1)}%  (prompt=${p.prompt_tokens?.toFixed(0)} comp=${p.completion_tokens?.toFixed(0)})`);
+  }
 
   console.log(`\n💾 All artifacts written to: ${RUNS_DIR}`);
 }

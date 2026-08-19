@@ -1,0 +1,12 @@
+{
+  "condition_id": "D",
+  "name": "LIN Constrained (5 examples + grammar)",
+  "mode": "CONSTRAINED",
+  "model_config": {
+    "baseUrl": "http://localhost:11434",
+    "provider": "ollama",
+    "model": "qwen2.5-coder:7b",
+    "temperature": 0,
+    "seed": 42
+  }
+}

@@ -23,7 +23,7 @@ export const TARGETS = [
 ];
 
 /** Real nucleus: compile + toolchain check. Stub langs may emit but are not suite_rate. */
-export const REAL_TARGETS = ['ts', 'js', 'py', 'go', 'rust', 'c', 'java'];
+export const REAL_TARGETS = ['ts', 'js', 'py', 'go', 'rust', 'c', 'java', 'zig'];
 export const STUB_TARGETS = TARGETS.filter((t) => !REAL_TARGETS.includes(t));
 export const GATE_REQUIRED = ['ts', 'js', 'py', 'go', 'rust', 'java'];
 
@@ -39,7 +39,7 @@ export function formatStubIntel() {
   return `EXPERIMENTAL_NOT_PASS ${STUB_TARGETS.join(',')} no_toolchain_no_oracle`;
 }
 
-const STUB_PASS_RE = /\b(?:cs|lua|elixir|crystal|kotlin|hcl|julia|scala|haskell|prolog|zig|nim|asm):P\d+\/S\d+\/F\d+\s*/g;
+const STUB_PASS_RE = /\b(?:cs|lua|elixir|crystal|kotlin|hcl|julia|scala|haskell|prolog|nim|asm):P\d+\/S\d+\/F\d+\s*/g;
 
 export function stripStubPassScores(text) {
   return String(text || '').replace(STUB_PASS_RE, '');
@@ -131,6 +131,7 @@ export function emitNilDefaults(defaults, target) {
     if (target === 'go') return `\tif ${name} == nil { ${name} = ${value} }`;
     if (target === 'java' && /^["']/.test(value)) return `    if (${name} == null) ${name} = ${value};`;
     if (target === 'c' && /^["']/.test(value)) return `  if (!${name}) ${name} = ${value};`;
+    if (target === 'zig' && /^["']/.test(value)) return `    if (${name}.len == 0) ${name} = ${value};`;
     return null;
   }).filter(Boolean);
 }
@@ -147,9 +148,7 @@ export function isJsRuntimeOnly(body, name) {
     || /\bnew\s+Date\b/.test(body)
     || /\bLs\b/.test(body)
     || /\bObject\.(setPrototypeOf|defineProperty|defineProperties|entries|create)\b/.test(body)
-    || /\\u\{/.test(body)
     || /\bdo\b/.test(body)
-    || /\b_\b/.test(body)
     || /#\([^;)]*\bin\b/.test(body)
     || /\bfor\s*\([^;)]*\bin\b/.test(body)
     || /~\(/.test(body)
@@ -163,7 +162,7 @@ export function isJsRuntimeOnly(body, name) {
     || /\b(Array|Vec|Option|Result|Box|Rc|RefCell|HashMap|BTreeMap|VecDeque)<[A-Za-z_$][\w$]*>/.test(body)
     || /`/.test(body)
     || /LIN_TS_ERASE/.test(body)
-    || /=>/.test(body)
+    || /\b=>\b/.test(body)
     || /\.\.\./.test(body)
     || /\btry\b|\bclass\b|\bthrow\b/.test(body)
     || body.length > 2400
@@ -199,6 +198,7 @@ export function emitFreeHostDecls(ids, target) {
     if (target === 'rust') return `    let ${id} = String::new();`;
     if (target === 'java') return `    Object ${id} = null;`;
     if (target === 'c') return `  const char *${id} = "";`;
+    if (target === 'zig') return `    var ${id}: []const u8 = undefined;`;
     return '';
   }).filter(Boolean);
 }
@@ -270,7 +270,7 @@ export function inferTypes(stmts) {
         else if (/^(true|false)$/.test(rhs)) t = 'bool';
         else if (/==|!=|<=|>=|<|>/.test(rhs)) t = 'bool';
         else if (/\b(length|len|is_empty|Math\.abs|Math\.round|_lia_abs|_lia_round|_lia_num|parseFloat)\b/.test(rhs)) t = 'int';
-        else if (/[a-zA-Z_$][\w$]*\s*[+\-*/]\s*[a-zA-Z_$][\w$]*(\[[^\]]+\])?/.test(rhs)) {
+        else if (/[a-zA-Z_$][\w$]*(?:\[[^\]]+\])?\s*[+\-*/%]\s*(?:[a-zA-Z_$][\w$]*(?:\[[^\]]+\])?|\d+)/.test(rhs)) {
           if (types.get(st.id) === 'string' || isStringishId(st.id)) t = 'string';
           else t = 'int';
         }
@@ -333,6 +333,7 @@ export function emitCond(cond, target) {
   if (/^[A-Za-z_][\w]*$/.test(t) && isNumishId(t)) {
     if (target === 'go') return `_lia_num(${t})!=0`;
     if (target === 'rust' || target === 'java' || target === 'c') return `${t} != 0`;
+    if (target === 'zig') return `${t} != 0`;
   }
   return asBoolCond(rewriteExpr(t, target), target);
 }
@@ -367,16 +368,19 @@ export function assignOpLine(id, op, expr, target, pad, types) {
     if (isNumishId(id)) {
       if (target === 'go') return `${pad}${id} = _lia_num(${id}) + _lia_num(${rhs})`;
       if (target === 'rust') return `${pad}${id} = ${id} + (${rhs});`;
+      if (target === 'zig') return `${pad}${id} = ${id} +| ${rhs};`;
       return `${pad}${id} += ${rhs};`;
     }
     if (target === 'go') return `${pad}${id} = _lia_cat(${id}, ${rhs})`;
     if (target === 'rust') return `${pad}${id} = format!("{}{}", &${id}, &${rhs});`;
     if (target === 'c') return `${pad}${id} = _lia_cat_c(${id}, ${rhs});`;
+    if (target === 'zig') return `${pad}${id} = concat(${id}, ${rhs});`;
     return `${pad}${id} = ${id} + ${rhs};`;
   }
   const bin = op.endsWith('=') ? op.slice(0, -1) : op;
   if (target === 'go') return `${pad}${id} = _lia_num(${id}) ${bin} _lia_num(${rhs})`;
   if (target === 'rust') return `${pad}${id} = ${id} ${bin} ${rhs};`;
+  if (target === 'zig') return `${pad}${id} = ${id} ${bin} ${rhs};`;
   return `${pad}${id} ${op} ${rhs};`;
 }
 
@@ -710,11 +714,46 @@ export function rewriteExpr(expr, target) {
     s = foldPlus(s, (a, b) => (plusIsNumeric(a, b) ? null : `_lia_cat(&(${a}),&(${b}))`));
     return s;
   }
+  if (target === 'zig') {
+    s = s.replace(/'([^']*)'/g, (_, inner) => JSON.stringify(inner));
+    s = s.replace(/\bString\(([A-Za-z_][\w]*)\s*\|\|\s*""\)/g, '$1');
+    s = s.replace(/\bString\(([A-Za-z_][\w]*)\)/g, '$1');
+    s = s.replace(/\[\s*\]/g, '&[_][]const u8{}');
+    s = s.replace(/\bNumber\.isFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisFinite\s*\(/g, '_lia_isfinite(');
+    s = s.replace(/\bisNaN\s*\(/g, '_lia_isnan(');
+    s = s.replace(/===/g, '==').replace(/!==/g, '!=');
+    s = s.replace(/\bString\(([^)]+)\)/g, '$1');
+    s = s.replace(/\b_lia_abs\(([^)&][^)]*)\)/g, '_lia_abs($1)');
+    s = s.replace(/\b_lia_num\(([^)&][^)]*)\)/g, '_lia_num($1)');
+    s = s.replace(/\b_lia_isfinite\(([^)&][^)]*)\)/g, '_lia_isfinite($1)');
+    s = s.replace(/([A-Za-z_][\w]*)\.length\b/g, '$1.len');
+    s = s.replace(/([A-Za-z_][\w]*)\.trim\s*\(\s*\)/g, '_lia_trim($1)');
+    s = s.replace(/\btrue\b/g, 'true').replace(/\bfalse\b/g, 'false');
+    s = s.replace(/\b([A-Za-z_][\w]*)\s*!=\s*0\b/g, (_, id) => (
+      isNumishId(id) || !isStringishId(id) ? `${id} != 0` : `_lia_truthy(${id})`
+    ));
+    s = s.replace(/\b([A-Za-z_][\w]*)\s*==\s*0\b/g, (_, id) => (
+      isNumishId(id) || !isStringishId(id) ? `${id} == 0` : `!_lia_truthy(${id})`
+    ));
+    s = s.replace(/!!\(/g, '_lia_truthy(');
+    s = rewriteTernaries(s, (c, a, b) => `if (${c}) ${a} else ${b}`);
+    let prevZ;
+    do {
+      prevZ = s;
+      s = s.replace(
+        /((?:_lia_cat\([^()]*\)|_lia_str\([^)]+\)|\([^()]+\)|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))\s*\+\s*((?:_lia_cat\([^()]*\)|_lia_str\([^)]+\)|\([^()]+\)|[A-Za-z_][\w]*|"(?:\\.|[^"\\])*"))/g,
+        (m, a, b) => (plusIsNumeric(a, b) ? m.replace(/\s*\+\s*/, '+') : `_lia_cat(${a},${b})`),
+      );
+    } while (s !== prevZ);
+    s = s.replace(/\bnull\b|\bundefined\b/g, '"undefined"');
+    return s;
+  }
   return s;
 }
 
 export function defaultOutPath(inPath, target) {
-  const ext = { js: '.js', ts: '.ts', py: '.py', go: '.go', rust: '.rs', c: '.c', java: '.java' }[target] || `.${target}`;
+  const ext = { js: '.js', ts: '.ts', py: '.py', go: '.go', rust: '.rs', c: '.c', java: '.java', zig: '.zig' }[target] || `.${target}`;
   const base = String(inPath).replace(/\.(lia|ail|lin)$/i, '');
   return `${base}.compiled${ext}`;
 }

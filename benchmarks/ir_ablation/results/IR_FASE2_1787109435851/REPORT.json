@@ -1,0 +1,359 @@
+{
+  "timestamp": "2026-08-19T03:17:15.851Z",
+  "phase": "IR_BENCHMARK_V1 Phase 2",
+  "model": "qwen2.5-coder:7b",
+  "tasks": [
+    "T001",
+    "T002",
+    "T003",
+    "T004",
+    "T005",
+    "T006",
+    "T007",
+    "T008",
+    "T009",
+    "T010"
+  ],
+  "conditions": [
+    {
+      "id": "A",
+      "name": "LLM → TS (baseline)"
+    },
+    {
+      "id": "B",
+      "name": "LLM → LIN (zero-shot)"
+    },
+    {
+      "id": "C",
+      "name": "LLM → LIN (few-shot)"
+    }
+  ],
+  "phase1_canonical": {
+    "avg_ir_ratio": 0.7027891819040859,
+    "semantic_eq_rate": 0.7,
+    "total_tokens": 282
+  },
+  "results": [
+    {
+      "condition_id": "A",
+      "condition_name": "LLM → TS (baseline)",
+      "summary": {
+        "tasks": 10,
+        "semantic_pass_rate": 0.8,
+        "semantic_pass_count": 8,
+        "total_prompt_tokens": 1266,
+        "total_completion_tokens": 925,
+        "total_tokens": 2191,
+        "avg_prompt_tokens": 126.6,
+        "avg_completion_tokens": 92.5,
+        "avg_tokens": 219.1
+      },
+      "task_results": [
+        {
+          "task_id": "T001",
+          "prompt_tokens": 133,
+          "completion_tokens": 57,
+          "total_tokens": 190,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T002",
+          "prompt_tokens": 133,
+          "completion_tokens": 46,
+          "total_tokens": 179,
+          "semantic_pass": false,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T003",
+          "prompt_tokens": 132,
+          "completion_tokens": 128,
+          "total_tokens": 260,
+          "semantic_pass": false,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T004",
+          "prompt_tokens": 118,
+          "completion_tokens": 188,
+          "total_tokens": 306,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T005",
+          "prompt_tokens": 120,
+          "completion_tokens": 31,
+          "total_tokens": 151,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T006",
+          "prompt_tokens": 111,
+          "completion_tokens": 118,
+          "total_tokens": 229,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T007",
+          "prompt_tokens": 118,
+          "completion_tokens": 77,
+          "total_tokens": 195,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T008",
+          "prompt_tokens": 128,
+          "completion_tokens": 97,
+          "total_tokens": 225,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T009",
+          "prompt_tokens": 139,
+          "completion_tokens": 117,
+          "total_tokens": 256,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        },
+        {
+          "task_id": "T010",
+          "prompt_tokens": 134,
+          "completion_tokens": 66,
+          "total_tokens": 200,
+          "semantic_pass": true,
+          "ir_ratio": null,
+          "end_to_end_ratio": null
+        }
+      ]
+    },
+    {
+      "condition_id": "B",
+      "condition_name": "LLM → LIN (zero-shot)",
+      "summary": {
+        "tasks": 10,
+        "semantic_pass_rate": 0.5,
+        "semantic_pass_count": 5,
+        "total_prompt_tokens": 1953,
+        "total_completion_tokens": 1030,
+        "total_tokens": 2983,
+        "avg_prompt_tokens": 195.3,
+        "avg_completion_tokens": 103,
+        "avg_tokens": 298.3
+      },
+      "task_results": [
+        {
+          "task_id": "T001",
+          "prompt_tokens": 206,
+          "completion_tokens": 53,
+          "total_tokens": 259,
+          "semantic_pass": true,
+          "ir_ratio": 2.789473684210526,
+          "end_to_end_ratio": 13.631578947368421
+        },
+        {
+          "task_id": "T002",
+          "prompt_tokens": 205,
+          "completion_tokens": 108,
+          "total_tokens": 313,
+          "semantic_pass": false,
+          "ir_ratio": 4.153846153846154,
+          "end_to_end_ratio": 12.038461538461538
+        },
+        {
+          "task_id": "T003",
+          "prompt_tokens": 202,
+          "completion_tokens": 150,
+          "total_tokens": 352,
+          "semantic_pass": false,
+          "ir_ratio": 1.5957446808510638,
+          "end_to_end_ratio": 3.74468085106383
+        },
+        {
+          "task_id": "T004",
+          "prompt_tokens": 186,
+          "completion_tokens": 124,
+          "total_tokens": 310,
+          "semantic_pass": false,
+          "ir_ratio": 1.9076923076923078,
+          "end_to_end_ratio": 4.769230769230769
+        },
+        {
+          "task_id": "T005",
+          "prompt_tokens": 186,
+          "completion_tokens": 25,
+          "total_tokens": 211,
+          "semantic_pass": true,
+          "ir_ratio": 1.3888888888888888,
+          "end_to_end_ratio": 11.722222222222221
+        },
+        {
+          "task_id": "T006",
+          "prompt_tokens": 179,
+          "completion_tokens": 151,
+          "total_tokens": 330,
+          "semantic_pass": true,
+          "ir_ratio": 1.5408163265306123,
+          "end_to_end_ratio": 3.36734693877551
+        },
+        {
+          "task_id": "T007",
+          "prompt_tokens": 188,
+          "completion_tokens": 68,
+          "total_tokens": 256,
+          "semantic_pass": false,
+          "ir_ratio": 1.2830188679245282,
+          "end_to_end_ratio": 4.830188679245283
+        },
+        {
+          "task_id": "T008",
+          "prompt_tokens": 194,
+          "completion_tokens": 101,
+          "total_tokens": 295,
+          "semantic_pass": true,
+          "ir_ratio": 1.4027777777777777,
+          "end_to_end_ratio": 4.097222222222222
+        },
+        {
+          "task_id": "T009",
+          "prompt_tokens": 207,
+          "completion_tokens": 110,
+          "total_tokens": 317,
+          "semantic_pass": true,
+          "ir_ratio": 1.4102564102564104,
+          "end_to_end_ratio": 4.064102564102564
+        },
+        {
+          "task_id": "T010",
+          "prompt_tokens": 200,
+          "completion_tokens": 140,
+          "total_tokens": 340,
+          "semantic_pass": false,
+          "ir_ratio": 2.3728813559322033,
+          "end_to_end_ratio": 5.762711864406779
+        }
+      ]
+    },
+    {
+      "condition_id": "C",
+      "condition_name": "LLM → LIN (few-shot)",
+      "summary": {
+        "tasks": 10,
+        "semantic_pass_rate": 0,
+        "semantic_pass_count": 0,
+        "total_prompt_tokens": 2255,
+        "total_completion_tokens": 702,
+        "total_tokens": 2957,
+        "avg_prompt_tokens": 225.5,
+        "avg_completion_tokens": 70.2,
+        "avg_tokens": 295.7
+      },
+      "task_results": [
+        {
+          "task_id": "T001",
+          "prompt_tokens": 262,
+          "completion_tokens": 40,
+          "total_tokens": 302,
+          "semantic_pass": false,
+          "ir_ratio": 2.1052631578947367,
+          "end_to_end_ratio": 15.894736842105264
+        },
+        {
+          "task_id": "T002",
+          "prompt_tokens": 261,
+          "completion_tokens": 66,
+          "total_tokens": 327,
+          "semantic_pass": false,
+          "ir_ratio": 2.5384615384615383,
+          "end_to_end_ratio": 12.576923076923077
+        },
+        {
+          "task_id": "T003",
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 0,
+          "semantic_pass": false,
+          "ir_ratio": 0,
+          "end_to_end_ratio": 0
+        },
+        {
+          "task_id": "T004",
+          "prompt_tokens": 242,
+          "completion_tokens": 159,
+          "total_tokens": 401,
+          "semantic_pass": false,
+          "ir_ratio": 2.4461538461538463,
+          "end_to_end_ratio": 6.1692307692307695
+        },
+        {
+          "task_id": "T005",
+          "prompt_tokens": 242,
+          "completion_tokens": 27,
+          "total_tokens": 269,
+          "semantic_pass": false,
+          "ir_ratio": 1.5,
+          "end_to_end_ratio": 14.944444444444445
+        },
+        {
+          "task_id": "T006",
+          "prompt_tokens": 235,
+          "completion_tokens": 121,
+          "total_tokens": 356,
+          "semantic_pass": false,
+          "ir_ratio": 1.2346938775510203,
+          "end_to_end_ratio": 3.63265306122449
+        },
+        {
+          "task_id": "T007",
+          "prompt_tokens": 244,
+          "completion_tokens": 63,
+          "total_tokens": 307,
+          "semantic_pass": false,
+          "ir_ratio": 1.1886792452830188,
+          "end_to_end_ratio": 5.7924528301886795
+        },
+        {
+          "task_id": "T008",
+          "prompt_tokens": 250,
+          "completion_tokens": 94,
+          "total_tokens": 344,
+          "semantic_pass": false,
+          "ir_ratio": 1.3055555555555556,
+          "end_to_end_ratio": 4.777777777777778
+        },
+        {
+          "task_id": "T009",
+          "prompt_tokens": 263,
+          "completion_tokens": 69,
+          "total_tokens": 332,
+          "semantic_pass": false,
+          "ir_ratio": 0.8846153846153846,
+          "end_to_end_ratio": 4.256410256410256
+        },
+        {
+          "task_id": "T010",
+          "prompt_tokens": 256,
+          "completion_tokens": 63,
+          "total_tokens": 319,
+          "semantic_pass": false,
+          "ir_ratio": 1.0677966101694916,
+          "end_to_end_ratio": 5.406779661016949
+        }
+      ]
+    }
+  ]
+}

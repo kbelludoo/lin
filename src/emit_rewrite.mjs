@@ -87,6 +87,7 @@ export function emitThrowLine(raw, target, pad, rewrite) {
   if (target === 'rust') return `${pad}panic!("{}", ${JSON.stringify(String(extractThrowArg(raw)).slice(0, 80))});`;
   if (target === 'java') return `${pad}throw new RuntimeException(String.valueOf(${msg}));`;
   if (target === 'c') return `${pad}abort();`;
+  if (target === 'zig') return `${pad}@panic(${msg});`;
   return `${pad}throw ${msg};`;
 }
 

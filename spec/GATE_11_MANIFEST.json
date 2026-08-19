@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "name": "GATE_11_AND_12_FALSIFICATION_MANIFEST",
+  "generated_at": "2026-08-19T20:15:00-03:00",
+  "repositories": [
+    {
+      "name": "dayjs",
+      "url": "https://github.com/iamkun/dayjs.git",
+      "pinned_commit_sha": "0f6c19e3b63bcc3ff74917cb3a60125020c75648",
+      "filter_ext": [".js"],
+      "exclude_dirs": ["test", "benchmark", "node_modules"],
+      "sample_cap": 185,
+      "extracted_modules_count": 182
+    },
+    {
+      "name": "underscore",
+      "url": "https://github.com/jashkenas/underscore.git",
+      "pinned_commit_sha": "e70d5bd070f1d883b40e786a955a61e4f4b3c2c6",
+      "filter_ext": [".js", ".mjs"],
+      "exclude_dirs": ["test", "docs", "node_modules"],
+      "sample_cap": 115,
+      "extracted_modules_count": 107
+    }
+  ],
+  "gates": {
+    "gate_11a": {
+      "name": "Historical Raw Baseline",
+      "description": "Unconstrained regex text replacement across 289 real modules; documents over-invalidation from blind token replacement",
+      "recall_soundness": "100.00%",
+      "under_invalidation": "0.00%",
+      "total_evaluated": 289,
+      "true_positives": 119,
+      "true_negatives": 169,
+      "false_positives": 1,
+      "false_negatives": 0
+    },
+    "gate_11b": {
+      "name": "Hygienic Real-World Corpus",
+      "description": "Controlled alpha-renaming and cosmetic transformations on 289 real modules",
+      "recall_soundness": "100.00%",
+      "precision": "100.00%",
+      "under_invalidation": "0.00%",
+      "over_invalidation": "0.00%",
+      "total_evaluated": 289,
+      "true_positives": 119,
+      "true_negatives": 170,
+      "false_positives": 0,
+      "false_negatives": 0
+    },
+    "gate_12": {
+      "name": "Adversarial Scope Boundary Mutation",
+      "description": "12 targeted scope, binding, shadowing, literal, and parameter boundary condition vectors",
+      "recall_soundness": "100.00%",
+      "precision": "100.00%",
+      "under_invalidation": "0.00%",
+      "over_invalidation": "0.00%",
+      "total_evaluated": 12,
+      "true_positives": 8,
+      "true_negatives": 4,
+      "false_positives": 0,
+      "false_negatives": 0
+    }
+  }
+}

@@ -55,8 +55,9 @@ export function parseStmts(body) {
       continue;
     }
 
-    if (s.startsWith('?(', i)) {
-      const openParen = i + 1;
+    if ((s.startsWith('if (', i) && !/[A-Za-z0-9_$]/.test(s[i + 3] || '')) || s.startsWith('?(', i)) {
+      const isLIN = s.startsWith('?(', i);
+      const openParen = isLIN ? i + 1 : s.indexOf('(', i);
       const closeParen = findMatching(s, openParen, '(', ')');
       if (closeParen < 0) throw new Error('LIA_AST_IF_PAREN');
       const cond = s.slice(openParen + 1, closeParen);
@@ -82,10 +83,24 @@ export function parseStmts(body) {
           j = b.end;
           continue;
         }
-        if (s.startsWith(':{', j)) {
-          const b = parseBlockBody(s, j + 1);
-          elseStmts = b.stmts;
+        if (s.startsWith('else if (', j) || s.startsWith('elseif (', j)) {
+          const op = s.indexOf('(', j);
+          const cp = findMatching(s, op, '(', ')');
+          const c2 = s.slice(op + 1, cp);
+          let k = skipWs(s, cp + 1);
+          if (s[k] !== '{') throw new Error('LIA_AST_ELIF_BRACE');
+          const b = parseBlockBody(s, k);
+          elseIf.push({ cond: c2, body: b.stmts });
           j = b.end;
+          continue;
+        }
+        if (s.startsWith('else', j) && !/[A-Za-z0-9_$]/.test(s[j + 4] || '')) {
+          let k = skipWs(s, j + 4);
+          if (s[k] === '{') {
+            const b = parseBlockBody(s, k);
+            elseStmts = b.stmts;
+            j = b.end;
+          }
         }
         break;
       }
@@ -219,6 +234,54 @@ export function parseStmts(body) {
       continue;
     }
 
+    if (s.startsWith('var ', i) || s.startsWith('let ', i)) {
+      const keyword = s.startsWith('var ') ? 'var' : 'let';
+      let j = i + keyword.length;
+      j = skipWs(s, j);
+      const idMatch = s.slice(j).match(/^([A-Za-z_$][\w$]*)/);
+      if (!idMatch) throw new Error('LIA_AST_VAR_ID');
+      const id = idMatch[1];
+      j += idMatch[0].length;
+      j = skipWs(s, j);
+      let expr = '';
+      let op = '';
+      if (s[j] === '=') {
+        op = '=';
+        j++;
+        j = skipWs(s, j);
+        let end = s.indexOf(';', j);
+        if (end < 0) {
+          const nextLine = s.indexOf('\n', j);
+          const nextKeyword = Math.min(
+            s.indexOf('var ', j + 1),
+            s.indexOf('let ', j + 1),
+            s.indexOf('while ', j + 1),
+            s.indexOf('if ', j + 1),
+            s.indexOf('return ', j + 1),
+            s.indexOf('match ', j + 1),
+            s.indexOf('throw ', j + 1),
+          );
+          end = Math.min(
+            nextLine >= 0 ? nextLine : s.length,
+            nextKeyword >= 0 ? nextKeyword : s.length,
+          );
+        }
+        if (end >= 0) {
+          expr = s.slice(j, end).trim();
+          j = end + 1;
+          if (s[end] === '\n') {
+            j = end + 1;
+          }
+        } else {
+          expr = s.slice(j).trim();
+          j = s.length;
+        }
+      }
+      out.push({ type: 'assign', id, op: op || '=', expr });
+      i = j;
+      continue;
+    }
+
     // assignment or expr until ; or control at depth 0 (not ^ inside /regex/ or strings)
     let j = i;
     let depth = 0;
@@ -244,6 +307,8 @@ export function parseStmts(body) {
       else if (c === ')' || c === '}' || c === ']') depth--;
       else if (c === ';' && depth === 0) break;
       else if (depth === 0 && j > i && (s.startsWith('?(', j) || s.startsWith('#(', j))) break;
+      else if (depth === 0 && j > i && /^(var|let|while|if)\b/.test(s.slice(j))) break;
+      else if (c === '\n' && depth === 0 && /^(var|let|while|if|return)\b/.test(s.slice(i, j).trim())) break;
       j++;
     }
     const chunk = s.slice(i, j).trim();
@@ -289,11 +354,6 @@ export function collectAssignedIds(stmts) {
       }
       if (st.type === 'match') {
         for (const arm of st.arms || []) {
-          const idm = arm.pat.match(/^[A-Za-z_$][\w$]*\(([^)]+)\)$/);
-          if (idm) {
-            const innerVars = idm[1].split(',').map((x) => x.trim()).filter((x) => /^[A-Za-z_$][\w$]*$/.test(x));
-            for (const v of innerVars) ids.add(v);
-          }
           walk(arm.body);
         }
       }
@@ -373,6 +433,11 @@ function parseMatchArms(inner) {
         if (ch === '(' || ch === '{' || ch === '[') d2++;
         else if (ch === ')' || ch === '}' || ch === ']') d2--;
         else if (d2 === 0 && (ch === ',' || ch === ';')) break;
+        else if (d2 === 0 && ch === '\n') {
+          let m = k + 1;
+          while (m < inner.length && /\s/.test(inner[m])) m++;
+          if (m < inner.length && /^[A-Za-z_0-9"'(\s]/.test(inner[m])) break;
+        }
       }
       const exprStr = inner.slice(bodyStart, k).trim();
       if (exprStr) {
