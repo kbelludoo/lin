@@ -229,8 +229,9 @@ function stripDeadAssignments(body) {
       result = result.slice(0, sepEnd) + result.slice(removeEnd);
     }
   }
-  // Clean up leading semicolons and empty blocks
-  result = result.replace(/^[;{\s]+/, '').replace(/;\s*$/, '').replace(/[;{\s]+$/, '');
+  // Clean up whitespace artifacts from stripping (leading/trailing newlines, spaces)
+  // Do NOT strip leading ';' or '{' — they are part of the original body structure
+  result = result.replace(/^\s+/, '').replace(/\s+$/, '');
   return result || '';
 }
 
