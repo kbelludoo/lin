@@ -1,0 +1,104 @@
+{
+  "E1": {
+    "variant": "E1",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "files_changed": false,
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "benchmark_result": null
+  },
+  "E2": {
+    "variant": "E2",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 2,
+      "total_delta": 2
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "files_changed": true,
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "benchmark_result": {
+      "all_parity": true,
+      "results": {
+        "sequential": {
+          "avg_seek": "8.0",
+          "parity": true
+        },
+        "random": {
+          "avg_seek": "3881.1",
+          "parity": true
+        },
+        "mixed_rw": {
+          "avg_seek": "3895.7",
+          "parity": true
+        },
+        "bursty": {
+          "avg_seek": "121.2",
+          "parity": true
+        }
+      },
+      "lin_valid": true
+    }
+  },
+  "E3": {
+    "variant": "E3",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 2,
+      "total_delta": 2
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "files_changed": true,
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "benchmark_result": {
+      "all_parity": true,
+      "results": {
+        "sequential": {
+          "avg_seek": "8.0",
+          "parity": true
+        },
+        "random": {
+          "avg_seek": "3881.1",
+          "parity": true
+        },
+        "mixed_rw": {
+          "avg_seek": "3895.7",
+          "parity": true
+        },
+        "bursty": {
+          "avg_seek": "121.2",
+          "parity": true
+        }
+      },
+      "lin_valid": true
+    }
+  }
+}

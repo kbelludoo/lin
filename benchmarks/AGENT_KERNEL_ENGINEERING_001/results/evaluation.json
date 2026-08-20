@@ -1,0 +1,95 @@
+{
+  "scenario_1": {
+    "scenario": "scenario_1_compress",
+    "name": "Compression (mixed_structured)",
+    "source_diff": {
+      "added": 6,
+      "removed": 0,
+      "changed": 48,
+      "total_delta": 54
+    },
+    "bench_diff": {
+      "added": 10,
+      "removed": 0,
+      "changed": 98,
+      "total_delta": 108
+    },
+    "lin_valid": true,
+    "lin_hash": "3ffc360c0c963c04",
+    "frozen_functions_ok": true,
+    "frozen_details": [],
+    "benchmark_result": {
+      "all_parity": true,
+      "results": {
+        "zero_filled": {
+          "compress_ns": "10260.1",
+          "ratio": "1365.33",
+          "parity": true
+        },
+        "text_repetitive": {
+          "compress_ns": "36499.4",
+          "ratio": "15.34",
+          "parity": true
+        },
+        "random_data": {
+          "compress_ns": "34615.8",
+          "ratio": "1.00",
+          "parity": true
+        },
+        "mixed_structured": {
+          "compress_ns": "28778.4",
+          "ratio": "2.63",
+          "parity": true
+        },
+        "high_entropy": {
+          "compress_ns": "17784.8",
+          "ratio": "1.00",
+          "parity": true
+        }
+      },
+      "lin_valid": true
+    }
+  },
+  "scenario_2": {
+    "scenario": "scenario_2_iosched",
+    "name": "I/O Scheduler (random)",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "frozen_details": [],
+    "benchmark_result": {
+      "all_parity": true,
+      "results": {
+        "sequential": {
+          "avg_seek": "8.0",
+          "parity": true
+        },
+        "random": {
+          "avg_seek": "370411.7",
+          "parity": true
+        },
+        "mixed_rw": {
+          "avg_seek": "228192.5",
+          "parity": true
+        },
+        "bursty": {
+          "avg_seek": "121.2",
+          "parity": true
+        }
+      },
+      "lin_valid": true
+    }
+  }
+}

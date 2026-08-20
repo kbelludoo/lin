@@ -1,0 +1,98 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lin_lz_v2_hash
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+// ═══ lin_lz V2: hash-table + chain O(1)-amortized match finder ═══
+// Frozen: format, window=256, min_match=4, decompress identical to V1
+// ONLY difference from V1: match-finder uses hash_table instead of linear scan
+
+!compress_page(input: [u8], input_len: int{>0..4096}): [u8] {
+  $all_zero = true
+  #i=0..input_len-1 { ?(input[i] != 0) { all_zero = false } }
+  ?(all_zero) { ^[0xFF, (input_len >> 8) & 0xFF, input_len & 0xFF] }
+
+  // Hash table: hash4(pos) -> last position with that hash
+  $hash_table_size = 4096
+  $hash_table = new_array(hash_table_size, -1)
+  $chain_table = new_array(input_len, -1)
+  $max_chain = 16
+
+  // Hash function: 4-byte rolling hash
+  $hash4 = fn(p: int): int {
+    ?(p + 3 >= input_len) { ^-1 }
+    ^((input[p] << 16 | input[p+1] << 8 | input[p+2]) ^ (input[p+3] << 4)) & (hash_table_size - 1)
+  }
+
+  // Early entropy check using hash table
+  $early_matches = 0
+  #pos=0..127 {
+    $h = hash4(pos)
+    ?(h >= 0) {
+      $prev = hash_table[h]
+      ?(prev >= 0) {
+        $ml = 0
+        ?(pos+ml < input_len && input[prev+ml] == input[pos+ml] && ml < 8) { ml = ml + 1 }
+        ?(ml >= 4) { early_matches = early_matches + 1 }
+      }
+      chain_table[pos] = hash_table[h]
+      hash_table[h] = pos
+    }
+  }
+  ?(early_matches < 2) {
+    $out = alloc(input_len + 3)
+    out[0] = 0xFE; out[1] = (input_len >> 8) & 0xFF; out[2] = input_len & 0xFF
+    copy(input, 0, out, 3, input_len)
+    ^out
+  }
+
+  // Reset hash table for full compression
+  hash_table = new_array(hash_table_size, -1)
+
+  $output = []; $pos = 0; $lit_start = 0; $min_match = 4; $window = 256
+
+  #pos=0..input_len-1 {
+    $best_len = 0; $best_dist = 0
+    $h = hash4(pos)
+
+    ?(h >= 0) {
+      // Walk chain: O(chain_depth) instead of O(window)
+      $candidate = hash_table[h]
+      $chain_len = 0
+      ?(candidate >= 0 && chain_len < max_chain) {
+        ?(candidate < pos && pos - candidate <= window) {
+          $ml = 0
+          ?(pos+ml < input_len && input[candidate+ml] == input[pos+ml] && ml < 63) { ml = ml + 1 }
+          ?(ml > best_len && ml >= min_match) { best_len = ml; best_dist = pos - candidate }
+        }
+        candidate = chain_table[candidate]
+        chain_len = chain_len + 1
+      }
+    }
+
+    ?(best_len > 0) {
+      flush_literals(output, input, lit_start, pos)
+      output.push(0x80 | ((best_len - min_match) & 0x3F))
+      output.push((best_dist >> 8) & 0xFF)
+      output.push(best_dist & 0xFF)
+      // Insert hash entries for matched region
+      #k=0..best_len-1 {
+        $ph = hash4(pos + k)
+        ?(ph >= 0) { chain_table[pos+k] = hash_table[ph]; hash_table[ph] = pos + k }
+      }
+      pos = pos + best_len; lit_start = pos
+    }:{
+      ?(h >= 0) { chain_table[pos] = hash_table[h]; hash_table[h] = pos }
+    }
+  }
+  flush_literals(output, input, lit_start, input_len)
+  ^output
+}
+
+~workflow {
+  step compress -> compress_page(input_data, 4096)
+  step decompress -> decompress_page(compress, 4096)
+  step verify -> ?(decompress.length == 4096) -> ok : -> fail
+}
+
+=ex{compress_page}

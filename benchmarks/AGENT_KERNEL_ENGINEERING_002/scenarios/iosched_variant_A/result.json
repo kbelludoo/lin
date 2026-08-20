@@ -1,0 +1,22 @@
+{
+  "all_parity": true,
+  "results": {
+    "sequential": {
+      "avg_seek": "8.0",
+      "parity": true
+    },
+    "random": {
+      "avg_seek": "370411.7",
+      "parity": true
+    },
+    "mixed_rw": {
+      "avg_seek": "228192.5",
+      "parity": true
+    },
+    "bursty": {
+      "avg_seek": "121.2",
+      "parity": true
+    }
+  },
+  "lin_valid": true
+}

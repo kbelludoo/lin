@@ -1,0 +1,82 @@
+{
+  "A": {
+    "variant": "A",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "files_changed": false,
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "benchmark_result": null
+  },
+  "B": {
+    "variant": "B",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "files_changed": false,
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "benchmark_result": null
+  },
+  "C": {
+    "variant": "C",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "files_changed": false,
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "benchmark_result": null
+  },
+  "D": {
+    "variant": "D",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "files_changed": false,
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "benchmark_result": null
+  }
+}

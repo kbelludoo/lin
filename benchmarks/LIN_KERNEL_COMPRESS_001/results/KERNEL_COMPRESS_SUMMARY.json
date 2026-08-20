@@ -1,0 +1,150 @@
+{
+  "benchmark_id": "LIN_KERNEL_COMPRESS_001",
+  "page_size": 4096,
+  "iterations": 1000,
+  "compressors": [
+    "lin_lz",
+    "lz4",
+    "zstd_deflate"
+  ],
+  "page_types": [
+    "zero_filled",
+    "text_repetitive",
+    "random_data",
+    "mixed_structured",
+    "high_entropy"
+  ],
+  "results": {
+    "zero_filled": {
+      "lin_lz": {
+        "compress_ns": "6546.2",
+        "decompress_ns": "2724.3",
+        "compressed_size": 3,
+        "ratio": "1365.33",
+        "throughput_gbs": "0.626",
+        "parity": true
+      },
+      "lz4": {
+        "compress_ns": "4467.0",
+        "decompress_ns": "3430.2",
+        "compressed_size": 26,
+        "ratio": "157.54",
+        "throughput_gbs": "0.917",
+        "parity": true
+      },
+      "zstd_deflate": {
+        "compress_ns": "38447.6",
+        "decompress_ns": "15749.3",
+        "compressed_size": 20,
+        "ratio": "204.80",
+        "throughput_gbs": "0.107",
+        "parity": true
+      }
+    },
+    "text_repetitive": {
+      "lin_lz": {
+        "compress_ns": "102886.3",
+        "decompress_ns": "23804.5",
+        "compressed_size": 241,
+        "ratio": "17.00",
+        "throughput_gbs": "0.040",
+        "parity": true
+      },
+      "lz4": {
+        "compress_ns": "1988.2",
+        "decompress_ns": "1606.7",
+        "compressed_size": 71,
+        "ratio": "57.69",
+        "throughput_gbs": "2.060",
+        "parity": true
+      },
+      "zstd_deflate": {
+        "compress_ns": "28342.7",
+        "decompress_ns": "10447.8",
+        "compressed_size": 72,
+        "ratio": "56.89",
+        "throughput_gbs": "0.145",
+        "parity": true
+      }
+    },
+    "random_data": {
+      "lin_lz": {
+        "compress_ns": "35541.6",
+        "decompress_ns": "418.5",
+        "compressed_size": 4099,
+        "ratio": "1.00",
+        "throughput_gbs": "0.115",
+        "parity": true
+      },
+      "lz4": {
+        "compress_ns": "4522.2",
+        "decompress_ns": "2596.3",
+        "compressed_size": 4114,
+        "ratio": "1.00",
+        "throughput_gbs": "0.906",
+        "parity": true
+      },
+      "zstd_deflate": {
+        "compress_ns": "66615.2",
+        "decompress_ns": "8706.4",
+        "compressed_size": 4101,
+        "ratio": "1.00",
+        "throughput_gbs": "0.061",
+        "parity": true
+      }
+    },
+    "mixed_structured": {
+      "lin_lz": {
+        "compress_ns": "945823.2",
+        "decompress_ns": "27010.6",
+        "compressed_size": 1434,
+        "ratio": "2.86",
+        "throughput_gbs": "0.004",
+        "parity": true
+      },
+      "lz4": {
+        "compress_ns": "2662.7",
+        "decompress_ns": "1616.3",
+        "compressed_size": 1311,
+        "ratio": "3.12",
+        "throughput_gbs": "1.538",
+        "parity": true
+      },
+      "zstd_deflate": {
+        "compress_ns": "74074.8",
+        "decompress_ns": "10944.1",
+        "compressed_size": 1370,
+        "ratio": "2.99",
+        "throughput_gbs": "0.055",
+        "parity": true
+      }
+    },
+    "high_entropy": {
+      "lin_lz": {
+        "compress_ns": "18379.8",
+        "decompress_ns": "80.5",
+        "compressed_size": 4099,
+        "ratio": "1.00",
+        "throughput_gbs": "0.223",
+        "parity": true
+      },
+      "lz4": {
+        "compress_ns": "7125.0",
+        "decompress_ns": "1517.3",
+        "compressed_size": 4114,
+        "ratio": "1.00",
+        "throughput_gbs": "0.575",
+        "parity": true
+      },
+      "zstd_deflate": {
+        "compress_ns": "67840.8",
+        "decompress_ns": "11024.0",
+        "compressed_size": 4101,
+        "ratio": "1.00",
+        "throughput_gbs": "0.060",
+        "parity": true
+      }
+    }
+  },
+  "verdict": "B — lin_lz SOBREVIVEU PARCIALMENTE: parity OK but compression ratio below native"
+}

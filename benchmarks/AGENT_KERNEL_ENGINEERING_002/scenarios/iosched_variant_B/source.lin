@@ -1,0 +1,31 @@
+@LIN:L2w:1.0
+^schema_once ^ops=iosched_elevator
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+// I/O Scheduler: Elevator/SCAN dispatch
+// Dispatches requests sorted by sector.
+
+!enqueue(queue: [IOReq], req: IOReq): [IOReq] {
+  queue.push(req)
+  ^queue
+}
+
+!dispatch_batch(queue: [IOReq], batch_size: int{1..256}): [IOReq] {
+  queue.sort_by_sector()
+  $result = []
+  #i=0..batch_size-1 {
+    ?(queue.length == 0) { ^result }
+    $req = queue.shift()
+    result.push(req)
+  }
+  ^result
+}
+
+~workflow {
+  step enqueue  -> enqueue(request_queue, incoming_request)
+  step dispatch -> dispatch_batch(request_queue, batch_count)
+  step verify   -> ?(dispatch.length == expected_batch) -> ok : -> fail
+}
+
+=ex{enqueue,dispatch_batch}

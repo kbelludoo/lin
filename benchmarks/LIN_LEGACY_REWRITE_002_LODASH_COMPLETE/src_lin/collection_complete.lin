@@ -1,0 +1,162 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_collection_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!countBy(arr: [any], iteratee: any): any {
+  $res = {}
+  #i=0..arr.length-1 {
+    $k = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    ?(res[k] == null) { res[k] = 0 }
+    res[k] = res[k] + 1
+  }
+  ^res
+}
+
+!every(arr: [any], pred: any): bool {
+  #i=0..arr.length-1 {
+    $p = typeof pred == "function" ? pred(arr[i]) : arr[i][pred]
+    ?(!p) { ^false }
+  }
+  ^true
+}
+
+!filter(arr: [any], pred: any): [any] {
+  ^arr.filter(v => typeof pred == "function" ? pred(v) : v[pred])
+}
+
+!find(arr: [any], pred: any): any {
+  #i=0..arr.length-1 {
+    ?(typeof pred == "function" ? pred(arr[i]) : arr[i][pred]) { ^arr[i] }
+  }
+  ^undefined
+}
+
+!flatMap(arr: [any], iteratee: any): [any] {
+  $res = []
+  #i=0..arr.length-1 {
+    $v = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    ?(Array.isArray(v)) { res.push(...v) }:{ res.push(v) }
+  }
+  ^res
+}
+
+!groupBy(arr: [any], iteratee: any): any {
+  $res = {}
+  #i=0..arr.length-1 {
+    $k = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    ?(res[k] == null) { res[k] = [] }
+    res[k].push(arr[i])
+  }
+  ^res
+}
+
+!includes(arr: [any], val: any): bool {
+  #i=0..arr.length-1 { ?(arr[i] === val) { ^true } }
+  ^false
+}
+
+!keyBy(arr: [any], iteratee: any): any {
+  $res = {}
+  #i=0..arr.length-1 {
+    $k = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    res[k] = arr[i]
+  }
+  ^res
+}
+
+!map(arr: [any], iteratee: any): [any] {
+  ^arr.map(v => typeof iteratee == "function" ? iteratee(v) : v[iteratee])
+}
+
+!partition(arr: [any], pred: any): [[any],[any]] {
+  $pass = []
+  $fail = []
+  #i=0..arr.length-1 {
+    ?(typeof pred == "function" ? pred(arr[i]) : arr[i][pred]) { pass.push(arr[i]) }:{ fail.push(arr[i]) }
+  }
+  ^[pass, fail]
+}
+
+!reduce(arr: [any], fn: any, acc: any): any {
+  $curr = acc
+  #i=0..arr.length-1 { curr = fn(curr, arr[i]) }
+  ^curr
+}
+
+!reject(arr: [any], pred: any): [any] {
+  ^arr.filter(v => !(typeof pred == "function" ? pred(v) : v[pred]))
+}
+
+!size(arr: any): int {
+  ?(typeof arr == "string" || Array.isArray(arr)) { ^arr.length }
+  ?(typeof arr == "object" && arr != null) { ^Object.keys(arr).length }
+  ^0
+}
+
+!some(arr: [any], pred: any): bool {
+  #i=0..arr.length-1 {
+    ?(typeof pred == "function" ? pred(arr[i]) : arr[i][pred]) { ^true }
+  }
+  ^false
+}
+
+!sortBy(arr: [any], iteratee: any): [any] {
+  $copy = [...arr]
+  $keyFn = typeof iteratee == "function" ? iteratee : (v => v[iteratee])
+  copy.sort((a,b) => {
+    $ka = keyFn(a)
+    $kb = keyFn(b)
+    ?(ka < kb) { ^-1 }:(?(ka > kb) { ^1 })
+    ^0
+  })
+  ^copy
+}
+
+!orderBy(arr: [any], iteratees: [any], orders: [any]): [any] {
+  $copy = [...arr]
+  #k=iteratees.length-1..0 {
+    $iter = iteratees[k]
+    $order = orders[k]
+    $keyFn = typeof iter == "function" ? iter : (v => v[iter])
+    copy.sort((a,b) => {
+      $ka = keyFn(a)
+      $kb = keyFn(b)
+      $cmp = ka < kb ? -1 : (ka > kb ? 1 : 0)
+      ?(order == "desc") { ^-cmp }
+      ^cmp
+    })
+  }
+  ^copy
+}
+
+!sample(arr: [any]): any {
+  ^arr[Math.floor(Math.random() * arr.length)]
+}
+
+!shuffle(arr: [any]): [any] {
+  $copy = [...arr]
+  #i=copy.length-1..1 {
+    $j = Math.floor(Math.random() * (i + 1))
+    $tmp = copy[i]
+    copy[i] = copy[j]
+    copy[j] = tmp
+  }
+  ^copy
+}
+
+~workflow {
+  step w_countBy -> countBy([6.1,4.2,6.3], Math.floor)
+  step w_every -> every([true,1,null], Boolean)
+  step w_filter -> filter([1,2,3,4], n => n > 2)
+  step w_find -> find([{a:1},{a:2}], {a:2})
+  step w_groupBy -> groupBy([6.1,4.2,6.3], Math.floor)
+  step w_keyBy -> keyBy([{id:'a'},{id:'b'}], 'id')
+  step w_map -> map([{n:1},{n:2}], 'n')
+  step w_partition -> partition([1,2,3,4], n => n % 2 == 0)
+  step w_reduce -> reduce([1,2,3], (a,b) => a+b, 0)
+  step w_sortBy -> sortBy([{x:3},{x:1}], 'x')
+  step w_some -> some([null,0,'yes'], Boolean)
+}
+
+=ex{countBy,every,filter,find,flatMap,groupBy,includes,keyBy,map,partition,reduce,reject,size,some,sortBy,orderBy,sample,shuffle}

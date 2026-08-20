@@ -1,4 +1,4 @@
-@RULEL:LIN_INDEX:1.5.0
+@RULEL:LIN_INDEX:1.12.0
 ~R{.m=meta .c=commands .p=path .g=gate .a=allow .f=forbid}
 .m{
   name=lin-lang
@@ -20,6 +20,20 @@
 .a{code=.lin|.lia rules=.rulel|.md(RULEL)}
 .f{hand_TS hand_JS external_runtime_dependency mutate_lin_nucleus}
 .p{
+  kernel_compress_bench=benchmarks/LIN_KERNEL_COMPRESS_001
+  kernel_causality_bench=benchmarks/LIN_KERNEL_COMPRESS_002
+  kernel_iosched_bench=benchmarks/LIN_KERNEL_IOSCHED_001
+  agent_engineering_bench=benchmarks/AGENT_KERNEL_ENGINEERING_001
+  agent_engineering_002_bench=benchmarks/AGENT_KERNEL_ENGINEERING_002
+  agent_engineering_002_spec=spec/AGENT_KERNEL_ENGINEERING_002.rulel
+  agent_discovery_bench=benchmarks/AGENT_DISCOVERY_001
+  agent_discovery_spec=spec/AGENT_DISCOVERY_001.rulel
+  agent_execution_bench=benchmarks/AGENT_EXECUTION_001
+  agent_execution_spec=spec/AGENT_EXECUTION_001.rulel
+  kernel_iosched_spec=spec/LIN_KERNEL_IOSCHED_001.rulel
+  kernel_causality_spec=spec/LIN_KERNEL_COMPRESS_002.rulel
+  kernel_compress_spec=spec/LIN_KERNEL_COMPRESS_001.rulel
+  consolidated_evidence=spec/CONSOLIDATED_EVIDENCE_REPORT.md
   workflow_engine=src/lin_workflow_engine.mjs
   workflow_spec=spec/LIN_WORKFLOW_IR_SPEC_FREEZE.md
   evidence_matrix=spec/EVIDENCE_MATRIX_CONSOLIDATED.md

@@ -1,0 +1,52 @@
+@RULEL:AGENT_KERNEL_ENGINEERING_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric .e=experimental_design}
+.m{
+  name=AGENT_KERNEL_ENGINEERING_001
+  status=ACTIVE_BENCHMARK
+  domain="agent_iterative_engineering_on_lin_artifacts"
+  date=2026-08-20
+  purpose="Test whether an AI agent can perform the full detect-localize-modify-verify-measure cycle on LIN kernel artifacts: receive a performance problem, diagnose it, identify the correct semantic node, modify only that unit, recompile, run the benchmark, compare gains and regressions, and accept or reject the change."
+  parent_methodology=LIN_KERNEL_COMPRESS_002+LIN_KERNEL_IOSCHED_001
+  thesis="LIN is a good work unit for iterative agent engineering on real software"
+}
+.h{
+  id=H_AGENT_KERNEL_001
+  claim="An AI agent, given only LIN source + benchmark + performance profile + constraints, can correctly diagnose a bottleneck, surgically modify the corresponding semantic unit, recompile, verify parity, measure improvement, and honestly report regressions -- without rewriting the entire artifact."
+  stronger_claim="If the agent succeeds on two structurally different subsystems (compression and I/O scheduling), LIN enables verifiable iterative engineering by agents across software classes."
+}
+.e{
+  design="agent_in_the_loop_controlled_experiment"
+  agent_input=["LIN_source", "benchmark_runner", "performance_profile", "constraints", "task_description"]
+  agent_must_NOT_see=["V2_solutions", "COMPRESS_002_results", "IOSCHED_001_results"]
+  scenarios=[
+    {id=S1 subsystem=compression task="reduce compression time on mixed_structured pages" source=lin_lz_v1},
+    {id=S2 subsystem=io_scheduler task="reduce seek distance on random workload" source=iosched_v1}
+  ]
+  agent_workflow=[diagnose, identify_node, modify_unit, recompile, run_benchmark, compare, accept_or_reject]
+}
+.mtr{
+  primary=[
+    "diagnosis_correct: did agent identify the right bottleneck",
+    "surgical_precision: did agent change only the target unit",
+    "recompiled: did agent verify LIN source parses after modification",
+    "benchmark_run: did agent run the benchmark",
+    "parity_ok: does the modified version pass roundtrip verification",
+    "gain_obtained: measured improvement on target metric",
+    "regressions_reported: did agent report regressions honestly",
+    "verdict: accept or reject"
+  ]
+  efficiency=["tokens_consumed", "files_modified", "lines_changed", "repair_iterations"]
+}
+.r{
+  R1=agent_receives_onlyLIN_source_benchmark_profile_constraints
+  R2=agent_must_not_see_V2_solutions_or_prior_results
+  R3=agent_must_recompile_and_verify_after_modification
+  R4=agent_must_run_benchmark_and_compare
+  R5=agent_must_report_regressions_explicitly
+  R6=frozen_variables_must_not_change: format, decompress/enqueue function, verification
+  R7=evaluation_measures_agent_behavior_not_just_code_performance
+}
+.g{
+  pass=diagnosis_correct AND surgical_precision AND parity_ok AND gain_obtained AND regressions_reported
+  fail=parity_failure OR wrong_unit_modified OR frozen_variable_changed OR no_benchmark_run
+}

@@ -1,0 +1,92 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_math_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!add(a: num, b: num): num { ^(a + b) }
+!ceil(n: num, p: int{>=0}): num {
+  $m = Math.pow(10, p)
+  ^Math.ceil(n * m) / m
+}
+!divide(a: num, b: num): num { ^(a / b) }
+!floor(n: num, p: int{>=0}): num {
+  $m = Math.pow(10, p)
+  ^Math.floor(n * m) / m
+}
+!max(arr: [any]): any {
+  ?(arr == null || arr.length == 0) { ^undefined }
+  ^Math.max(...arr)
+}
+!maxBy(arr: [any], iteratee: any): any {
+  ?(arr == null || arr.length == 0) { ^undefined }
+  $best = arr[0]
+  $bestVal = typeof iteratee == "function" ? iteratee(best) : best[iteratee]
+  #i=1..arr.length-1 {
+    $v = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    ?(v > bestVal) { best = arr[i]; bestVal = v }
+  }
+  ^best
+}
+!mean(arr: [any]): num {
+  ?(arr == null || arr.length == 0) { ^NaN }
+  $s = 0
+  #i=0..arr.length-1 { s = s + arr[i] }
+  ^(s / arr.length)
+}
+!meanBy(arr: [any], iteratee: any): num {
+  ?(arr == null || arr.length == 0) { ^NaN }
+  $s = 0
+  #i=0..arr.length-1 {
+    $v = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    s = s + v
+  }
+  ^(s / arr.length)
+}
+!min(arr: [any]): any {
+  ?(arr == null || arr.length == 0) { ^undefined }
+  ^Math.min(...arr)
+}
+!minBy(arr: [any], iteratee: any): any {
+  ?(arr == null || arr.length == 0) { ^undefined }
+  $best = arr[0]
+  $bestVal = typeof iteratee == "function" ? iteratee(best) : best[iteratee]
+  #i=1..arr.length-1 {
+    $v = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    ?(v < bestVal) { best = arr[i]; bestVal = v }
+  }
+  ^best
+}
+!multiply(a: num, b: num): num { ^(a * b) }
+!round(n: num, p: int{>=0}): num {
+  $m = Math.pow(10, p)
+  ^Math.round(n * m) / m
+}
+!subtract(a: num, b: num): num { ^(a - b) }
+!sum(arr: [any]): num {
+  $s = 0
+  #i=0..arr.length-1 { s = s + arr[i] }
+  ^s
+}
+!sumBy(arr: [any], iteratee: any): num {
+  $s = 0
+  #i=0..arr.length-1 {
+    $v = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    s = s + v
+  }
+  ^s
+}
+
+~workflow {
+  step w_add -> add(6, 4)
+  step w_ceil -> ceil(4.006, 2)
+  step w_divide -> divide(6, 4)
+  step w_floor -> floor(0.046, 2)
+  step w_max -> max([1,2,3])
+  step w_maxBy -> maxBy([{n:1},{n:2}], 'n')
+  step w_mean -> mean([1,2,3])
+  step w_min -> min([1,2,3])
+  step w_round -> round(4.006, 2)
+  step w_sum -> sum([1,2,3])
+}
+
+=ex{add,ceil,divide,floor,max,maxBy,mean,meanBy,min,minBy,multiply,round,subtract,sum,sumBy}

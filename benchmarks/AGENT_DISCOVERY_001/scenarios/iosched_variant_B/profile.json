@@ -1,0 +1,30 @@
+{
+  "benchmark": "iosched FIFO profile",
+  "request_count": 256,
+  "iterations": 1000,
+  "workloads": {
+    "sequential": {
+      "avg_seek": 8,
+      "iops": 8616213,
+      "parity": "OK"
+    },
+    "random": {
+      "avg_seek": 370411.7,
+      "iops": 9761826,
+      "parity": "OK"
+    },
+    "mixed_rw": {
+      "avg_seek": 228192.5,
+      "iops": 9394266,
+      "parity": "OK"
+    },
+    "bursty": {
+      "avg_seek": 121.2,
+      "iops": 14586945,
+      "parity": "OK"
+    }
+  },
+  "problem": "random workload avg seek distance is 370412 sectors -- extremely high, indicating random dispatch order",
+  "critical_workload": "random",
+  "target": "reduce avg_seek for random workload"
+}

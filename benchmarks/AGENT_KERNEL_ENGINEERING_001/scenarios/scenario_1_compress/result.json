@@ -1,0 +1,31 @@
+{
+  "all_parity": true,
+  "results": {
+    "zero_filled": {
+      "compress_ns": "10260.1",
+      "ratio": "1365.33",
+      "parity": true
+    },
+    "text_repetitive": {
+      "compress_ns": "36499.4",
+      "ratio": "15.34",
+      "parity": true
+    },
+    "random_data": {
+      "compress_ns": "34615.8",
+      "ratio": "1.00",
+      "parity": true
+    },
+    "mixed_structured": {
+      "compress_ns": "28778.4",
+      "ratio": "2.63",
+      "parity": true
+    },
+    "high_entropy": {
+      "compress_ns": "17784.8",
+      "ratio": "1.00",
+      "parity": true
+    }
+  },
+  "lin_valid": true
+}

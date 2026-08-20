@@ -1,0 +1,67 @@
+@RULEL:AGENT_DISCOVERY_001:1.0.0
+~R{.m=meta .h=hypothesis .e=experimental_design .s=scenario .mtr=metric .r=rule .g=gate .idx=semantic_index}
+.m{
+  name=AGENT_DISCOVERY_001
+  status=ACTIVE_BENCHMARK
+  domain=agent_discovery_test
+  date=2026-08-20
+  purpose="Test whether an AI agent can autonomously discover the LIN node responsible for a performance problem, without being given the node name. Closes the gap identified in AGENT_KERNEL_ENGINEERING_002: step 1 (discovery) is the bottleneck, not LIN semantics or modification capability."
+  parent=AGENT_KERNEL_ENGINEERING_002
+  subsystem=block_io_scheduler
+}
+.h{
+  id=H_AGENT_DISCOVERY_001
+  claim="If an agent can discover the responsible LIN node from a semantic index without being told the node name, then the discovery bottleneck is solvable and LIN is a complete environment for agentic engineering. If not, discovery remains the hard problem regardless of LIN's semantic model."
+}
+.e{
+  design=semantic_index_discovery
+  task="random seek is high (370412). Find the responsible node and reduce it."
+  interface=semantic_index_query
+  frozen=["source.lin", "benchmark.mjs", "constraints.md"]
+  variable_independent="discovery_interface (node_name_given vs semantic_index vs raw_source)"
+  variable_dependent=["discovery_success", "correct_node", "discovery_iterations", "benchmark_run", "parity", "gain", "verdict"]
+}
+.mtr{
+  primary=[
+    "discovery_success: did agent find the correct node without being told",
+    "correct_node: did agent identify !dispatch_next or !dispatch_batch",
+    "discovery_iterations: how many queries/read attempts until correct node found",
+    "benchmark_run: did agent execute benchmark after discovery",
+    "parity_ok: all requests dispatched",
+    "seek_reduction: improvement on random workload",
+    "verdict: accept or reject"
+  ]
+  efficiency=["files_changed", "lines_changed", "repair_iterations", "time_to_discovery"]
+}
+.idx{
+  format=json
+  fields=["symbol", "contract", "effects", "dependencies", "benchmark_provenance", "hash"]
+  exposed_nodes=[
+    "!dispatch_next: {contract: dispatch first request, effects: [seek_distance], dependencies: [queue], benchmark_provenance: [random: high]}",
+    "!dispatch_batch: {contract: dispatch all pending, effects: [throughput], dependencies: [!dispatch_next], benchmark_provenance: []}",
+    "iosched_enqueue: {contract: add request to queue, effects: [queue_state], dependencies: [], benchmark_provenance: []}",
+    "verifyAllDispatched: {contract: verify all requests dispatched, effects: [verification], dependencies: [queue], benchmark_provenance: []}"
+  ]
+}
+.r{
+  R1=agent_receives_only_performance_problem_and_semantic_index
+  R2=agent_does_not_receive_node_name_in_prompt
+  R3=agent_can_query_semantic_index_multiple_times
+  R4=agent_does_not_see_AGENT_001_or_AGENT_002_solutions
+  R5=harness_measures_discovery_iterations
+  R6=constraints_identical_to_AGENT_002
+}
+.g{
+  pass=agent_discovers_correct_node_in_3_or_fewer_iterations => discovery_solvable
+  pass=agent_discovers_correct_node_in_more_than_3_iterations => discovery_hard_but_possible
+  fail=agent_fails_to_discover_after_5_iterations => discovery_bottleneck_confirmed
+}
+.s{
+  id=iosched_discovery
+  problem="random seek is 370412, need to reduce"
+  semantic_index=benchmarks/AGENT_DISCOVERY_001/scenarios/iosched_discovery/semantic_index.json
+  source=benchmarks/AGENT_DISCOVERY_001/scenarios/iosched_discovery/source.lin
+  benchmark=benchmarks/AGENT_DISCOVERY_001/scenarios/iosched_discovery/benchmark.mjs
+  constraints=benchmarks/AGENT_DISCOVERY_001/scenarios/iosched_discovery/constraints.md
+  task_prompt=benchmarks/AGENT_DISCOVERY_001/scenarios/iosched_discovery/task.md
+}

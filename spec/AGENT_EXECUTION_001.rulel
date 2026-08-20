@@ -1,0 +1,76 @@
+@RULEL:AGENT_EXECUTION_001:1.0.0
+~R{.m=meta .h=hypothesis .e=experimental_design .s=scenario .mtr=metric .r=rule .g=gate}
+.m{
+  name=AGENT_EXECUTION_001
+  status=ACTIVE_BENCHMARK
+  domain=agent_execution_test
+  date=2026-08-20
+  purpose="Isolate whether the agent bottleneck is editing (E1), tool execution (E2), or full engineering loop (E3). Following AGENT_DISCOVERY_001 finding that discovery works but execution fails."
+  parent=AGENT_DISCOVERY_001
+  subsystem=block_io_scheduler
+}
+.h{
+  id=H_AGENT_EXECUTION_001
+  claim="If E1 passes and E2 passes but E3 fails, the bottleneck is loop integration. If E1 fails, the bottleneck is editing. If E2 fails, the bottleneck is tool execution."
+}
+.e{
+  design=execution_capability_ab_test
+  task="Replace FIFO with Elevator in !dispatch_next, recompile, run benchmark"
+  variants=[
+    {id=E1 label=edit_only capability=edit_only},
+    {id=E2 label=execute_only capability=execute_only},
+    {id=E3 label=full_cycle capability=edit_compile_benchmark}
+  ]
+  frozen=["constraints.md"]
+  variable_independent="agent_capability (edit_only vs execute_only vs full_cycle)"
+  variable_dependent=["edit_success", "compile_success", "benchmark_run", "parity", "seek_reduction", "verdict"]
+}
+.mtr{
+  primary=[
+    "edit_success: did agent modify source.lin correctly",
+    "compile_success: did source.lin parse after modification",
+    "benchmark_run: did agent execute benchmark",
+    "parity_ok: all requests dispatched",
+    "seek_reduction: improvement on random workload",
+    "verdict: accept or reject"
+  ]
+  efficiency=["lines_changed", "time_to_edit", "time_to_compile", "time_to_benchmark"]
+}
+.r{
+  R1=E1_agent_can_edit_but_not_execute_commands
+  R2=E2_agent_can_execute_commands_but_edits_are_pre_applied
+  R3=E3_agent_can_edit_compile_and_benchmark
+  R4=all_variants_receive_same_task_description_except_capability_instructions
+  R5=harness_measures_same_metrics_for_all_variants
+  R6=oracle_compares_against_known_correct_modification
+}
+.g{
+  pass=E1_fails_AND_E2_passes_AND_E3_passes => editing_is_bottleneck
+  pass=E1_passes_AND_E2_fails_AND_E3_passes => tool_execution_is_bottleneck
+  pass=E1_passes_AND_E2_passes_AND_E3_fails => loop_integration_is_bottleneck
+  pass=all_three_pass => execution_capability_sufficient
+  fail=more_than_one_fails_without_clear_pattern
+}
+.s{
+  id=edit_only
+  capability=edit_only
+  task="Replace FIFO with Elevator in !dispatch_next node. Edit source.lin and benchmark.mjs. Do NOT execute any commands."
+  pre_edits=none
+  expected_edit="Add sort by sector in dispatch_next"
+}
+.s{
+  id=execute_only
+  capability=execute_only
+  task="Run the benchmark and report results. The files are already edited."
+  pre_edits="source.lin and benchmark.mjs already contain Elevator implementation"
+  expected_edit=none
+  expected_execution="node benchmark.mjs"
+}
+.s{
+  id=full_cycle
+  capability=edit_compile_benchmark
+  task="Replace FIFO with Elevator in !dispatch_next, recompile, run benchmark, report results."
+  pre_edits=none
+  expected_edit="Add sort by sector in dispatch_next"
+  expected_execution="node benchmark.mjs"
+}

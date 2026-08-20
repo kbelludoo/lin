@@ -1,0 +1,30 @@
+{
+  "runtime_metrics": {
+    "cold_start_ms_orig": "0.015",
+    "cold_start_ms_lin": "0.163",
+    "throughput_cmd_s_orig": 39030,
+    "throughput_cmd_s_lin": 33160,
+    "ram_heap_kb_1k_tasks_orig": 349,
+    "ram_heap_kb_1k_tasks_lin": 581,
+    "source_bytes_orig": 4054,
+    "source_bytes_lin": 4482,
+    "emitted_ts_bytes": 1244,
+    "emitted_rust_bytes": 1545
+  },
+  "benchmark_id": "LIN_LEGACY_APP_001",
+  "app": "Task Manager CLI",
+  "parity_passed": 21,
+  "parity_total": 21,
+  "parity_rate": 1,
+  "mutations_passed": 100,
+  "mutations_total": 100,
+  "over_invalidation": 0,
+  "token_reduction": "-10.6%",
+  "lin_tokens": 1121,
+  "orig_tokens": 1014,
+  "lin_loc": 116,
+  "orig_loc": 114,
+  "emitted_ts_lines": 31,
+  "emitted_rust_lines": 34,
+  "verdict": "A — LIN SOBREVIVEU INTEGRALMENTE (Complete app rewrite with 100% parity)"
+}

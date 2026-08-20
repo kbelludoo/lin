@@ -1,0 +1,58 @@
+@RULEL:AGENT_KERNEL_ENGINEERING_002:1.0.0
+~R{.m=meta .h=hypothesis .e=experimental_design .v=variants .mtr=metric .r=rule .g=gate}
+.m{
+  name=AGENT_KERNEL_ENGINEERING_002
+  status=ACTIVE_BENCHMARK
+  domain=agent_prompt_causality_test
+  date=2026-08-20
+  purpose="Isolate why AGENT_001 scenario 2 (I/O scheduler) failed: is it an LLM understanding problem, a LIN semantic-unit discovery problem, or a LIN model problem? Three prompt variants test the same task with increasing explicitness."
+  parent=AGENT_KERNEL_ENGINEERING_001
+  subsystem=block_io_scheduler
+}
+.h{
+  id=H_AGENT_KERNEL_002
+  claim="If A=free prompt fails and B=explicit diagnosis passes, the bottleneck is agent agency/discovery, not LIN semantics. If A=B=C all fail, LIN semantic model for scheduling needs evolution."
+}
+.e{
+  design=prompt_explicitness_ab_test
+  task="reduce seek distance on random I/O workload (FIFO -> elevator)"
+  variants=[
+    {id=A label=free_prompt explicitness=minimal},
+    {id=B label=explicit_diagnosis explicitness=medium},
+    {id=C label=semantic_loc explicitness=full}
+  ]
+  frozen=["source.lin", "benchmark.mjs", "profile.json", "constraints.md"]
+  variable_independent="prompt_explicitness (A=none, B=diagnosis, C=diagnosis+semantic_location)"
+  variable_dependent=["diagnosis_success", "correct_node", "files_changed", "benchmark_run", "parity", "gain", "verdict"]
+}
+.mtr{
+  primary=[
+    "diagnosis_success: did agent identify FIFO dispatch as bottleneck",
+    "correct_node_identification: did agent modify dispatch_next or dispatch_batch",
+    "benchmark_run: did agent execute benchmark",
+    "parity_ok: all requests dispatched",
+    "seek_reduction: improvement on random workload",
+    "first_pass: succeeded on first attempt without re-reading constraints",
+    "verdict: accept or reject"
+  ]
+  efficiency=["files_changed", "lines_changed_source", "lines_changed_bench", "repair_iterations"]
+}
+.r{
+  R1=all_variants_receive_identical_source_benchmark_profile_constraints
+  R2=only_task.md_differs_between_variants
+  R3=agent_does_not_see_other_variant_results
+  R4=agent_does_not_see_IOSCHED_001_solutions
+  R5=harness_measures_same_metrics_for_all_variants
+  R6=variant_C_provides_exact_node_name_and_function
+}
+.g{
+  pass=Variant_A_fails_AND_Variant_B_passes_AND_Variant_C_passes => agency_discovery_problem
+  pass=Variant_A_fails_AND_Variant_B_fails_AND_Variant_C_passes => LIN_semantic_model_needs_evolution
+  pass=Variant_A_passes => baseline_sufficient
+  fail=all_three_fail_without_clear_distinction
+}
+.v{
+  A_task="Reduce seek distance on random workload (free prompt)"
+  B_task="Seek distance is 370412. Bottleneck is FIFO policy. Replace dispatch algorithm only."
+  C_task="Seek distance is 370412. Bottleneck is !dispatch_next node in iosched_v1_fifo workflow. Modify only that node to sort by sector before dispatch."
+}

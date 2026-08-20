@@ -1,0 +1,161 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_lang_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!castArray(val: any): [any] {
+  ?(Array.isArray(val)) { ^val }:{ ^[val] }
+}
+
+!clone(val: any): any {
+  ?(val == null || typeof val != "object") { ^val }
+  ?(Array.isArray(val)) { ^[...val] }
+  ^{...val}
+}
+
+!cloneDeep(val: any): any {
+  ?(val == null || typeof val != "object") { ^val }
+  ?(Array.isArray(val)) {
+    $res = []
+    #i=0..val.length-1 { res.push(cloneDeep(val[i])) }
+    ^res
+  }
+  $res = {}
+  $ks = Object.keys(val)
+  #j=0..ks.length-1 { res[ks[j]] = cloneDeep(val[ks[j]]) }
+  ^res
+}
+
+!eq(a: any, b: any): bool {
+  ^(a === b || (a != a && b != b))
+}
+
+!gt(a: any, b: any): bool { ^(a > b) }
+!gte(a: any, b: any): bool { ^(a >= b) }
+!lt(a: any, b: any): bool { ^(a < b) }
+!lte(a: any, b: any): bool { ^(a <= b) }
+
+!isArguments(val: any): bool {
+  ^(Object.prototype.toString.call(val) == "[object Arguments]")
+}
+
+!isArray(val: any): bool { ^Array.isArray(val) }
+!isArrayBuffer(val: any): bool { ^(val instanceof ArrayBuffer) }
+!isArrayLike(val: any): bool { ^(val != null && typeof val.length == "number" && val.length >= 0 && val.length <= 4294967295) }
+!isBoolean(val: any): bool { ^(val === true || val === false) }
+!isBuffer(val: any): bool { ^(typeof Buffer != "undefined" && Buffer.isBuffer(val)) }
+!isDate(val: any): bool { ^(val instanceof Date) }
+!isElement(val: any): bool { ^(val != null && val.nodeType == 1) }
+!isEmpty(val: any): bool {
+  ?(val == null) { ^true }
+  ?(Array.isArray(val) || typeof val == "string") { ^val.length == 0 }
+  ?(typeof val == "object") { ^Object.keys(val).length == 0 }
+  ^true
+}
+
+!isEqual(a: any, b: any): bool {
+  ?(a === b) { ^true }
+  ?(typeof a != typeof b || a == null || b == null) { ^false }
+  ?(typeof a != "object") { ^a === b }
+  $ka = Object.keys(a)
+  $kb = Object.keys(b)
+  ?(ka.length != kb.length) { ^false }
+  #i=0..ka.length-1 {
+    $k = ka[i]
+    ?(!isEqual(a[k], b[k])) { ^false }
+  }
+  ^true
+}
+
+!isError(val: any): bool { ^(val instanceof Error) }
+!isFinite(val: any): bool { ^Number.isFinite(val) }
+!isFunction(val: any): bool { ^(typeof val == "function") }
+!isInteger(val: any): bool { ^Number.isInteger(val) }
+!isLength(val: any): bool { ^(typeof val == "number" && val >= 0 && val <= 4294967295 && Number.isInteger(val)) }
+!isMap(val: any): bool { ^(val instanceof Map) }
+!isMatch(obj: any, src: any): bool {
+  $ks = Object.keys(src)
+  #i=0..ks.length-1 {
+    $k = ks[i]
+    ?(!isEqual(obj[k], src[k])) { ^false }
+  }
+  ^true
+}
+!isNaN(val: any): bool { ^(typeof val == "number" && Number.isNaN(val)) }
+!isNil(val: any): bool { ^(val == null) }
+!isNull(val: any): bool { ^(val === null) }
+!isNumber(val: any): bool { ^(typeof val == "number") }
+!isObject(val: any): bool { ^(typeof val == "object" && val != null || typeof val == "function") }
+!isObjectLike(val: any): bool { ^(typeof val == "object" && val != null) }
+!isPlainObject(val: any): bool {
+  ?(val == null || typeof val != "object") { ^false }
+  $proto = Object.getPrototypeOf(val)
+  ^(proto == null || proto == Object.prototype)
+}
+!isRegExp(val: any): bool { ^(val instanceof RegExp) }
+!isSafeInteger(val: any): bool { ^Number.isSafeInteger(val) }
+!isSet(val: any): bool { ^(val instanceof Set) }
+!isString(val: any): bool { ^(typeof val == "string") }
+!isSymbol(val: any): bool { ^(typeof val == "symbol") }
+!isTypedArray(val: any): bool { ^(Object.prototype.toString.call(val).includes("TypedArray")) }
+!isUndefined(val: any): bool { ^(val === undefined) }
+!isWeakMap(val: any): bool { ^(val instanceof WeakMap) }
+!isWeakSet(val: any): bool { ^(val instanceof WeakSet) }
+
+!toArray(val: any): [any] {
+  ?(val == null) { ^[] }
+  ?(Array.isArray(val)) { ^[...val] }
+  ?(typeof val == "object") { ^Object.values(val) }
+  ?(typeof val == "string") { ^val.split("") }
+  ^[]
+}
+
+!toNumber(val: any): num {
+  ?(typeof val == "number") { ^val }
+  $n = Number(val)
+  ?(Number.isNaN(n)) { ^0 }
+  ^n
+}
+
+!toInteger(val: any): int {
+  $n = toNumber(val)
+  ?(Number.isNaN(n)) { ^0 }
+  ^Math.trunc(n)
+}
+
+!toFinite(val: any): num {
+  $n = toNumber(val)
+  ?(Number.isNaN(n)) { ^0 }
+  ?(n == Infinity) { ^1.7976931348623157e+308 }
+  ?(n == -Infinity) { ^-1.7976931348623157e+308 }
+  ^n
+}
+
+!toSafeInteger(val: any): int {
+  $n = toInteger(val)
+  ?(n > 9007199254740991) { ^9007199254740991 }
+  ?(n < -9007199254740991) { ^-9007199254740991 }
+  ^n
+}
+
+!toString(val: any): str {
+  ?(val == null) { ^"" }
+  ?(typeof val == "string") { ^val }
+  ?(Array.isArray(val)) { ^val.map(toString).join(",") }
+  ^String(val)
+}
+
+~workflow {
+  step w_clone -> clone({a:1})
+  step w_cloneDeep -> cloneDeep({a:{b:[1,2]}})
+  step w_isArray -> isArray([1,2])
+  step w_isEqual -> isEqual({a:1},{a:1})
+  step w_isNil -> isNil(null)
+  step w_isObject -> isObject({})
+  step w_isString -> isString("abc")
+  step w_toArray -> toArray({a:1,b:2})
+  step w_toNumber -> toNumber("3.14")
+  step w_toInteger -> toInteger("3.99")
+}
+
+=ex{castArray,clone,cloneDeep,eq,gt,gte,lt,lte,isArguments,isArray,isArrayBuffer,isArrayLike,isBoolean,isBuffer,isDate,isElement,isEmpty,isEqual,isError,isFinite,isFunction,isInteger,isLength,isMap,isMatch,isNaN,isNil,isNull,isNumber,isObject,isObjectLike,isPlainObject,isRegExp,isSafeInteger,isSet,isString,isSymbol,isTypedArray,isUndefined,isWeakMap,isWeakSet,toArray,toNumber,toInteger,toFinite,toSafeInteger,toString}

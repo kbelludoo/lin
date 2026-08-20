@@ -1,0 +1,208 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_object_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!assign(obj: any, ...srcs: [any]): any {
+  $res = {...obj}
+  #i=0..srcs.length-1 {
+    ?(srcs[i] != null) {
+      $keys = Object.keys(srcs[i])
+      #j=0..keys.length-1 { res[keys[j]] = srcs[i][keys[j]] }
+    }
+  }
+  ^res
+}
+
+!defaults(obj: any, ...srcs: [any]): any {
+  $res = {...obj}
+  #i=0..srcs.length-1 {
+    ?(srcs[i] != null) {
+      $keys = Object.keys(srcs[i])
+      #j=0..keys.length-1 {
+        $k = keys[j]
+        ?(res[k] == null) { res[k] = srcs[i][k] }
+      }
+    }
+  }
+  ^res
+}
+
+!get(obj: any, path: str, def: any): any {
+  ?(obj == null) { ^def }
+  $parts = path.replace(/\[/g,".").replace(/\]/g,"").split(".")
+  $curr = obj
+  #i=0..parts.length-1 {
+    $p = parts[i]
+    ?(curr == null || curr[p] == null) { ^def }
+    curr = curr[p]
+  }
+  ^curr
+}
+
+!has(obj: any, path: str): bool {
+  $parts = path.replace(/\[/g,".").replace(/\]/g,"").split(".")
+  $curr = obj
+  #i=0..parts.length-1 {
+    $p = parts[i]
+    ?(curr == null || !Object.prototype.hasOwnProperty.call(curr, p)) { ^false }
+    curr = curr[p]
+  }
+  ^true
+}
+
+!invert(obj: any): any {
+  $res = {}
+  $keys = Object.keys(obj)
+  #i=0..keys.length-1 { res[String(obj[keys[i]])] = keys[i] }
+  ^res
+}
+
+!keys(obj: any): [any] {
+  ^Object.keys(obj)
+}
+
+!mapKeys(obj: any, fn: any): any {
+  $res = {}
+  $ks = Object.keys(obj)
+  #i=0..ks.length-1 {
+    $nk = fn(obj[ks[i]], ks[i])
+    res[nk] = obj[ks[i]]
+  }
+  ^res
+}
+
+!mapValues(obj: any, fn: any): any {
+  $res = {}
+  $ks = Object.keys(obj)
+  #i=0..ks.length-1 { res[ks[i]] = fn(obj[ks[i]], ks[i]) }
+  ^res
+}
+
+!merge(obj: any, ...srcs: [any]): any {
+  $deep = (t, s) => {
+    $r = {...t}
+    $ks = Object.keys(s)
+    #i=0..ks.length-1 {
+      $k = ks[i]
+      ?(typeof s[k] == "object" && s[k] != null && !Array.isArray(s[k])) {
+        r[k] = deep(t[k] || {}, s[k])
+      }:{
+        r[k] = s[k]
+      }
+    }
+    ^r
+  }
+  $res = {...obj}
+  #i=0..srcs.length-1 {
+    ?(srcs[i] != null) { res = deep(res, srcs[i]) }
+  }
+  ^res
+}
+
+!omit(obj: any, keys: [any]): any {
+  $res = {...obj}
+  #i=0..keys.length-1 { delete res[keys[i]] }
+  ^res
+}
+
+!pick(obj: any, keys: [any]): any {
+  $res = {}
+  #i=0..keys.length-1 {
+    $k = keys[i]
+    ?(obj[k] != null) { res[k] = obj[k] }
+  }
+  ^res
+}
+
+!set(obj: any, path: str, val: any): any {
+  $res = {...obj}
+  $parts = path.replace(/\[/g,".").replace(/\]/g,"").split(".")
+  $curr = res
+  #i=0..parts.length-2 {
+    $p = parts[i]
+    ?(curr[p] == null) { curr[p] = {} }
+    curr = curr[p]
+  }
+  curr[parts[parts.length-1]] = val
+  ^res
+}
+
+!toPairs(obj: any): [[any]] {
+  $ks = Object.keys(obj)
+  $res = []
+  #i=0..ks.length-1 { res.push([ks[i], obj[ks[i]]]) }
+  ^res
+}
+
+!unset(obj: any, path: str): any {
+  $res = {...obj}
+  $parts = path.replace(/\[/g,".").replace(/\]/g,"").split(".")
+  $curr = res
+  #i=0..parts.length-2 {
+    $p = parts[i]
+    ?(curr[p] == null) { ^res }
+    curr = curr[p]
+  }
+  delete curr[parts[parts.length-1]]
+  ^res
+}
+
+!values(obj: any): [any] {
+  ^Object.values(obj)
+}
+
+!at(obj: any, paths: [any]): [any] {
+  $res = []
+  #i=0..paths.length-1 { res.push(get(obj, paths[i], undefined)) }
+  ^res
+}
+
+!create(proto: any, props: any): any {
+  $res = Object.create(proto)
+  ?(props != null) { res = assign(res, props) }
+  ^res
+}
+
+!findKey(obj: any, pred: any): any {
+  $ks = Object.keys(obj)
+  #i=0..ks.length-1 {
+    $k = ks[i]
+    ?(typeof pred == "function" ? pred(obj[k], k) : obj[k] == pred) { ^k }
+  }
+  ^undefined
+}
+
+!forIn(obj: any, fn: any): any {
+  $ks = Object.keys(obj)
+  #i=0..ks.length-1 { fn(obj[ks[i]], ks[i], obj) }
+  ^obj
+}
+
+!forOwn(obj: any, fn: any): any {
+  $ks = Object.keys(obj)
+  #i=0..ks.length-1 { fn(obj[ks[i]], ks[i], obj) }
+  ^obj
+}
+
+!functions(obj: any): [any] {
+  $res = []
+  $ks = Object.keys(obj)
+  #i=0..ks.length-1 {
+    ?(typeof obj[ks[i]] == "function") { res.push(ks[i]) }
+  }
+  ^res.sort()
+}
+
+~workflow {
+  step w_assign -> assign({a:0}, {a:1, b:2})
+  step w_get -> get({a:[{b:2}]}, "a[0].b", 0)
+  step w_has -> has({a:1,b:2}, "a")
+  step w_keys -> keys({a:1,b:2})
+  step w_merge -> merge({a:{b:1}}, {a:{c:2}})
+  step w_omit -> omit({a:1,b:2,c:3}, ["b"])
+  step w_pick -> pick({a:1,b:2,c:3}, ["a","c"])
+  step w_values -> values({a:1,b:2})
+}
+
+=ex{assign,defaults,get,has,invert,keys,mapKeys,mapValues,merge,omit,pick,set,toPairs,unset,values,at,create,findKey,forIn,forOwn,functions}

@@ -1,0 +1,61 @@
+{
+  "benchmark_id": "LIN_LEGACY_REWRITE_002_LODASH_COMPLETE",
+  "oracle": "lodash@4.17.21",
+  "oracle_total_functions": 306,
+  "parity_tests_passed": 275,
+  "parity_tests_total": 278,
+  "parity_rate": 0.9892086330935251,
+  "mismatches": 3,
+  "mismatch_details": [
+    {
+      "fn": "unzipWith",
+      "args": "[[\"a\",\"b\"],[1,2],null]",
+      "lin": "ERROR: object is not a function",
+      "oracle": "oracle_error"
+    },
+    {
+      "fn": "xorWith",
+      "args": "[[1,2],[2,3],null]",
+      "lin": "[2,2]",
+      "oracle": "[2,3]"
+    },
+    {
+      "fn": "invokeMap",
+      "args": "[[123,456],null,\"\"]",
+      "lin": "ERROR: String.prototype.split called on null or undefined",
+      "oracle": "oracle_error"
+    }
+  ],
+  "mutations": {
+    "semantic": {
+      "passed": 700,
+      "total": 700,
+      "invariance_rate": 1
+    },
+    "topological": {
+      "passed": 300,
+      "total": 300,
+      "elevation_rate": 1
+    },
+    "over_invalidation": 0,
+    "under_invalidation": 0
+  },
+  "metrics": {
+    "lin_tokens": 7889,
+    "lodash_original_tokens": 18254,
+    "token_reduction_pct": "56.8",
+    "lin_source_chars": 31555,
+    "lodash_original_chars": 73015,
+    "lin_nodes": 76,
+    "lin_edges": 68,
+    "emitted_ts_lines": 192,
+    "emitted_rust_lines": 284
+  },
+  "multi_target": {
+    "typescript": 8,
+    "rust": 8,
+    "c": 8,
+    "zig": 8
+  },
+  "verdict": "B — LIN SOBREVIVEU PARCIALMENTE (High parity with edge-case gaps)"
+}

@@ -1,0 +1,120 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_function_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!after(n: int, fn: any): any {
+  $count = 0
+  ^(...args) => {
+    count = count + 1
+    ?(count >= n) { ^fn(...args) }
+    ^undefined
+  }
+}
+
+!before(n: int, fn: any): any {
+  $count = 0
+  $result = undefined
+  ^(...args) => {
+    count = count + 1
+    ?(count < n) { result = fn(...args) }
+    ^result
+  }
+}
+
+!ary(fn: any, n: int): any {
+  ^(...args) => fn(...args.slice(0, n))
+}
+
+!bind(fn: any, ctx: any, ...partials: [any]): any {
+  ^(...args) => fn.apply(ctx, [...partials, ...args])
+}
+
+!curry(fn: any, arity: int): any {
+  $curried = (...args) => {
+    ?(args.length >= arity) { ^fn(...args) }
+    ^(...more) => curried(...args, ...more)
+  }
+  ^curried
+}
+
+!debounce(fn: any, wait: int): any {
+  $timer = null
+  ^(...args) => {
+    ?(timer != null) { clearTimeout(timer) }
+    timer = setTimeout(() => fn(...args), wait)
+  }
+}
+
+!delay(fn: any, wait: int, ...args: [any]): any {
+  ^setTimeout(() => fn(...args), wait)
+}
+
+!flip(fn: any): any {
+  ^(...args) => fn(...args.reverse())
+}
+
+!memoize(fn: any): any {
+  $cache = {}
+  $memo = (...args) => {
+    $k = JSON.stringify(args)
+    ?(cache[k] == null) { cache[k] = fn(...args) }
+    ^cache[k]
+  }
+  $memo.cache = cache
+  ^memo
+}
+
+!negate(pred: any): any {
+  ^(...args) => !pred(...args)
+}
+
+!once(fn: any): any {
+  $called = false
+  $result = undefined
+  ^(...args) => {
+    ?(!called) { result = fn(...args); called = true }
+    ^result
+  }
+}
+
+!rest(fn: any, start: int): any {
+  ^(...args) => {
+    $head = args.slice(0, start)
+    $tail = args.slice(start)
+    ^fn(...head, tail)
+  }
+}
+
+!spread(fn: any, start: int): any {
+  ^(...args) => fn(...args.slice(0, start), ...args[start])
+}
+
+!throttle(fn: any, wait: int): any {
+  $lastTime = 0
+  ^(...args) => {
+    $now = Date.now()
+    ?(now - lastTime >= wait) { lastTime = now; ^fn(...args) }
+    ^undefined
+  }
+}
+
+!unary(fn: any): any {
+  ^(a) => fn(a)
+}
+
+!wrap(val: any, wrapper: any): any {
+  ^(...args) => wrapper(val, ...args)
+}
+
+~workflow {
+  step w_after -> after(2, () => "done")
+  step w_bind -> bind((a,b) => a+b, null, 1)
+  step w_curry -> curry((a,b) => a+b, 2)
+  step w_memoize -> memoize(n => n*2)
+  step w_negate -> negate(() => true)
+  step w_once -> once(() => "x")
+  step w_unary -> unary(String)
+}
+
+=ex{after,before,ary,bind,curry,debounce,delay,flip,memoize,negate,once,rest,spread,throttle,unary,wrap}

@@ -1,0 +1,116 @@
+@LIN:L2w:1.0
+^schema_once ^ops=task_manager_app
+~G{?=if #=for ^=ret :else}
+~effects{pure,io,async}
+
+// ═══ Task Manager Application — LIN @L2w:1.0 Canonical Rewrite ═══
+// Layers: Storage → Validation → Business Logic → Display → CLI Router
+
+// ── Storage Layer ──
+!load_tasks(): [any] {
+  fs_read("tasks.json")
+}
+
+!save_tasks(tasks: [any]): bool {
+  fs_write("tasks.json", tasks)
+  ^true
+}
+
+// ── Validation Layer ──
+!validate_task(title: str{len>0}, priority: str): {valid: bool, error: str} {
+  ?(title.trim().length == 0) { ^{valid: false, error: "Title is required"} }
+  ?(title.length > 200) { ^{valid: false, error: "Title too long"} }
+  $valid_priorities = ["low", "medium", "high", "urgent"]
+  ?(!valid_priorities.includes(priority)) { ^{valid: false, error: "Invalid priority"} }
+  ^{valid: true, error: ""}
+}
+
+// ── Business Logic Layer ──
+!add_task(tasks: [any], title: str, priority: str): {success: bool, task: any, error: str} {
+  $v = validate_task(title, priority)
+  ?(!v.valid) { ^{success: false, task: null, error: v.error} }
+  $task = {id: tasks.length + 1, title: title.trim(), priority: priority, done: false, created_at: "2026-01-01T00:00:00Z"}
+  save_tasks(tasks)
+  ^{success: true, task: task, error: ""}
+}
+
+!list_tasks(tasks: [any], filter: str): [any] {
+  $filtered = tasks
+  ?(filter == "pending") { filtered = tasks.filter(t => !t.done) }
+  ?(filter == "done") { filtered = tasks.filter(t => t.done) }
+  ?(filter == "high") { filtered = tasks.filter(t => t.priority == "high" || t.priority == "urgent") }
+  $priority_order = {urgent: 0, high: 1, medium: 2, low: 3}
+  ^filtered.sort((a, b) => priority_order[a.priority] - priority_order[b.priority])
+}
+
+!complete_task(tasks: [any], id: int{>0}): {success: bool, task: any, error: str} {
+  $task = tasks.find(t => t.id == id)
+  ?(!task) { ^{success: false, task: null, error: "Task not found"} }
+  task.done = true
+  save_tasks(tasks)
+  ^{success: true, task: task, error: ""}
+}
+
+!delete_task(tasks: [any], id: int{>0}): {success: bool, task: any, error: str} {
+  $idx = tasks.findIndex(t => t.id == id)
+  ?(idx == -1) { ^{success: false, task: null, error: "Task not found"} }
+  $removed = tasks[idx]
+  tasks.splice(idx, 1)
+  save_tasks(tasks)
+  ^{success: true, task: removed, error: ""}
+}
+
+!search_tasks(tasks: [any], query: str): [any] {
+  $q = query.toLowerCase()
+  ^tasks.filter(t => t.title.toLowerCase().includes(q))
+}
+
+!get_stats(tasks: [any]): any {
+  ^{
+    total: tasks.length,
+    pending: tasks.filter(t => !t.done).length,
+    done: tasks.filter(t => t.done).length,
+    urgent: tasks.filter(t => t.priority == "urgent").length,
+    high: tasks.filter(t => t.priority == "high").length,
+    medium: tasks.filter(t => t.priority == "medium").length,
+    low: tasks.filter(t => t.priority == "low").length
+  }
+}
+
+// ── Display Layer ──
+!format_task(task: any): str {
+  $status = task.done ? "[x]" : "[ ]"
+  $priority = task.priority.toUpperCase()
+  ^status + " #" + task.id + " " + priority + " " + task.title
+}
+
+!format_stats(stats: any): str {
+  ^"Total: " + stats.total + " | Pending: " + stats.pending + " | Done: " + stats.done +
+    " | Urgent: " + stats.urgent + " | High: " + stats.high + " | Medium: " + stats.medium + " | Low: " + stats.low
+}
+
+// ── CLI Command Router ──
+!execute_command(tasks: [any], cmd: str, args: [any]): any {
+  ?(cmd == "add") { ^add_task(tasks, args[0] || "", args[1] || "medium") }
+  ?(cmd == "list") { ^{success: true, tasks: list_tasks(tasks, args[0])} }
+  ?(cmd == "done") { ^complete_task(tasks, parseInt(args[0])) }
+  ?(cmd == "delete") { ^delete_task(tasks, parseInt(args[0])) }
+  ?(cmd == "search") { ^{success: true, tasks: search_tasks(tasks, args[0] || "")} }
+  ?(cmd == "stats") { ^{success: true, stats: get_stats(tasks)} }
+  ^{success: false, error: "Unknown command: " + cmd}
+}
+
+// ── Application Workflow ──
+~workflow {
+  step init       -> load_tasks()
+  step add_first  -> add_task(init, "Setup CI/CD pipeline", "high")
+  step add_second -> add_task(init, "Write unit tests", "urgent")
+  step add_third  -> add_task(init, "Update documentation", "low")
+  step list_all   -> list_tasks(init, "all")
+  step complete_1 -> complete_task(init, 1)
+  step search_ci  -> retry(2, exp) search_tasks(init, "CI")
+  step stats      -> get_stats(init)
+  step display    -> format_task(list_all[0])
+}
+
+=ex{load_tasks,save_tasks,validate_task,add_task,list_tasks,complete_task,delete_task,search_tasks,get_stats,format_task,format_stats,execute_command}

@@ -1,0 +1,76 @@
+@LIN:L2w:1.0
+^schema_once ^ops=iosched_v2_elevator
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+// ═══ I/O Scheduler V2: Elevator/SCAN dispatch ═══
+// Sorts requests by sector, sweeps in one direction,
+// reverses at the end of the queue.
+// ONLY difference from V1: dispatch algorithm.
+// Frozen: request format, enqueue function, verification function
+
+!enqueue(queue: [IOReq], req: IOReq): [IOReq] {
+  queue.push(req)
+  ^queue
+}
+
+!dispatch_next(queue: [IOReq], state: ElevState): IOReq {
+  ?(queue.length == 0) { ^null }
+  
+  // Sort by sector
+  $sorted = sort_by(queue, sector)
+  
+  // Find next request in current sweep direction
+  $best_idx = -1
+  $best_dist = 999999
+  #i=0..sorted.length-1 {
+    $dist = sorted[i].sector - state.head_pos
+    ?(state.direction == 1) {
+      // Moving up: find smallest positive distance
+      ?(dist >= 0 && dist < best_dist) { best_dist = dist; best_idx = i }
+    }:{
+      // Moving down: find smallest negative distance
+      ?(dist <= 0 && -dist < best_dist) { best_dist = -dist; best_idx = i }
+    }
+  }
+  
+  // If no request in current direction, reverse
+  ?(best_idx == -1) {
+    state.direction = -state.direction
+    // Retry in new direction
+    #i=0..sorted.length-1 {
+      $dist = sorted[i].sector - state.head_pos
+      ?(state.direction == 1) {
+        ?(dist >= 0 && dist < best_dist) { best_dist = dist; best_idx = i }
+      }:{
+        ?(dist <= 0 && -dist < best_dist) { best_dist = -dist; best_idx = i }
+      }
+    }
+  }
+  
+  ?(best_idx == -1) { ^null }
+  
+  $req = sorted[best_idx]
+  state.head_pos = req.sector
+  // Remove from queue
+  remove_at(queue, best_idx)
+  ^req
+}
+
+!dispatch_batch(queue: [IOReq], batch_size: int{1..256}, state: ElevState): [IOReq] {
+  $result = []
+  #i=0..batch_size-1 {
+    ?(queue.length == 0) { ^result }
+    $req = dispatch_next(queue, state)
+    result.push(req)
+  }
+  ^result
+}
+
+~workflow {
+  step enqueue  -> enqueue(request_queue, incoming_request)
+  step dispatch -> dispatch_batch(request_queue, batch_count, elevator_state)
+  step verify   -> ?(dispatch.length == expected_batch) -> ok : -> fail
+}
+
+=ex{enqueue,dispatch_next,dispatch_batch}

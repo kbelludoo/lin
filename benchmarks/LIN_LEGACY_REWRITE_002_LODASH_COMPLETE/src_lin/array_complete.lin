@@ -1,0 +1,213 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_array_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!chunk(arr: [any], size: int{>0}): [[any]] {
+  $res = []
+  #i=0..arr.length-1 {
+    ?(i % size == 0) { res.push([]) }
+    res[res.length-1].push(arr[i])
+  }
+  ^res
+}
+
+!compact(arr: [any]): [any] {
+  $res = []
+  #i=0..arr.length-1 {
+    $v = arr[i]
+    ?(v != null && v != false && v != 0 && v != "" && !Number.isNaN(v)) { res.push(v) }
+  }
+  ^res
+}
+
+!concat(...arrs: [any]): [any] {
+  $res = []
+  #i=0..arrs.length-1 {
+    $a = arrs[i]
+    ?(Array.isArray(a)) { res.push(...a) }:{ res.push(a) }
+  }
+  ^res
+}
+
+!difference(arr: [any], ...values: [any]): [any] {
+  $exclude = []
+  #i=0..values.length-1 { exclude.push(...values[i]) }
+  $res = arr.filter(v => !exclude.includes(v))
+  ^res
+}
+
+!drop(arr: [any], n: int{>=0}): [any] {
+  ^arr.slice(n)
+}
+
+!dropRight(arr: [any], n: int{>=0}): [any] {
+  ^arr.slice(0, arr.length - n)
+}
+
+!fill(arr: [any], val: any, start: int{>=0}, end: int): [any] {
+  $res = [...arr]
+  #i=start..end-1 { res[i] = val }
+  ^res
+}
+
+!findIndex(arr: [any], pred: any): int {
+  #i=0..arr.length-1 {
+    ?(typeof pred == "function" ? pred(arr[i]) : arr[i] == pred) { ^i }
+  }
+  ^-1
+}
+
+!flatten(arr: [any]): [any] {
+  $res = []
+  #i=0..arr.length-1 {
+    ?(Array.isArray(arr[i])) { res.push(...arr[i]) }:{ res.push(arr[i]) }
+  }
+  ^res
+}
+
+!flattenDeep(arr: [any]): [any] {
+  $res = []
+  $flat = (v) => { ?(Array.isArray(v)) { #j=0..v.length-1 { flat(v[j]) } }:{ res.push(v) } }
+  #i=0..arr.length-1 { flat(arr[i]) }
+  ^res
+}
+
+!head(arr: [any]): any {
+  ?(arr.length > 0) { ^arr[0] }:{ ^undefined }
+}
+
+!indexOf(arr: [any], val: any): int {
+  #i=0..arr.length-1 { ?(arr[i] === val) { ^i } }
+  ^-1
+}
+
+!initial(arr: [any]): [any] {
+  ^arr.slice(0, arr.length - 1)
+}
+
+!intersection(...arrs: [any]): [any] {
+  $first = arrs[0]
+  $res = first.filter(v => arrs.slice(1).every(a => a.includes(v)))
+  ^res
+}
+
+!join(arr: [any], sep: str): str {
+  ^arr.join(sep)
+}
+
+!last(arr: [any]): any {
+  ?(arr.length > 0) { ^arr[arr.length-1] }:{ ^undefined }
+}
+
+!nth(arr: [any], n: int): any {
+  $idx = n < 0 ? arr.length + n : n
+  ^arr[idx]
+}
+
+!pull(arr: [any], ...vals: [any]): [any] {
+  ^arr.filter(v => !vals.includes(v))
+}
+
+!remove(arr: [any], pred: any): [any] {
+  $res = []
+  $rest = []
+  #i=0..arr.length-1 {
+    ?(pred(arr[i])) { res.push(arr[i]) }:{ rest.push(arr[i]) }
+  }
+  ^res
+}
+
+!reverse(arr: [any]): [any] {
+  ^[...arr].reverse()
+}
+
+!slice(arr: [any], start: int, end: int): [any] {
+  ^arr.slice(start, end)
+}
+
+!tail(arr: [any]): [any] {
+  ^arr.slice(1)
+}
+
+!take(arr: [any], n: int{>=0}): [any] {
+  ^arr.slice(0, n)
+}
+
+!takeRight(arr: [any], n: int{>=0}): [any] {
+  ^arr.slice(arr.length - n)
+}
+
+!union(...arrs: [any]): [any] {
+  $all = []
+  #i=0..arrs.length-1 { all.push(...arrs[i]) }
+  $res = []
+  #i=0..all.length-1 { ?(!res.includes(all[i])) { res.push(all[i]) } }
+  ^res
+}
+
+!uniq(arr: [any]): [any] {
+  $res = []
+  #i=0..arr.length-1 { ?(!res.includes(arr[i])) { res.push(arr[i]) } }
+  ^res
+}
+
+!uniqBy(arr: [any], iteratee: any): [any] {
+  $seen = []
+  $res = []
+  #i=0..arr.length-1 {
+    $k = typeof iteratee == "function" ? iteratee(arr[i]) : arr[i][iteratee]
+    ?(!seen.includes(k)) { seen.push(k); res.push(arr[i]) }
+  }
+  ^res
+}
+
+!without(arr: [any], ...vals: [any]): [any] {
+  ^arr.filter(v => !vals.includes(v))
+}
+
+!xor(...arrs: [any]): [any] {
+  $all = []
+  #i=0..arrs.length-1 { all.push(...arrs[i]) }
+  $counts = {}
+  #i=0..all.length-1 {
+    $k = String(all[i])
+    ?(counts[k] == null) { counts[k] = 0 }
+    counts[k] = counts[k] + 1
+  }
+  $res = all.filter(v => counts[String(v)] == 1)
+  ^res
+}
+
+!zip(...arrs: [any]): [[any]] {
+  $maxLen = 0
+  #i=0..arrs.length-1 { ?(arrs[i].length > maxLen) { maxLen = arrs[i].length } }
+  $res = []
+  #i=0..maxLen-1 {
+    $grp = []
+    #j=0..arrs.length-1 { grp.push(arrs[j][i]) }
+    res.push(grp)
+  }
+  ^res
+}
+
+!zipObject(keys: [any], vals: [any]): any {
+  $res = {}
+  #i=0..keys.length-1 { res[keys[i]] = vals[i] }
+  ^res
+}
+
+~workflow {
+  step w_chunk -> chunk([1,2,3,4], 2)
+  step w_compact -> compact([0,1,false,2])
+  step w_drop -> drop([1,2,3], 1)
+  step w_flatten -> flatten([1,[2,3],4])
+  step w_uniq -> uniq([2,1,2])
+  step w_intersection -> intersection([2,1],[2,3])
+  step w_union -> union([2],[1,2])
+  step w_zip -> zip([1,2],['a','b'])
+  step w_without -> without([2,1,2,3],1,2)
+  step w_xor -> xor([2,1],[2,3])
+}
+
+=ex{chunk,compact,concat,difference,drop,dropRight,fill,findIndex,flatten,flattenDeep,head,indexOf,initial,intersection,join,last,nth,pull,remove,reverse,slice,tail,take,takeRight,union,uniq,uniqBy,without,xor,zip,zipObject}

@@ -1,0 +1,27 @@
+{
+  "generated_at": "2026-08-20T23:03:14.802Z",
+  "benchmark_file": "benchmark.mjs",
+  "seed": 12345,
+  "workloads": {
+    "sequential": {
+      "avg_seek": 8,
+      "parity": true,
+      "status": "normal"
+    },
+    "random": {
+      "avg_seek": 370411.7,
+      "parity": true,
+      "status": "high"
+    },
+    "mixed_rw": {
+      "avg_seek": 228192.5,
+      "parity": true,
+      "status": "high"
+    },
+    "bursty": {
+      "avg_seek": 121.2,
+      "parity": true,
+      "status": "high"
+    }
+  }
+}

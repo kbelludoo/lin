@@ -1,0 +1,61 @@
+@RULEL:LIN_KERNEL_COMPRESS_002:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric .e=experimental_design}
+.m{
+  name=LIN_KERNEL_COMPRESS_002
+  status=ACTIVE_BENCHMARK
+  domain="controlled_algorithmic_causality_test"
+  date=2026-08-20
+  purpose="Prove that the compression bottleneck in lin_lz is algorithmic (O(N*W) match-finder), not linguistic (LIN/IR/compiler), by swapping ONLY the match-finder from linear-scan to hash-table while freezing everything else."
+  parent=LIN_KERNEL_COMPRESS_001
+}
+.h{
+  id=H_KERNEL_COMPRESS_002
+  claim="Replacing the match-finder from O(N*W) to hash-table O(1)-amortized, with all other variables frozen, will reduce compress_ns for mixed_structured pages from ~943us to ~2-5us, proving the bottleneck is algorithmic not linguistic."
+  stronger_claim="If LIN V1+bad_algo=bad and LIN V2+hash_algo=competitive, on the same IR/compiler, then LIN does not impose the algorithmic bottleneck; it allows evolving the algorithm within the same semantic artifact."
+}
+.e{
+  design="controlled_differential_algorithm_swap"
+  variable_independent="match_finder_algorithm (V1=linear_scan, V2=hash_table)"
+  variables_frozen=[
+    "source_language=LIN_@L2w:1.0",
+    "compiler=LinSurfaceParser+LinWorkflowEngine",
+    "output_format=same_token_format",
+    "window_size=256",
+    "min_match=4",
+    "page_size=4096",
+    "page_data=identical_to_COMPRESS_001",
+    "iterations=1000",
+    "scomp_framework=same"
+  ]
+  variable_dependent=["compress_ns", "decompress_ns", "ratio", "parity"]
+  control="LZ4_native_same_run"
+}
+.c{
+  V1_name=lin_lz_v1_linear
+  V1_algorithm="O(N*W) sliding window, linear scan"
+  V2_name=lin_lz_v2_hash
+  V2_algorithm="hash_table+chain O(1)-amortized match finder, chain_depth=16"
+  frozen_format=[
+    "0xFF+len=RLE_zero",
+    "0xFE+len+raw=uncompressed",
+    "ctrl&0x80=match(len=(ctrl&0x3F)+4,dist=2bytes)",
+    "!ctrl&0x80=literal_run(count=(ctrl&0x7F)+1)"
+  ]
+}
+.mtr{
+  primary=["compress_ns_per_page", "decompress_ns_per_page", "ratio", "parity_ok"]
+  causality=["delta_compress_ns_V2_vs_V1", "speedup_factor"]
+}
+.r{
+  R1=V1_and_V2_use_identical_page_data
+  R2=V1_and_V2_use_identical_output_format
+  R3=V1_and_V2_differ_ONLY_in_match_finder
+  R4=LZ4_control_measured_in_same_run
+  R5=decompress_function_is_identical_for_V1_and_V2
+  R6=timing_uses_hrtime_nanosecond_precision
+}
+.g{
+  pass=V2_compress_ns_dramatically_lower_than_V1
+  AND V2_parity_OK
+  AND speedup_factor_proves_algorithmic_causality
+}

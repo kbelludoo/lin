@@ -1,0 +1,172 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_util_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!attempt(fn: any, ...args: [any]): any {
+  try {
+    ^fn(...args)
+  } catch(e) {
+    ^e
+  }
+}
+
+!constant(val: any): any {
+  ^() => val
+}
+
+!defaultTo(val: any, def: any): any {
+  ?(val == null || Number.isNaN(val)) { ^def }
+  ^val
+}
+
+!flow(...fns: [any]): any {
+  ^(...args) => {
+    $curr = fns[0](...args)
+    #i=1..fns.length-1 { curr = fns[i](curr) }
+    ^curr
+  }
+}
+
+!flowRight(...fns: [any]): any {
+  ^(...args) => {
+    $curr = fns[fns.length-1](...args)
+    #i=fns.length-2..0 { curr = fns[i](curr) }
+    ^curr
+  }
+}
+
+!identity(val: any): any {
+  ^val
+}
+
+!matches(src: any): any {
+  ^obj => {
+    $ks = Object.keys(src)
+    #i=0..ks.length-1 {
+      $k = ks[i]
+      ?(obj[k] != src[k] && !isEqual(obj[k], src[k])) { ^false }
+    }
+    ^true
+  }
+}
+
+!matchesProperty(path: any, srcVal: any): any {
+  ^obj => obj[path] === srcVal
+}
+
+!method(path: any, ...args: [any]): any {
+  ^obj => obj[path](...args)
+}
+
+!methodOf(obj: any, ...args: [any]): any {
+  ^path => obj[path](...args)
+}
+
+!mixin(obj: any, src: any, chain: bool): any {
+  $ks = Object.keys(src)
+  #i=0..ks.length-1 {
+    $k = ks[i]
+    obj[k] = src[k]
+  }
+  ^obj
+}
+
+!noConflict(): any {
+  ^undefined
+}
+
+!noop(...args: [any]): any {
+  ^undefined
+}
+
+!nthArg(n: int): any {
+  ^(...args) => args[n < 0 ? args.length + n : n]
+}
+
+!over(...iteratees: [any]): any {
+  ^(...args) => iteratees.map(fn => fn(...args))
+}
+
+!overEvery(...preds: [any]): any {
+  ^(...args) => preds.every(p => p(...args))
+}
+
+!overSome(...preds: [any]): any {
+  ^(...args) => preds.some(p => p(...args))
+}
+
+!property(path: any): any {
+  ^obj => {
+    ?(typeof path == "string") {
+      $parts = path.split(".")
+      $curr = obj
+      #i=0..parts.length-1 { ?(curr != null) { curr = curr[parts[i]] } }
+      ^curr
+    }
+    ^obj[path]
+  }
+}
+
+!propertyOf(obj: any): any {
+  ^path => {
+    ?(typeof path == "string") {
+      $parts = path.split(".")
+      $curr = obj
+      #i=0..parts.length-1 { ?(curr != null) { curr = curr[parts[i]] } }
+      ^curr
+    }
+    ^obj[path]
+  }
+}
+
+!range(start: int, end: int, step: int): [int] {
+  $s = end == null ? 0 : start
+  $e = end == null ? start : end
+  $st = step == null ? 1 : step
+  $res = []
+  ?(st > 0) {
+    #i=s..e-1..st { res.push(i) }
+  }:{
+    #i=s..e+1..st { res.push(i) }
+  }
+  ^res
+}
+
+!stubArray(): [any] { ^[] }
+!stubFalse(): bool { ^false }
+!stubObject(): any { ^{} }
+!stubString(): str { ^"" }
+
+!times(n: int, iteratee: any): [any] {
+  $res = []
+  #i=0..n-1 { res.push(typeof iteratee == "function" ? iteratee(i) : iteratee) }
+  ^res
+}
+
+!toPath(val: any): [str] {
+  ^String(val).replace(/\[(\d+)\]/g, ".$1").split(".").filter(Boolean)
+}
+
+!uniqueId(prefix: str): str {
+  $id = uniqueIdCounter
+  uniqueIdCounter = uniqueIdCounter + 1
+  ^prefix + id.toString(36)
+}
+
+$uniqueIdCounter = 0
+
+~workflow {
+  step w_constant -> constant("x")()
+  step w_defaultTo -> defaultTo(1, 10)
+  step w_identity -> identity("x")
+  step w_range -> range(0, 5)
+  step w_times -> times(3, String)
+  step w_uniqueId -> uniqueId("id_")
+  step w_over -> over(Math.max, Math.min)(1,2,3)
+  step w_stubArray -> stubArray()
+  step w_stubFalse -> stubFalse()
+  step w_noop -> noop()
+}
+
+=ex{attempt,constant,defaultTo,flow,flowRight,identity,matches,matchesProperty,method,methodOf,mixin,noConflict,noop,nthArg,over,overEvery,overSome,property,propertyOf,range,stubArray,stubFalse,stubObject,stubString,times,toPath,uniqueId}

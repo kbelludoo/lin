@@ -1,0 +1,176 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_string_complete
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!camelCase(str: str): str {
+  $words = str.replace(/[-_\s]+/g, " ").trim().split(" ")
+  $res = words[0].toLowerCase()
+  #i=1..words.length-1 {
+    $w = words[i]
+    res = res + w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()
+  }
+  ^res
+}
+
+!capitalize(str: str): str {
+  ^str.charAt(0).toUpperCase() + str.slice(1).toLowerCase()
+}
+
+!endsWith(str: str, target: str, pos: int): bool {
+  $p = pos == null ? str.length : pos
+  ^(str.slice(0, p).endsWith(target))
+}
+
+!escape(str: str): str {
+  $res = str
+  res = res.replace(/&/g, "&amp;")
+  res = res.replace(/</g, "&lt;")
+  res = res.replace(/>/g, "&gt;")
+  res = res.replace(/"/g, "&quot;")
+  res = res.replace(/'/g, "&#39;")
+  ^res
+}
+
+!kebabCase(str: str): str {
+  $words = str.replace(/([A-Z])/g, " $1").replace(/[-_\s]+/g, " ").trim().toLowerCase().split(" ")
+  ^words.join("-")
+}
+
+!lowerCase(str: str): str {
+  $words = str.replace(/([A-Z])/g, " $1").replace(/[-_\s]+/g, " ").trim().toLowerCase().split(" ")
+  ^words.join(" ")
+}
+
+!lowerFirst(str: str): str {
+  ^str.charAt(0).toLowerCase() + str.slice(1)
+}
+
+!pad(str: str, len: int, chars: str): str {
+  $c = chars == null ? " " : chars
+  $diff = len - str.length
+  ?(diff <= 0) { ^str }
+  $leftPad = Math.floor(diff / 2)
+  $rightPad = diff - leftPad
+  $leftStr = c.repeat(Math.ceil(leftPad / c.length)).slice(0, leftPad)
+  $rightStr = c.repeat(Math.ceil(rightPad / c.length)).slice(0, rightPad)
+  ^leftStr + str + rightStr
+}
+
+!padEnd(str: str, len: int, chars: str): str {
+  $c = chars == null ? " " : chars
+  $diff = len - str.length
+  ?(diff <= 0) { ^str }
+  $padStr = c.repeat(Math.ceil(diff / c.length)).slice(0, diff)
+  ^str + padStr
+}
+
+!padStart(str: str, len: int, chars: str): str {
+  $c = chars == null ? " " : chars
+  $diff = len - str.length
+  ?(diff <= 0) { ^str }
+  $padStr = c.repeat(Math.ceil(diff / c.length)).slice(0, diff)
+  ^padStr + str
+}
+
+!parseInt(str: str, radix: int): int {
+  ^Number.parseInt(str, radix || 10)
+}
+
+!repeat(str: str, n: int{>=0}): str {
+  ^str.repeat(n)
+}
+
+!replace(str: str, pattern: any, replacement: any): str {
+  ^str.replace(pattern, replacement)
+}
+
+!snakeCase(str: str): str {
+  $words = str.replace(/([A-Z])/g, " $1").replace(/[-_\s]+/g, " ").trim().toLowerCase().split(" ")
+  ^words.join("_")
+}
+
+!split(str: str, sep: any, limit: int): [str] {
+  ^str.split(sep, limit)
+}
+
+!startCase(str: str): str {
+  $words = str.replace(/([A-Z])/g, " $1").replace(/[-_\s]+/g, " ").trim().split(" ")
+  $res = []
+  #i=0..words.length-1 {
+    $w = words[i]
+    res.push(w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+  }
+  ^res.join(" ")
+}
+
+!startsWith(str: str, target: str, pos: int): bool {
+  ^(str.slice(pos || 0).startsWith(target))
+}
+
+!toLower(str: str): str { ^str.toLowerCase() }
+!toUpper(str: str): str { ^str.toUpperCase() }
+
+!trim(str: str, chars: str): str {
+  ?(chars == null) { ^str.trim() }
+  $re = new RegExp("^[" + chars + "]+|[" + chars + "]+$", "g")
+  ^str.replace(re, "")
+}
+
+!trimEnd(str: str, chars: str): str {
+  ?(chars == null) { ^str.replace(/\s+$/, "") }
+  $re = new RegExp("[" + chars + "]+$", "g")
+  ^str.replace(re, "")
+}
+
+!trimStart(str: str, chars: str): str {
+  ?(chars == null) { ^str.replace(/^\s+/, "") }
+  $re = new RegExp("^[" + chars + "]+", "g")
+  ^str.replace(re, "")
+}
+
+!truncate(str: str, opts: any): str {
+  $len = opts.length || 30
+  $omission = opts.omission || "..."
+  ?(str.length <= len) { ^str }
+  ^str.slice(0, len - omission.length) + omission
+}
+
+!unescape(str: str): str {
+  $res = str
+  res = res.replace(/&amp;/g, "&")
+  res = res.replace(/&lt;/g, "<")
+  res = res.replace(/&gt;/g, ">")
+  res = res.replace(/&quot;/g, '"')
+  res = res.replace(/&#39;/g, "'")
+  ^res
+}
+
+!upperCase(str: str): str {
+  $words = str.replace(/([A-Z])/g, " $1").replace(/[-_\s]+/g, " ").trim().toUpperCase().split(" ")
+  ^words.join(" ")
+}
+
+!upperFirst(str: str): str {
+  ^str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+!words(str: str, pattern: any): [str] {
+  ?(pattern != null) { ^str.match(pattern) || [] }
+  ^str.match(/\b\w+\b/g) || []
+}
+
+~workflow {
+  step w_camel -> camelCase("Foo Bar")
+  step w_capitalize -> capitalize("FRED")
+  step w_endsWith -> endsWith("abc","c")
+  step w_kebab -> kebabCase("Foo Bar")
+  step w_pad -> pad("abc", 8)
+  step w_snake -> snakeCase("Foo Bar")
+  step w_split -> split("a-b-c", "-")
+  step w_trim -> trim("  abc  ")
+  step w_truncate -> truncate("hi-diddly-ho there, neighborino", {length: 24})
+  step w_upperFirst -> upperFirst("fred")
+}
+
+=ex{camelCase,capitalize,endsWith,escape,kebabCase,lowerCase,lowerFirst,pad,padEnd,padStart,parseInt,repeat,replace,snakeCase,split,startCase,startsWith,toLower,toUpper,trim,trimEnd,trimStart,truncate,unescape,upperCase,upperFirst,words}

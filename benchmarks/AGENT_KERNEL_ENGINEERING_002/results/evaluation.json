@@ -1,0 +1,125 @@
+{
+  "A": {
+    "variant": "A",
+    "source_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "bench_diff": {
+      "added": 0,
+      "removed": 0,
+      "changed": 0,
+      "total_delta": 0
+    },
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "frozen_details": [],
+    "benchmark_result": {
+      "all_parity": true,
+      "results": {
+        "sequential": {
+          "avg_seek": "8.0",
+          "parity": true
+        },
+        "random": {
+          "avg_seek": "370411.7",
+          "parity": true
+        },
+        "mixed_rw": {
+          "avg_seek": "228192.5",
+          "parity": true
+        },
+        "bursty": {
+          "avg_seek": "121.2",
+          "parity": true
+        }
+      },
+      "lin_valid": true
+    }
+  },
+  "B": {
+    "variant": "B",
+    "source_diff": {
+      "added": 0,
+      "removed": 6,
+      "changed": 22,
+      "total_delta": 28
+    },
+    "bench_diff": {
+      "added": 1,
+      "removed": 0,
+      "changed": 72,
+      "total_delta": 73
+    },
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "frozen_details": [],
+    "benchmark_result": {
+      "all_parity": true,
+      "results": {
+        "sequential": {
+          "avg_seek": "8.0",
+          "parity": true
+        },
+        "random": {
+          "avg_seek": "3881.1",
+          "parity": true
+        },
+        "mixed_rw": {
+          "avg_seek": "3895.7",
+          "parity": true
+        },
+        "bursty": {
+          "avg_seek": "121.2",
+          "parity": true
+        }
+      },
+      "lin_valid": true
+    }
+  },
+  "C": {
+    "variant": "C",
+    "source_diff": {
+      "added": 1,
+      "removed": 0,
+      "changed": 23,
+      "total_delta": 24
+    },
+    "bench_diff": {
+      "added": 1,
+      "removed": 0,
+      "changed": 71,
+      "total_delta": 72
+    },
+    "lin_valid": true,
+    "lin_hash": "b24d1d29a4003591",
+    "frozen_functions_ok": true,
+    "frozen_details": [],
+    "benchmark_result": {
+      "all_parity": true,
+      "results": {
+        "sequential": {
+          "avg_seek": "8.0",
+          "parity": true
+        },
+        "random": {
+          "avg_seek": "3881.1",
+          "parity": true
+        },
+        "mixed_rw": {
+          "avg_seek": "3895.7",
+          "parity": true
+        },
+        "bursty": {
+          "avg_seek": "121.2",
+          "parity": true
+        }
+      },
+      "lin_valid": true
+    }
+  }
+}

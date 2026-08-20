@@ -1,0 +1,82 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lin_lz_compressor
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+// lin_lz: LZ-style compressor for kernel-space (4096-byte pages)
+// Format:
+//   0xFF + len_hi + len_lo = RLE zero page
+//   0xFE + len_hi + len_lo + raw = uncompressed page
+//   ctrl & 0x80 = match (len=(ctrl&0x3F)+4, dist=2 bytes)
+//   !ctrl & 0x80 = literal run (count=(ctrl&0x7F)+1, then raw bytes)
+
+!compress_page(input: [u8], input_len: int{>0..4096}): [u8] {
+  $all_zero = true
+  #i=0..input_len-1 { ?(input[i] != 0) { all_zero = false } }
+  ?(all_zero) { ^[0xFF, (input_len >> 8) & 0xFF, input_len & 0xFF] }
+
+  $early_matches = 0
+  #pos=0..127 {
+    $start = ?(pos > 256) ? pos - 256 : 0
+    #j=start..pos-1 {
+      $ml = 0
+      ?(pos+ml < input_len && input[j+ml] == input[pos+ml] && ml < 8) { ml = ml + 1 }
+      ?(ml >= 4) { early_matches = early_matches + 1 }
+    }
+  }
+  ?(early_matches < 2) {
+    $out = alloc(input_len + 3)
+    out[0] = 0xFE; out[1] = (input_len >> 8) & 0xFF; out[2] = input_len & 0xFF
+    copy(input, 0, out, 3, input_len)
+    ^out
+  }
+
+  $output = []; $pos = 0; $lit_start = 0; $window = 256; $min_match = 4
+  #pos=0..input_len-1 {
+    $best_len = 0; $best_dist = 0
+    $start = ?(pos > window) ? pos - window : 0
+    #j=start..pos-1 {
+      $ml = 0
+      ?(pos+ml < input_len && input[j+ml] == input[pos+ml] && ml < 63) { ml = ml + 1 }
+      ?(ml > best_len && ml >= min_match) { best_len = ml; best_dist = pos - j }
+    }
+    ?(best_len > 0) {
+      flush_literals(output, input, lit_start, pos)
+      output.push(0x80 | ((best_len - min_match) & 0x3F))
+      output.push((best_dist >> 8) & 0xFF)
+      output.push(best_dist & 0xFF)
+      pos = pos + best_len; lit_start = pos
+    }
+  }
+  flush_literals(output, input, lit_start, input_len)
+  ^output
+}
+
+!decompress_page(compressed: [u8], expected_len: int{>0}): [u8] {
+  ?(compressed[0] == 0xFF) { ^alloc_zero((compressed[1] << 8) | compressed[2]) }
+  ?(compressed[0] == 0xFE) { ^slice(compressed, 3, 3 + ((compressed[1] << 8) | compressed[2])) }
+  $output = []; $i = 0
+  #i=0..compressed.length-1 {
+    $ctrl = compressed[i]
+    ?(ctrl & 0x80) {
+      $match_len = (ctrl & 0x3F) + 4
+      $dist = (compressed[i+1] << 8) | compressed[i+2]
+      $src = output.length - dist
+      #k=0..match_len-1 { output.push(output[src + k]) }
+      i = i + 2
+    }:{
+      $lit_count = (ctrl & 0x7F) + 1
+      #k=0..lit_count-1 { output.push(compressed[i + 1 + k]) }
+      i = i + lit_count
+    }
+  }
+  ^output
+}
+
+~workflow {
+  step compress -> compress_page(input_data, 4096)
+  step decompress -> decompress_page(compress, 4096)
+  step verify -> ?(decompress.length == 4096) -> ok : -> fail
+}
+
+=ex{compress_page,decompress_page}

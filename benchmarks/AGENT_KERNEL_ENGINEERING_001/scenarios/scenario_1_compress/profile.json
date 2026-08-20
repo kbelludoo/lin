@@ -1,0 +1,40 @@
+{
+  "benchmark": "lin_lz compression profile",
+  "page_size": 4096,
+  "iterations": 1000,
+  "pages": {
+    "zero_filled": {
+      "compress_ns": 9769,
+      "decompress_ns": 2807,
+      "ratio": "1365.33x",
+      "parity": "OK"
+    },
+    "text_repetitive": {
+      "compress_ns": 120087,
+      "decompress_ns": 23132,
+      "ratio": "17.00x",
+      "parity": "OK"
+    },
+    "random_data": {
+      "compress_ns": 26146,
+      "decompress_ns": 390,
+      "ratio": "1.00x",
+      "parity": "OK"
+    },
+    "mixed_structured": {
+      "compress_ns": 923889,
+      "decompress_ns": 24097,
+      "ratio": "2.86x",
+      "parity": "OK"
+    },
+    "high_entropy": {
+      "compress_ns": 14164,
+      "decompress_ns": 84,
+      "ratio": "1.00x",
+      "parity": "OK"
+    }
+  },
+  "problem": "mixed_structured compression is 923889 ns -- 358x slower than LZ4 native (2712 ns)",
+  "critical_page": "mixed_structured",
+  "target": "reduce compress_ns for mixed_structured"
+}

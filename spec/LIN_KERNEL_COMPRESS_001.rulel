@@ -1,0 +1,33 @@
+@RULEL:LIN_KERNEL_COMPRESS_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_KERNEL_COMPRESS_001
+  status=ACTIVE_BENCHMARK
+  domain="kernel_space_compression_comparison"
+  date=2026-08-20
+  purpose="Compare lin_lz (LIN-authored LZ compressor emitted to C) against native kernel compressors (LZ4, Zstd, Deflate/LZO-RLE) on identical 4096-byte pages in an scomp-style framework, measuring compress/decompress latency, ratio, and throughput."
+}
+.h{
+  id=H_KERNEL_COMPRESS_001
+  claim="lin_lz achieves competitive compression ratio and throughput against LZ4 and Zstd on identical 4096-byte pages, with the advantage of being authored in LIN and emitted to C for kernel-space integration."
+}
+.c{
+  page_size=4096
+  compressors=["lin_lz", "lz4", "zstd", "deflate"]
+  workload="identical_pages_zero_filled_repetitive_text_random_mixed"
+  framework="scomp_style_in_process"
+}
+.mtr{
+  primary=[
+    "compress_ns_per_page",
+    "decompress_ns_per_page",
+    "compression_ratio",
+    "throughput_gb_s",
+    "parity_ok"
+  ]
+}
+.r{
+  R1=all_compressors_operate_on_identical_pages
+  R2=timing_uses_hrtime_for_nanosecond_precision
+  R3=parity_verified_via_roundtrip_decompress_check
+}

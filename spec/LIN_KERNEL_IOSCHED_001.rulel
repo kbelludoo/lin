@@ -1,0 +1,57 @@
+@RULEL:LIN_KERNEL_IOSCHED_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric .e=experimental_design}
+.m{
+  name=LIN_KERNEL_IOSCHED_001
+  status=ACTIVE_BENCHMARK
+  domain="block_io_scheduler_causality_test"
+  date=2026-08-20
+  purpose="Test whether the detect-localize-modify-verify-measure cycle works for a different Linux subsystem (block I/O scheduler) than kernel compression. Implements two I/O dispatch algorithms (V1=FIFO, V2=elevator/SCAN) in LIN @L2w:1.0 with everything else frozen, measuring latency, throughput, seek distance, and fairness."
+  parent_methodology=LIN_KERNEL_COMPRESS_002
+  subsystem="block/elevator.c analog"
+}
+.h{
+  id=H_KERNEL_IOSCHED_001
+  claim="The controlled algorithmic swap methodology generalizes: swapping ONLY the I/O dispatch algorithm (V1=FIFO -> V2=elevator/SCAN) with enqueue/format/verification frozen will produce dramatic seek-distance reduction on random workloads, proving the methodology works across subsystems."
+  broader_claim="If the same detect-localize-modify-verify-measure cycle works for both compression AND I/O scheduling, LIN is a good work unit for iterative agent engineering across software classes."
+}
+.e{
+  design="controlled_differential_algorithm_swap"
+  variable_independent="dispatch_algorithm (V1=FIFO, V2=elevator/SCAN)"
+  variables_frozen=[
+    "source_language=LIN_@L2w:1.0",
+    "compiler=LinSurfaceParser+LinWorkflowEngine",
+    "request_format=identical",
+    "enqueue_function=identical",
+    "verification_function=identical",
+    "workload_data=identical",
+    "iterations=identical"
+  ]
+  variable_dependent=["dispatch_latency_ns", "throughput_iops", "seek_distance", "fairness_index", "parity_ok"]
+  control="no_native_kernel_scheduler_available_in_userspace"
+}
+.c{
+  V1_name=iosched_v1_fifo
+  V1_algorithm="FIFO dispatch: requests dispatched in arrival order"
+  V2_name=iosched_v2_elevator
+  V2_algorithm="Elevator/SCAN dispatch: requests sorted by sector, sweep in one direction, reverse at end"
+  request_format={sector:int{0..max_sector} size:int{1..64} prio:int{0..3} arrived:bool}
+  workload_types=["sequential", "random", "mixed_read_write", "bursty"]
+}
+.mtr{
+  primary=["dispatch_latency_ns", "throughput_iops", "avg_seek_distance", "fairness_index"]
+  causality=["delta_seek_distance_V2_vs_V1", "speedup_factor"]
+}
+.r{
+  R1=V1_and_V2_use_identical_workload_data
+  R2=V1_and_V2_use_identical_request_format
+  R3=V1_and_V2_differ_ONLY_in_dispatch_algorithm
+  R4=enqueue_and_verification_functions_identical
+  R5=timing_uses_hrtime_nanosecond_precision
+  R6=seek_distance_measured_as_absolute_sector_delta_between_consecutive_dispatches
+  R7=fairness_measured_as_jains_fairness_index_over_request_priorities
+}
+.g{
+  pass=V2_seek_distance_dramatically_lower_than_V1_on_random_workload
+  AND V2_parity_OK
+  AND regressions_explicitly_recorded
+}

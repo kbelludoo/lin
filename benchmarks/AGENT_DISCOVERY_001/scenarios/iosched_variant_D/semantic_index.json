@@ -1,0 +1,89 @@
+{
+  "generated_at": "2026-08-20T23:04:17.015Z",
+  "source_hash": "b24d1d29a4003591dfc3a9739884aa8d",
+  "node_count": 3,
+  "edge_count": 2,
+  "nodes": {
+    "enqueue": {
+      "id": "enqueue",
+      "unit_name": "enqueue",
+      "effects": [
+        "pure",
+        "computational_step"
+      ],
+      "control_op": "step",
+      "inputs": [
+        {
+          "name": "in",
+          "type": "any"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "out",
+          "type": "any"
+        }
+      ],
+      "hash": "8b92327b84140ad4"
+    },
+    "dispatch": {
+      "id": "dispatch",
+      "unit_name": "dispatch_batch",
+      "effects": [
+        "pure",
+        "computational_step"
+      ],
+      "control_op": "step",
+      "inputs": [
+        {
+          "name": "in",
+          "type": "any"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "out",
+          "type": "any"
+        }
+      ],
+      "hash": null
+    },
+    "verify": {
+      "id": "verify",
+      "unit_name": "",
+      "effects": [
+        "pure",
+        "conditional_branch"
+      ],
+      "control_op": "if",
+      "inputs": [
+        {
+          "name": "in",
+          "type": "any"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "out",
+          "type": "any"
+        }
+      ],
+      "hash": null
+    }
+  },
+  "edges": [
+    {
+      "from": "enqueue",
+      "from_port": "out",
+      "to": "dispatch",
+      "to_port": "in"
+    },
+    {
+      "from": "dispatch",
+      "from_port": "out",
+      "to": "verify",
+      "to_port": "in"
+    }
+  ],
+  "entry_node": "enqueue"
+}

@@ -1,0 +1,39 @@
+@LIN:L2w:1.0
+^schema_once ^ops=iosched_v1_fifo
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+// ═══ I/O Scheduler V1: FIFO dispatch ═══
+// Dispatches requests in arrival order.
+// Frozen: request format, enqueue function, verification function
+
+!enqueue(queue: [IOReq], req: IOReq): [IOReq] {
+  queue.push(req)
+  ^queue
+}
+
+!dispatch_next(queue: [IOReq]): IOReq {
+  // FIFO: take from front
+  ?(queue.length == 0) { ^null }
+  $req = queue[0]
+  queue.shift()
+  ^req
+}
+
+!dispatch_batch(queue: [IOReq], batch_size: int{1..256}): [IOReq] {
+  $result = []
+  #i=0..batch_size-1 {
+    ?(queue.length == 0) { ^result }
+    $req = dispatch_next(queue)
+    result.push(req)
+  }
+  ^result
+}
+
+~workflow {
+  step enqueue  -> enqueue(request_queue, incoming_request)
+  step dispatch -> dispatch_batch(request_queue, batch_count)
+  step verify   -> ?(dispatch.length == expected_batch) -> ok : -> fail
+}
+
+=ex{enqueue,dispatch_next,dispatch_batch}
