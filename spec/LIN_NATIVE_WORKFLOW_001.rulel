@@ -1,0 +1,51 @@
+@RULEL:LIN_NATIVE_WORKFLOW_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_NATIVE_WORKFLOW_001
+  status=ACTIVE_BENCHMARK_SPEC
+  domain="native_workflow_vs_external_ainl"
+  date=2026-08-20
+  purpose="Formally validate whether C4 (LIN Native Workflow IR) reproduces 100% of the properties demonstrated by C3 (LIN + External AINL) across equivalence, hierarchical locality, context death, and multi-module repo maintenance without external toolchain dependency."
+  parent=LIN_WORKFLOW_IR
+}
+
+.h{
+  id=H_NATIVE_WF_001
+  claim="C4 (LIN Native Workflow IR) is behaviorally and semantically equivalent to C3 (LIN + External AINL), preserving hierarchical hash locality (zero edge-hash perturbation under pure node mutations), zero invariant violations under context death, and equivalent engineering efficiency in multi-module repos, while eliminating external python runtime dependencies."
+}
+
+.c{
+  conditions=[
+    "C1_LIN_PURE",
+    "C3_LIN_PLUS_AINL_EXTERNAL",
+    "C4_LIN_NATIVE_WORKFLOW"
+  ]
+  test_suites=[
+    "TEST_A_BEHAVIORAL_EQUIVALENCE",
+    "TEST_B_HIERARCHICAL_HASH_LOCALITY",
+    "TEST_C_CONTEXT_DEATH_RESILIENCE",
+    "TEST_D_MULTI_MODULE_REAL_REPO"
+  ]
+}
+
+.mtr{
+  primary=[
+    "behavioral_match_rate",
+    "hierarchical_hash_isolation",
+    "edge_hash_invariance_under_pure_mutation",
+    "tokens_consumed",
+    "reconstruction_tokens",
+    "repair_rounds",
+    "invariant_violations",
+    "dag_churn",
+    "runtime_latency_ms",
+    "toolchain_dependencies_count"
+  ]
+}
+
+.r{
+  R1=test_A_must_verify_exact_output_match_and_retry_semantics_between_C3_and_C4
+  R2=test_B_must_prove_edge_hash_invariance_under_pure_node_logic_change
+  R3=test_C_must_evaluate_context_death_recovery_under_blind_oracle
+  R4=test_D_must_benchmark_multi_module_evolution_under_identical_tasks
+}

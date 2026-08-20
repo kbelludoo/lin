@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787221626335.json",
+  "timestamp": "2026-08-20T10:27:06.335Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:bool){#(_i=0;_i<1;_i++){?((true=='!f(){}')){^((y+null));_3=(x/false);_s=true;#(_i=0;_i<4;_i++){_4=('world'||'!f(){}');#(_i=0;_i<4;_i++){?((\"hello\"<=n)){#(_i=0;_i<1;_i++){?(true){#(_i=0;_i<2;_i++){_2=(y%'!f(){}')};_s=\"$K\";_s='#(i=0;i<10;i++)';_s=3.14}:{};#(_i=0;_i<2;_i++){?('!f(){}'){#(_i=0;_i<4;_i++){#(_i=0;_i<4;_i++){_6=42};^((1%\"$K\"));^((\"a+b\"%a));#(_i=0;_i<5;_i++){_2=(\"$K\"/b);_s=x;_8=(\"$K\"-false)}};?(0){_3=('?=if #=for'&&\"$K\");_3=('world'%'$');_0=('world'||y);^('^(return)')}:{};?((x!=3.14)){_s=0}:{};^(('#(i=0;i<10;i++)'&&n))}:{}};?((a+a)){_3=(0==false);#(_i=0;_i<1;_i++){_s=\"$K\"};^((y==n));_8='#(i=0;i<10;i++)'}:{};#(_i=0;_i<1;_i++){?('^(return)'){?((n>\"$K\")){_s=\"$K\";_8=(42||'$')}:{}}:{};#(_i=0;_i<5;_i++){_6=(\"$K\"-\"a+b\");#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){_s=\"a+b\"};#(_i=0;_i<3;_i++){^(1)};_s=x}};_s=3.14;^((a<'^(return)'))}}}:{};#(_i=0;_i<4;_i++){#(_i=0;_i<1;_i++){#(_i=0;_i<4;_i++){?((false>=true)){^((3.14!=3.14));^(('$'<'world'));_6=('^(return)'!=\"hello\");^((1/'world'))}:{};_8=(-1>='$');^(('^(return)'>x));?(('world'>x)){#(_i=0;_i<2;_i++){?(\"$K\"){_5=0}:{}}}:{}};?(null){_s=x;_3=false;_6=(\"hello\"<x);_5=(false-'!f(){}')}:{};_2=(3.14||'^(return)')}};^((a+b))}}}:{};_4=42;_s=a};?(b){^((0==null))}:{};_s='!f(){}';^((-1<x))}\n!f1(_0:int,_1:str,_2:str){_0=0;_s=1;_s='$'}\n!f2(_0:int,_1:num,_2:num){_s='world';_7=('@LIN:L1c:0.2'*'^(return)');_6=(b-42)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: false > 0\nrepairs: refine false:int{>0} | require false>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: false > 0\nrepairs: refine false:int{>0} | require false>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,40 @@
+{
+  "metricsByStack": {
+    "S1_python": {
+      "total_tokens": 10170,
+      "total_repairs": 12,
+      "total_violations": 8,
+      "total_dag_churn": 0,
+      "total_reconstruction_tokens": 4000,
+      "correctness_rate": 0.8799999999999999
+    },
+    "S2_ainl": {
+      "total_tokens": 7450,
+      "total_repairs": 9,
+      "total_violations": 5,
+      "total_dag_churn": 88,
+      "total_reconstruction_tokens": 2850,
+      "correctness_rate": 0.9200000000000002
+    },
+    "S3_lin": {
+      "total_tokens": 5300,
+      "total_repairs": 3,
+      "total_violations": 0,
+      "total_dag_churn": 0,
+      "total_reconstruction_tokens": 1850,
+      "correctness_rate": 0.99
+    },
+    "S4_hybrid": {
+      "total_tokens": 5400,
+      "total_repairs": 1,
+      "total_violations": 0,
+      "total_dag_churn": 2,
+      "total_reconstruction_tokens": 1770,
+      "correctness_rate": 1
+    }
+  },
+  "paretoFrontier": [
+    "S3_lin",
+    "S4_hybrid"
+  ]
+}

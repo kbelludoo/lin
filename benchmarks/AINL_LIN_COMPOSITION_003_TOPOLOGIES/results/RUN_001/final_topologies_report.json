@@ -1,0 +1,62 @@
+{
+  "T1_LINEAR_DEEP": {
+    "C1_AINL_PLUS_LIN": {
+      "avg_nodes_per_mut": 1.35,
+      "cumulative_latency_ms": 36.45,
+      "avg_tokens_per_mut": 46,
+      "over_invalidation_rate": "0%",
+      "SEMANTIC_TO_OPERATIONAL_RATIO": 0.741,
+      "invariants_preserved": "100.0%",
+      "behavior_equivalence": "100.0%"
+    },
+    "C2_AINL_STANDALONE": {
+      "avg_nodes_per_mut": 1.93,
+      "cumulative_latency_ms": 201.48,
+      "avg_tokens_per_mut": 154,
+      "over_invalidation_rate": "2.5%",
+      "SEMANTIC_TO_OPERATIONAL_RATIO": 0.518,
+      "invariants_preserved": "100.0%",
+      "behavior_equivalence": "100.0%"
+    }
+  },
+  "T2_WIDE_FANOUT": {
+    "C1_AINL_PLUS_LIN": {
+      "avg_nodes_per_mut": 1.45,
+      "cumulative_latency_ms": 39.15,
+      "avg_tokens_per_mut": 46,
+      "over_invalidation_rate": "0%",
+      "SEMANTIC_TO_OPERATIONAL_RATIO": 0.69,
+      "invariants_preserved": "100.0%",
+      "behavior_equivalence": "100.0%"
+    },
+    "C2_AINL_STANDALONE": {
+      "avg_nodes_per_mut": 2.54,
+      "cumulative_latency_ms": 265.08,
+      "avg_tokens_per_mut": 154,
+      "over_invalidation_rate": "3.68%",
+      "SEMANTIC_TO_OPERATIONAL_RATIO": 0.394,
+      "invariants_preserved": "100.0%",
+      "behavior_equivalence": "100.0%"
+    }
+  },
+  "T3_HIGH_REUSE_MESH": {
+    "C1_AINL_PLUS_LIN": {
+      "avg_nodes_per_mut": 1.4,
+      "cumulative_latency_ms": 37.8,
+      "avg_tokens_per_mut": 46,
+      "over_invalidation_rate": "0%",
+      "SEMANTIC_TO_OPERATIONAL_RATIO": 0.714,
+      "invariants_preserved": "100.0%",
+      "behavior_equivalence": "100.0%"
+    },
+    "C2_AINL_STANDALONE": {
+      "avg_nodes_per_mut": 2.64,
+      "cumulative_latency_ms": 264.24,
+      "avg_tokens_per_mut": 154,
+      "over_invalidation_rate": "5.04%",
+      "SEMANTIC_TO_OPERATIONAL_RATIO": 0.379,
+      "invariants_preserved": "100.0%",
+      "behavior_equivalence": "100.0%"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "benchmark": "AGENT_ENGINEERING_003_REAL_REPO",
+  "version": "1.0.0",
+  "title": "Real-World Production Repository Engineering Benchmark (Day.js, Underscore, Chalk)",
+  "goal": "Evaluate end-to-end autonomous agent engineering (Ingest → 70% Context Death → Regression Repair → Adversarial Defense → 50 Real-World Evolution PRs) on actual production OSS repositories.",
+  "freeze_before_execution": true,
+  "repositories": [
+    {
+      "id": "REPO_DAYJS",
+      "name": "dayjs",
+      "modules": 185,
+      "loc": 8200,
+      "domain": "Temporal Parsing & Immutable Date Engine",
+      "intel_spec": "INTEL_CLONE_LIN_dayjs.rulel"
+    },
+    {
+      "id": "REPO_UNDERSCORE",
+      "name": "underscore",
+      "modules": 115,
+      "loc": 5400,
+      "domain": "Functional Utility Library & Collections",
+      "intel_spec": "INTEL_CLONE_LIN_underscore.rulel"
+    },
+    {
+      "id": "REPO_CHALK",
+      "name": "chalk",
+      "modules": 48,
+      "loc": 2100,
+      "domain": "Terminal ANSI Styling & Color Composition",
+      "intel_spec": "INTEL_CLONE_LIN_chalk.rulel"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "C0_PYTHON_JS_BASELINE",
+      "label": "Traditional Real-World Codebase (JS/TS + Tests + README)"
+    },
+    {
+      "id": "C1_LIN_STANDALONE",
+      "label": "LIN Cloned Repository (.lin + .linmeta 4-layer)"
+    },
+    {
+      "id": "C2_AINL_STANDALONE",
+      "label": "AINL Task Graph Workflow"
+    },
+    {
+      "id": "C3_COMPOSITE_STACK",
+      "label": "Composite Stack (AINL Macro + LIN Micro + Native Kernel)"
+    }
+  ],
+  "evolution_campaign_prs": 50,
+  "repetitions": 15,
+  "total_trials": 180,
+  "metrics": [
+    "real_world_lifecycle_completion",
+    "total_lifecycle_tokens",
+    "cumulative_rebuild_and_test_latency_ms",
+    "recon_tokens_p70",
+    "regression_violations_total",
+    "adversarial_leaks_total",
+    "unnecessary_module_rebuild_rate",
+    "semantic_to_operational_ratio",
+    "test_suite_oracle_pass_rate"
+  ]
+}

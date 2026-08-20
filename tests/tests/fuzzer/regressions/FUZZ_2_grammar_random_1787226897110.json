@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787226897110.json",
+  "timestamp": "2026-08-20T11:54:57.110Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:any) -> int{^((3.14&&x));^(('world'>0))}\n!f1(){?((true&&n)){#(_i=0;_i<3;_i++){^(x);?((1==-1)){_5=(\"$K\"||x)}:{};_4=(null!=n)};_4='?=if #=for'}:{};#(_i=0;_i<4;_i++){_s='!f(){}'}}\n!f2(){#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){?(a){#(_i=0;_i<4;_i++){_s=0;^(\"$K\");?('!f(){}'){?((true*'!f(){}')){?(('@LIN:L1c:0.2'%42)){_2='!f(){}';_5=(x+'^(return)');^((true/'@LIN:L1c:0.2'));^((true-0))}:{}}:{};^((42>=null));#(_i=0;_i<2;_i++){_1=(42||'$');_7=x;?((b<\"hello\")){_s='@LIN:L1c:0.2';^(true);_s=\"hello\";?(false){?(('^(return)'==42)){?(('@LIN:L1c:0.2'=='!f(){}')){^((\"$K\"&&\"hello\"));_s=b;_s=false}:{};_1=n;_s=-1}:{};_9=('$'%'?=if #=for')}:{}}:{}};_s='!f(){}'}:{};_5=(y<=null)};?(true){#(_i=0;_i<5;_i++){#(_i=0;_i<1;_i++){_8=(42!='^(return)');^(('^(return)'==0));_4=('!f(){}'==false)};?((y==x)){_8=(true>=3.14)}:{};?(('$'>='$')){_6=a;^(x)}:{}};_s=y}:{};_2=(\"hello\"!=y);_4=(b/1)}:{}};?(a){_3=(-1%'?=if #=for');?((42<-1)){#(_i=0;_i<1;_i++){?(('world'>x)){_7=(x<=a);?((false<x)){#(_i=0;_i<1;_i++){_6=(n||\"a+b\");^(false);_7=(3.14!='$');_s=\"$K\"};_6=('world'-'world');_4=(3.14%'@LIN:L1c:0.2')}:{};_5=(y-n)}:{};_4=(x-'$');#(_i=0;_i<1;_i++){_5=(false+3.14);#(_i=0;_i<5;_i++){_8=y;#(_i=0;_i<1;_i++){#(_i=0;_i<2;_i++){#(_i=0;_i<2;_i++){_3=(-1/'?=if #=for');_s=\"a+b\";_0=a};_5=('^(return)'<'@LIN:L1c:0.2')};_s=\"hello\"};_s='^(return)';?('?=if #=for'){#(_i=0;_i<4;_i++){_s=\"a+b\";_s=a;_s=y;?(('#(i=0;i<10;i++)'<'^(return)')){^(('@LIN:L1c:0.2'+'@LIN:L1c:0.2'))}:{}}}:{}};?(a){_8=(a+a)}:{}}};_3=('@LIN:L1c:0.2'-false)}:{};#(_i=0;_i<3;_i++){^((\"$K\"||false));?((y<true)){_6=('#(i=0;i<10;i++)'%'$');_6=(true/b);#(_i=0;_i<4;_i++){_5=(42+'world')}}:{};_4=('^(return)'<=3.14)}}:{};_s=true}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')) > 0\nrepairs: refine '@LIN:L1c:0.2')):int{>0} | require '@LIN:L1c:0.2'))>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')) > 0\nrepairs: refine '@LIN:L1c:0.2')):int{>0} | require '@LIN:L1c:0.2'))>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

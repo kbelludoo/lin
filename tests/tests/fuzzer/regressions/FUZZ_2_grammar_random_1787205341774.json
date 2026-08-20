@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787205341774.json",
+  "timestamp": "2026-08-20T05:55:41.774Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int|null,_1:str|num) -> str{_2=\"hello\";#(_i=0;_i<1;_i++){_8=y;?((a<='#(i=0;i<10;i++)')){#(_i=0;_i<4;_i++){_s=\"$K\";_4=(a=='world');^(1)};_4=(null==n);?(('world'%false)){#(_i=0;_i<1;_i++){?(b){_9=\"hello\";#(_i=0;_i<5;_i++){?('@LIN:L1c:0.2'){_7=(0>null);?((-1<=true)){^((0>=n));_s=0;_2=('world'>x)}:{};_3=(3.14+a);_7=(3.14!=\"$K\")}:{};^((y<='#(i=0;i<10;i++)'));#(_i=0;_i<2;_i++){#(_i=0;_i<4;_i++){_4=true;_7=(b<=0);?((0==0)){_s=n;#(_i=0;_i<5;_i++){_4=(42&&n);#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){^((1-'#(i=0;i<10;i++)'));?((\"$K\"--1)){_s='world';?((0*'world')){_s=y;?((0+0)){_9=(a&&\"hello\");_3=(null>='$')}:{};_3='!f(){}';_s=-1}:{};_s=y;_5=x}:{}};^((y/'!f(){}'));_s=b};_8=b};_s=n};_6=(0>=a);_s=42}:{}};_0=n}};_5=(3.14==null);?('#(i=0;i<10;i++)'){_s=-1;?(3.14){?((1<=true)){_0=1}:{};_s=\"hello\";?((0*n)){_7=false;_9=(3.14||-1);#(_i=0;_i<3;_i++){_6=(\"hello\"!=a);_s=1}}:{}}:{}}:{}}:{};_s=n;_s=n}}:{};#(_i=0;_i<4;_i++){^(('?=if #=for'==y))}}:{}};?((3.14/'^(return)')){_s=true;#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_3=(\"hello\"<='^(return)');#(_i=0;_i<3;_i++){^((y<=\"a+b\"));_9=(\"a+b\"+'$');_s=a;#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){_s=y;_6=(1||a)};_s=x;^((0*0))}}};_s=null};_4=0};_6=('!f(){}'-0);#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){?((\"$K\"<=\"hello\")){_2=x}:{};?('?=if #=for'){^(('?=if #=for'<=x));_3=null;#(_i=0;_i<4;_i++){_5=(false+y)}}:{}}}};?((42!=1)){_1=('@LIN:L1c:0.2'/x);^((-1&&0));_4=('#(i=0;i<10;i++)'||'world');_4=('@LIN:L1c:0.2'<'$')}:{}}:{};^(('^(return)'+-1))}\n!f1(_0:str|num) -> bool{_6=('$'!=\"$K\");_3=(1/3.14)}\n!f2(_0:int){_6=\"$K\"}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}'));_s=b} > 0\nrepairs: refine '!f(){}'));_s=b}:int{>0} | require '!f(){}'));_s=b}>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}'));_s=b} > 0\nrepairs: refine '!f(){}'));_s=b}:int{>0} | require '!f(){}'));_s=b}>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

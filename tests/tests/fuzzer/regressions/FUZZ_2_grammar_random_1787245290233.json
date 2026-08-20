@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787245290233.json",
+  "timestamp": "2026-08-20T17:01:30.233Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:num,_1:str|num,_2:num) -> num{#(_i=0;_i<4;_i++){^(x);_4=('@LIN:L1c:0.2'||'$');_0=('@LIN:L1c:0.2'<=true)};_5='?=if #=for';_s=x;_2=('#(i=0;i<10;i++)'&&null)}\n!f1(_0:int,_1:int) -> any{?(0){_s=42;_s=\"$K\";_s='$';_s=y}:{}}\n!f2(_0:int|null,_1:bool){?(('#(i=0;i<10;i++)'&&false)){_4=('@LIN:L1c:0.2'%null);_6=(x>='$');_s=1;_5=(\"hello\"--1)}:{}}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_M1T1wK/emit.cjs:5\n/* effect:Write */function f2(_0, _1){var _4,_6,_s,_5,i;if(('for(i=0;i<10;i++)'&&false)){_4=('@LIN:L1c:0.2'%null);_6=(x>='$');_s=1;_5=(\"hello\"--1);}else{}}\n                                                  ",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_M1T1wK/emit.cjs:5\n/* effect:Write */function f2(_0, _1){var _4,_6,_s,_5,i;if(('for(i=0;i<10;i++)'&&false)){_4=('@LIN:L1c:0.2'%null);_6=(x>='$');_s=1;_5=(\"hello\"--1);}else{}}\n                                                  ",
+    "testable": false
+  },
+  "fixed": false
+}

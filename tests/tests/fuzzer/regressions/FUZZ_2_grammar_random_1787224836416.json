@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787224836416.json",
+  "timestamp": "2026-08-20T11:20:36.417Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool){#(_i=0;_i<2;_i++){^(('@LIN:L1c:0.2'==b));?(true){?(('!f(){}'>false)){_1=\"$K\";?((0<0)){^((-1<='@LIN:L1c:0.2'));#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_s=x;#(_i=0;_i<5;_i++){_9=('?=if #=for'!=\"a+b\");_6=(true==b)};_2=(\"a+b\"<\"$K\");#(_i=0;_i<2;_i++){_s=n;_1=y;?(('world'>=0)){_0=('^(return)'<true)}:{};_6=3.14}};?(('^(return)'>\"a+b\")){?(('^(return)'/'^(return)')){_s=1;_9=('world'/'$');?('#(i=0;i<10;i++)'){?(('^(return)'==x)){_s=b;_6=('world'==0);_9=\"$K\";^((a/null))}:{};#(_i=0;_i<5;_i++){_s=y;^((-1*42));_4=(0-1);_9=\"a+b\"};^(('world'==y));^(0)}:{};^((\"hello\"||true))}:{};_s=null;_s=\"a+b\"}:{}};_8=('#(i=0;i<10;i++)'>=\"$K\")}:{};_8=(3.14||y)}:{};#(_i=0;_i<1;_i++){_1=0;_4=null};_s=\"a+b\"}:{};#(_i=0;_i<3;_i++){_9=(\"$K\"+\"a+b\");?((3.14/'!f(){}')){_5=(y!='$');#(_i=0;_i<5;_i++){_s=x;^(('@LIN:L1c:0.2'>=\"a+b\"));_s='world';?(('^(return)'/\"hello\")){_4=(\"a+b\"+b);_5=(a%3.14);?(x){_s=42;#(_i=0;_i<2;_i++){^((\"$K\"/true))};_s='#(i=0;i<10;i++)'}:{};_5=false}:{}}}:{};_2=(b==null)}}}\n!f1() -> int|null{_s=\"$K\"}\n!f2(_0:any,_1:bool){^(('^(return)'+'!f(){}'));?((-1/'$')){#(_i=0;_i<4;_i++){?(('world'&&\"$K\")){_s=null;_s=3.14;^('^(return)');_4=(3.14==false)}:{};_4=42;^((\"$K\">=-1));_2='?=if #=for'};_s=-1;#(_i=0;_i<2;_i++){?(1){?(null){_2=(3.14-\"$K\");_1=('?=if #=for'-'#(i=0;i<10;i++)');_s='#(i=0;i<10;i++)';_5=(b/'!f(){}')}:{}}:{};_s=true}}:{};#(_i=0;_i<2;_i++){_9=(y&&n)}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

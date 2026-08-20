@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787217671725.json",
+  "timestamp": "2026-08-20T09:21:11.725Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:any,_1:any,_2:int|null){_s='#(i=0;i<10;i++)'}\n!f1() -> num{?((n=='@LIN:L1c:0.2')){#(_i=0;_i<1;_i++){_s='#(i=0;i<10;i++)';_s=null;#(_i=0;_i<1;_i++){_9=y};?(y){?(b){#(_i=0;_i<1;_i++){_4=(3.14>'@LIN:L1c:0.2');_6=('@LIN:L1c:0.2'>'world');?((42<false)){^((0<'$'))}:{}};?((x>='^(return)')){^((1/'$'))}:{};_0=1}:{};#(_i=0;_i<2;_i++){^(('#(i=0;i<10;i++)'<=null))}}:{}}}:{};^('!f(){}');^((true<\"hello\"))}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$'))}:{};_0=1}: > 0\nrepairs: refine '$'))}:{};_0=1}::int{>0} | require '$'))}:{};_0=1}:>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$'))}:{};_0=1}: > 0\nrepairs: refine '$'))}:{};_0=1}::int{>0} | require '$'))}:{};_0=1}:>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

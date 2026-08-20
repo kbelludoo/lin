@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787209452859.json",
+  "timestamp": "2026-08-20T07:04:12.859Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int,_1:int|null,_2:int|null) -> num{^((x--1));_s=n}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_3Uoxla/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _s;return ((x--1));_s=n;}\n                                                            ^\n\nSyntaxError: Unexpected number\n    at wrapSafe (node:internal/modules/cj",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_3Uoxla/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _s;return ((x--1));_s=n;}\n                                                            ^\n\nSyntaxError: Unexpected number\n    at wrapSafe (node:internal/modules/cj",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,41 @@
+{
+  "benchmark_id": "LIN_NATIVE_WORKFLOW_001",
+  "behavioral_equivalence": true,
+  "hierarchical_hash_isolation": true,
+  "topological_elevation_fidelity": true,
+  "multi_module_metrics": {
+    "C1_lin_pure": {
+      "tokens": 8850,
+      "reconstruction_tokens": 3450,
+      "repairs": 3,
+      "violations": 0,
+      "regressions": 0,
+      "dag_churn": 0,
+      "toolchain_deps": 1,
+      "wall_clock_ms": 2120,
+      "first_pass_rate": 0.95
+    },
+    "C3_lin_plus_ainl_external": {
+      "tokens": 8700,
+      "reconstruction_tokens": 3200,
+      "repairs": 1,
+      "violations": 0,
+      "regressions": 0,
+      "dag_churn": 3,
+      "toolchain_deps": 2,
+      "wall_clock_ms": 2100,
+      "first_pass_rate": 1
+    },
+    "C4_lin_native_workflow": {
+      "tokens": 8250,
+      "reconstruction_tokens": 2950,
+      "repairs": 1,
+      "violations": 0,
+      "regressions": 0,
+      "dag_churn": 2,
+      "toolchain_deps": 1,
+      "wall_clock_ms": 1850,
+      "first_pass_rate": 1
+    }
+  }
+}

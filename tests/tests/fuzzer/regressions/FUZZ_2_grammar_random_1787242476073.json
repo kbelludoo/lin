@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787242476073.json",
+  "timestamp": "2026-08-20T16:14:36.073Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0() -> str|num{#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){?((-1/b)){_3=(false%3.14);_3='^(return)';?((n=='#(i=0;i<10;i++)')){^(('@LIN:L1c:0.2'*'!f(){}'));_7=1;_s=1;_1=('world'+\"$K\")}:{};_4=(true<'?=if #=for')}:{};_s=y};_s='world'};_s=1;_s=x}\n!f1(_0:num){_4=('!f(){}'%x);_s='world'}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: b > 0\nrepairs: refine b:int{>0} | require b>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: b > 0\nrepairs: refine b:int{>0} | require b>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

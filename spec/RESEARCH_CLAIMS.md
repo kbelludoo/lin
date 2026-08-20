@@ -1,0 +1,11 @@
+# RESEARCH CLAIMS (LIN + AINL ARCHITECTURE)
+
+| Claim (Afirmação) | Evidence (Evidência Experimental) | Boundary (Limites do Escopo) |
+| :--- | :--- | :--- |
+| **C1: Desacoplamento Topológico**<br>Separar lógica de nó em LIN e grafo em AINL elimina a explosão combinatória de labels sob mutações puras. | `COMPOSITION_001` ($Delta\text{DAG}=0$ no C1 vs. 3$\to$11 labels no C2) | Validado em fixtures de API monitor e checkout transacional. |
+| **C2: Localidade e Imunidade a Over-invalidation**<br>Mutações semânticas mantêm custo local unitário ($approx 1,00$ nó invalidado) e zero *over-invalidation*. | `COMPOSITION_002` (1,00 nó C1 vs. 8,40 nós C2; 0 vs. 750 over-inval) | Avaliado em workflow empresarial de 30 nós e 100 mutações. |
+| **C3: Invariância Topológica sob Escala**<br>A localidade de invalidação independe da topologia do grafo (linear, árvore ou malha) até 100 nós. | `COMPOSITION_003` (1,00 nó constante em 3 topologias $\times$ 4 escalas, 1.200 ensaios) | Tendência empírica no intervalo $N \in [10, 100]$, não teorema analítico. |
+| **C4: Roteamento Ortogonal de Mutações**<br>O sistema discrimina perfeitamente entre mudanças semânticas ($Delta\text{DAG}=0$) e topológicas (elevação mínima). | `COMPOSITION_004` (50/50 semânticas contidas; 50/50 topológicas elevadas; 0 under-inval) | Válido para as 9 classes de mutação controladas no corpus. |
+| **C5: Minimização do Custo de Engenharia**<br>A composição S4 ocupa a Fronteira de Pareto com S3, reduzindo tokens em 46,9% e amnésia em 55,8% vs. Python. | `AGENT_ENG_001` (Fronteira de Pareto ${S3, S4}$ em 5 workloads sob Context Death) | 1 modelo representativo sob protocolo unificado de teste. |
+| **C6: Invariância Cross-Model**<br>A vantagem da composição S4 e a fronteira ${S3, S4}$ replicam-se através de 4 famílias de LLM distintas. | `AGENT_ENG_002` (4/4 famílias de LLM: Claude 3.5, GPT-4o, DeepSeek V3, Llama 3.3) | 4 famílias de modelos da geração atual. |
+| **C7: Resiliência em Repositório Real**<br>Em 25+ arquivos sob amnésia contínua, S4 atinge -52,5% tokens, 0 regressões, 0 violações e 5,4x em Engineering Efficiency. | `AGENT_ENG_003` (5 tarefas incrementais reais $\times$ 2 resets de amnésia em 25+ arquivos) | Repositório multi-módulo empresarial especificado. |

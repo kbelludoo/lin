@@ -1,0 +1,59 @@
+@LIN:language_acquisition_loop:2.0
+^schema_once ^lossy=true ^ops=acquire
+~G{?=if #=for ^=ret :else}
+
+!prompt_header(lang){^"You are building a compiler backend for the LIN language targeting "+lang+". Learn this language deeply."}
+
+!prompt_lin_legend(){^"LIN syntax: !name(params){body}=fn _x=val=var #(i=1;i<=n;i=i+1){}=for ?(cond){}=if ?(cond){}:(else)=ifelse ^expr=return"}
+
+!prompt_target_spec(lang){^"For "+lang+" return ONLY valid JSON: {primitives:{int,float,string,bool,nil}, type_inference, functions, control_flow, error_handling, memory_model, stdlib, modules, edge_cases, emit_template}. No markdown, no explanation."}
+
+!prompt_test_spec(lang){^"Generate 3 test functions a LIN "+lang+" backend should compile. Return ONLY JSON array: [{name, lin_input, expected_js}]"}
+
+!prompt_refine_spec(lang){^"Debugging LIN "+lang+" backend. FUZZER OUTPUT below shows failures. Parse and return ONLY JSON: {root_cause, layer, fix, regression_tests}. Common patterns: undefined=missing primitive, Unexpected token=wrong syntax, is not a function=wrong emit, timeout=infinite loop."}
+
+!prompt_transfer_spec(lang){^"Given "+lang+" knowledge and LIN targets (c rust go zig java cs kotlin swift cpp haskell elixir lua julia), what facts transfer? Return ONLY JSON: {hypotheses, candidates}"}
+
+!make_prompt(lang,corpus){^prompt_header(lang)+" "+prompt_lin_legend()+" Known: "+corpus+" "+prompt_target_spec(lang)}
+
+!make_refinement_prompt(lang,knowledge,failures){^prompt_refine_spec(lang)+" Knowledge: "+knowledge+" FAILURES: "+failures}
+
+!make_transfer_prompt(lang,current,targets){^prompt_transfer_spec(lang)+" Knowledge: "+current+" Certified: "+targets}
+
+!build_record(lang,cycle,k,t,f,tr,st){^"{\"lang\":\""+lang+"\",\"cycle\":"+cycle+"}"}
+
+!acquire_one(lang,cycle,corpus,targets){
+_p=make_prompt(lang,corpus);
+_k=extract_text(http_post("http://localhost:11434/api/generate",OLLAMA_MODEL,_p));
+_t=extract_text(http_post("http://localhost:11434/api/generate",OLLAMA_MODEL,prompt_test_spec(lang)));
+_cand="{\"lang\":\""+lang+"\",\"k\":"+_k+",\"t\":"+_t+"}";
+write_file(".lin/language_learning/"+lang+"/candidate_"+cycle+".json",_cand);
+_fr=run_test("node tests/fuzzer/lin_fuzz.test.mjs 2>&1 | grep -E 'PASS|FAIL' | tail -20");
+_tp=make_transfer_prompt(lang,_k,targets);
+_tr=extract_text(http_post("http://localhost:11434/api/generate",OLLAMA_MODEL,_tp));
+_res=build_record(lang,cycle,_k,_t,_fr,_tr,"ACQUIRED");
+write_file(".lin/language_learning/"+lang+"/iteration_"+cycle+".json",_res);
+^_res}
+
+!refine_one(lang,cycle,k,f){
+_p=make_refinement_prompt(lang,k,f);
+_r=extract_text(http_post("http://localhost:11434/api/generate",OLLAMA_MODEL,_p));
+write_file(".lin/language_learning/"+lang+"/refinement_"+cycle+".json",_r);
+_v=run_test("node tests/fuzzer/lin_fuzz.test.mjs 2>&1 | grep -E 'PASS|FAIL' | tail -10");
+^_v}
+
+!learn_and_refine(lang,cycles,corpus,targets){
+_h="";
+#(i=1;i<=cycles;i=i+1){
+_it=acquire_one(lang,i,corpus,targets);
+_h=_h+" CYCLE "+i+": "+_it;
+_rf=refine_one(lang,i,_it,_it);
+_h=_h+" REFINE "+i+": "+_rf};
+^_h}
+
+!main(lang,cycles){
+_corpus="Backends: c rust go zig java cs kotlin swift cpp haskell elixir lua julia. isNumishId: d e lo hi r t base exp = numbers.";
+_targets="c,rust,go,zig,java,cs,kotlin,swift,cpp,haskell,elixir,lua,julia";
+^learn_and_refine(lang,cycles,_corpus,_targets)}
+
+=ex{main,make_prompt,make_refinement_prompt,make_transfer_prompt,acquire_one,refine_one,learn_and_refine,build_record}

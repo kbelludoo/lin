@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787227117793.json",
+  "timestamp": "2026-08-20T11:58:37.793Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(){_8=b;?(-1){_s='#(i=0;i<10;i++)'}:{};#(_i=0;_i<5;_i++){?(y){_s=null}:{};?(\"hello\"){_9=(-1||null);#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_0=(null<=-1);#(_i=0;_i<5;_i++){?(\"$K\"){?(('^(return)'<=\"hello\")){_s='#(i=0;i<10;i++)';_5=n}:{};_9=(0==\"a+b\");_2=(\"a+b\"*true)}:{};#(_i=0;_i<3;_i++){_s=null}}};_s='^(return)';?('!f(){}'){_1=(b>=\"hello\");#(_i=0;_i<5;_i++){?(false){?((y-true)){_s=null;^((y%\"hello\"));_4=(false<\"a+b\");_5=('$'<null)}:{};_s=0;_s=x}:{};_0=(\"$K\"!='?=if #=for')};?('!f(){}'){_s=false;^(('^(return)'<\"$K\"));?(null){#(_i=0;_i<4;_i++){?((x/true)){#(_i=0;_i<1;_i++){?(0){_s=42;?((true*42)){_s='$'}:{};_s=y;_s=null}:{}};#(_i=0;_i<3;_i++){_s=\"$K\";_8=('!f(){}'!=b)}}:{};_6=null;_7=x}}:{}}:{}}:{};_0=(a%n)}}:{};?(3.14){?((y<y)){_5=(0*0)}:{};?(('?=if #=for'+'$')){#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){_s='world';_s='@LIN:L1c:0.2';#(_i=0;_i<3;_i++){^((1<=true));?('@LIN:L1c:0.2'){_3=(0/42);#(_i=0;_i<3;_i++){_5=(\"hello\"%'#(i=0;i<10;i++)');^((0==1))}}:{};_2=(false<a);_6=('$'>=n)};_s='?=if #=for'};_4=('@LIN:L1c:0.2'==\"$K\")}}:{};#(_i=0;_i<2;_i++){_5=(a>=3.14);^((42+'^(return)'))}}:{}}}\n!f1(_0:int|null){_s=a;_s=y;?((\"hello\"+\"$K\")){#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){_s=-1;_5=42;^(42)};?(false){#(_i=0;_i<3;_i++){?('@LIN:L1c:0.2'){?(('^(return)'<='@LIN:L1c:0.2')){_s=\"$K\"}:{};_5='#(i=0;i<10;i++)';_s=false}:{};_s=x}}:{}};_1=(false>=y);_7=(true+\"hello\")}:{};^(n)}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

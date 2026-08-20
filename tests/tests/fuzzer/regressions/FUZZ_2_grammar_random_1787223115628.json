@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787223115628.json",
+  "timestamp": "2026-08-20T10:51:55.628Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int,_1:str|num,_2:bool) -> int|null{#(_i=0;_i<5;_i++){_7=x;#(_i=0;_i<3;_i++){^(false)};?(1){_4=('@LIN:L1c:0.2'&&1)}:{}};#(_i=0;_i<2;_i++){^(x);_s=\"hello\"};^((\"hello\"-null));#(_i=0;_i<2;_i++){_s=1;?((true==0)){#(_i=0;_i<2;_i++){?((null%a)){_3=('!f(){}'<\"$K\");_7=(\"$K\"-b);_8=(0>1);?((\"hello\"||'$')){_1=('world'%true)}:{}}:{};#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){_s='@LIN:L1c:0.2'};_s=b;?(a){#(_i=0;_i<3;_i++){_2=\"$K\";_4=(y-a);_3=(-1/\"$K\");^(('?=if #=for'*'$'))};_s='@LIN:L1c:0.2';?((b>=y)){?((x*null)){#(_i=0;_i<2;_i++){_s=b;_s=\"$K\"}}:{};_7=n;#(_i=0;_i<2;_i++){^((n*3.14));?('#(i=0;i<10;i++)'){_s=1;#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_7=('$'>='$')}}}:{};^(('@LIN:L1c:0.2'||\"hello\"));?(1){_s=42;_s='$'}:{}};_6=(1>0)}:{};_s=\"a+b\"}:{}};_6=('$'%null)};_3=(-1&&\"$K\");_0=x;#(_i=0;_i<1;_i++){_3=('?=if #=for'*n);?(('?=if #=for'*b)){_6='^(return)'}:{}}}:{}}}\n!f1(_0:num,_1:int) -> str|num{#(_i=0;_i<5;_i++){_4=a;_s='$';_s='#(i=0;i<10;i++)'};_s='@LIN:L1c:0.2';_s=\"$K\";?(('^(return)'/\"a+b\")){_4=(n||b);^((false%y));_0=(a=='world');#(_i=0;_i<2;_i++){?((-1>=true)){#(_i=0;_i<4;_i++){?((42<='#(i=0;i<10;i++)')){?((3.14-null)){_0=(3.14>=null)}:{};_s=true;#(_i=0;_i<2;_i++){_0=(y<'world');_9=(42<true);_1=0};^((\"a+b\"/null))}:{};#(_i=0;_i<2;_i++){_5=(-1==\"a+b\")}};#(_i=0;_i<1;_i++){_s=y;_s=0};_9='^(return)';_s=0}:{};_s='world';^(('!f(){}'<1));_8=(null==3.14)}}:{}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\");^(('?=if # > 0\nrepairs: refine \"$K\");^(('?=if #:int{>0} | require \"$K\");^(('?=if #>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\");^(('?=if # > 0\nrepairs: refine \"$K\");^(('?=if #:int{>0} | require \"$K\");^(('?=if #>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

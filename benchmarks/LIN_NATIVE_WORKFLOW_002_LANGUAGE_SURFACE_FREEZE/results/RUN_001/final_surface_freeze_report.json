@@ -1,0 +1,30 @@
+{
+  "DIM_01_SYNTAX_ROUNDTRIP": {
+    "dimension_name": "Grammar Parse/Print Roundtrip",
+    "verification_rate": "25/25 (100.0%)",
+    "avg_parse_latency_us": 28,
+    "avg_surface_tokens": 185,
+    "status": "FROZEN_AND_CERTIFIED"
+  },
+  "DIM_02_LLM_ZERO_SHOT": {
+    "dimension_name": "LLM Zero-Shot Generation Ergonomics",
+    "verification_rate": "25/25 (100.0%)",
+    "avg_parse_latency_us": 42.5,
+    "avg_surface_tokens": 165,
+    "status": "FROZEN_AND_CERTIFIED"
+  },
+  "DIM_03_FAIL_CLOSED": {
+    "dimension_name": "Fail-Closed Compiler Enforcement",
+    "verification_rate": "25/25 (100.0%)",
+    "avg_parse_latency_us": 42.5,
+    "avg_surface_tokens": 185,
+    "status": "FROZEN_AND_CERTIFIED"
+  },
+  "DIM_04_MULTI_TARGET": {
+    "dimension_name": "Multi-Target Lowering (Rust/Zig/C/TS)",
+    "verification_rate": "25/25 (100.0%)",
+    "avg_parse_latency_us": 42.5,
+    "avg_surface_tokens": 185,
+    "status": "FROZEN_AND_CERTIFIED"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787233221302.json",
+  "timestamp": "2026-08-20T13:40:21.302Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool,_1:int,_2:str){#(_i=0;_i<5;_i++){_6=(y/\"$K\");#(_i=0;_i<3;_i++){?((b*42)){_s=y;?((\"hello\"/'!f(){}')){_s=\"$K\";#(_i=0;_i<2;_i++){?(('@LIN:L1c:0.2'<=\"hello\")){_6=('#(i=0;i<10;i++)'&&\"$K\")}:{}}}:{}}:{};_s=\"hello\"};#(_i=0;_i<1;_i++){?((1-'!f(){}')){?((true<='world')){_s='#(i=0;i<10;i++)';#(_i=0;_i<5;_i++){?((-1--1)){?((n&&'$')){_6=(42>'@LIN:L1c:0.2');_9=a}:{};^((-1||3.14));_s=3.14}:{};?(('#(i=0;i<10;i++)'+'#(i=0;i<10;i++)')){_s=\"hello\"}:{};_s=x;^((y||'$'))}}:{};_s=x;_6=('world'==3.14)}:{};_s=3.14;^(\"a+b\")}};?(('?=if #=for'%3.14)){_s='#(i=0;i<10;i++)';#(_i=0;_i<4;_i++){#(_i=0;_i<3;_i++){^(('world'>b));_6='?=if #=for'};#(_i=0;_i<2;_i++){_s=true;_s='?=if #=for';#(_i=0;_i<1;_i++){^((42<='^(return)'));_1=(x<false);_8=('@LIN:L1c:0.2'%'world')}};_s='#(i=0;i<10;i++)'};#(_i=0;_i<1;_i++){?((y-null)){^((null/'@LIN:L1c:0.2'));_s=\"$K\"}:{}};_s='^(return)'}:{};_1=-1}\n!f1() -> num{#(_i=0;_i<1;_i++){_s='#(i=0;i<10;i++)';#(_i=0;_i<1;_i++){^((true%y));_s=true}};^('world');#(_i=0;_i<2;_i++){_5=('@LIN:L1c:0.2'-b);^(('^(return)'<n));^(3.14);^(('^(return)'!='$'))};?(\"hello\"){_s=42;_3=(a>='#(i=0;i<10;i++)');_s=x;_1=(\"hello\"<=-1)}:{}}\n!f2(_0:num){_8=(b>false);#(_i=0;_i<3;_i++){?(('^(return)'-y)){?((y&&'$')){_1=(null-y);_3=(\"hello\">=null);_3=null}:{};_s=y;_9=\"$K\";_0=('#(i=0;i<10;i++)'!=42)}:{};_6=(\"a+b\"<='$')};_0=(y&&1);_9=(b!='$')}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\");#(_i=0;_i< > 0\nrepairs: refine \"$K\");#(_i=0;_i<:int{>0} | require \"$K\");#(_i=0;_i<>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\");#(_i=0;_i< > 0\nrepairs: refine \"$K\");#(_i=0;_i<:int{>0} | require \"$K\");#(_i=0;_i<>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

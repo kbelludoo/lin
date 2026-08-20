@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787214032072.json",
+  "timestamp": "2026-08-20T08:20:32.072Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int,_1:num,_2:any){#(_i=0;_i<5;_i++){_s=0;#(_i=0;_i<2;_i++){_2=('!f(){}'=='@LIN:L1c:0.2');^(('@LIN:L1c:0.2'>=true));?(('$'+y)){#(_i=0;_i<4;_i++){?((3.14<=n)){#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){?(42){_s=-1;#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){?(('^(return)'>='^(return)')){_5=('$'&&3.14);_0='$';#(_i=0;_i<2;_i++){^((x!=y));_s=b};?(\"$K\"){_9='!f(){}';?((x-b)){^('#(i=0;i<10;i++)');#(_i=0;_i<5;_i++){_s=0;_s=n;_s='$';_3=y}}:{};_6=(\"a+b\"||a);_3=(x&&'$')}:{}}:{}};?(('?=if #=for'+true)){_s=-1}:{};_s=n}}:{};_4=('#(i=0;i<10;i++)'+b);_s=0};?(('!f(){}'||null)){?(null){^(('$'+\"$K\"))}:{};?((3.14>-1)){_s=false;?((42-false)){_s=42;?((x!=3.14)){?(('!f(){}'<a)){_2=(b/3.14);_3='world';_9=(3.14||true)}:{};^((false+42));_s=42;#(_i=0;_i<4;_i++){_s='@LIN:L1c:0.2'}}:{};^((\"$K\"%3.14));_s=\"hello\"}:{};_5=(true>'^(return)')}:{}}:{}};_6=n;?((\"hello\"||x)){^('#(i=0;i<10;i++)');?('!f(){}'){?(('world'<'world')){_8=1;_s=null;^(n)}:{}}:{};_1=null;_9=(a<='!f(){}')}:{};_3=-1}:{};#(_i=0;_i<5;_i++){_9=('!f(){}'-null);_7=(n/null);_3=('^(return)'/3.14);_1=('!f(){}'>=b)}};^((-1=='!f(){}'));?(b){#(_i=0;_i<2;_i++){?(('^(return)'>=\"$K\")){_2=('#(i=0;i<10;i++)'>'!f(){}');^('$')}:{}};^(('^(return)'<false));_s=a;#(_i=0;_i<5;_i++){_s='^(return)';_2='!f(){}'}}:{};^(true)}:{}};?(false){_s=b;?(\"$K\"){#(_i=0;_i<3;_i++){_9=y;_2=(3.14-3.14);_9=0;?('@LIN:L1c:0.2'){#(_i=0;_i<5;_i++){_s=\"$K\"};^((a<='@LIN:L1c:0.2'));?(n){^((x<=42))}:{}}:{}};#(_i=0;_i<3;_i++){_0='#(i=0;i<10;i++)';^(x);^(42);?((null||\"a+b\")){^(1)}:{}};#(_i=0;_i<5;_i++){?(('!f(){}'/true)){_s=n}:{};_9=('$'<'#(i=0;i<10;i++)');_s='^(return)'}}:{};_s=42}:{};_2='?=if #=for'};_s=n;_s=0;^((b=='@LIN:L1c:0.2'))}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

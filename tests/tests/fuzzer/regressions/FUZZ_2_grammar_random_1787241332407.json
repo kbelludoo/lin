@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787241332407.json",
+  "timestamp": "2026-08-20T15:55:32.407Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num) -> bool{_9=(3.14-false);^(('?=if #=for'-b));?((true*3.14)){_8=(0!='^(return)')}:{}}\n!f1(_0:int|null){^('$')}\n!f2(_0:int|null,_1:num){?((1/0)){^((-1*a));_7=('!f(){}'/false)}:{};^(\"a+b\");_s=\"hello\";?((\"$K\"*null)){#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){?((1<a)){^((y!='@LIN:L1c:0.2'))}:{};_5=(b&&\"a+b\");_s=\"a+b\"};_5=(n-'^(return)');#(_i=0;_i<4;_i++){#(_i=0;_i<3;_i++){_4=x};#(_i=0;_i<3;_i++){^((3.14*1));?((true>=b)){?(null){^(3.14);^(('!f(){}'<'world'))}:{};?(('?=if #=for'-n)){?(('#(i=0;i<10;i++)'==null)){?(('@LIN:L1c:0.2'!=null)){?(('world'<\"$K\")){^((0<1));?(('$'/'#(i=0;i<10;i++)')){#(_i=0;_i<4;_i++){_0=(3.14/'world');_0=(\"hello\"!=null);_s=\"hello\"};_6='!f(){}';?(y){_4=(b>=a);#(_i=0;_i<5;_i++){^((\"a+b\"||true))}}:{}}:{};?(1){^(('$'<0));?((y<=\"hello\")){_8=(1-'world')}:{}}:{};^((3.14<=null))}:{};^(('@LIN:L1c:0.2'!=\"$K\"));_6=('world'>=\"hello\")}:{};_8=(42-'?=if #=for')}:{};^(n);#(_i=0;_i<3;_i++){^(3.14);?((y<=null)){_s=1;?((\"a+b\"||1)){^('!f(){}');#(_i=0;_i<4;_i++){_8=(null%'#(i=0;i<10;i++)')};_1=('?=if #=for'*\"$K\");_s=n}:{};_s=x;_s='!f(){}'}:{};_s='@LIN:L1c:0.2';#(_i=0;_i<2;_i++){_2=(1/'@LIN:L1c:0.2');?(x){_6=(1>=\"hello\")}:{};?((b==b)){_7=(\"$K\"<'#(i=0;i<10;i++)');_s=3.14;?((42<false)){^(42);#(_i=0;_i<3;_i++){?(y){_1=42;^(('#(i=0;i<10;i++)'>0))}:{}};_0=\"a+b\"}:{}}:{};_9=(3.14<=x)}}}:{}}:{};#(_i=0;_i<5;_i++){_7=(null||y)};^((-1>=true))}};_s=null};_8='!f(){}';^((3.14/'$'))}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 0 > 0\nrepairs: refine 0:int{>0} | require 0>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 0 > 0\nrepairs: refine 0:int{>0} | require 0>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

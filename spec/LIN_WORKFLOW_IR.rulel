@@ -1,0 +1,36 @@
+@RULEL:LIN_WORKFLOW_IR:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_NATIVE_WORKFLOW_IR
+  status=CORE_SPEC_IN_PROGRESS
+  domain="native_agent_workflow_ir"
+  date=2026-08-20
+  purpose="Define the unified LIN Workflow IR separating semantic node contracts from canonical execution DAG with hierarchical semantic hashing"
+}
+
+.c{
+  node_contract={
+    id="string"
+    unit_ref="function_or_primitive"
+    inputs="typed_ports"
+    outputs="typed_ports"
+    effects="~effects{pure|io|async|state}"
+    refinements="refinement_constraints"
+    semantic_hash="hash(contract+body)"
+  }
+  workflow_dag={
+    id="string"
+    nodes="map<node_id, Node>"
+    edges="list<{from: node_id, to: node_id, port?: string}>"
+    control_primitives=["step", "dependency", "if", "parallel", "retry", "await", "return"]
+    edge_hash="hash(edges+topology)"
+    hierarchical_hash="hash(nodes_hashes + edge_hash)"
+  }
+}
+
+.r{
+  R1=workflow_is_canonical_entity_decoupled_from_node_internals
+  R2=hierarchical_hash_must_isolate_internal_node_mutation_from_edge_hash
+  R3=effects_and_refinements_must_be_statically_verified_across_dag_edges
+  R4=ir_must_lower_deterministically_to_native_targets(rust,c,ts,wasm)
+}

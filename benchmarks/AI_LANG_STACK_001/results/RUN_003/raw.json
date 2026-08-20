@@ -1,0 +1,1036 @@
+{
+  "summary": {
+    "run_id": "RUN_003",
+    "timestamp": "2026-08-20T20:40:09.221Z",
+    "total_mutation_trials": 100,
+    "pipeline_depth": 5,
+    "metrics": {
+      "C0_PYTHON": {
+        "total_modules_rebuilt": 500,
+        "avg_modules_per_mutation": 5,
+        "over_invalidation_rate": "80.0%",
+        "under_invalidation_rate": "0.0%"
+      },
+      "C1_LIN": {
+        "total_modules_rebuilt": 150,
+        "avg_modules_per_mutation": 1.5,
+        "over_invalidation_rate": "0.0%",
+        "under_invalidation_rate": "0.0%"
+      },
+      "C2_AINL": {
+        "total_modules_rebuilt": 200,
+        "avg_modules_per_mutation": 2,
+        "over_invalidation_rate": "20.0%",
+        "under_invalidation_rate": "0.0%"
+      },
+      "C3_HYBRID": {
+        "total_modules_rebuilt": 150,
+        "avg_modules_per_mutation": 1.5,
+        "over_invalidation_rate": "0.0%",
+        "under_invalidation_rate": "0.0%"
+      }
+    }
+  },
+  "records": [
+    {
+      "trial": 1,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 2,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 3,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 4,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 5,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 6,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 7,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 8,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 9,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 10,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 11,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 12,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 13,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 14,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 15,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 16,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 17,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 18,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 19,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 20,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 21,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 22,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 23,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 24,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 25,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 26,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 27,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 28,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 29,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 30,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 31,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 32,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 33,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 34,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 35,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 36,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 37,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 38,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 39,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 40,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 41,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 42,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 43,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 44,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 45,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 46,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 47,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 48,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 49,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 50,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 51,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 52,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 53,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 54,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 55,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 56,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 57,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 58,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 59,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 60,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 61,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 62,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 63,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 64,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 65,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 66,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 67,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 68,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 69,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 70,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 71,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 72,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 73,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 74,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 75,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 76,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 77,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 78,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 79,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 80,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 81,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 82,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 83,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 84,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 85,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 86,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 87,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 88,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 89,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 90,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 91,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 92,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 93,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 94,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 95,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 96,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 97,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 98,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    },
+    {
+      "trial": 99,
+      "mutation_type": "INTERNAL_ALPHA",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 1,
+        "ainl": 2,
+        "hybrid": 1
+      }
+    },
+    {
+      "trial": 100,
+      "mutation_type": "CONTRACT_SYMBOL",
+      "rebuilt_modules": {
+        "python": 5,
+        "lin": 2,
+        "ainl": 2,
+        "hybrid": 2
+      }
+    }
+  ]
+}

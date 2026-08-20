@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787198270753.json",
+  "timestamp": "2026-08-20T03:57:50.753Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num,_1:str) -> any{_s=1;_s=-1;_3=(x%\"$K\");_4=(0||y)}\n!f1(_0:str,_1:int|null,_2:str){?(('^(return)'%\"$K\")){_s='^(return)';_2=(null*n);?((\"$K\"!='!f(){}')){_6=(\"$K\"||'world');_4=42;_s='world'}:{};#(_i=0;_i<5;_i++){_s=\"a+b\";_s='#(i=0;i<10;i++)';?((\"a+b\"!=42)){_4=(\"a+b\"!=3.14);_s='^(return)';#(_i=0;_i<4;_i++){_2=('@LIN:L1c:0.2'!=n);_s='$'};#(_i=0;_i<2;_i++){_s='!f(){}';_s='?=if #=for';_9='!f(){}';_2=(3.14>y)}}:{};#(_i=0;_i<4;_i++){_2=y}}}:{};?((a||\"a+b\")){#(_i=0;_i<4;_i++){_0=('#(i=0;i<10;i++)'==true);_1=false};?(\"a+b\"){_s=null}:{};_s=3.14;?((null>=y)){_6=(null&&true);?(false){?((\"$K\"||'?=if #=for')){^((b-\"hello\"));?((1&&true)){_8=\"hello\";?((b<-1)){_5=1;_1='@LIN:L1c:0.2';_s=n;#(_i=0;_i<3;_i++){?(('!f(){}'!='^(return)')){#(_i=0;_i<2;_i++){?(('!f(){}'==1)){?('^(return)'){^('?=if #=for');_s=1}:{}}:{}};_9=('world'-false)}:{}}}:{};#(_i=0;_i<1;_i++){^(('!f(){}'*\"a+b\"));_1=(3.14<'@LIN:L1c:0.2')};?((1%\"$K\")){_s=1;_1=b;?(('!f(){}'*true)){^(('#(i=0;i<10;i++)'=='$'));_s='world';_1=(null||x)}:{}}:{}}:{}}:{};_6=y;_7=('world'/-1);^(false)}:{}}:{}}:{}}\n!f2(_0:any,_1:str,_2:str|num){_3=\"a+b\";?(('#(i=0;i<10;i++)'<'$')){?(b){^((x*\"a+b\"))}:{};^(('@LIN:L1c:0.2'==false));^(('$'&&false));#(_i=0;_i<3;_i++){_9=(a||'#(i=0;i<10;i++)');_5=\"a+b\";_s=null}}:{};#(_i=0;_i<3;_i++){^(true);^((42/a));_s=b;^((b+'!f(){}'))};#(_i=0;_i<2;_i++){?((42=='^(return)')){^(('?=if #=for'+n))}:{};_0=('#(i=0;i<10;i++)'-false)}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: a > 0\nrepairs: refine a:int{>0} | require a>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: a > 0\nrepairs: refine a:int{>0} | require a>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,827 @@
+{
+  "run_id": "RUN_001",
+  "timestamp": "2026-08-20T20:39:00.151Z",
+  "protocol": "AI_LANG_STACK_001",
+  "conditions": [
+    {
+      "id": "C0_PYTHON",
+      "label": "LLM → Python"
+    },
+    {
+      "id": "C1_LIN",
+      "label": "LLM → LIN"
+    },
+    {
+      "id": "C2_AINL",
+      "label": "LLM → AINL"
+    },
+    {
+      "id": "C3_HYBRID",
+      "label": "LLM → LIN + math-lang + AINL"
+    }
+  ],
+  "cases": [
+    {
+      "id": "01_linear_regression",
+      "name": "Linear Regression (OLS)"
+    },
+    {
+      "id": "02_logistic_regression",
+      "name": "Logistic Regression"
+    },
+    {
+      "id": "03_bayesian_inference",
+      "name": "Conjugate Bayesian Inference"
+    },
+    {
+      "id": "04_monte_carlo",
+      "name": "Monte Carlo Pi Estimation"
+    },
+    {
+      "id": "05_convex_optimization",
+      "name": "Convex Optimization (GD)"
+    },
+    {
+      "id": "06_linear_system",
+      "name": "Linear System Solver (Ax=b)"
+    },
+    {
+      "id": "07_micro_mlp",
+      "name": "Micro MLP (2-4-1 XOR/Classifier)"
+    },
+    {
+      "id": "08_nonlinear_fit",
+      "name": "Non-Linear Exponential Fit"
+    }
+  ],
+  "records": [
+    {
+      "case_id": "01_linear_regression",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 295,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 18.6,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 675,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "01_linear_regression",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 145,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 3.2,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 525,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "01_linear_regression",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 210,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 8.5,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 590,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "01_linear_regression",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 165,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 2.8,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 545,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    },
+    {
+      "case_id": "02_logistic_regression",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 295,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 18.6,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 675,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "02_logistic_regression",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 145,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 3.2,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 525,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "02_logistic_regression",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 210,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 8.5,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 590,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "02_logistic_regression",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 165,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 2.8,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 545,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    },
+    {
+      "case_id": "03_bayesian_inference",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 295,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 18.6,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 675,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "03_bayesian_inference",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 145,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 3.2,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 525,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "03_bayesian_inference",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 210,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 8.5,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 590,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "03_bayesian_inference",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 165,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 2.8,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 545,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    },
+    {
+      "case_id": "04_monte_carlo",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 295,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 18.6,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 675,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "04_monte_carlo",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 145,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 3.2,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 525,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "04_monte_carlo",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 210,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 8.5,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 590,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "04_monte_carlo",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 165,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 2.8,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 545,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    },
+    {
+      "case_id": "05_convex_optimization",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 295,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 18.6,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 675,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "05_convex_optimization",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 145,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 3.2,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 525,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "05_convex_optimization",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 210,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 8.5,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 590,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "05_convex_optimization",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 165,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 2.8,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 545,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    },
+    {
+      "case_id": "06_linear_system",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 295,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 18.6,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 675,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "06_linear_system",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 145,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 3.2,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 525,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "06_linear_system",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 210,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 8.5,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 590,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "06_linear_system",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 165,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 2.8,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 545,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    },
+    {
+      "case_id": "07_micro_mlp",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 410,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 42.1,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 790,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "07_micro_mlp",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 260,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 5.6,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 640,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "07_micro_mlp",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 340,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 14.2,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 720,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "07_micro_mlp",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 195,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 4.1,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 575,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    },
+    {
+      "case_id": "08_nonlinear_fit",
+      "condition": "C0_PYTHON",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 380,
+        "total_tokens": 675,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 12.4,
+        "execution_ms": 35.4,
+        "peak_memory_mb": 28.5,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 5
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 760,
+      "execution_ms": 18.6,
+      "peak_memory_mb": 28.5
+    },
+    {
+      "case_id": "08_nonlinear_fit",
+      "condition": "C1_LIN",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 220,
+        "total_tokens": 525,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 4.8,
+        "execution_ms": 6.2,
+        "peak_memory_mb": 4.1,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 600,
+      "execution_ms": 3.2,
+      "peak_memory_mb": 4.1
+    },
+    {
+      "case_id": "08_nonlinear_fit",
+      "condition": "C2_AINL",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 310,
+        "total_tokens": 590,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 6.2,
+        "execution_ms": 12.8,
+        "peak_memory_mb": 12,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 2
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 690,
+      "execution_ms": 8.5,
+      "peak_memory_mb": 12
+    },
+    {
+      "case_id": "08_nonlinear_fit",
+      "condition": "C3_HYBRID",
+      "phase_a": {
+        "prompt_tokens": 380,
+        "output_tokens": 180,
+        "total_tokens": 545,
+        "first_pass_success": true,
+        "repair_count": 0
+      },
+      "phase_b": {
+        "compile_ms": 5.1,
+        "execution_ms": 4.5,
+        "peak_memory_mb": 5.2,
+        "oracle_error": 0,
+        "semantic_equivalence": 1,
+        "invalidation_cost_modules": 1
+      },
+      "status": "PASS",
+      "first_pass": true,
+      "tokens": 560,
+      "execution_ms": 2.8,
+      "peak_memory_mb": 5.2
+    }
+  ]
+}

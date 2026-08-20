@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787229042201.json",
+  "timestamp": "2026-08-20T12:30:42.201Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){_s=x}\n!f1(){_0=('#(i=0;i<10;i++)'--1);^((x+a))}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_V18LVD/emit.cjs:3\n/* effect:Read */function f1(){var _0,i;_0=('for(i=0;i<10;i++)'--1);return ((x+a));}\n                                            ^^^^^^^^^^^^^^^^^^^\n\nSyntaxError: Invalid left-hand side expression in postfi",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_V18LVD/emit.cjs:3\n/* effect:Read */function f1(){var _0,i;_0=('for(i=0;i<10;i++)'--1);return ((x+a));}\n                                            ^^^^^^^^^^^^^^^^^^^\n\nSyntaxError: Invalid left-hand side expression in postfi",
+    "testable": false
+  },
+  "fixed": false
+}

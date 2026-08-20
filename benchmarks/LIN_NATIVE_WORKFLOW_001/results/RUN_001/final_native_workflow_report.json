@@ -1,0 +1,52 @@
+{
+  "C0_JS_TS_BASELINE": {
+    "label": "C0_JS_TS_BASELINE",
+    "mean_tokens_full_cycle": 39720,
+    "mean_p70_recon_tokens": 2801,
+    "mean_latency_ms": 44048.3,
+    "over_invalidation_rate": "84.5%",
+    "SELECTIVITY_SCORE": 0.2,
+    "invariants_preserved": "0.0%",
+    "cross_language_overhead": 0
+  },
+  "C1_LIN_STANDALONE": {
+    "label": "C1_LIN_STANDALONE",
+    "mean_tokens_full_cycle": 11557,
+    "mean_p70_recon_tokens": 467,
+    "mean_latency_ms": 910.7,
+    "over_invalidation_rate": "0.0%",
+    "SELECTIVITY_SCORE": 0.85,
+    "invariants_preserved": "100.0%",
+    "cross_language_overhead": 0
+  },
+  "C2_AINL_STANDALONE": {
+    "label": "C2_AINL_STANDALONE",
+    "mean_tokens_full_cycle": 18477,
+    "mean_p70_recon_tokens": 881,
+    "mean_latency_ms": 4565.3,
+    "over_invalidation_rate": "26.2%",
+    "SELECTIVITY_SCORE": 0.408,
+    "invariants_preserved": "0.0%",
+    "cross_language_overhead": 0
+  },
+  "C3_COMPOSITE_EXTERNAL": {
+    "label": "C3_COMPOSITE_EXTERNAL",
+    "mean_tokens_full_cycle": 11973,
+    "mean_p70_recon_tokens": 498,
+    "mean_latency_ms": 886,
+    "over_invalidation_rate": "0.0%",
+    "SELECTIVITY_SCORE": 1,
+    "invariants_preserved": "100.0%",
+    "cross_language_overhead": 416
+  },
+  "C4_LIN_NATIVE_WORKFLOW": {
+    "label": "C4_LIN_NATIVE_WORKFLOW",
+    "mean_tokens_full_cycle": 11210,
+    "mean_p70_recon_tokens": 442,
+    "mean_latency_ms": 642.5,
+    "over_invalidation_rate": "0.0%",
+    "SELECTIVITY_SCORE": 1,
+    "invariants_preserved": "100.0%",
+    "cross_language_overhead": 0
+  }
+}

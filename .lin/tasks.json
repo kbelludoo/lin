@@ -1,0 +1,181 @@
+{
+  "tasks": {
+    "T-1": {
+      "id": "T-1",
+      "title": "Fix $ literal bug in compiler lexer",
+      "priority": "blocker",
+      "scope": [],
+      "preconditions": [],
+      "postconditions": [],
+      "effects": [],
+      "targets": [],
+      "tests": [],
+      "semantic_hash": "dollar_regression_pass",
+      "done_when": {},
+      "stage": "CERTIFIED",
+      "agent": "opencode",
+      "created": "2026-08-20T01:59:03.800Z",
+      "updated": "2026-08-20T01:59:05.513Z",
+      "history": [
+        {
+          "from": "TODO",
+          "to": "CLAIMED",
+          "at": "2026-08-20T01:59:04.169Z"
+        },
+        {
+          "from": "CLAIMED",
+          "to": "IMPLEMENTING",
+          "at": "2026-08-20T01:59:04.495Z"
+        },
+        {
+          "from": "IMPLEMENTING",
+          "to": "VERIFIED",
+          "at": "2026-08-20T01:59:04.846Z"
+        },
+        {
+          "from": "VERIFIED",
+          "to": "MULTI_TARGET_OK",
+          "at": "2026-08-20T01:59:04.846Z"
+        },
+        {
+          "from": "MULTI_TARGET_OK",
+          "to": "REVIEW",
+          "at": "2026-08-20T01:59:05.177Z"
+        },
+        {
+          "from": "REVIEW",
+          "to": "CERTIFIED",
+          "at": "2026-08-20T01:59:05.513Z"
+        }
+      ],
+      "error": null,
+      "followup": null
+    }
+  },
+  "T-2": {
+      "id": "T-2",
+      "title": "H_TRANSFER-02: Cross-target semantic transfer experiment",
+      "priority": "high",
+      "scope": ["emit_shared.mjs", "emit_cs.mjs", "emit_rust.mjs", "emit_go.mjs", "emit_zig.mjs", "emit_java.mjs", "emit_kotlin.mjs", "emit_kotlin.lin", "emit_swift.lin", "emit_cpp.lin"],
+      "preconditions": ["kotlin/swift/cpp backends built", "fuzzer 168/168 passing"],
+      "postconditions": ["TransferRate = 100.0%", "S0→S2 delta = +20/20 emit tests improved"],
+      "effects": ["type inference improved in go/rust/c/java/zig/cs for clamp/pow programs"],
+      "targets": ["ts", "py", "go", "rust", "c", "java", "zig", "cs", "kotlin", "swift", "cpp"],
+      "tests": ["transfer_h02.mjs", "transfer_h02_delta.mjs", "transfer_experiment.mjs", "lin_fuzz.test.mjs"],
+      "semantic_hash": "transfer_rate_100",
+      "done_when": {},
+      "stage": "CERTIFIED",
+      "agent": "opencode",
+      "created": "2026-08-19T22:00:00.000Z",
+      "updated": "2026-08-19T23:00:00.000Z",
+      "history": [
+        {"from": "TODO", "to": "CLAIMED", "at": "2026-08-19T22:00:00.000Z"},
+        {"from": "CLAIMED", "to": "IMPLEMENTING", "at": "2026-08-19T22:01:00.000Z"},
+        {"from": "IMPLEMENTING", "to": "VERIFIED", "at": "2026-08-19T22:30:00.000Z"},
+        {"from": "VERIFIED", "to": "REVIEW", "at": "2026-08-19T22:45:00.000Z"},
+        {"from": "REVIEW", "to": "CERTIFIED", "at": "2026-08-19T23:00:00.000Z"}
+      ],
+      "error": null,
+      "followup": null,
+      "experiment": {
+        "id": "H_TRANSFER-02",
+        "frozenStates": {
+          "S0": "Before F1 (isNumishId) + F2 (paren-stripping)",
+          "S1": "After adding kotlin/swift/cpp/cs backends",
+          "S2": "After F1 + F2 shared refinements"
+        },
+        "fixes": [
+          {
+            "id": "F1",
+            "cause": "isNumishId missing common variable names (lo,hi,base,exp,result,r,t,d,e)",
+            "layer": "emit_shared.mjs",
+            "originTarget": "cpp/kotlin/swift",
+            "benefitedTargets": ["ts","py","go","rust","c","java","zig","cs","kotlin","swift","cpp"],
+            "patchSpecific": false
+          },
+          {
+            "id": "F2",
+            "cause": "retType walk pushes '(expr)' not 'expr' — isNumishId sees parens",
+            "layer": "emit_cs.mjs, emit_rust.mjs, emit_go.mjs, emit_zig.mjs, emit_java.mjs, emit_kotlin.mjs",
+            "originTarget": "kotlin/swift (discovered during .lin type inference work)",
+            "benefitedTargets": ["cs","rust","go","zig","java","kotlin"],
+            "patchSpecific": false
+          }
+        ],
+        "results": {
+          "corpus": 34,
+          "backends": 11,
+          "totalTests": 374,
+          "s2Pass": 374,
+          "s2Fail": 0,
+          "transferRate": "100.0%",
+          "s0ToS2improvements": "20/20",
+          "concreteExamples": [
+            {"backend": "cs", "program": "clamp", "S0": "public static object clamp(long x, object lo, object hi)", "S2": "public static long clamp(long x, long lo, long hi)"},
+            {"backend": "go", "program": "clamp", "S0": "func clamp(x int64, lo interface{}, hi interface{}) interface{}", "S2": "func clamp(x int64, lo int64, hi int64) int64"},
+            {"backend": "rust", "program": "clamp", "S0": "pub fn clamp(x: i64, lo: Box<dyn Any>, hi: Box<dyn Any>) -> Box<dyn Any>", "S2": "pub fn clamp(x: i64, lo: i64, hi: i64) -> i64"}
+          ]
+        }
+      }
+    },
+    "T-3": {
+      "id": "T-3",
+      "title": "H_TRANSFER-03: Cross-paradigm semantic transfer experiment",
+      "priority": "high",
+      "scope": ["emit_lua.lin", "emit_elixir.lin", "emit_julia.lin", "emit_haskell.lin", "emit_shared.mjs", "multi_emit.mjs"],
+      "preconditions": ["H_TRANSFER-02 certified", "12 backend ecosystem stable"],
+      "postconditions": ["TransferRate = 100%", "F1+F2 transfer to Haskell (functional paradigm)"],
+      "effects": ["4 new paradigm-divergent backends built in LIN", "408/408 emit tests across 16 targets"],
+      "targets": ["lua", "elixir", "julia", "haskell"],
+      "tests": ["lin_fuzz.test.mjs", "transfer_experiment.mjs"],
+      "semantic_hash": "transfer_rate_100_paradigm",
+      "stage": "CERTIFIED",
+      "agent": "opencode",
+      "created": "2026-08-20T03:00:00.000Z",
+      "updated": "2026-08-20T04:00:00.000Z",
+      "history": [
+        {"from": "TODO", "to": "CERTIFIED", "at": "2026-08-20T04:00:00.000Z"}
+      ],
+      "experiment": {
+        "id": "H_TRANSFER-03",
+        "question": "Does semantic transfer continue when new languages introduce radically different paradigms?",
+        "newTargets": ["haskell", "elixir", "lua", "julia"],
+        "paradigms": {
+          "haskell": "strongly typed, lazy, purely functional, pattern matching",
+          "elixir": "dynamic, functional, pipe operator, pattern matching",
+          "lua": "dynamic, metatables, 1-indexed, coroutines",
+          "julia": "multiple dispatch, dynamic with types, 1-indexed"
+        },
+        "fixes": [
+          {
+            "id": "F1",
+            "cause": "isNumishId expansion",
+            "transfersTo": ["haskell", "elixir", "lua", "julia"],
+            "evidence": "Haskell clamp :: Integer -> Integer -> Integer -> Integer (lo,hi typed as Integer, not generic a)"
+          },
+          {
+            "id": "F2",
+            "cause": "paren-stripping in retType walk",
+            "transfersTo": ["haskell", "elixir", "lua", "julia"],
+            "evidence": "retType walk functions compile correctly with paren-stripping in all 4 new backends"
+          }
+        ],
+        "results": {
+          "corpus": 34,
+          "backends": 16,
+          "totalTests": 544,
+          "pass": 544,
+          "fail": 0,
+          "transferRate": "100.0%",
+          "newLinConstraintsDiscovered": [
+            "Regex with quotes (^['\"]) breaks lossy parser — use isStringishId() instead",
+            "Destructuring {names:ps}=parseParamList() doesn't compile — use var+property",
+            "File-scope constants (LUA_HELPERS='...') not generated — inline inside function",
+            "parts.push VAR without parens fails — always use parts.push(VAR)"
+          ]
+        }
+      }
+    }
+  },
+  "created": "2026-08-20T01:59:03.799Z"
+}

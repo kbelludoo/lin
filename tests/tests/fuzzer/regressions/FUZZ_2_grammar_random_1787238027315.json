@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787238027315.json",
+  "timestamp": "2026-08-20T15:00:27.315Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0() -> int|null{_6='@LIN:L1c:0.2'}\n!f1() -> str|num{_s=n;#(_i=0;_i<5;_i++){_1=(\"a+b\"--1);_s='!f(){}';_s=y}}\n!f2() -> int{_s=a}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_HULGiX/emit.cjs:3\n/* effect:Write */function f1(){var _s,_1,_i;_s=n;for(_i=0;_i<5;_i++){_1=(\"a+b\"--1);_s='!f(){}';_s=y;}}\n                                                                          ^^^^^\n\nSyntaxError: Invalid ",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_HULGiX/emit.cjs:3\n/* effect:Write */function f1(){var _s,_1,_i;_s=n;for(_i=0;_i<5;_i++){_1=(\"a+b\"--1);_s='!f(){}';_s=y;}}\n                                                                          ^^^^^\n\nSyntaxError: Invalid ",
+    "testable": false
+  },
+  "fixed": false
+}

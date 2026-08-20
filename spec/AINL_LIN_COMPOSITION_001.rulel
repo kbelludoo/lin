@@ -1,0 +1,35 @@
+@RULEL:AINL_LIN_COMPOSITION:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis}
+.m{
+  name=AINL_LIN_COMPOSITION_001
+  status=SUPPORTED_EXPERIMENTAL
+  domain="ai_agent_architecture"
+  date=2026-08-20
+  purpose="Separation of operational workflow topology (AINL) and node semantic contracts (LIN)"
+}
+
+.h{
+  id=H_COMPOSITION_001
+  claim="Delegating internal node logic to LIN semantic units prevents topological graph explosion in AINL workflows under business logic mutations while guaranteeing static invariants and effect sandboxing."
+  result=SUPPORTED
+}
+
+.c{
+  layers={
+    top="LLM / Agent Intent"
+    semantic="LIN (Types, Refinements, Invariants, Pure/Effect Contracts)"
+    orchestration="AINL (Canonical DAG, Adapters, Scheduling, Tool Execution)"
+    execution="Deterministic Runtime / Native Machine"
+  }
+}
+
+.r{
+  R1=AINL_owns_workflow_topology_only
+  R2=LIN_owns_internal_node_logic_and_invariants
+  R3=Nodes_must_declare_effect_boundaries(~effects{pure|io|async})
+  R4=Mutations_in_pure_logic_must_NOT_alter_AINL_DAG_labels
+}
+
+.g{
+  pass=AINL_check_ok AND LIN_compile_ok AND invariant_violations==0
+}

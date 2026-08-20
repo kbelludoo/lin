@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787216609569.json",
+  "timestamp": "2026-08-20T09:03:29.569Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str,_1:bool,_2:any) -> str{?('?=if #=for'){_s='!f(){}'}:{};?((y>'?=if #=for')){_9='world';?(('world'>='!f(){}')){_s='?=if #=for';#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){#(_i=0;_i<2;_i++){?(('!f(){}'!=b)){_4=\"$K\";?(1){_1=(x/0);#(_i=0;_i<1;_i++){?(3.14){?(('@LIN:L1c:0.2'||42)){_3=('@LIN:L1c:0.2'*true)}:{}}:{};#(_i=0;_i<1;_i++){#(_i=0;_i<3;_i++){^(n)};_9='@LIN:L1c:0.2';_s='#(i=0;i<10;i++)'}};#(_i=0;_i<5;_i++){_s=b;^('^(return)')};#(_i=0;_i<4;_i++){_s='@LIN:L1c:0.2';_4=(x*\"hello\");_s='^(return)'}}:{};^((\"hello\"<='^(return)'));_s=x}:{};_3='?=if #=for'}};_9=('^(return)'-y);_s='@LIN:L1c:0.2'};#(_i=0;_i<3;_i++){?(('world'>\"a+b\")){_2='!f(){}'}:{};?((\"$K\"!='^(return)')){^((b<'?=if #=for'));?(('world'%false)){_1=(false>'!f(){}');?((b-n)){_5=(42>x);?((-1<=3.14)){_s=a;#(_i=0;_i<4;_i++){_s='$'}}:{};#(_i=0;_i<5;_i++){^((false>=\"$K\"));?((b!=-1)){_s=\"$K\";?(a){^((\"$K\"/'world'));^('^(return)');_3=('?=if #=for'<'^(return)');^((0||'world'))}:{};_5=(\"$K\"%'?=if #=for');?((y%1)){_s=n;_1=(true/\"a+b\");?((-1>='#(i=0;i<10;i++)')){_7=(3.14<='^(return)');?((3.14&&a)){?('^(return)'){_s='$'}:{};_2=false;^(0)}:{};#(_i=0;_i<1;_i++){_7=(null/\"$K\");^(('!f(){}'+1));#(_i=0;_i<5;_i++){_0=(1-\"$K\");_3=(null-'@LIN:L1c:0.2');#(_i=0;_i<4;_i++){_4=('$'*42);?(('#(i=0;i<10;i++)'*'^(return)')){_s=\"a+b\";_s=y;#(_i=0;_i<1;_i++){?((3.14>n)){?((\"$K\"||x)){?((3.14>b)){?((b>0)){^((x||n));_s=null}:{};_5='@LIN:L1c:0.2';^((42>='@LIN:L1c:0.2'))}:{};_2=y;?(('@LIN:L1c:0.2'&&a)){_s=b}:{}}:{}}:{}}}:{}}}};_s='@LIN:L1c:0.2'}:{};_s='!f(){}'}:{}}:{};?((false/0)){?(('#(i=0;i<10;i++)'==1)){_s=x;#(_i=0;_i<1;_i++){_4=('^(return)'>'^(return)');_s='?=if #=for'};_s=0}:{};_5=(b||'world');_s=3.14}:{};_4=true};_s=\"a+b\"}:{};_s='^(return)'}:{}}:{};_7=(\"$K\"||0)}}:{}}:{};_8=\"$K\";?(('$'>=x)){_5=(42/0);#(_i=0;_i<1;_i++){_7=('^(return)'||\"$K\")};_2=(42<y)}:{}}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 0 > 0\nrepairs: refine 0:int{>0} | require 0>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 0 > 0\nrepairs: refine 0:int{>0} | require 0>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

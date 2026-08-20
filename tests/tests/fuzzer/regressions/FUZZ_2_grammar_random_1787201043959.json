@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787201043959.json",
+  "timestamp": "2026-08-20T04:44:03.959Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){^('$');_s=3.14;#(_i=0;_i<3;_i++){_6=(\"hello\">=-1);^(b);?((true/b)){_s=1;?(-1){_8=(n*'?=if #=for');_7=-1;_1=\"hello\";_s='^(return)'}:{};#(_i=0;_i<1;_i++){^(('@LIN:L1c:0.2'!=y))};_2='world'}:{};?('world'){_7=(\"$K\"<=1);?(('#(i=0;i<10;i++)'<=y)){_s=0;?(('?=if #=for'*b)){?((0/true)){_s=\"a+b\";?((\"hello\"<=n)){_6=(null>='$');_2=b}:{};?((1<=true)){_s=1;_s='^(return)'}:{}}:{}}:{};_6=(1=='?=if #=for')}:{};_7=(-1!=-1)}:{}}}\n!f1(_0:str) -> num{_8=('#(i=0;i<10;i++)'/\"a+b\");_s=-1;#(_i=0;_i<2;_i++){?(0){_5=(false%'$');#(_i=0;_i<1;_i++){_s=false}}:{};_4=(null<\"hello\");_6=(y>='?=if #=for');_6=(\"a+b\"*\"a+b\")};#(_i=0;_i<4;_i++){^((3.14+b))}}\n!f2(_0:num){_s=\"a+b\";?((false==y)){#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){?((1-n)){#(_i=0;_i<3;_i++){?((n||a)){_6=('world'<='!f(){}');#(_i=0;_i<4;_i++){^(('?=if #=for'<1));^(b);_9=false;_s='world'};_1=(b!=\"hello\")}:{};^(-1);_6=a;_6=(a>-1)};_2=(1*\"a+b\");_s='$'}:{};#(_i=0;_i<1;_i++){?('world'){_9=(-1>'world');_8=\"$K\"}:{}};?(\"$K\"){^((3.14-'^(return)'));_2=a}:{}};_9=1;?((-1-'#(i=0;i<10;i++)')){_4=y;^((false/x))}:{}};#(_i=0;_i<1;_i++){_0=('!f(){}'>false);_4=(1<true);^(null);#(_i=0;_i<1;_i++){?((y%'$')){_s='#(i=0;i<10;i++)';?(('!f(){}'||'#(i=0;i<10;i++)')){_2=n}:{};#(_i=0;_i<4;_i++){?((-1%x)){_s='$';_7=('!f(){}'>=-1);#(_i=0;_i<2;_i++){_s=42}}:{};#(_i=0;_i<1;_i++){?((\"a+b\"-3.14)){_8=(0>=3.14);^((y%b))}:{};_0=(b||b);_s='?=if #=for';?((42%a)){?((x!=\"a+b\")){_0=(a||x)}:{}}:{}}}}:{}}}}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: b > 0\nrepairs: refine b:int{>0} | require b>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: b > 0\nrepairs: refine b:int{>0} | require b>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

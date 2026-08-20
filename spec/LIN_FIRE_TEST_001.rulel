@@ -1,0 +1,50 @@
+@RULEL:LIN_FIRE_TEST_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_FIRE_TEST_001
+  status=ACTIVE_FALSIFICATION_STRESS_TEST
+  domain="real_large_software_falsification"
+  date=2026-08-20
+  purpose="Subject the frozen LIN @L2w:1.0 language and compiler to an unsparing stress-test on a massive multi-subsystem architecture across 7 trials: build, functional battery, context death, adversarial bypass attacks, 500 multi-category mutations, backend differential execution, and cryptographic artifact corruption."
+}
+
+.c{
+  trials=[
+    "T1_full_system_build",
+    "T2_functional_battery_probes",
+    "T3_severe_context_death_amnesia",
+    "T4_adversarial_bypass_prompt_attacks",
+    "T5_500_continuous_mutations",
+    "T6_backend_differential_execution",
+    "T7_deliberate_cryptographic_corruption"
+  ]
+  stress_matrix={
+    "normal_mutations": 100,
+    "adversarial_mutations": 100,
+    "contract_mutations": 100,
+    "topological_mutations": 100,
+    "context_death_events": 100,
+    "corruption_injection_probes": 50
+  }
+}
+
+.mtr{
+  primary=[
+    "build_pass_rate",
+    "functional_probe_success_rate",
+    "regression_count",
+    "unsafe_accept_count",
+    "under_invalidation_count",
+    "over_invalidation_count",
+    "context_recovery_success_rate",
+    "backend_differential_match_rate",
+    "corruption_intercept_rate"
+  ]
+}
+
+.r{
+  R1=compiler_spec_is_strictly_frozen_no_ad_hoc_patches
+  R2=adversarial_attacks_must_be_mechanically_tested_against_type_and_effect_verifiers
+  R3=corruptions_must_include_tampered_hashes_forged_edges_and_effect_escalations
+  R4=verdict_must_be_strictly_A_B_or_C_based_on_empirical_survival
+}

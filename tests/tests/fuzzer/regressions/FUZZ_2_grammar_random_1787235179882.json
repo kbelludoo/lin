@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787235179882.json",
+  "timestamp": "2026-08-20T14:12:59.882Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:num) -> int{?((x!='@LIN:L1c:0.2')){#(_i=0;_i<2;_i++){?('?=if #=for'){_s=\"$K\"}:{};_6='$'};_9=('!f(){}'>3.14);?((\"hello\"<=\"hello\")){?((-1>=y)){^((y/'@LIN:L1c:0.2'));_0='#(i=0;i<10;i++)';_s=3.14;_1=(true&&\"hello\")}:{};^('@LIN:L1c:0.2');_s='$'}:{}}:{};_1='#(i=0;i<10;i++)'}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')) > 0\nrepairs: refine '@LIN:L1c:0.2')):int{>0} | require '@LIN:L1c:0.2'))>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')) > 0\nrepairs: refine '@LIN:L1c:0.2')):int{>0} | require '@LIN:L1c:0.2'))>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

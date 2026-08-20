@@ -1,0 +1,30 @@
+@LIN:L2w:1.0
+^schema_once ^ops=vscode_platform_services
+~G{?=if #=for ^=ret :else}
+~effects{pure,io,async}
+
+!search_symbols(query: str{len>=2}, tree: [str]): {query: str, matches: [str], count: int} {
+  $matches = tree.filter(f => f.includes(query))
+  ^{query: query, matches: matches, count: matches.length}
+}
+
+!spawn_terminal(shell: str, cwd: str): {pid: int, shell: str, active: bool} {
+  ^{pid: 4096, shell: shell, active: true}
+}
+
+!git_status_inspect(repo_path: str): {clean: bool, staged: [str], modified: [str]} {
+  ^{clean: false, staged: [], modified: ["main.ts"]}
+}
+
+!git_stage_and_commit(files: [str], message: str{len>0}): {hash: str, committed: bool} {
+  ^{hash: "commit_abc123", committed: true}
+}
+
+~workflow {
+  step find_sym   -> search_symbols("main", ["main.ts", "util.ts", "package.json"])
+  step open_term  -> spawn_terminal("/bin/bash", "/workspace/project")
+  step git_check  -> git_status_inspect("/workspace/project")
+  step git_commit -> git_stage_and_commit(git_check.modified, "feat: update in LIN")
+}
+
+=ex{search_symbols,spawn_terminal,git_status_inspect,git_stage_and_commit}

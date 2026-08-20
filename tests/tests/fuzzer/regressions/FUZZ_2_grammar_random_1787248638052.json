@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787248638052.json",
+  "timestamp": "2026-08-20T17:57:18.052Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:int,_1:str|num){_5=(false<\"a+b\");_4=\"a+b\";^(0)}\n!f1(_0:str,_1:bool){_s=\"hello\";_6=('!f(){}'--1);^(\"a+b\")}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_FbRzvE/emit.cjs:4\n/* effect:Read */function f1(_0, _1){var _s,_6;_s=\"hello\";_6=('!f(){}'--1);return (\"a+b\");}\n                                                              ^^^^^^^^\n\nSyntaxError: Invalid left-hand side expres",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_FbRzvE/emit.cjs:4\n/* effect:Read */function f1(_0, _1){var _s,_6;_s=\"hello\";_6=('!f(){}'--1);return (\"a+b\");}\n                                                              ^^^^^^^^\n\nSyntaxError: Invalid left-hand side expres",
+    "testable": false
+  },
+  "fixed": false
+}

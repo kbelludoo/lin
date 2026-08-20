@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787202204864.json",
+  "timestamp": "2026-08-20T05:03:24.864Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:any,_1:int) -> any{?(\"$K\"){_6=(true-n)}:{};_s=42;_s=false}\n!f1(_0:int|null){_9=(3.14+n);#(_i=0;_i<3;_i++){_s=x;?((true<42)){_3=-1;#(_i=0;_i<2;_i++){_8=null};_s='#(i=0;i<10;i++)';_s=-1}:{}};_6=(x+'?=if #=for')}\n!f2(){#(_i=0;_i<5;_i++){?(n){_3=y;^((42%false));?(('!f(){}'-\"a+b\")){#(_i=0;_i<2;_i++){^(('world'!='!f(){}'))};?((\"hello\"||\"hello\")){_s=true;_s=0}:{};_9=-1;?((false>false)){?((3.14*\"hello\")){?(3.14){_s=3.14}:{}}:{};#(_i=0;_i<5;_i++){_0=(null!=n)}}:{}}:{};#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){_s='$';^(('#(i=0;i<10;i++)'<1))};_9='$';_2=0}}:{};?(('!f(){}'*true)){^(true)}:{};_3=(x-\"hello\")};?(('@LIN:L1c:0.2'&&'@LIN:L1c:0.2')){_0=y;?((null/'world')){_s='^(return)';_s=\"$K\";_s=y;#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){^((-1<'!f(){}'));_s='^(return)'};?((a-null)){_s=42;_s='!f(){}'}:{};?((a/1)){_s=\"a+b\";_2=(\"hello\"&&\"a+b\")}:{};_s=false}}:{};_8=\"$K\"}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world')){_s='^( > 0\nrepairs: refine 'world')){_s='^(:int{>0} | require 'world')){_s='^(>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world')){_s='^( > 0\nrepairs: refine 'world')){_s='^(:int{>0} | require 'world')){_s='^(>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

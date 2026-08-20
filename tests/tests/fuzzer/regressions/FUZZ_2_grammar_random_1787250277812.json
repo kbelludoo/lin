@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787250277812.json",
+  "timestamp": "2026-08-20T18:24:37.812Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:int,_1:num){#(_i=0;_i<3;_i++){_s=\"$K\";_5=('@LIN:L1c:0.2'-n);#(_i=0;_i<3;_i++){?((y*'?=if #=for')){?((42>='#(i=0;i<10;i++)')){_9=('^(return)'>'@LIN:L1c:0.2');#(_i=0;_i<4;_i++){_s='^(return)';?(y){#(_i=0;_i<2;_i++){^((null+1));_s='?=if #=for';_s=y;_8=(b>3.14)}}:{};?(('!f(){}'||a)){#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){_5=(y<=1);#(_i=0;_i<4;_i++){_8=(0<='@LIN:L1c:0.2')}};_s=\"a+b\";_3=('?=if #=for'==y);_s='@LIN:L1c:0.2'};#(_i=0;_i<5;_i++){^(1)}}:{};_0=('#(i=0;i<10;i++)'||'@LIN:L1c:0.2')};_6=(n>=3.14)}:{};_7=(true<='world');#(_i=0;_i<1;_i++){_s=42;#(_i=0;_i<1;_i++){^((\"$K\"*'$'));?((42>'#(i=0;i<10;i++)')){?((null&&\"$K\")){?('world'){#(_i=0;_i<4;_i++){_4=(0>-1);^((3.14==b))};?(x){_8='!f(){}';?('^(return)'){_1=(\"$K\"+1);?((n/\"hello\")){^(0);_9=(\"hello\"<3.14);^(('?=if #=for'/\"a+b\"));^(n)}:{}}:{};^((true*\"$K\"))}:{};_s=a}:{};_9=('^(return)'&&1)}:{};^('?=if #=for');_s=-1;^((true&&'@LIN:L1c:0.2'))}:{};^(('?=if #=for'==\"hello\"));_s=true};?(('world'+\"$K\")){_5=('$'&&'!f(){}');_s=3.14;?(null){_s='^(return)';_3=a;_3=(true&&false);_s=0}:{}}:{}};_0=3.14}:{};_s='@LIN:L1c:0.2'}}}\n!f1(_0:num,_1:str,_2:int){^((\"hello\"+1));?(('?=if #=for'>='$')){_8=42}:{};?(('!f(){}'/'$')){_s='^(return)';_3=(b!=\"$K\");_5=(y!='?=if #=for')}:{};_9='@LIN:L1c:0.2'}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\")){^(0);_ > 0\nrepairs: refine \"hello\")){^(0);_:int{>0} | require \"hello\")){^(0);_>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\")){^(0);_ > 0\nrepairs: refine \"hello\")){^(0);_:int{>0} | require \"hello\")){^(0);_>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

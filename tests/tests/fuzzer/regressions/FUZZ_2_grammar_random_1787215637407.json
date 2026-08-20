@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787215637407.json",
+  "timestamp": "2026-08-20T08:47:17.407Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool) -> any{_7=('#(i=0;i<10;i++)'||'world');_3='!f(){}';?(null){_3=('^(return)'/false);_s=y}:{};?(('$'==42)){?('!f(){}'){#(_i=0;_i<4;_i++){#(_i=0;_i<1;_i++){_8=(-1/null);#(_i=0;_i<2;_i++){_9=y};?(('#(i=0;i<10;i++)'--1)){^(false);^(\"hello\");^((false!=-1));_2=('$'+null)}:{};#(_i=0;_i<3;_i++){_8=('#(i=0;i<10;i++)'>-1);_3=('!f(){}'<n);#(_i=0;_i<2;_i++){_4=(a<n);?((y>=42)){?((n+'^(return)')){_6=('#(i=0;i<10;i++)'*1);_6=(42--1);?('!f(){}'){#(_i=0;_i<1;_i++){_s=42;#(_i=0;_i<3;_i++){_0=(3.14+-1);^((\"$K\"/'^(return)'));?(('?=if #=for'!=n)){_s='$';_8=('world'-a);^((false>y));_s='#(i=0;i<10;i++)'}:{}};?((null*'#(i=0;i<10;i++)')){_s=b;_s=a;_0=(1<-1);?((\"a+b\"%'$')){#(_i=0;_i<5;_i++){_s=3.14;_9='#(i=0;i<10;i++)';#(_i=0;_i<2;_i++){^(('world'!=n));_5=(1>=3.14);_s=1}};_s='?=if #=for';_0='@LIN:L1c:0.2'}:{}}:{};_s='$'};?(('^(return)'>=y)){_4=(n*n);^((null+1))}:{}}:{};^((y%a))}:{}}:{}}}};_0=('^(return)'!=false)};?(('#(i=0;i<10;i++)'||3.14)){_6=(42-false);_0='^(return)';_9=('$'>x)}:{};_0=(y=='!f(){}')}:{};#(_i=0;_i<3;_i++){_s='?=if #=for';_3=false;#(_i=0;_i<5;_i++){?(y){_1=(n+\"a+b\");#(_i=0;_i<4;_i++){?('?=if #=for'){_0=(null!=n)}:{}}}:{};_1='@LIN:L1c:0.2';_6='#(i=0;i<10;i++)'}};#(_i=0;_i<5;_i++){^((-1&&b));^((\"hello\"==true));#(_i=0;_i<3;_i++){_6=(y/'?=if #=for');#(_i=0;_i<4;_i++){?((n/true)){?(\"a+b\"){_9=('#(i=0;i<10;i++)'*'world');_5=(\"$K\"+'!f(){}');_s=n}:{}}:{}};?((0%1)){?(('$'>true)){_s=y;?(('?=if #=for'&&false)){_5=('@LIN:L1c:0.2'>\"hello\")}:{};_s=b}:{};^('^(return)')}:{}}};_2=x}:{}}\n!f1(_0:any,_1:num){^(('world'+'!f(){}'));_s=1}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787215310575.json",
+  "timestamp": "2026-08-20T08:41:50.575Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){?(true){_s='@LIN:L1c:0.2';^(0);?((true<=a)){#(_i=0;_i<5;_i++){_7=('?=if #=for'+null);_s=a;^(('^(return)'&&x));_0=(\"$K\"||-1)};_s='^(return)';?((x!='#(i=0;i<10;i++)')){^((true||\"$K\"))}:{}}:{}}:{};_s='@LIN:L1c:0.2'}\n!f1(_0:int) -> num{#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_4=(\"hello\"*42);?((n>='!f(){}')){#(_i=0;_i<5;_i++){^((\"$K\"-y));#(_i=0;_i<1;_i++){_2=(null-true);_s='#(i=0;i<10;i++)';_s='^(return)'};#(_i=0;_i<1;_i++){_s=1;_s=n;#(_i=0;_i<1;_i++){^('$');_9=('$'<false);_s=true};_s=y}};_3=(3.14||1)}:{};?(('!f(){}'*b)){^(('?=if #=for'-x));?(0){_2=('world'*false);?((42+3.14)){_s='$'}:{}}:{};_s=null;^(0)}:{};_3=(1/\"$K\")};?((-1-y)){_s='?=if #=for';_2='@LIN:L1c:0.2';_4=('!f(){}'%3.14);_2=x}:{};#(_i=0;_i<5;_i++){#(_i=0;_i<1;_i++){?((b||\"hello\")){_2=('^(return)'%'@LIN:L1c:0.2');?(-1){#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){_7=('$'+'!f(){}');_6=('$'/'@LIN:L1c:0.2');_2=(3.14&&b)}};#(_i=0;_i<4;_i++){?((3.14<-1)){_5=('?=if #=for'>-1);_s=x}:{};^((y-'!f(){}'))}}:{};_s=0;#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){_0=false};_s=\"hello\"}}:{};?((\"$K\"!='^(return)')){_s=3.14;_7=\"a+b\";_4=(\"$K\"<='!f(){}')}:{};?(3.14){?((y>null)){?(('^(return)'||a)){^(('$'!='!f(){}'))}:{};^((0>n));^((y||\"a+b\"));_2=(1%x)}:{};_0=null}:{}};_s='?=if #=for';_8=n;_s='@LIN:L1c:0.2'}};_3=(\"$K\"*b);_s='?=if #=for';#(_i=0;_i<3;_i++){_9=('@LIN:L1c:0.2'<a)}}\n!f2(_0:any){_2=(-1+b);_s='#(i=0;i<10;i++)'}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")};?((-1-y)) > 0\nrepairs: refine \"$K\")};?((-1-y)):int{>0} | require \"$K\")};?((-1-y))>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")};?((-1-y)) > 0\nrepairs: refine \"$K\")};?((-1-y)):int{>0} | require \"$K\")};?((-1-y))>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

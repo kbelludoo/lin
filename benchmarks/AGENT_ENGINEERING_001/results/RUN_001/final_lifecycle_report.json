@@ -1,0 +1,46 @@
+{
+  "C0_PYTHON_BASELINE": {
+    "label": "C0_PYTHON_BASELINE",
+    "lifecycle_completion": "0/25 (0.0%)",
+    "total_tokens": 14370,
+    "total_latency_ms": 1275,
+    "p70_recon_tokens": 920,
+    "unsafe_accepts_total": 50,
+    "invariant_violations_total": 50,
+    "unnecessary_churn_edges_total": 375,
+    "SEMANTIC_TO_OPERATIONAL_RATIO": 0.2
+  },
+  "C1_LIN_STANDALONE": {
+    "label": "C1_LIN_STANDALONE",
+    "lifecycle_completion": "25/25 (100.0%)",
+    "total_tokens": 6870,
+    "total_latency_ms": 94.5,
+    "p70_recon_tokens": 250,
+    "unsafe_accepts_total": 0,
+    "invariant_violations_total": 0,
+    "unnecessary_churn_edges_total": 0,
+    "SEMANTIC_TO_OPERATIONAL_RATIO": 0.76
+  },
+  "C2_AINL_STANDALONE": {
+    "label": "C2_AINL_STANDALONE",
+    "lifecycle_completion": "0/25 (0.0%)",
+    "total_tokens": 9630,
+    "total_latency_ms": 277,
+    "p70_recon_tokens": 380,
+    "unsafe_accepts_total": 50,
+    "invariant_violations_total": 50,
+    "unnecessary_churn_edges_total": 200,
+    "SEMANTIC_TO_OPERATIONAL_RATIO": 0.45
+  },
+  "C3_COMPOSITE_STACK": {
+    "label": "C3_COMPOSITE_STACK",
+    "lifecycle_completion": "25/25 (100.0%)",
+    "total_tokens": 6965,
+    "total_latency_ms": 81.5,
+    "p70_recon_tokens": 265,
+    "unsafe_accepts_total": 0,
+    "invariant_violations_total": 0,
+    "unnecessary_churn_edges_total": 0,
+    "SEMANTIC_TO_OPERATIONAL_RATIO": 0.76
+  }
+}

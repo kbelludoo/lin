@@ -22,7 +22,7 @@ function appendDicelEntry(file, block) {
 }
 
 function run(cmd, args) {
-  const r = spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8', shell: true });
+  const r = spawnSync(cmd, args, { cwd: ROOT, encoding: 'utf8' });
   return { status: r.status ?? 1, out: (r.stdout || '') + (r.stderr || '') };
 }
 

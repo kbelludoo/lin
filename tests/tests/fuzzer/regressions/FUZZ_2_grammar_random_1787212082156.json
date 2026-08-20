@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787212082156.json",
+  "timestamp": "2026-08-20T07:48:02.156Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:str|num,_1:str|num,_2:int|null){_4=(\"$K\"||'#(i=0;i<10;i++)')}\n!f1(_0:str|num,_1:str){#(_i=0;_i<4;_i++){_5=(\"$K\"<=\"a+b\");?((42--1)){_0=(b!='world')}:{};_2=('^(return)'<b);^((-1+3.14))};_5=('!f(){}'<'world');_s=0}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_MZCOXk/emit.cjs:3\n/* effect:Read */function f1(_0, _1){var _5,_2,_s,_i;for(_i=0;_i<4;_i++){_5=(\"$K\"<=\"a+b\");if((42--1)){_0=(b!=='world');}else{};_2=('^(return)'<b);return ((-1+3.14));};_5=('!f(){}'<'world');_s=0;}\n          ",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_MZCOXk/emit.cjs:3\n/* effect:Read */function f1(_0, _1){var _5,_2,_s,_i;for(_i=0;_i<4;_i++){_5=(\"$K\"<=\"a+b\");if((42--1)){_0=(b!=='world');}else{};_2=('^(return)'<b);return ((-1+3.14));};_5=('!f(){}'<'world');_s=0;}\n          ",
+    "testable": false
+  },
+  "fixed": false
+}

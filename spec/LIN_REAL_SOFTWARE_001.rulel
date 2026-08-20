@@ -1,0 +1,50 @@
+@RULEL:LIN_REAL_SOFTWARE_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_REAL_SOFTWARE_001_VSCODE_SLICE
+  status=ACTIVE_CORE_BENCHMARK
+  domain="real_large_software_execution_and_parity"
+  date=2026-08-20
+  purpose="Implement, compile, execute and functionally validate a 10-layer VS Code-compatible slice in LIN @L2w:1.0 with behavioral parity against the external VS Code reference oracle"
+  parent=LIN_NATIVE_WORKFLOW_003
+}
+
+.h{
+  id=H_REAL_SW_001
+  claim="A functional VS Code-compatible architecture across 10 observable layers (L1 Startup -> L10 Agent Workflow) can be fully authored in LIN Surface L2w, compiled to Unified Workflow IR and executed deterministically in native targets (TypeScript/Rust), achieving 100% behavioral parity with 0 invariant violations and granular incremental invalidation."
+}
+
+.c{
+  layers=[
+    "L01_startup_lifecycle",
+    "L02_file_open_save_io",
+    "L03_editor_text_model_state",
+    "L04_project_tree_explorer",
+    "L05_ripgrep_search_indexer",
+    "L06_terminal_process_host",
+    "L07_git_version_control",
+    "L08_extension_host_api",
+    "L09_settings_command_palette",
+    "L10_agent_chat_workflow"
+  ]
+  external_oracle="VSCode_Architecture_Observable_Contract"
+  target_compilers=["TypeScript", "Rust"]
+}
+
+.mtr{
+  primary=[
+    "observable_behavioral_parity",
+    "layers_verified_count",
+    "total_modules_compiled",
+    "tokens_consumed_total",
+    "hierarchical_hash_isolation",
+    "incremental_build_time_ms",
+    "runtime_execution_success"
+  ]
+}
+
+.r{
+  R1=external_vscode_behavior_is_the_immutable_oracle
+  R2=all_10_layers_must_execute_and_pass_automated_functional_probes
+  R3=layer_modules_must_use_LIN_L2w_surface_and_unified_workflow_ir
+}

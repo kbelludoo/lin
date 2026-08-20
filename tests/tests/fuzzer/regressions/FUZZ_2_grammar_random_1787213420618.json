@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787213420618.json",
+  "timestamp": "2026-08-20T08:10:20.618Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:num,_1:any){#(_i=0;_i<1;_i++){_7='world';#(_i=0;_i<1;_i++){_2=(1>'@LIN:L1c:0.2')};_7=1;?('world'){#(_i=0;_i<2;_i++){_s=b};_9=('?=if #=for'<n);_s='?=if #=for'}:{}};?((y==false)){_6=(\"$K\"+x);_0=('world'/'!f(){}');^(('$'<'^(return)'));#(_i=0;_i<4;_i++){^(b);^((null>='#(i=0;i<10;i++)'));^(x)}}:{};?(('$'/true)){_7=(-1||a);_s=0;_8=(b==\"hello\");_6=(\"a+b\"+'?=if #=for')}:{};#(_i=0;_i<4;_i++){_s='$';_5=('@LIN:L1c:0.2'/42);?(1){?('?=if #=for'){?((n&&'$')){_s='$';_5=(true%b);_s=a;?((3.14/0)){_8=(null+'?=if #=for');_s=42}:{}}:{};_5=('#(i=0;i<10;i++)'||-1);_2=true;_s='?=if #=for'}:{};#(_i=0;_i<1;_i++){^((-1*false));^((false/x));^((\"hello\"-'^(return)'));#(_i=0;_i<1;_i++){^(\"$K\");_s=3.14}};#(_i=0;_i<4;_i++){_s=1};_9=(\"a+b\">false)}:{}}}\n!f1(_0:int|null,_1:int){#(_i=0;_i<5;_i++){_s=\"$K\";_4=true;_8='#(i=0;i<10;i++)';^((-1==\"hello\"))};#(_i=0;_i<2;_i++){#(_i=0;_i<4;_i++){^((42||'$'));_1=('?=if #=for'!='@LIN:L1c:0.2');_9=(null==b)};?(('#(i=0;i<10;i++)'>'world')){#(_i=0;_i<3;_i++){_s='world';_8=\"$K\";?(('world'*n)){_s=y}:{}};_8=('!f(){}'||\"hello\");?((\"hello\"||1)){?((\"$K\"%42)){_9='#(i=0;i<10;i++)';_s=1}:{};_s='world'}:{};?(false){^('!f(){}');?((-1+null)){_3=('?=if #=for'==\"hello\");_s=0}:{}}:{}}:{}};_s='world';#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){?(('#(i=0;i<10;i++)'!='!f(){}')){#(_i=0;_i<1;_i++){?(('!f(){}'=='^(return)')){_2=('!f(){}'<a)}:{};#(_i=0;_i<3;_i++){_9=\"a+b\"};^((y*y))}}:{}};_3=(\"hello\">'#(i=0;i<10;i++)');^(1)}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

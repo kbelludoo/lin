@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787208561369.json",
+  "timestamp": "2026-08-20T06:49:21.369Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool){?((n-42)){_2=(\"hello\"||\"hello\");_8=(null/'!f(){}')}:{};_7=(-1<y);_8=('$'||x)}\n!f1(_0:str,_1:num) -> int{_s=n;_8=false}\n!f2(_0:int) -> str|num{_2=(n%-1)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}')}:{};_7 > 0\nrepairs: refine '!f(){}')}:{};_7:int{>0} | require '!f(){}')}:{};_7>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}')}:{};_7 > 0\nrepairs: refine '!f(){}')}:{};_7:int{>0} | require '!f(){}')}:{};_7>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

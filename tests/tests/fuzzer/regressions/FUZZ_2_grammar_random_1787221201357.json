@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787221201357.json",
+  "timestamp": "2026-08-20T10:20:01.357Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:int|null,_1:bool,_2:num) -> any{^((\"hello\"&&'#(i=0;i<10;i++)'));_6=(\"$K\"%'@LIN:L1c:0.2');?((3.14/'world')){?((-1%y)){#(_i=0;_i<5;_i++){_4=(x%null);_1=(\"$K\"==null)};#(_i=0;_i<2;_i++){_s=y;_s=y;#(_i=0;_i<2;_i++){?(42){_6=(3.14>=y);?((y+n)){_9=\"hello\";^(('#(i=0;i<10;i++)'||null));_7=\"$K\";#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){^(('@LIN:L1c:0.2'*b));_2=\"hello\";_s='$'};?(b){?((n||'^(return)')){_9=('@LIN:L1c:0.2'||-1);_8=('!f(){}'>=a);?((false-3.14)){_s='@LIN:L1c:0.2';_4=true;?(('@LIN:L1c:0.2'%'^(return)')){#(_i=0;_i<2;_i++){?(('?=if #=for'||null)){^((a-'@LIN:L1c:0.2'));^((true+1));#(_i=0;_i<3;_i++){_s=a}}:{}};^('^(return)')}:{}}:{};?(('$'>a)){_6=(1+3.14);?((n!=false)){_3=('$'||3.14);_8=(y||3.14);_2=true}:{};_2=(1<'^(return)');^((b/'@LIN:L1c:0.2'))}:{}}:{};^(-1);_s=null;?((false-true)){#(_i=0;_i<2;_i++){_6=1;_s=\"a+b\"};#(_i=0;_i<4;_i++){^((true<=a));^((false<\"hello\"));#(_i=0;_i<4;_i++){?((-1*'!f(){}')){_4=(true=='world');_s=1}:{};_8=('!f(){}'==\"hello\");_s='?=if #=for';^(true)};^(b)};#(_i=0;_i<3;_i++){_0=true};_s=1}:{}}:{}}}:{}}:{};_7=('!f(){}'%x);?(('#(i=0;i<10;i++)'>=0)){^((y*\"hello\"));_s='@LIN:L1c:0.2';_6=(\"a+b\"=='!f(){}')}:{}}};#(_i=0;_i<5;_i++){_s=\"hello\";?(('world'||\"hello\")){^(false)}:{};?((3.14!='!f(){}')){#(_i=0;_i<3;_i++){?((0+42)){?(b){_s=b;^((b>='$'));?((1>=\"hello\")){?((\"a+b\"<-1)){?((n%-1)){_s=a;^('$');_3=42;^((b||\"a+b\"))}:{};_9=('world'!=n);#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){_8=(x>\"a+b\");_3=(n||\"hello\")};_6=y;_4=(0||'#(i=0;i<10;i++)');_s='?=if #=for'};?((3.14>='$')){_0=b}:{}}:{};_5='world'}:{}}:{}}:{}};^('world');^((n-0))}:{}};#(_i=0;_i<3;_i++){^((\"$K\"/\"$K\"))}}:{};_4=\"hello\"}:{};_1=(\"$K\"<=\"a+b\")}\n!f1(){?((0&&0)){_1=(false<y);_s='world';^((-1/'world'))}:{}}\n!f2(_0:bool,_1:any,_2:num) -> int|null{?(('$'<n)){?(('world'==true)){_1=('#(i=0;i<10;i++)'-true);_4=(\"hello\"/'?=if #=for')}:{}}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world')){?((-1% > 0\nrepairs: refine 'world')){?((-1%:int{>0} | require 'world')){?((-1%>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world')){?((-1% > 0\nrepairs: refine 'world')){?((-1%:int{>0} | require 'world')){?((-1%>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

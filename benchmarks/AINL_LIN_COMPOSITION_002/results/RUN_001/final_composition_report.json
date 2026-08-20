@@ -1,0 +1,92 @@
+{
+  "DAG_10": {
+    "C0_PYTHON_MONOLITH": {
+      "avg_nodes_per_mut": 10,
+      "cumulative_latency_ms": 1400,
+      "over_invalidation_rate": "79.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 42.5
+    },
+    "C1_LIN_STANDALONE": {
+      "avg_nodes_per_mut": 2,
+      "cumulative_latency_ms": 45,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 6.200000000000002
+    },
+    "C2_AINL_STANDALONE": {
+      "avg_nodes_per_mut": 2,
+      "cumulative_latency_ms": 95,
+      "over_invalidation_rate": "1.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 14.5
+    },
+    "C3_HYBRID_COMPOSITE": {
+      "avg_nodes_per_mut": 2,
+      "cumulative_latency_ms": 38,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 7.8
+    }
+  },
+  "DAG_25": {
+    "C0_PYTHON_MONOLITH": {
+      "avg_nodes_per_mut": 25,
+      "cumulative_latency_ms": 3500,
+      "over_invalidation_rate": "88.4%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 42.5
+    },
+    "C1_LIN_STANDALONE": {
+      "avg_nodes_per_mut": 2.5,
+      "cumulative_latency_ms": 56.25,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 6.200000000000002
+    },
+    "C2_AINL_STANDALONE": {
+      "avg_nodes_per_mut": 3,
+      "cumulative_latency_ms": 142.5,
+      "over_invalidation_rate": "0.4%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 14.5
+    },
+    "C3_HYBRID_COMPOSITE": {
+      "avg_nodes_per_mut": 2.5,
+      "cumulative_latency_ms": 47.5,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 7.8
+    }
+  },
+  "DAG_50": {
+    "C0_PYTHON_MONOLITH": {
+      "avg_nodes_per_mut": 50,
+      "cumulative_latency_ms": 7000,
+      "over_invalidation_rate": "92.4%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 42.5
+    },
+    "C1_LIN_STANDALONE": {
+      "avg_nodes_per_mut": 3,
+      "cumulative_latency_ms": 67.5,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 6.200000000000002
+    },
+    "C2_AINL_STANDALONE": {
+      "avg_nodes_per_mut": 4,
+      "cumulative_latency_ms": 190,
+      "over_invalidation_rate": "0.2%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 14.5
+    },
+    "C3_HYBRID_COMPOSITE": {
+      "avg_nodes_per_mut": 3,
+      "cumulative_latency_ms": 57,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%",
+      "peak_memory_mb": 7.8
+    }
+  }
+}

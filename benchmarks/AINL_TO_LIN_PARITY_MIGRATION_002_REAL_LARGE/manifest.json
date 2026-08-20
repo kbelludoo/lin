@@ -1,0 +1,64 @@
+{
+  "benchmark": "AINL_TO_LIN_PARITY_MIGRATION_002_REAL_LARGE",
+  "version": "1.0.0",
+  "title": "Large-Scale Production Repository Parity Migration (1,240 Modules, 112k LOC, 5,800 Nodes, 12,400 Edges)",
+  "goal": "Empirically evaluate behavioral parity, incremental compilation, semantic hashcons stability, and selective locality across a 4-tier mutation campaign (R0 Ingest, R1 10-Mut, R2 100-Mut, R3 1,000-Mut) in a large multi-service repository.",
+  "freeze_before_execution": true,
+  "scale_profile": {
+    "repository_name": "enterprise-multi-service-engine",
+    "total_modules": 1240,
+    "total_loc": 112400,
+    "semantic_workflow_nodes": 5800,
+    "workflow_edges": 12400,
+    "critical_path_depth": 32,
+    "services_count": 18
+  },
+  "mutation_campaigns": [
+    {
+      "id": "R0_INGEST",
+      "name": "Full Initial Repository Ingestion & Baseline Graph Projection",
+      "mutations": 0
+    },
+    {
+      "id": "R1_MUT_10",
+      "name": "Initial Maintenance Campaign (10 Real-World Mutations)",
+      "mutations": 10
+    },
+    {
+      "id": "R2_MUT_100",
+      "name": "Mid-Scale Evolution Campaign (100 Real-World Mutations)",
+      "mutations": 100
+    },
+    {
+      "id": "R3_MUT_1000",
+      "name": "Massive Stress Evolution Campaign (1,000 Real-World Mutations)",
+      "mutations": 1000
+    }
+  ],
+  "conditions": [
+    {
+      "id": "C3_EXTERNAL_AINL_REFERENCE",
+      "label": "External AINL Reference (Baseline)"
+    },
+    {
+      "id": "C4_LIN_NATIVE_WORKFLOW",
+      "label": "LIN Native Workflow (Unified C4)"
+    }
+  ],
+  "repetitions": 10,
+  "total_trials": 80,
+  "metrics": [
+    "transpilation_success_rate",
+    "observable_behavioral_parity_rate",
+    "semantic_hash_match_rate",
+    "invariants_preserved_rate",
+    "over_invalidation_rate",
+    "under_invalidation_rate",
+    "avg_incremental_rebuild_ms",
+    "cumulative_evolution_latency_ms",
+    "peak_memory_mb",
+    "total_tokens_consumed",
+    "p70_context_recon_tokens",
+    "semantic_to_operational_ratio"
+  ]
+}

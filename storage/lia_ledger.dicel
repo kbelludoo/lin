@@ -690,3 +690,11 @@
 @E{t="2026-08-19T23:38:48.677Z" kind=improve_lin_from_clone slug=ecc harvest="positive_transfer:ok×50" autogen="no_fails" candidate="CLONE_ecc_mt0qgb1h.rulel" nucleus=untouched}
 
 @E{t="2026-08-19T23:39:11.145Z" kind=improve_lin_from_clone slug=ecc harvest="positive_transfer:ok×42" autogen="no_fails" candidate="CLONE_ecc_mt0qgsdl.rulel" nucleus=untouched}
+
+@E{t="2026-08-20T04:09:04.704Z" kind=improve ok=true path=self_repair_smoke}
+
+@E{t="2026-08-20T20:08:55.820Z" kind=improve ok=true path=self_repair_smoke}
+
+@E{t="2026-08-20T20:26:02.637Z" kind=improve ok=true path=self_repair_smoke}
+
+@E{t="2026-08-20T20:27:33.903Z" kind=improve ok=true path=self_repair_smoke}

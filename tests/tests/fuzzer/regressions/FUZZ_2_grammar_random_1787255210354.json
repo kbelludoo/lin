@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787255210354.json",
+  "timestamp": "2026-08-20T19:46:50.354Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:any,_1:str){?((null<\"a+b\")){_2=true;_9=(\"hello\"--1);_9=true}:{};#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){_0=0;#(_i=0;_i<4;_i++){#(_i=0;_i<4;_i++){_3=a};_4=(a!='!f(){}')}};^((\"hello\"<\"$K\"))};_s=0;_s=\"$K\"}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_kJDdi0/emit.cjs:2\n/* effect:Read */function f0(_0, _1){var _2,_9,_3,_4,_s,_i;if((null<\"a+b\")){_2=true;_9=(\"hello\"--1);_9=true;}else{};for(_i=0;_i<2;_i++){for(_i=0;_i<3;_i++){_0=0;for(_i=0;_i<4;_i++){for(_i=0;_i<4;_i++){_3=a;",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_kJDdi0/emit.cjs:2\n/* effect:Read */function f0(_0, _1){var _2,_9,_3,_4,_s,_i;if((null<\"a+b\")){_2=true;_9=(\"hello\"--1);_9=true;}else{};for(_i=0;_i<2;_i++){for(_i=0;_i<3;_i++){_0=0;for(_i=0;_i<4;_i++){for(_i=0;_i<4;_i++){_3=a;",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787229233214.json",
+  "timestamp": "2026-08-20T12:33:53.214Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:any,_1:num){#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){_s=b};^(('$'%3.14));^(0)};?((\"$K\"<=b)){_s='$';_s='#(i=0;i<10;i++)';?(a){?(('?=if #=for'-'$')){_2=('@LIN:L1c:0.2'==\"$K\")}:{}}:{}}:{};#(_i=0;_i<3;_i++){_s=0;?(('@LIN:L1c:0.2'!=\"$K\")){_9=(false+\"$K\");?((\"hello\"-a)){_0=(true!=b);_s=1}:{};#(_i=0;_i<2;_i++){_6=('#(i=0;i<10;i++)'+-1);_3=('!f(){}'-\"a+b\")}}:{};?((n+'#(i=0;i<10;i++)')){?((3.14*'#(i=0;i<10;i++)')){?(n){_s='!f(){}'}:{};_s='^(return)';^((b/n));_0=42}:{};_s=\"hello\"}:{}}}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: n > 0\nrepairs: refine n:int{>0} | require n>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: n > 0\nrepairs: refine n:int{>0} | require n>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,64 @@
+{
+  "benchmark": "AINL_LIN_SELECTIVE_LOCALITY_001",
+  "version": "0.1.0",
+  "title": "Selective Locality & Boundary Crossing Benchmark",
+  "goal": "Empirically evaluate whether the composite system correctly classifies and routes mutations to the minimal required architectural layer (LIN internal, LIN effect sandbox, LIN contract, or AINL DAG structure) without under- or over-propagating changes.",
+  "freeze_before_execution": true,
+  "mutation_tiers": [
+    {
+      "id": "T1_LOCAL_IMPL",
+      "name": "Pure Local Implementation",
+      "description": "Alpha-renaming, local constant folding, AST-equivalent helper refactor",
+      "required_layer_touched": "LIN_INTERNAL_ONLY",
+      "expected_topology_change": false,
+      "expected_downstream_invalidation": false
+    },
+    {
+      "id": "T2_EFFECT_SANDBOX",
+      "name": "Effect Sandbox Change",
+      "description": "Node introduces new effect (e.g. state_read or log_audit) requiring effect boundary verification",
+      "required_layer_touched": "LIN_EFFECTS_GATE",
+      "expected_topology_change": false,
+      "expected_downstream_invalidation": false
+    },
+    {
+      "id": "T3_TYPE_CONTRACT",
+      "name": "Type Signature & Return Contract Change",
+      "description": "Node modifies exported return signature, requiring transitive downstream consumer re-typecheck",
+      "required_layer_touched": "LIN_CONTRACT_TRANSITIVE",
+      "expected_topology_change": false,
+      "expected_downstream_invalidation": true
+    },
+    {
+      "id": "T4_STRUCTURAL_DAG",
+      "name": "Structural Topology Mutation",
+      "description": "Workflow requires inserting an intermediate aggregator node, splitting branches, or rerouting edges",
+      "required_layer_touched": "AINL_DAG_TOPOLOGY",
+      "expected_topology_change": true,
+      "expected_downstream_invalidation": true
+    }
+  ],
+  "conditions": [
+    {
+      "id": "C1_COMPOSITE_SELECTIVE",
+      "label": "Selective Composite (AINL + LIN)",
+      "description": "Routes mutations strictly to the minimal required layer using LIN semantic hashcons + AINL DAG classification"
+    },
+    {
+      "id": "C2_COARSE_WORKFLOW",
+      "label": "Coarse Workflow Baseline (AINL Standalone)",
+      "description": "Treats node modifications as task-level churn without fine-grained effect/symbol classification"
+    }
+  ],
+  "trials_per_tier": 30,
+  "total_trials": 240,
+  "metrics": [
+    "boundary_classification_accuracy",
+    "unnecessary_topology_churn_rate",
+    "missed_boundary_crossing_rate",
+    "avg_nodes_invalidated",
+    "avg_edges_modified",
+    "selectivity_score",
+    "correctness_rate"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787218558886.json",
+  "timestamp": "2026-08-20T09:35:58.886Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:any){#(_i=0;_i<4;_i++){?(('world'<=a)){_4='?=if #=for';?((\"$K\"+'world')){_9=false;_s=-1;_4=x}:{}}:{};^((0/'world'));_s=\"a+b\";?((\"hello\">\"hello\")){?(n){#(_i=0;_i<3;_i++){_9=(a>'?=if #=for')}}:{};?(('@LIN:L1c:0.2'+3.14)){_s=3.14}:{};_1=(y%1);^(\"a+b\")}:{}};_2=(\"hello\"-n)}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world'));_s=\"a+ > 0\nrepairs: refine 'world'));_s=\"a+:int{>0} | require 'world'));_s=\"a+>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world'));_s=\"a+ > 0\nrepairs: refine 'world'));_s=\"a+:int{>0} | require 'world'));_s=\"a+>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

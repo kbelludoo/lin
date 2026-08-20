@@ -1,0 +1,24 @@
+@RULEL:AGENT_ENGINEERING_001:1.1.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=AGENT_ENGINEERING_001
+  status=SUPPORTED_EMPIRICAL_WORKLOAD
+  domain="ai_agent_engineering_real_workload"
+  date=2026-08-20
+  purpose="Evaluate end-to-end autonomous agent engineering across real workloads, comparing 4 architectural stacks under repeated evolutions and context-death events"
+  parent=AINL_LIN_COMPOSITION_004
+}
+
+.h{
+  id=H_AGENT_ENG_001
+  claim="Within the evaluated workload and protocol, the composite stack S4 (LIN+AINL) achieved 46.9% token reduction vs S1 (Python), 55.8% lower reconstruction cost under context death, 97.7% reduction in unnecessary DAG churn vs S2 (AINL), and 100% blind correctness with zero invariant violations."
+  result=SUPPORTED_EMPIRICAL_WORKLOAD
+}
+
+.c{
+  pareto_frontier=["S3_lin", "S4_hybrid"]
+  limitations=[
+    "valid_within_specified_workload_and_protocol",
+    "sample_size_requires_expansion_across_more_model_families_and_codebases"
+  ]
+}

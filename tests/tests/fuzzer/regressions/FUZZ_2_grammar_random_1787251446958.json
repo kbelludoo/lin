@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787251446958.json",
+  "timestamp": "2026-08-20T18:44:06.958Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0() -> any{_s='world'}\n!f1(_0:int|null){?((0==\"$K\")){#(_i=0;_i<2;_i++){_8=(b==x);^(('!f(){}'>=false));_2=(3.14/3.14);?((b!=n)){^((0*a));_s=-1;?((3.14!=-1)){^((n<'world'));_s=0;?((42/'world')){^((\"$K\"||n));?(('!f(){}'||x)){?((null*n)){_4=(y/'world');_s=0;^(y)}:{};_0=('?=if #=for'!='@LIN:L1c:0.2');_9=(-1<-1);?((1!='$')){#(_i=0;_i<1;_i++){?(-1){_s=null;?(3.14){?((x!=n)){_s='?=if #=for';?((-1!='!f(){}')){_9=('?=if #=for'!='$');_7='@LIN:L1c:0.2';^((1/'?=if #=for'))}:{};#(_i=0;_i<3;_i++){?(\"$K\"){_7=(n==1)}:{}};_s=\"$K\"}:{};?((0+0)){_5=(n>=0);?(('$'<\"hello\")){#(_i=0;_i<4;_i++){_s='$';?((true&&true)){?((x<'#(i=0;i<10;i++)')){_6=(\"$K\"&&n);#(_i=0;_i<5;_i++){?((\"$K\"/1)){#(_i=0;_i<1;_i++){#(_i=0;_i<5;_i++){_s=x;#(_i=0;_i<3;_i++){_3=('world'&&\"$K\");_s=null};_s=n};_1=('!f(){}'%'#(i=0;i<10;i++)');_s=\"$K\"}}:{};?(('#(i=0;i<10;i++)'!=\"$K\")){_s=0}:{}};_1=(true==\"$K\")}:{}}:{};?(false){?(('world'>0)){^((1>'!f(){}'))}:{};#(_i=0;_i<2;_i++){^('world');?(true){_2=false;_s='^(return)';?((\"$K\"+\"a+b\")){_4='^(return)';?(\"a+b\"){_0=(1=='world')}:{};_s=\"a+b\"}:{}}:{};_0=(x/\"a+b\");_6=y}}:{};^((null<='#(i=0;i<10;i++)'))}}:{};_2=(null&&42);_7=(\"hello\"<='#(i=0;i<10;i++)')}:{};_0=\"hello\"}:{};?(null){?((b>=3.14)){^((null%true));_4=(a*false);_2=(null-'#(i=0;i<10;i++)')}:{}}:{}}:{};^((a>='world'))};?((42<'#(i=0;i<10;i++)')){_s=-1;?((x>-1)){?((0+-1)){#(_i=0;_i<2;_i++){^(('?=if #=for'/\"hello\"));^(('@LIN:L1c:0.2'%y))}}:{};_s='^(return)'}:{}}:{};_s='world'}:{}}:{};_s='#(i=0;i<10;i++)';_2=(\"$K\"!='$')}:{}}:{}}:{}};_s=\"a+b\";_1=42}:{};?(('$'-1)){_3=('^(return)'%true);^('?=if #=for');#(_i=0;_i<1;_i++){_1='?=if #=for';_s='?=if #=for';_9='!f(){}'}}:{}}\n!f2(_0:bool,_1:int|null){_2=('@LIN:L1c:0.2'||'#(i=0;i<10;i++)')}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world')){^((\"$K > 0\nrepairs: refine 'world')){^((\"$K:int{>0} | require 'world')){^((\"$K>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world')){^((\"$K > 0\nrepairs: refine 'world')){^((\"$K:int{>0} | require 'world')){^((\"$K>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

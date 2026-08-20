@@ -1,0 +1,21 @@
+{
+  "benchmark_id": "LIN_LANGUAGE_SURFACE_001",
+  "parse_success": true,
+  "nodes_count": 5,
+  "edges_count": 4,
+  "static_verification": true,
+  "hierarchical_hash": {
+    "node_hashes": {
+      "apply_disc": "a282a3c6690c145747e25be003e09a9f03e4f476f28321eac609551f94a90dc1",
+      "execute_pay": "83610bca4194eee0c94d11a9af073e32c00d14ef7d9f860c7e4ea1a7c8c4fda5",
+      "fetch_cart": "b79368089b147b4865d967fb252e4c0518c368dc9959c2ebf3cefdff9e053ada",
+      "send_receipt": "4bddb390ff4f7e0ebbdc3f07c413c239cc3cab5946d48efdcc712cbb67a60df3",
+      "validate": "3df1ad54b8cc629d7a982200800840788716885ccb7fd4fc0f2e2d92db53d341"
+    },
+    "edge_hash": "8d813db7099790f00011755fe470fba0b143c8896baed89142524eb3885277f7",
+    "workflow_hash": "e873b3b5ff87a68bfe466a474ce3ac5ef4ad55b0a0f0736be4bd779c87ee59eb"
+  },
+  "tokens_est": 194,
+  "emitted_ts_lines": 23,
+  "emitted_rust_lines": 22
+}

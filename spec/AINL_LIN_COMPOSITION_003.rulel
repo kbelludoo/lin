@@ -1,0 +1,21 @@
+@RULEL:AINL_LIN_COMPOSITION_003:1.1.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=AINL_LIN_COMPOSITION_003_GENERALIZATION
+  status=SUPPORTED_EMPIRICAL
+  domain="ai_agent_architecture_generalization"
+  date=2026-08-20
+  purpose="Measure localization, topological propagation and maintenance cost across 3 distinct graph topologies and varied scales (10, 30, 50, 100 nodes)"
+}
+
+.h{
+  id=H_COMPOSITION_003
+  claim="Across linear, branching, and shared-mesh topologies at scales N in {10, 30, 50, 100}, semantic mutations encapsulated in LIN nodes maintain constant mean invalidation of 1.00 node with zero over-invalidation, whereas pure AINL exhibits growing, topology-dependent propagation."
+  result=SUPPORTED_EMPIRICAL
+}
+
+.c{
+  topologies=["linear_deep", "highly_branching", "highly_shared_mesh"]
+  scales=[10, 30, 50, 100]
+  conditions=["C1_AINL_LIN", "C2_AINL_PURE"]
+}

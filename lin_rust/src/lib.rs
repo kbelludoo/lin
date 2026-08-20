@@ -235,20 +235,350 @@ pub fn type_check(program: &Program) -> Result<(), String> {
 }
 
 /// ============================================================================
-/// Semantic Hash
+/// Canonicalize + Content Hash — matches JS content_hash.mjs exactly
 /// ============================================================================
 
-pub fn compute_semantic_hash(program: &Program) -> String {
-    use std::collections::hash_map::DefaultHasher;
-    use std::hash::{Hash, Hasher};
+const RESERVED_WORDS: &[&str] = &[
+    "var", "let", "const", "return", "if", "else", "while", "for", "in", "of",
+    "null", "true", "false", "undefined", "void", "typeof",
+];
 
-    let mut hasher = DefaultHasher::new();
-    program.header.hash(&mut hasher);
-    for func in &program.functions {
-        func.name.hash(&mut hasher);
-        func.body.hash(&mut hasher);
+const IDENT_KEYWORDS: &[&str] = &[
+    "true", "false", "null", "undefined", "NaN", "Infinity",
+    "if", "else", "while", "for", "return", "throw", "switch", "case", "default",
+];
+
+fn is_ident_char(c: char) -> bool {
+    c.is_ascii_alphanumeric() || c == '_' || c == '$'
+}
+
+fn word_boundary_before(s: &str, pos: usize) -> bool {
+    pos == 0 || {
+        let b = s.as_bytes()[pos - 1];
+        !b.is_ascii_alphanumeric() && b != b'_' && b != b'$'
     }
-    format!("{:x}", hasher.finish())
+}
+
+fn word_boundary_after(s: &str, pos: usize) -> bool {
+    pos >= s.len() || {
+        let b = s.as_bytes()[pos];
+        !b.is_ascii_alphanumeric() && b != b'_' && b != b'$'
+    }
+}
+
+fn replace_word_all(s: &str, word: &str, replacement: &str) -> String {
+    let mut out = String::with_capacity(s.len());
+    let mut i = 0;
+    let wlen = word.len();
+    while i < s.len() {
+        if i + wlen <= s.len()
+            && &s[i..i + wlen] == word
+            && word_boundary_before(s, i)
+            && word_boundary_after(s, i + wlen)
+        {
+            out.push_str(replacement);
+            i += wlen;
+        } else {
+            out.push(s.as_bytes()[i] as char);
+            i += 1;
+        }
+    }
+    out
+}
+
+fn strip_comments(body: &str) -> String {
+    let bytes = body.as_bytes();
+    let len = bytes.len();
+    let mut out = Vec::with_capacity(len);
+    let mut i = 0;
+    let mut in_sq = false;
+    let mut in_dq = false;
+    while i < len {
+        let c = bytes[i] as char;
+        if in_sq {
+            if c == '\\' && i + 1 < len { out.push(bytes[i]); out.push(bytes[i+1]); i += 2; continue; }
+            if c == '\'' { in_sq = false; }
+            out.push(bytes[i]); i += 1; continue;
+        }
+        if in_dq {
+            if c == '\\' && i + 1 < len { out.push(bytes[i]); out.push(bytes[i+1]); i += 2; continue; }
+            if c == '"' { in_dq = false; }
+            out.push(bytes[i]); i += 1; continue;
+        }
+        if c == '\'' { in_sq = true; out.push(bytes[i]); i += 1; continue; }
+        if c == '"' { in_dq = true; out.push(bytes[i]); i += 1; continue; }
+        if i + 1 < len && bytes[i] == b'/' && bytes[i + 1] == b'/' {
+            while i < len && bytes[i] != b'\n' { i += 1; }
+            continue;
+        }
+        if i + 1 < len && bytes[i] == b'/' && bytes[i + 1] == b'*' {
+            i += 2;
+            while i + 1 < len && !(bytes[i] == b'*' && bytes[i + 1] == b'/') { i += 1; }
+            i += 2;
+            continue;
+        }
+        out.push(bytes[i]); i += 1;
+    }
+    String::from_utf8(out).unwrap_or_default()
+}
+
+fn collect_ids_flat(text: &str) -> Vec<String> {
+    let mut ids = Vec::new();
+    let chars: Vec<char> = text.chars().collect();
+    let len = chars.len();
+    let mut i = 0;
+    while i < len {
+        if chars[i] == '"' || chars[i] == '\'' {
+            let q = chars[i]; i += 1;
+            while i < len && chars[i] != q {
+                if chars[i] == '\\' && i + 1 < len { i += 2; } else { i += 1; }
+            }
+            if i < len { i += 1; } continue;
+        }
+        if i + 1 < len && chars[i] == '/' && chars[i + 1] == '/' {
+            while i < len && chars[i] != '\n' { i += 1; } continue;
+        }
+        if i + 1 < len && chars[i] == '/' && chars[i + 1] == '*' {
+            i += 2;
+            while i + 1 < len && !(chars[i] == '*' && chars[i + 1] == '/') { i += 1; }
+            i += 2; continue;
+        }
+        if chars[i].is_ascii_alphabetic() || chars[i] == '_' {
+            let start = i;
+            while i < len && is_ident_char(chars[i]) { i += 1; }
+            let word: String = chars[start..i].iter().collect();
+            if !IDENT_KEYWORDS.contains(&word.as_str()) {
+                if start == 0 || chars[start - 1] != '.' {
+                    ids.push(word);
+                }
+            }
+            continue;
+        }
+        i += 1;
+    }
+    ids
+}
+
+fn is_pure_rhs(expr: &str) -> bool {
+    let s = expr.trim();
+    if s.is_empty() { return false; }
+    let stripped = s.strip_prefix('-').unwrap_or(s);
+    if stripped.chars().all(|c| c.is_ascii_digit()) && !stripped.is_empty() { return true; }
+    if (s.starts_with('"') && s.ends_with('"')) || (s.starts_with('\'') && s.ends_with('\'')) { return true; }
+    if matches!(s, "true" | "false" | "null" | "undefined" | "NaN" | "Infinity") { return true; }
+    if !s.is_empty() && (s.starts_with(|c: char| c.is_ascii_alphabetic() || c == '_'))
+        && s.chars().all(|c| is_ident_char(c)) { return true; }
+    if s.contains('(') { return false; }
+    if s.contains("console.") || s.contains("throw") || s.contains("fetch(")
+        || s.contains("process.") || s.contains("require(") { return false; }
+    if s.contains("String(") || s.contains("Number(") || s.contains("Math.")
+        || s.contains("Array(") || s.contains("Object(") || s.contains("JSON.") { return false; }
+    if let Some(pos) = find_rhs_binary_op(s) {
+        let left = &s[..pos];
+        let right = &s[pos + 1..];
+        return is_pure_rhs(left) && is_pure_rhs(right);
+    }
+    false
+}
+
+fn find_rhs_binary_op(s: &str) -> Option<usize> {
+    let chars: Vec<char> = s.chars().collect();
+    let len = chars.len();
+    let mut depth = 0i32;
+    let mut in_q: Option<char> = None;
+    for i in (0..len).rev() {
+        let c = chars[i];
+        if let Some(q) = in_q {
+            if c == q { in_q = None; } continue;
+        }
+        if c == '"' || c == '\'' { in_q = Some(c); continue; }
+        if c == ')' || c == ']' || c == '}' { depth += 1; continue; }
+        if c == '(' || c == '[' || c == '{' { depth -= 1; continue; }
+        if depth == 0 && "+-*/%&|^<>".contains(c) {
+            if i > 0 && "+-*/%&|^<>".contains(chars[i - 1]) { continue; }
+            return Some(i);
+        }
+    }
+    None
+}
+
+fn find_dead_assignments(body: &str) -> Vec<String> {
+    let all_used: Vec<String> = collect_ids_flat(body);
+    let reserved_set: std::collections::HashSet<&str> = RESERVED_WORDS.iter().copied().collect();
+    let chars: Vec<char> = body.chars().collect();
+    let len = chars.len();
+    let mut dead = Vec::new();
+    let mut i = 0;
+    while i < len {
+        if chars[i] == '"' || chars[i] == '\'' {
+            let q = chars[i]; i += 1;
+            while i < len && chars[i] != q {
+                if chars[i] == '\\' && i + 1 < len { i += 2; } else { i += 1; }
+            }
+            if i < len { i += 1; } continue;
+        }
+        let can_start = i == 0 || matches!(chars[i - 1], ';' | '{' | '(' | '\n' | '\r');
+        if can_start && (chars[i].is_ascii_alphabetic() || chars[i] == '_') {
+            let start = i;
+            while i < len && is_ident_char(chars[i]) { i += 1; }
+            let id: String = chars[start..i].iter().collect();
+            while i < len && chars[i] == ' ' { i += 1; }
+            if i < len && chars[i] == '=' && (i + 1 >= len || chars[i + 1] != '=') {
+                i += 1;
+                while i < len && chars[i] == ' ' { i += 1; }
+                let expr_start = i;
+                while i < len && chars[i] != ';' && chars[i] != '\n' && chars[i] != '\r' { i += 1; }
+                let expr: String = chars[expr_start..i].iter().collect();
+                if !reserved_set.contains(id.as_str())
+                    && !id.starts_with('$')
+                    && is_pure_rhs(&expr)
+                {
+                    let id_count = all_used.iter().filter(|u| *u == &id).count();
+                    if id_count <= 1 {
+                        dead.push(id);
+                    }
+                }
+                continue;
+            }
+        }
+        i += 1;
+    }
+    dead
+}
+
+fn strip_dead_assigns(body: &str) -> String {
+    let dead = find_dead_assignments(body);
+    if dead.is_empty() { return body.to_string(); }
+    let mut result = body.to_string();
+    for id in &dead {
+        let pat = format!(r"(^|[;{{])\s*{}\s*=\s*[^;]*;?", regex::escape(id));
+        if let Ok(re) = regex::Regex::new(&pat) {
+            if let Some(m) = re.find(&result) {
+                let matched = m.as_str();
+                let sep_len = matched.chars().take_while(|&c| c == ';' || c == '{' || c == ' ').count();
+                let keep_end = m.start() + sep_len;
+                let skip_end = m.start() + matched.len();
+                let keep = &result[..keep_end];
+                let skip = &result[skip_end..];
+                result = format!("{}{}", keep, skip);
+            }
+        }
+    }
+    result.trim().to_string()
+}
+
+/// Canonicalize a function body for hashing, matching JS content_hash.mjs canonicalize() exactly.
+///
+/// Steps: strip_comments → strip_dead_assigns → normalize_ws → alpha_rename_params → alpha_rename_locals
+/// → normalize_strings → normalize_operators → strip_trailing_semicolons
+/// Returns "(paramCount:paramTypes)canonicalBody"
+pub fn canonicalize(_fn_name: &str, params_str: &str, body: &str) -> String {
+    let mut canon = body.trim().to_string();
+    canon = strip_comments(&canon);
+    canon = strip_dead_assigns(&canon);
+
+    let ws_re = regex::Regex::new(r"\s+").unwrap();
+    canon = ws_re.replace_all(&canon, " ").to_string();
+
+    let op_re = regex::Regex::new(r"\s*([=+\-*/%&|^<>(),;!?:{}\[\]])\s*").unwrap();
+    canon = op_re.replace_all(&canon, "$1").to_string();
+    canon = canon.trim().to_string();
+
+    let raw_params: Vec<String> = params_str.split(',')
+        .map(|p| p.trim().to_string())
+        .filter(|p| !p.is_empty())
+        .collect();
+    let param_types: Vec<String> = raw_params.iter()
+        .map(|p| {
+            if let Some(pos) = p.find(':') {
+                p[pos + 1..].trim().to_string()
+            } else {
+                String::new()
+            }
+        })
+        .collect();
+    let param_names: Vec<String> = raw_params.iter()
+        .map(|p| {
+            if let Some(pos) = p.find(':') {
+                p[..pos].trim().to_string()
+            } else {
+                p.clone()
+            }
+        })
+        .collect();
+    let param_types_str = param_types.join(",");
+
+    for (i, name) in param_names.iter().enumerate() {
+        if name.is_empty() { continue; }
+        let replacement = format!("${}", i);
+        canon = replace_word_all(&canon, name, &replacement);
+    }
+
+    let assign_re = regex::Regex::new(r"(?:^|[;{(])\s*([a-zA-Z_$][\w$]*)\s*=").unwrap();
+    let mut locals: Vec<String> = Vec::new();
+    let mut seen = std::collections::HashSet::new();
+    for cap in assign_re.captures_iter(&canon) {
+        if let Some(m) = cap.get(1) {
+            let id = m.as_str().to_string();
+            let eq_pos = m.end();
+            let next_is_eq = canon.as_bytes().get(eq_pos) == Some(&b'=');
+            if next_is_eq { continue; }
+            if !seen.contains(&id) && !id.starts_with('$') && !RESERVED_WORDS.contains(&id.as_str()) {
+                seen.insert(id.clone());
+                locals.push(id);
+            }
+        }
+    }
+    for (i, name) in locals.iter().enumerate() {
+        let replacement = format!("_l{}", i);
+        canon = replace_word_all(&canon, name, &replacement);
+    }
+
+    canon = canon.replace('\'', "\"");
+    canon = canon.replace("===", "==").replace("!==", "!=");
+
+    while canon.ends_with(';') { canon.pop(); }
+
+    format!("({}:{}){}", param_names.len(), param_types_str, canon)
+}
+
+/// Compute the content-addressed hash of a single LIN function.
+/// Returns a 16-char hex string (64-bit collision resistance), matching JS contentHash().
+pub fn content_hash(fn_name: &str, params: &str, body: &str) -> String {
+    use sha2::{Sha256, Digest};
+    let canonical = canonicalize(fn_name, params, body);
+    let mut hasher = Sha256::new();
+    hasher.update(canonical.as_bytes());
+    let result = hasher.finalize();
+    let hex: String = result.iter().map(|b| format!("{:02x}", b)).collect();
+    hex[..16].to_string()
+}
+
+/// Compute the semantic hash of a full program.
+/// Concatenates per-function content hashes with the module header.
+/// Matches JS linobj.mjs computeModuleSemanticHash() + content_hash.mjs semantics.
+pub fn compute_semantic_hash(program: &Program) -> String {
+    use sha2::{Sha256, Digest};
+    let mut input = String::new();
+    input.push_str(&program.header);
+    input.push('\n');
+    for func in &program.functions {
+        let params = func.params.join(",");
+        let h = content_hash(&func.name, &params, &func.body);
+        input.push_str(&h);
+        input.push('\n');
+    }
+    let mut hasher = Sha256::new();
+    hasher.update(input.as_bytes());
+    let result = hasher.finalize();
+    let hex: String = result.iter().map(|b| format!("{:02x}", b)).collect();
+    hex[..16].to_string()
+}
+
+/// Check if two functions are semantically equivalent (same content hash).
+pub fn semantic_equals(fn1_name: &str, fn1_params: &str, fn1_body: &str,
+                       fn2_name: &str, fn2_params: &str, fn2_body: &str) -> bool {
+    content_hash(fn1_name, fn1_params, fn1_body) == content_hash(fn2_name, fn2_params, fn2_body)
 }
 
 /// ============================================================================

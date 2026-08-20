@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787252567232.json",
+  "timestamp": "2026-08-20T19:02:47.232Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int|null){?(false){_8='#(i=0;i<10;i++)';_0=('?=if #=for'*-1);#(_i=0;_i<1;_i++){_6=('^(return)'*'world');_s=42}}:{};^(true);^((null*true));_s=b}\n!f1(_0:any,_1:num,_2:int|null){_6=(\"a+b\"-a);_7=-1;^((1/'^(return)'));^('^(return)')}\n!f2(){_s=y;^((42<=x));_3=('#(i=0;i<10;i++)'&&\"a+b\")}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)'));^( > 0\nrepairs: refine '^(return)'));^(:int{>0} | require '^(return)'));^(>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)'));^( > 0\nrepairs: refine '^(return)'));^(:int{>0} | require '^(return)'));^(>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

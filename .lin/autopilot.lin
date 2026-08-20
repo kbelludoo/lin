@@ -1,0 +1,40 @@
+@LIN:autopilot:1.0
+^schema_once ^lossy=true ^ops=acquire
+~G{?=if #=for ^=ret :else}
+
+!log(msg){_ts=get_timestamp();_line="["+_ts+"] "+msg;write_file(".lin/language_learning/autopilot.log",_line+"\n");^_line}
+
+!check_ollama(){_r=exec_cmd("curl -s http://localhost:11434/api/tags");^_r.includes("models")}
+
+!pull_model(model){_has=exec_cmd("curl -s http://localhost:11434/api/tags");?(_has.includes(model)){"ready";^true};exec_cmd("ollama pull "+model);^true}
+
+!run_one(lang,cycles){log(">>> "+lang);_out=exec_cmd("node scripts/run_acquisition_loop.mjs --language "+lang+" --cycles "+cycles);?(_out.includes("DONE")){^"ok"};^"fail"}
+
+!ask_new_langs(done,model){
+_p="Programming languages already known by LIN: c rust go zig java cs kotlin swift cpp haskell elixir lua julia. Already acquired: "+done+". Suggest 5 NEW languages NOT in either list. Return ONLY comma-separated lowercase ids, no explanation.";
+_r=http_post("http://localhost:11434/api/generate",model,_p);
+^_r}
+
+!has_word(list,word){^includes(list,word)}
+
+!process_one_round(queue,done,cycles,model){
+_langs=split(queue,",");
+_nd=done;
+_n=length(_langs);
+_i=0;
+#(_i=0;_i<_n;_i=_i+1){
+_l=_langs[_i];
+?(!includes(_nd,_l)){
+_res=run_one(_l,cycles);
+_nd=_nd+_l+",";
+log(_l+" => "+_res)
+}:{log("skip "+_l)}
+};
+^_nd}
+
+!init(model){
+?(!check_ollama()){^"no ollama"};
+pull_model(model);
+^"ready"}
+
+=ex{init,log,check_ollama,pull_model,run_one,ask_new_langs,has_word,process_one_round}

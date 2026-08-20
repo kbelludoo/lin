@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787212774446.json",
+  "timestamp": "2026-08-20T07:59:34.446Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool,_1:int|null) -> int{_4=(false<='^(return)');^((-1<=n));_0=(3.14>=null);^('@LIN:L1c:0.2')}\n!f1(_0:int,_1:str){?((y+'$')){?((\"hello\"--1)){#(_i=0;_i<5;_i++){?(1){?((-1&&0)){_0=(null*n);_1=(-1%'^(return)')}:{}}:{};_s='^(return)';#(_i=0;_i<2;_i++){?(('$'>=-1)){#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_s=b}}}:{};_0=(\"a+b\"!=b);#(_i=0;_i<3;_i++){_6='world';#(_i=0;_i<5;_i++){_0=(\"$K\"&&false);?(-1){#(_i=0;_i<5;_i++){^((\"hello\">0));#(_i=0;_i<3;_i++){_4=('world'||'@LIN:L1c:0.2');^((\"a+b\">=1))};_7=(-1<\"hello\")};^((a>='!f(){}'));#(_i=0;_i<2;_i++){#(_i=0;_i<4;_i++){?('#(i=0;i<10;i++)'){_s=\"a+b\"}:{};_s=1;_s=42};_2=(\"$K\"/null);?(('#(i=0;i<10;i++)'<n)){?((\"a+b\"%n)){?((3.14+'#(i=0;i<10;i++)')){?(n){?((n&&a)){^(3.14);^(('$'>=true));#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){?((a%'#(i=0;i<10;i++)')){_5=('world'||'#(i=0;i<10;i++)');?((3.14<=null)){_s=a;_3=(x!=0)}:{};_4=1;_7='^(return)'}:{};?(('^(return)'&&42)){^(('#(i=0;i<10;i++)'%42));#(_i=0;_i<2;_i++){_6=(false&&y);#(_i=0;_i<4;_i++){^(0)}}}:{};?('^(return)'){^((n<\"hello\"));?((\"hello\"-42)){?((\"a+b\"<'!f(){}')){_s=\"$K\";^(0);_5=a}:{}}:{};?((x>3.14)){?((true*b)){#(_i=0;_i<4;_i++){?(('@LIN:L1c:0.2'==null)){_0=('^(return)'==true);_s=a}:{};_9=(\"hello\"<='#(i=0;i<10;i++)');^((42-n))};?(null){_2=(42/'^(return)')}:{};_4=(3.14/y)}:{};_s=false;_s=x;#(_i=0;_i<5;_i++){_s=x;_s=b}}:{};_0=('$'||n)}:{};_9=\"hello\"}}}:{};?(('!f(){}'>false)){_s='?=if #=for';_7=('world'*'@LIN:L1c:0.2');^((n>='^(return)'))}:{}}:{};_s=false}:{};^(('world'%n));_2=a;?(\"$K\"){^(true);^((-1-false));^((a/'?=if #=for'));^(\"a+b\")}:{}}:{}}:{};_3=false};_9=y}:{};_s=1};_s='!f(){}'}}};_7=(3.14<='@LIN:L1c:0.2');_8=a}:{};_0='world';_s=b}:{}}\n!f2(){#(_i=0;_i<5;_i++){?(a){_3=(-1-'world')}:{};_s=a;_4=(n+false);_s='#(i=0;i<10;i++)'};#(_i=0;_i<3;_i++){_6=(x%42);_5=(n+1);_s=42};_7=(\"$K\"*\"hello\")}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: y > 0\nrepairs: refine y:int{>0} | require y>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: y > 0\nrepairs: refine y:int{>0} | require y>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

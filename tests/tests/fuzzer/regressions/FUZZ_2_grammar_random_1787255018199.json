@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787255018199.json",
+  "timestamp": "2026-08-20T19:43:38.199Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:int|null,_1:num,_2:bool) -> str{_9=a;_s=b;_8=(null--1)}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_kpgG13/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _9,_s,_8;_9=a;_s=b;_8=(null--1);}\n                                                                    ^^^^\n\nSyntaxError: Invalid left-hand side expression in pos",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_kpgG13/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _9,_s,_8;_9=a;_s=b;_8=(null--1);}\n                                                                    ^^^^\n\nSyntaxError: Invalid left-hand side expression in pos",
+    "testable": false
+  },
+  "fixed": false
+}

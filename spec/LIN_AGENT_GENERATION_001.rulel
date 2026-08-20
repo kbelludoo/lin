@@ -1,0 +1,45 @@
+@RULEL:LIN_AGENT_GENERATION_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_AGENT_GENERATION_001
+  status=ACTIVE_BENCHMARK_SPEC
+  domain="agent_surface_language_generation"
+  date=2026-08-20
+  purpose="Evaluate direct LLM generation across 3 surface languages (Python, AINL, LIN Surface) measuring tokens generated, syntax errors, semantic errors, repair rounds, first-pass success, and invariant preservation"
+  parent=LIN_LANGUAGE_SURFACE_001
+}
+
+.h{
+  id=H_AGENT_GEN_001
+  claim="Direct LLM generation in LIN Surface achieves >55% token reduction vs Python and >30% vs AINL, with higher first-pass validity, zero semantic invariant violations, and minimal repair rounds."
+}
+
+.c{
+  tasks=[
+    "T1_api_monitor_alert",
+    "T2_tiered_pricing_checkout",
+    "T3_fraud_risk_evaluation",
+    "T4_retry_gateway_charge",
+    "T5_accounting_journal_audit"
+  ]
+  surfaces=["Python", "AINL", "LIN_Surface"]
+  models=["Claude_3_5", "GPT_4o", "DeepSeek_V3", "Llama_3_3"]
+}
+
+.mtr{
+  primary=[
+    "tokens_generated",
+    "first_pass_success_rate",
+    "syntax_errors_count",
+    "semantic_errors_count",
+    "repair_rounds_to_valid",
+    "time_to_valid_ir_ms",
+    "invariant_preservation_rate"
+  ]
+}
+
+.r{
+  R1=identical_intent_prompts_across_all_three_surfaces
+  R2=evaluation_measures_generation_effort_from_blank_slate_and_under_mutation
+  R3=blind_parser_and_typechecker_oracle_validates_compliance
+}

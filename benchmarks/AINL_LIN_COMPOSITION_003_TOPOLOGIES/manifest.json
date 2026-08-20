@@ -1,0 +1,59 @@
+{
+  "benchmark": "AINL_LIN_COMPOSITION_003_TOPOLOGIES",
+  "version": "0.4.0",
+  "title": "Topological Generalization Benchmark: Linear Deep vs Wide Fan-out vs High-Reuse Mesh",
+  "goal": "Empirically test whether the local maintenance advantage of AINL+LIN generalizes across 3 distinct graph topologies (Linear Deep, Wide Fan-out, and High-Reuse Diamond Mesh) under 60 mutations.",
+  "freeze_before_execution": true,
+  "topologies": [
+    {
+      "id": "T1_LINEAR_DEEP",
+      "name": "Linear Deep Pipeline",
+      "nodes": 24,
+      "edges": 23,
+      "depth": 24,
+      "branching_factor": 1,
+      "description": "Strictly sequential processing chain with extreme transitive depth"
+    },
+    {
+      "id": "T2_WIDE_FANOUT",
+      "name": "Wide Fan-Out Tree",
+      "nodes": 31,
+      "edges": 30,
+      "depth": 4,
+      "branching_factor": 5,
+      "description": "Shallow hierarchy with massive parallel branch fan-out"
+    },
+    {
+      "id": "T3_HIGH_REUSE_MESH",
+      "name": "High-Reuse Diamond Mesh",
+      "nodes": 25,
+      "edges": 52,
+      "depth": 6,
+      "branching_factor": 2.2,
+      "description": "Dense diamond DAG where intermediate nodes are shared by multiple downstream paths"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "C1_AINL_PLUS_LIN",
+      "label": "Hybrid Composite (AINL + LIN)"
+    },
+    {
+      "id": "C2_AINL_STANDALONE",
+      "label": "Standalone AINL Workflow"
+    }
+  ],
+  "mutations_per_topology": 60,
+  "repetitions": 30,
+  "total_trials": 180,
+  "metrics": [
+    "avg_nodes_invalidated_per_mut",
+    "cumulative_maintenance_ms",
+    "avg_tokens_changed_per_mut",
+    "over_invalidation_rate",
+    "under_invalidation_rate",
+    "semantic_to_operational_ratio",
+    "invariant_preservation_rate",
+    "behavior_equivalence_rate"
+  ]
+}

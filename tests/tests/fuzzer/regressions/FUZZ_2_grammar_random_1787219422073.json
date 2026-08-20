@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787219422073.json",
+  "timestamp": "2026-08-20T09:50:22.073Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){^(('@LIN:L1c:0.2'/'!f(){}'))}\n!f1(_0:any,_1:int|null) -> str|num{_1=('@LIN:L1c:0.2'--1);^(3.14);_7=x;#(_i=0;_i<5;_i++){?((-1||a)){?((y||3.14)){_s='world';^((0>=42));_s=42}:{};_s=\"a+b\";_7=n}:{};?((x<3.14)){_8=(3.14>\"hello\");_2=('^(return)'/false);^(('world'<-1));^((\"hello\"+\"$K\"))}:{}}}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_64DPwF/emit.cjs:3\n/* effect:Read */function f1(_0, _1){var _7,_s,_8,_2,_i;_1=('@LIN:L1c:0.2'--1);return (3.14);_7=x;for(_i=0;_i<5;_i++){if((-1||a)){if((y||3.14)){_s='world';return ((0>=42));_s=42;}else{};_s=\"a+b\";_7=n;}else{",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_64DPwF/emit.cjs:3\n/* effect:Read */function f1(_0, _1){var _7,_s,_8,_2,_i;_1=('@LIN:L1c:0.2'--1);return (3.14);_7=x;for(_i=0;_i<5;_i++){if((-1||a)){if((y||3.14)){_s='world';return ((0>=42));_s=42;}else{};_s=\"a+b\";_7=n;}else{",
+    "testable": false
+  },
+  "fixed": false
+}

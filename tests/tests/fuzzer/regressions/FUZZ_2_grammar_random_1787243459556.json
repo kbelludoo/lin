@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787243459556.json",
+  "timestamp": "2026-08-20T16:30:59.556Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:str|num,_1:any,_2:any) -> num{^(('$'||0))}\n!f1(_0:int|null,_1:num){^(('@LIN:L1c:0.2'%'!f(){}'))}\n!f2(){?((42*'@LIN:L1c:0.2')){_4=('$'/'@LIN:L1c:0.2')}:{};_2=(n+\"hello\");?(('$'--1)){_4=\"$K\";_s=a;_s='!f(){}';_4=('@LIN:L1c:0.2'<42)}:{}}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_Bo2PjH/emit.cjs:5\n/* effect:Read */function f2(){var _4,_2,_s;if((42*'@LIN:L1c:0.2')){_4=('$'/'@LIN:L1c:0.2');}else{};_2=(n+\"hello\");if(('$'--1)){_4=\"$K\";_s=a;_s='!f(){}';_4=('@LIN:L1c:0.2'<42);}else{}}\n                     ",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_Bo2PjH/emit.cjs:5\n/* effect:Read */function f2(){var _4,_2,_s;if((42*'@LIN:L1c:0.2')){_4=('$'/'@LIN:L1c:0.2');}else{};_2=(n+\"hello\");if(('$'--1)){_4=\"$K\";_s=a;_s='!f(){}';_4=('@LIN:L1c:0.2'<42);}else{}}\n                     ",
+    "testable": false
+  },
+  "fixed": false
+}

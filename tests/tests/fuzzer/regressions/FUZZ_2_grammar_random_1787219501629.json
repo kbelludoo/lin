@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787219501629.json",
+  "timestamp": "2026-08-20T09:51:41.629Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:num){_0=(n%false);?((n>'!f(){}')){#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){?((false||'^(return)')){^((y||x));_7=(true>='!f(){}');_s=0;?((false+42)){_s='world'}:{}}:{};_0=\"a+b\";_9=(\"$K\"!=1)};#(_i=0;_i<2;_i++){?(('world'*true)){^('?=if #=for');_4=(42>b);^(42);?(('$'/'world')){^('#(i=0;i<10;i++)');_s='#(i=0;i<10;i++)';_s='#(i=0;i<10;i++)'}:{}}:{};_s=a;?('@LIN:L1c:0.2'){^((y*b));^((x%0));^((x<0));?(0){_9=('$'>=n);#(_i=0;_i<1;_i++){_s='!f(){}';?(-1){?(b){^(y);?((-1!=1)){?(('^(return)'-'^(return)')){_7=(true/'?=if #=for');?('!f(){}'){?(('@LIN:L1c:0.2'-y)){_s=3.14;_3=('world'<0);^((3.14<=n));^(('@LIN:L1c:0.2'/n))}:{}}:{};?(1){#(_i=0;_i<1;_i++){_s=3.14};_s=n;^(0)}:{};?(('#(i=0;i<10;i++)'--1)){#(_i=0;_i<1;_i++){#(_i=0;_i<5;_i++){^((42>'?=if #=for'));^((a%\"a+b\"));_s=true};_s='#(i=0;i<10;i++)'};_3=(b&&\"$K\")}:{}}:{};_s=n}:{}}:{};_8=3.14;^(3.14)}:{}};_5=('#(i=0;i<10;i++)'+y)}:{}}:{}};#(_i=0;_i<3;_i++){^((42*\"hello\"));_s='$';^((x*y))}};_8=(\"a+b\">'!f(){}');#(_i=0;_i<4;_i++){_s=n;?(('@LIN:L1c:0.2'<=42)){_6=-1}:{};_s=\"a+b\";^(('?=if #=for'!=\"hello\"))}}:{};^(1);^(('world'*'^(return)'))}\n!f1(){_s='$';?(y){_s='@LIN:L1c:0.2'}:{}}\n!f2(_0:str) -> str{^(('@LIN:L1c:0.2'>null));_4=(\"hello\"*1)}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_HAk1g2/emit.cjs:2\n/* effect:Write */function f0(_0){var _7,_s,_9,_4,_3,_8,_5,_6,_i,i;_0=(n%false);if((n>'!f(){}')){for(_i=0;_i<3;_i++){for(_i=0;_i<1;_i++){if((false||'^(return)')){return ((y||x));_7=(true>='!f(){}');_s=0;if(",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_HAk1g2/emit.cjs:2\n/* effect:Write */function f0(_0){var _7,_s,_9,_4,_3,_8,_5,_6,_i,i;_0=(n%false);if((n>'!f(){}')){for(_i=0;_i<3;_i++){for(_i=0;_i<1;_i++){if((false||'^(return)')){return ((y||x));_7=(true>='!f(){}');_s=0;if(",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,70 @@
+{
+  "benchmark": "LIN_NATIVE_WORKFLOW_002_LANGUAGE_SURFACE_FREEZE",
+  "version": "1.0.0",
+  "title": "LIN Native Workflow Public Language Surface & Grammar Specification Freeze",
+  "goal": "Formally freeze the public surface syntax of LIN Native Workflow, verifying parser roundtripping, zero-shot LLM ergonomics, strict fail-closed contract enforcement, and deterministic lowering to multi-target backends (Rust, Zig, C, TS).",
+  "freeze_before_execution": true,
+  "syntax_primitives": [
+    {
+      "keyword": "~pipeline",
+      "role": "Top-level orchestrator block definition with typed inputs, outputs, and effect boundaries"
+    },
+    {
+      "keyword": "!node",
+      "role": "Atomic functional execution unit with explicit typing, purity/effect annotations, and precondition contracts"
+    },
+    {
+      "keyword": ">step",
+      "role": "Sequential workflow execution transition with dataflow port bindings"
+    },
+    {
+      "keyword": "*parallel",
+      "role": "Concurrent branch execution with barrier synchronization / join semantics"
+    },
+    {
+      "keyword": "?branch",
+      "role": "Conditional control-flow routing based on node contract outcome"
+    },
+    {
+      "keyword": "@retry",
+      "role": "Deterministic fault-tolerance policy with bounded backoff and fallback routes"
+    },
+    {
+      "keyword": "=port",
+      "role": "Typed communication channel enforcing semantic schema compatibility across nodes"
+    },
+    {
+      "keyword": "^emit",
+      "role": "Final validated output emission sealed with semantic hash digest"
+    }
+  ],
+  "evaluated_dimensions": [
+    {
+      "id": "DIM_01_SYNTAX_ROUNDTRIP",
+      "name": "Grammar AST Parse & Print Roundtrip Fidelity"
+    },
+    {
+      "id": "DIM_02_LLM_ZERO_SHOT",
+      "name": "LLM Zero-Shot Generation & First-Pass Syntax Validity"
+    },
+    {
+      "id": "DIM_03_FAIL_CLOSED",
+      "name": "Strict Fail-Closed Compiler Enforcement on Ill-Typed DAGs"
+    },
+    {
+      "id": "DIM_04_MULTI_TARGET",
+      "name": "Deterministic Multi-Target Lowering (Rust, Zig, C, TS)"
+    }
+  ],
+  "repetitions": 25,
+  "total_trials": 100,
+  "metrics": [
+    "ast_roundtrip_fidelity_rate",
+    "llm_first_pass_syntax_rate",
+    "type_and_effect_soundness_rate",
+    "fail_closed_rejection_rate",
+    "multi_target_lowering_parity_rate",
+    "mean_surface_tokens_per_dag",
+    "compiler_parse_latency_us"
+  ]
+}

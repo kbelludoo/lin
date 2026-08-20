@@ -1,0 +1,166 @@
+{
+  "summaryByModel": {
+    "M1_DEEPSEEK_V3": {
+      "C0_PYTHON_BASELINE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 14209,
+        "avg_latency_ms": 1273.7,
+        "avg_p70_recon_tokens": 918,
+        "violations_total": 40
+      },
+      "C1_LIN_STANDALONE": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 6752,
+        "avg_latency_ms": 95.7,
+        "avg_p70_recon_tokens": 250,
+        "violations_total": 0
+      },
+      "C2_AINL_STANDALONE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 9468,
+        "avg_latency_ms": 281.3,
+        "avg_p70_recon_tokens": 380,
+        "violations_total": 40
+      },
+      "C3_COMPOSITE_STACK": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 6848,
+        "avg_latency_ms": 82.8,
+        "avg_p70_recon_tokens": 266,
+        "violations_total": 0
+      }
+    },
+    "M2_CLAUDE_35_SONNET": {
+      "C0_PYTHON_BASELINE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 14794,
+        "avg_latency_ms": 1274.4,
+        "avg_p70_recon_tokens": 955,
+        "violations_total": 40
+      },
+      "C1_LIN_STANDALONE": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 7029,
+        "avg_latency_ms": 95.7,
+        "avg_p70_recon_tokens": 261,
+        "violations_total": 0
+      },
+      "C2_AINL_STANDALONE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 9861,
+        "avg_latency_ms": 282.1,
+        "avg_p70_recon_tokens": 395,
+        "violations_total": 40
+      },
+      "C3_COMPOSITE_STACK": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 7122,
+        "avg_latency_ms": 82.7,
+        "avg_p70_recon_tokens": 274,
+        "violations_total": 0
+      }
+    },
+    "M3_GPT_4O": {
+      "C0_PYTHON_BASELINE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 14500,
+        "avg_latency_ms": 1273.1,
+        "avg_p70_recon_tokens": 935,
+        "violations_total": 40
+      },
+      "C1_LIN_STANDALONE": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 6897,
+        "avg_latency_ms": 95.5,
+        "avg_p70_recon_tokens": 255,
+        "violations_total": 0
+      },
+      "C2_AINL_STANDALONE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 9661,
+        "avg_latency_ms": 281.3,
+        "avg_p70_recon_tokens": 386,
+        "violations_total": 40
+      },
+      "C3_COMPOSITE_STACK": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 6991,
+        "avg_latency_ms": 82.1,
+        "avg_p70_recon_tokens": 270,
+        "violations_total": 0
+      }
+    },
+    "M4_GEMINI_15_PRO": {
+      "C0_PYTHON_BASELINE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 15077,
+        "avg_latency_ms": 1273.6,
+        "avg_p70_recon_tokens": 974,
+        "violations_total": 40
+      },
+      "C1_LIN_STANDALONE": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 7165,
+        "avg_latency_ms": 95.6,
+        "avg_p70_recon_tokens": 265,
+        "violations_total": 0
+      },
+      "C2_AINL_STANDALONE": {
+        "completion_rate": "0/20 (0.0%)",
+        "avg_tokens": 10036,
+        "avg_latency_ms": 281.2,
+        "avg_p70_recon_tokens": 404,
+        "violations_total": 40
+      },
+      "C3_COMPOSITE_STACK": {
+        "completion_rate": "20/20 (100.0%)",
+        "avg_tokens": 7269,
+        "avg_latency_ms": 82.5,
+        "avg_p70_recon_tokens": 282,
+        "violations_total": 0
+      }
+    }
+  },
+  "crossModelOverview": {
+    "C0_PYTHON_BASELINE": {
+      "label": "C0_PYTHON_BASELINE",
+      "cross_model_completion": "0/80 (0.0%)",
+      "mean_tokens_all_models": 14645,
+      "token_variance_cv": "2.21%",
+      "mean_p70_recon_tokens": 945,
+      "mean_latency_ms": 1273.7,
+      "violations_total": 160,
+      "unsafe_accepts_total": 160
+    },
+    "C1_LIN_STANDALONE": {
+      "label": "C1_LIN_STANDALONE",
+      "cross_model_completion": "80/80 (100.0%)",
+      "mean_tokens_all_models": 6961,
+      "token_variance_cv": "2.20%",
+      "mean_p70_recon_tokens": 258,
+      "mean_latency_ms": 95.6,
+      "violations_total": 0,
+      "unsafe_accepts_total": 0
+    },
+    "C2_AINL_STANDALONE": {
+      "label": "C2_AINL_STANDALONE",
+      "cross_model_completion": "0/80 (0.0%)",
+      "mean_tokens_all_models": 9757,
+      "token_variance_cv": "2.18%",
+      "mean_p70_recon_tokens": 391,
+      "mean_latency_ms": 281.5,
+      "violations_total": 160,
+      "unsafe_accepts_total": 160
+    },
+    "C3_COMPOSITE_STACK": {
+      "label": "C3_COMPOSITE_STACK",
+      "cross_model_completion": "80/80 (100.0%)",
+      "mean_tokens_all_models": 7057,
+      "token_variance_cv": "2.21%",
+      "mean_p70_recon_tokens": 273,
+      "mean_latency_ms": 82.5,
+      "violations_total": 0,
+      "unsafe_accepts_total": 0
+    }
+  }
+}

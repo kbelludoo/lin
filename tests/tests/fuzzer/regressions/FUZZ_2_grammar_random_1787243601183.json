@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787243601183.json",
+  "timestamp": "2026-08-20T16:33:21.183Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){_s=\"$K\";#(_i=0;_i<4;_i++){?((true-'?=if #=for')){?((-1&&'@LIN:L1c:0.2')){^((n<=y));^((\"a+b\"--1));_s=3.14;_8=(null*'!f(){}')}:{};_7=(\"a+b\"*a);_s=null;?((y&&'@LIN:L1c:0.2')){_s=0;?((false<'?=if #=for')){_5=('world'/3.14);#(_i=0;_i<3;_i++){_s=3.14;?(42){_0=('?=if #=for'*-1);_7=(0%\"a+b\");?((3.14!=0)){#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_s=a;_7=(42+\"a+b\");_0=(\"$K\"==n)};_9=('$'%1)}}:{};_3=('!f(){}'||true)}:{};?((b&&b)){_7=n;^((3.14*y));^((42>=-1));_0=(\"a+b\"!='@LIN:L1c:0.2')}:{}};_5=(0>n);_s='^(return)'}:{};_s='!f(){}'}:{}}:{};_3=n;?((42*1)){_s=true}:{}}}\n!f1(){_5='^(return)'}\n!f2(_0:num,_1:any,_2:any){_s='!f(){}'}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_ZKopMm/emit.cjs:2\n/* effect:Write */function f0(){var _s,_8,_7,_5,_0,_9,_3,_i;_s=\"$K\";for(_i=0;_i<4;_i++){if((true-'?=if #=for')){if((-1&&'@LIN:L1c:0.2')){return ((n<=y));return ((\"a+b\"--1));_s=3.14;_8=(null*'!f(){}');}else{",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_ZKopMm/emit.cjs:2\n/* effect:Write */function f0(){var _s,_8,_7,_5,_0,_9,_3,_i;_s=\"$K\";for(_i=0;_i<4;_i++){if((true-'?=if #=for')){if((-1&&'@LIN:L1c:0.2')){return ((n<=y));return ((\"a+b\"--1));_s=3.14;_8=(null*'!f(){}');}else{",
+    "testable": false
+  },
+  "fixed": false
+}

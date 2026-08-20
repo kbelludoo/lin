@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787253772175.json",
+  "timestamp": "2026-08-20T19:22:52.175Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:bool) -> str{^('^(return)');?((1=='?=if #=for')){_5=null;_1=(x*'^(return)');_s=0;?(('#(i=0;i<10;i++)'+-1)){_7=(false-3.14);?('?=if #=for'){_7=('^(return)'<b);?((a<='?=if #=for')){_s=-1;#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_s='$';_s=x};_2=(a<=1);^((false<=3.14))};_4=(\"hello\">'@LIN:L1c:0.2')}:{};_0=(\"a+b\"/42);_s='!f(){}'}:{}}:{}}:{};#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){_5=(-1!=a);?((true!='^(return)')){_9=(b%3.14);_s='#(i=0;i<10;i++)';?(('#(i=0;i<10;i++)'||true)){_2=(n<=y);#(_i=0;_i<5;_i++){_s=null;?((true-x)){?((3.14&&42)){?((42!='!f(){}')){#(_i=0;_i<4;_i++){_s=b;_s='@LIN:L1c:0.2';#(_i=0;_i<4;_i++){_7=('#(i=0;i<10;i++)'/3.14)}};?(('@LIN:L1c:0.2'+-1)){_3=(42*'#(i=0;i<10;i++)')}:{};_s=x;?((-1==0)){_8=(y>true)}:{}}:{};_4=('#(i=0;i<10;i++)'>'^(return)');^(false);_7=\"hello\"}:{}}:{};?(('@LIN:L1c:0.2'-'$')){_s=true;?((42+0)){_6=('^(return)'||'^(return)');^((false<'world'));?((x!=1)){^(('@LIN:L1c:0.2'<=1));_s=1;#(_i=0;_i<2;_i++){_0=(false/'$')};?(('^(return)'*42)){^(('$'%0))}:{}}:{}}:{};^(('world'<='$'))}:{};?((\"$K\"=='^(return)')){_2=1;_2=('^(return)'=='^(return)')}:{}};#(_i=0;_i<5;_i++){?((1*null)){_s='^(return)';?((3.14<=b)){_8=\"a+b\";_3=('@LIN:L1c:0.2'||false)}:{};?('$'){_8=(3.14/'!f(){}');?((b<0)){_8='!f(){}';_s=\"hello\";?(('@LIN:L1c:0.2'>=\"$K\")){?((y||null)){_3=(a>=\"$K\")}:{}}:{}}:{}}:{}}:{};_4=(null<='world');?(b){_1=(\"$K\"%1)}:{};_8=(y%3.14)}}:{}}:{};_s='^(return)'};^(('#(i=0;i<10;i++)'<='!f(){}'));#(_i=0;_i<1;_i++){?((x>x)){_1=(true<x)}:{}}};#(_i=0;_i<3;_i++){_s=b;#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_s='#(i=0;i<10;i++)';^((1+'?=if #=for'));^((a%false));_s='?=if #=for'}};_5='world'}}\n!f1(_0:str){_5=('$'>='$')}\n!f2(_0:num,_1:str|num,_2:int){#(_i=0;_i<4;_i++){_1=(42>=\"hello\");_5=('@LIN:L1c:0.2'%\"$K\");_s='?=if #=for';_0=('@LIN:L1c:0.2'||42)};_s=true}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')};?(('^(retu > 0\nrepairs: refine '$')};?(('^(retu:int{>0} | require '$')};?(('^(retu>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')};?(('^(retu > 0\nrepairs: refine '$')};?(('^(retu:int{>0} | require '$')};?(('^(retu>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

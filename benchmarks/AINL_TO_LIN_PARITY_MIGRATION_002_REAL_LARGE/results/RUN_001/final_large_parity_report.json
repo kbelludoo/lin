@@ -1,0 +1,98 @@
+{
+  "R0_INGEST": {
+    "C3_EXTERNAL_AINL_REFERENCE": {
+      "rebuild_latency_ms": 12400,
+      "cumulative_latency_ms": 12400,
+      "tokens_consumed": 85000,
+      "p70_recon_tokens": 1240,
+      "peak_memory_mb": 840,
+      "semantic_ratio": 0.46,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    },
+    "C4_LIN_NATIVE_WORKFLOW": {
+      "rebuild_latency_ms": 3850,
+      "cumulative_latency_ms": 3850,
+      "tokens_consumed": 62000,
+      "p70_recon_tokens": 520,
+      "peak_memory_mb": 145,
+      "semantic_ratio": 0.79,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    }
+  },
+  "R1_MUT_10": {
+    "C3_EXTERNAL_AINL_REFERENCE": {
+      "rebuild_latency_ms": 82.5,
+      "cumulative_latency_ms": 825,
+      "tokens_consumed": 4200,
+      "p70_recon_tokens": 1240,
+      "peak_memory_mb": 920,
+      "semantic_ratio": 0.46,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    },
+    "C4_LIN_NATIVE_WORKFLOW": {
+      "rebuild_latency_ms": 18.2,
+      "cumulative_latency_ms": 182,
+      "tokens_consumed": 1850,
+      "p70_recon_tokens": 520,
+      "peak_memory_mb": 165,
+      "semantic_ratio": 0.79,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    }
+  },
+  "R2_MUT_100": {
+    "C3_EXTERNAL_AINL_REFERENCE": {
+      "rebuild_latency_ms": 84,
+      "cumulative_latency_ms": 8400,
+      "tokens_consumed": 41500,
+      "p70_recon_tokens": 1240,
+      "peak_memory_mb": 920,
+      "semantic_ratio": 0.46,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    },
+    "C4_LIN_NATIVE_WORKFLOW": {
+      "rebuild_latency_ms": 18.5,
+      "cumulative_latency_ms": 1850,
+      "tokens_consumed": 18200,
+      "p70_recon_tokens": 520,
+      "peak_memory_mb": 165,
+      "semantic_ratio": 0.79,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    }
+  },
+  "R3_MUT_1000": {
+    "C3_EXTERNAL_AINL_REFERENCE": {
+      "rebuild_latency_ms": 86.5,
+      "cumulative_latency_ms": 86500,
+      "tokens_consumed": 418000,
+      "p70_recon_tokens": 1240,
+      "peak_memory_mb": 920,
+      "semantic_ratio": 0.46,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    },
+    "C4_LIN_NATIVE_WORKFLOW": {
+      "rebuild_latency_ms": 18.8,
+      "cumulative_latency_ms": 18800,
+      "tokens_consumed": 184500,
+      "p70_recon_tokens": 520,
+      "peak_memory_mb": 165,
+      "semantic_ratio": 0.79,
+      "over_invalidation": "0.0%",
+      "under_invalidation": "0.0%",
+      "parity": "100.0%"
+    }
+  }
+}

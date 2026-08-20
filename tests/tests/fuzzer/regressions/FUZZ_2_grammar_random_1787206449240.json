@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787206449240.json",
+  "timestamp": "2026-08-20T06:14:09.240Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool){?(y){_0=('#(i=0;i<10;i++)'/y);_s=3.14;_7=('!f(){}'&&\"$K\");_1=(x<null)}:{};_1=(false<x);?(\"$K\"){?(\"$K\"){_s=null;^(y);_s='!f(){}';_7=(x>='$')}:{};^((-1/\"hello\"));?(('?=if #=for'&&a)){#(_i=0;_i<5;_i++){^((false>=1))};?((0&&3.14)){_3=n;?((-1+42)){#(_i=0;_i<1;_i++){?('world'){_s=3.14;_s='#(i=0;i<10;i++)';_6='#(i=0;i<10;i++)'}:{};_s=n;#(_i=0;_i<4;_i++){_0='^(return)'}};?((3.14/\"$K\")){_s=-1;?((\"a+b\"==42)){#(_i=0;_i<3;_i++){_s=42;_s='?=if #=for'};^('@LIN:L1c:0.2')}:{};^('world');_s=-1}:{};_s=b}:{};_s=\"$K\"}:{};_0=(-1<-1)}:{};_0=(x>\"hello\")}:{}}\n!f1(_0:num){?((-1==42)){_5=(-1+\"hello\");^(('$'/-1));_9=\"hello\";#(_i=0;_i<4;_i++){#(_i=0;_i<3;_i++){_4=('#(i=0;i<10;i++)'>='#(i=0;i<10;i++)');?((\"a+b\"<=true)){_s='!f(){}';_7=(x>'#(i=0;i<10;i++)');^((y!=3.14))}:{};?((3.14||b)){?((\"hello\"==null)){#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){#(_i=0;_i<4;_i++){_1=(\"hello\"+null)};#(_i=0;_i<3;_i++){_s=\"a+b\";_3=(1=='^(return)')};_2=('@LIN:L1c:0.2'||\"a+b\")};_s=0}}:{}}:{}};_s=a}}:{};_6=('$'+'#(i=0;i<10;i++)')}\n!f2(_0:num,_1:int|null,_2:bool){?(('world'=='world')){_0=('$'&&\"a+b\");#(_i=0;_i<4;_i++){?((n>'#(i=0;i<10;i++)')){_9=(b&&x);^(b);#(_i=0;_i<4;_i++){_s=0;#(_i=0;_i<4;_i++){_3=(x+n);_0=('#(i=0;i<10;i++)'&&null)};_0=(x*'#(i=0;i<10;i++)');?('?=if #=for'){_6=('@LIN:L1c:0.2'<=null);^((true||\"a+b\"))}:{}}}:{};_s=n;_s=n;_s=1}}:{};?(('!f(){}'*false)){_9=\"hello\"}:{};_7=('world'||'^(return)');^((false>'?=if #=for'))}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")){_s=-1;?(( > 0\nrepairs: refine \"$K\")){_s=-1;?((:int{>0} | require \"$K\")){_s=-1;?((>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")){_s=-1;?(( > 0\nrepairs: refine \"$K\")){_s=-1;?((:int{>0} | require \"$K\")){_s=-1;?((>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

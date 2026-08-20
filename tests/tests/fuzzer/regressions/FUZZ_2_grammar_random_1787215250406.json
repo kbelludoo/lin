@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787215250406.json",
+  "timestamp": "2026-08-20T08:40:50.406Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num) -> str{_8=('^(return)'<x);#(_i=0;_i<4;_i++){_5=(\"$K\">=0);_s=\"hello\";?(('!f(){}'&&'!f(){}')){?((false+n)){#(_i=0;_i<2;_i++){?(('^(return)'<n)){_7=(42||'@LIN:L1c:0.2')}:{};_1=('world'-n)};_1=(-1+null)}:{}}:{};#(_i=0;_i<1;_i++){^(('^(return)'==y));_3=(x+'#(i=0;i<10;i++)');_9=42;#(_i=0;_i<5;_i++){_8=(42>=n);?(42){_6=\"hello\";?('!f(){}'){_4=('#(i=0;i<10;i++)'/'$');_s=-1;?((null/42)){^(('!f(){}'-y));?('?=if #=for'){?(('!f(){}'&&1)){?('!f(){}'){_s='@LIN:L1c:0.2'}:{};#(_i=0;_i<3;_i++){_9=null};_s=a;?((a>false)){#(_i=0;_i<2;_i++){_5='$';^((n==42))};_0=('?=if #=for'||1)}:{}}:{};_5=(b-true);?((\"hello\"<='#(i=0;i<10;i++)')){^((0!=1));#(_i=0;_i<3;_i++){_s=42;_s=y;_4='#(i=0;i<10;i++)'};?((\"$K\"||x)){#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){?((42*3.14)){_8=x;?((null||n)){#(_i=0;_i<5;_i++){_s='!f(){}';_7=('^(return)'<42)};^(x);_9=(false<=0)}:{};_s=b;_4=(\"a+b\"<=b)}:{};_7=('world'%a);_8='#(i=0;i<10;i++)'};^('!f(){}')};_6=(b--1);_4=('#(i=0;i<10;i++)'>\"hello\")}:{}}:{}}:{}}:{};?(('@LIN:L1c:0.2'*true)){_4='^(return)'}:{}}:{};_9=('!f(){}'<=1);#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){_0=(x==null);#(_i=0;_i<5;_i++){#(_i=0;_i<2;_i++){_9=(x/'$')};_6=('!f(){}'/a)};?((false+b)){?(('#(i=0;i<10;i++)'*false)){#(_i=0;_i<1;_i++){?((42||false)){_9=3.14}:{}};_4=('!f(){}'*1);?((\"hello\"<true)){?('?=if #=for'){_5='@LIN:L1c:0.2'}:{}}:{};_9=(a==\"a+b\")}:{};_s='^(return)';_1=(0>='!f(){}');#(_i=0;_i<5;_i++){_0=(1+1);_6=42}}:{};^(b)};_8=(x-'$');#(_i=0;_i<5;_i++){?((n/n)){^((3.14/3.14));?((-1+b)){_8=(\"$K\"+b)}:{};#(_i=0;_i<2;_i++){^((false==null));_5=(\"a+b\"-true)};_s='^(return)'}:{}};^((x%b))}}}:{};_4=\"hello\";_6=1}}}}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')};_6=('!f(){ > 0\nrepairs: refine '$')};_6=('!f(){:int{>0} | require '$')};_6=('!f(){>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')};_6=('!f(){ > 0\nrepairs: refine '$')};_6=('!f(){:int{>0} | require '$')};_6=('!f(){>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

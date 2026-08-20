@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787237255314.json",
+  "timestamp": "2026-08-20T14:47:35.314Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0() -> str{#(_i=0;_i<3;_i++){?(('@LIN:L1c:0.2'-false)){_s=0;^(('!f(){}'>='?=if #=for'))}:{};^(null);?((n*'@LIN:L1c:0.2')){_2=n;_s=y;_2=('@LIN:L1c:0.2'/0);^('world')}:{}};_0=('#(i=0;i<10;i++)'==\"a+b\")}\n!f1(_0:bool){_s=true;^((0!=1))}\n!f2(_0:int,_1:bool) -> str|num{^(('$'!='world'));#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){_s='#(i=0;i<10;i++)';#(_i=0;_i<3;_i++){_s='world'};#(_i=0;_i<2;_i++){_8=y;?('?=if #=for'){#(_i=0;_i<4;_i++){^((\"a+b\"%0));_s=a;#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){?((a/\"$K\")){_8=1;_7=(x||false);?((null==-1)){_s='?=if #=for';#(_i=0;_i<2;_i++){_0=(a%-1);^((null-n));_2=(-1>=y);?((0/y)){_s='!f(){}'}:{}};^(('@LIN:L1c:0.2'*1))}:{};_8=(1&&\"$K\")}:{};?(('world'!=42)){^(x)}:{};_s='#(i=0;i<10;i++)';_s=3.14}}};?((x/'#(i=0;i<10;i++)')){_8=(42-'@LIN:L1c:0.2');^('world');?((3.14>3.14)){#(_i=0;_i<2;_i++){?('@LIN:L1c:0.2'){?((null*a)){^((true&&1));#(_i=0;_i<2;_i++){?((null-42)){_6=('@LIN:L1c:0.2'||'?=if #=for')}:{}};_6='!f(){}'}:{}}:{};_s='!f(){}'};#(_i=0;_i<1;_i++){_s=n;_s=42;?(('?=if #=for'=='?=if #=for')){_5=(a<-1)}:{};_s='@LIN:L1c:0.2'};_0=a}:{}}:{};^((1||'!f(){}'))}:{};?((\"$K\"||3.14)){_s=\"a+b\";_1=(1==a);_s=x;?((false<true)){_s='$';_4=a;_2=(42>='world')}:{}}:{}}};#(_i=0;_i<2;_i++){_s=true;_9=(3.14%42);^(('$'-b));_3=(true%'@LIN:L1c:0.2')};_7=(3.14*'@LIN:L1c:0.2')};_0=-1}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")){_8=1;_7=( > 0\nrepairs: refine \"$K\")){_8=1;_7=(:int{>0} | require \"$K\")){_8=1;_7=(>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")){_8=1;_7=( > 0\nrepairs: refine \"$K\")){_8=1;_7=(:int{>0} | require \"$K\")){_8=1;_7=(>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

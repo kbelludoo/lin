@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787232188363.json",
+  "timestamp": "2026-08-20T13:23:08.363Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:any,_1:bool,_2:any) -> any{_4=(b%null);#(_i=0;_i<2;_i++){?(42){?((null&&'!f(){}')){#(_i=0;_i<1;_i++){?((\"$K\"!='#(i=0;i<10;i++)')){?(('!f(){}'&&-1)){_3=x}:{};#(_i=0;_i<1;_i++){?(b){#(_i=0;_i<3;_i++){_4=('?=if #=for'==true)};?((1!='#(i=0;i<10;i++)')){_2=(null-0);_5=('#(i=0;i<10;i++)'>'#(i=0;i<10;i++)');_s=\"$K\";_s=\"$K\"}:{};_7=(\"a+b\">=3.14);^((true--1))}:{};?('^(return)'){?(\"hello\"){^((null*0));?((x>='?=if #=for')){_5=x}:{};?(a){?((3.14<true)){^((null>a))}:{};^(3.14)}:{}}:{}}:{}};_6=(3.14<null)}:{};?((n&&x)){#(_i=0;_i<5;_i++){^(('$'%a));^((\"a+b\"<=\"hello\"));#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){^(('#(i=0;i<10;i++)'>=null));_s=a;_s=a;#(_i=0;_i<2;_i++){^((0!=n));_0=1}};#(_i=0;_i<4;_i++){^((y*true));^((0&&\"a+b\"));_4=(42=='world')};_7=a;_s='world'};_s='#(i=0;i<10;i++)';^((-1-a));_s='world'}};_7=('#(i=0;i<10;i++)'<x);?(true){?(('!f(){}'%0)){#(_i=0;_i<4;_i++){^((\"hello\"/'world'));?((42-'^(return)')){_s=n}:{};?((true||'@LIN:L1c:0.2')){^(null)}:{};_8=(x<=42)}}:{}}:{};_s='?=if #=for'}:{};^((a||\"$K\"));^(('^(return)'/'world'))};_4=(x*'^(return)')}:{};#(_i=0;_i<5;_i++){^(('@LIN:L1c:0.2'+'world'))}}:{};?(('!f(){}'/y)){_s=x;#(_i=0;_i<1;_i++){_3=true}}:{};^(null)}}\n!f1(_0:int|null) -> str{_s=a}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_f7isam/emit.cjs:3\n/* effect:Write */function f0(_0, _1, _2){var _4,_3,_5,_s,_7,_6,_8,_i,i;_4=(b%null);for(_i=0;_i<2;_i++){if(42){if((null&&'!f(){}')){for(_i=0;_i<1;_i++){if((\"$K\"!=='for(i=0;i<10;i++)')){if(('!f(){}'&&-1)){_3",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_f7isam/emit.cjs:3\n/* effect:Write */function f0(_0, _1, _2){var _4,_3,_5,_s,_7,_6,_8,_i,i;_4=(b%null);for(_i=0;_i<2;_i++){if(42){if((null&&'!f(){}')){for(_i=0;_i<1;_i++){if((\"$K\"!=='for(i=0;i<10;i++)')){if(('!f(){}'&&-1)){_3",
+    "testable": false
+  },
+  "fixed": false
+}

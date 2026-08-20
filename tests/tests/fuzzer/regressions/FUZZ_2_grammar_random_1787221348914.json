@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787221348914.json",
+  "timestamp": "2026-08-20T10:22:28.914Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){_6=b;^(y);^(('?=if #=for'*null))}\n!f1() -> num{#(_i=0;_i<2;_i++){_s=-1;?('?=if #=for'){_s=3.14;_4=(y||'@LIN:L1c:0.2');_s='#(i=0;i<10;i++)'}:{};^(('#(i=0;i<10;i++)'!=\"a+b\"))};_s='$';?((42!=null)){_s=3.14;_8=(x||\"$K\");?(('@LIN:L1c:0.2'+'world')){?((\"a+b\"&&3.14)){_s='!f(){}';_3=\"$K\";_0='^(return)'}:{};^((x<=x))}:{}}:{}}\n!f2(){_3=(y!=-1);_7=(null<42);^(('$'--1));^(42)}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_EETWWb/emit.cjs:4\n/* effect:Write */function f2(){var _3,_7;_3=(y!==-1);_7=(null<42);return (('$'--1));return (42);}\n                                                                            ^^^\n\nSyntaxError: Invalid left-",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_EETWWb/emit.cjs:4\n/* effect:Write */function f2(){var _3,_7;_3=(y!==-1);_7=(null<42);return (('$'--1));return (42);}\n                                                                            ^^^\n\nSyntaxError: Invalid left-",
+    "testable": false
+  },
+  "fixed": false
+}

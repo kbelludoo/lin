@@ -1,0 +1,36 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_task_engine
+~G{?=if #=for ^=ret :else $K=b:1 kb:1024 max_tasks:1000}
+
+!stageTODO(){^'TODO'}
+!stageCLAIMED(){^'CLAIMED'}
+!stageIMPLEMENTING(){^'IMPLEMENTING'}
+!stageVERIFIED(){^'VERIFIED'}
+!stageMULTI_TARGET_OK(){^'MULTI_TARGET_OK'}
+!stageREVIEW(){^'REVIEW'}
+!stageCERTIFIED(){^'CERTIFIED'}
+!stageFAILED(){^'FAILED'}
+!hasSub(s,sub){^(String(s||'').indexOf(sub)>=0)}
+!arrLen(a){?(a==null){^0};^(a.length)}
+!now(){^(new Date().toISOString())}
+!mkTask(id,title,priority){t={};t.id=id;t.title=title;t.priority=priority;t.scope=[];t.preconditions=[];t.postconditions=[];t.effects=[];t.targets=[];t.tests=[];t.semantic_hash='';t.done_when={};t.stage=stageTODO();t.agent=null;t.created=now();t.updated=now();t.history=[];t.error=null;t.followup=null;^t}
+!mkTaskBoard(){b={};b.tasks={};b.counter=0;b.created=now();^b}
+!nextId(board){board.counter=board.counter+1;^'T-'+String(board.counter)}
+!addTask(board,task){board.tasks[task.id]=task;^board}
+!getTask(board,id){^(board.tasks[id]||null)}
+!moveTo(board,id,stage){task=getTask(board,id);?(task==null){^(null)};old=task.stage;task.stage=stage;task.updated=now();task.history.push({from:old,to:stage,at:now()});^(task)}
+!validTransition(from,to){?(from==stageTODO()&&(to==stageCLAIMED())){^1};?(from==stageCLAIMED()&&(to==stageIMPLEMENTING()||to==stageFAILED())){^1};?(from==stageIMPLEMENTING()&&(to==stageVERIFIED()||to==stageFAILED())){^1};?(from==stageVERIFIED()&&(to==stageMULTI_TARGET_OK())){^1};?(from==stageMULTI_TARGET_OK()&&(to==stageREVIEW())){^1};?(from==stageREVIEW()&&(to==stageCERTIFIED())){^1};^0}
+!transition(board,id,targetStage){task=getTask(board,id);?(task==null){^({ok:false,error:'task_not_found'})};?(validTransition(task.stage,targetStage)==0){^({ok:false,error:'invalid_transition:'+task.stage+'->'+targetStage})};moveTo(board,id,targetStage);^(task)}
+!claim(board,id,agent){task=getTask(board,id);?(task==null){^({ok:false,error:'task_not_found'})};?(task.stage!=stageTODO()){^({ok:false,error:'not_in_todo'})};task.agent=agent;moveTo(board,id,stageCLAIMED());^(task)}
+!implement(board,id){result=transition(board,id,stageIMPLEMENTING());^(result)}
+!verify(board,id,semanticHash,targetsOk){task=getTask(board,id);?(task==null){^({ok:false,error:'task_not_found'})};?(task.stage!=stageIMPLEMENTING()){^({ok:false,error:'not_implementing'})};?(semanticHash!=''&&semanticHash!=task.semantic_hash){task.semantic_hash=semanticHash};moveTo(board,id,stageVERIFIED());?(targetsOk==1){moveTo(board,id,stageMULTI_TARGET_OK())};^(task)}
+!review(board,id){result=transition(board,id,stageREVIEW());^(result)}
+!certify(board,id){result=transition(board,id,stageCERTIFIED());^(result)}
+!fail(board,id,error){task=getTask(board,id);?(task==null){^({ok:false,error:'task_not_found'})};task.error=error;moveTo(board,id,stageFAILED());^(task)}
+!createFollowup(board,failedId,title,priority){followup=mkTask(nextId(board),title,priority);failed=getTask(board,failedId);?(failed!=null){followup.scope=failed.scope;followup.effects=failed.effects;followup.targets=failed.targets};addTask(board,followup);^(followup)}
+!tasksByStage(board,stage){out=[];keys=Object.keys(board.tasks);#(i=0;i<arrLen(keys);){task=board.tasks[keys[i]];?(task.stage==stage){out.push(task)};i++};^(out)}
+!tasksByAgent(board,agent){out=[];keys=Object.keys(board.tasks);#(i=0;i<arrLen(keys);){task=board.tasks[keys[i]];?(task.agent==agent){out.push(task)};i++};^(out)}
+!boardSummary(board){s={};s.total=arrLen(Object.keys(board.tasks));s.TODO=arrLen(tasksByStage(board,stageTODO()));s.CLAIMED=arrLen(tasksByStage(board,stageCLAIMED()));s.IMPLEMENTING=arrLen(tasksByStage(board,stageIMPLEMENTING()));s.VERIFIED=arrLen(tasksByStage(board,stageVERIFIED()));s.MULTI_TARGET_OK=arrLen(tasksByStage(board,stageMULTI_TARGET_OK()));s.REVIEW=arrLen(tasksByStage(board,stageREVIEW()));s.CERTIFIED=arrLen(tasksByStage(board,stageCERTIFIED()));s.FAILED=arrLen(tasksByStage(board,stageFAILED()));^(s)}
+!fromBug(board,bugId,layer,category,input,error){priority='medium';?(layer<=2){priority='blocker'};?(layer==3){priority='high'};title='Fix '+category+' in '+input;task=mkTask(nextId(board),title,priority);task.scope=[category];task.effects=[category];task.error=error;addTask(board,task);^(task)}
+!toJsonTask(task){j={};j.id=task.id;j.title=task.title;j.priority=task.priority;j.stage=task.stage;j.scope=task.scope;j.effects=task.effects;j.targets=task.targets;j.tests=task.tests;j.semantic_hash=task.semantic_hash;j.agent=task.agent;j.created=task.created;j.updated=task.updated;?(task.error!=null){j.error=task.error};^(j)}
+=ex{stageTODO,stageCLAIMED,stageIMPLEMENTING,stageVERIFIED,stageMULTI_TARGET_OK,stageREVIEW,stageCERTIFIED,stageFAILED,hasSub,arrLen,now,mkTask,mkTaskBoard,nextId,addTask,getTask,moveTo,validTransition,transition,claim,implement,verify,review,certify,fail,createFollowup,tasksByStage,tasksByAgent,boardSummary,fromBug,toJsonTask}

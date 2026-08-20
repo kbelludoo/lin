@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787198903014.json",
+  "timestamp": "2026-08-20T04:08:23.014Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str,_1:num) -> str{^(b);?(('?=if #=for'+y)){^(('?=if #=for'!=42));_1=null;#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){^((0-'?=if #=for'))};_4=('^(return)'&&\"$K\");?((3.14%\"hello\")){#(_i=0;_i<5;_i++){_s=3.14;_3=(null=='@LIN:L1c:0.2');?(n){#(_i=0;_i<1;_i++){_s=3.14;_s=-1};^(3.14);#(_i=0;_i<2;_i++){?('?=if #=for'){#(_i=0;_i<4;_i++){_4=(0<='#(i=0;i<10;i++)');_4=(\"$K\"&&0)};#(_i=0;_i<2;_i++){_s=false;^('!f(){}');_6=(false+'@LIN:L1c:0.2')};?(true){_0=-1;^(('#(i=0;i<10;i++)'&&'!f(){}'))}:{};_4=\"hello\"}:{};^((y||-1));_s=3.14;?((\"a+b\"<='!f(){}')){#(_i=0;_i<2;_i++){?(('#(i=0;i<10;i++)'==\"$K\")){^('^(return)')}:{};?((b+x)){_9=(\"hello\"<y);^((42>=n))}:{}};?(('world'%-1)){_8=('^(return)'!=y)}:{};^((null--1));#(_i=0;_i<1;_i++){_s=\"$K\";_9=(a>='?=if #=for');^(b);?(x){#(_i=0;_i<4;_i++){_s=false;^(('$'-x))};^((-1&&\"hello\"));_0=y}:{}}}:{}}}:{}};?((x-n)){?(('$'%n)){_9=(a%\"hello\")}:{}}:{};_3=\"hello\";#(_i=0;_i<4;_i++){_5=true;#(_i=0;_i<4;_i++){_6=(\"$K\"-'@LIN:L1c:0.2');^((false!=0));_s=\"$K\"}}}:{}}}:{};?(('!f(){}'!=\"$K\")){^((3.14+'@LIN:L1c:0.2'));_3=(x||'world')}:{};_s=n}\n!f1(_0:int,_1:any,_2:str) -> any{?((false<=a)){^(('world'-y));_s=3.14}:{};_2=(x=='$')}\n!f2(_0:any){_s='world'}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_WZzxXX/emit.cjs:2\n/* effect:Write */function f0(_0, _1){var _4,_s,_3,_6,_9,_8,_5,_i,i;return (b);if(('?=if #=for'+y)){return (('?=if #=for'!==42));_1=null;for(_i=0;_i<2;_i++){for(_i=0;_i<1;_i++){return ((0-'?=if #=for'));};_",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_WZzxXX/emit.cjs:2\n/* effect:Write */function f0(_0, _1){var _4,_s,_3,_6,_9,_8,_5,_i,i;return (b);if(('?=if #=for'+y)){return (('?=if #=for'!==42));_1=null;for(_i=0;_i<2;_i++){for(_i=0;_i<1;_i++){return ((0-'?=if #=for'));};_",
+    "testable": false
+  },
+  "fixed": false
+}

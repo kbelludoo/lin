@@ -1,0 +1,64 @@
+{
+  "benchmark": "LIN_NATIVE_WORKFLOW_001",
+  "version": "1.0.0",
+  "title": "LIN Native Workflow (C4) vs External Composition (C3) and Baselines",
+  "goal": "Evaluate whether native workflow primitives inside LIN (nodes, stages, DAG pipelines) can achieve or exceed C3 (LIN + external AINL) performance without external orchestrator dependencies while strictly preserving 0% over-invalidation, selective locality, and compiler-gate defense.",
+  "freeze_before_execution": true,
+  "conditions": [
+    {
+      "id": "C0_JS_TS_BASELINE",
+      "label": "Traditional JS/TS Baseline",
+      "description": "Standard JS/TS codebase with unstructured module imports"
+    },
+    {
+      "id": "C1_LIN_STANDALONE",
+      "label": "LIN Standalone (Symbol-level micro IR only)",
+      "description": "LIN semantic IR without native DAG workflow primitives"
+    },
+    {
+      "id": "C2_AINL_STANDALONE",
+      "label": "AINL Standalone (Workflow DAG only)",
+      "description": "External AINL orchestrator without LIN micro-contracts"
+    },
+    {
+      "id": "C3_COMPOSITE_EXTERNAL",
+      "label": "Composite (LIN Micro + External AINL Macro)",
+      "description": "Two-language stack: LIN for node semantics + external AINL for DAG routing"
+    },
+    {
+      "id": "C4_LIN_NATIVE_WORKFLOW",
+      "label": "LIN Native Workflow (Unified Semantic IR + Native DAG)",
+      "description": "Single-language unified IR: native @pipeline, @stage, and @node constructs compiled and verified in the same compiler pass"
+    }
+  ],
+  "evaluated_cases": [
+    {
+      "id": "01_simple_dag",
+      "name": "15-Node Canonical Workflow"
+    },
+    {
+      "id": "02_selective_locality",
+      "name": "Layer Routing (T1-T4 Mutações)"
+    },
+    {
+      "id": "03_context_death_p70",
+      "name": "70% Context Death Recovery"
+    },
+    {
+      "id": "04_real_repo_dayjs",
+      "name": "Real Production Codebase (Day.js 185 modules)"
+    }
+  ],
+  "repetitions": 20,
+  "total_trials": 100,
+  "metrics": [
+    "total_tokens",
+    "p70_recon_tokens",
+    "avg_execution_latency_ms",
+    "over_invalidation_rate",
+    "selective_locality_score",
+    "invariants_preserved_rate",
+    "unified_language_overhead_tokens",
+    "single_compiler_pass_benefit_ms"
+  ]
+}

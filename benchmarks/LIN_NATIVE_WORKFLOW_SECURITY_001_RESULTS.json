@@ -1,0 +1,38 @@
+{
+  "benchmark_id": "LIN_NATIVE_WORKFLOW_SECURITY_001",
+  "total_attacks": 5,
+  "intercepted_count": 5,
+  "interception_rate": 1,
+  "results": [
+    {
+      "attack_id": "ATTACK_01_TYPE_CONFUSION",
+      "name": "Type Confusion on Port Connection",
+      "blocked": true,
+      "reason": "Type mismatch on edge n1.out (str) -> n2.in_num (num)."
+    },
+    {
+      "attack_id": "ATTACK_02_EFFECT_ESCALATION",
+      "name": "Effect Escalation (Hidden IO in Pure Node)",
+      "blocked": true,
+      "reason": "Effect violation: Node declared ~effects{pure} cannot execute IO operation."
+    },
+    {
+      "attack_id": "ATTACK_03_DANGLING_EDGE",
+      "name": "Dangling Edge Reference (Phantom Node)",
+      "blocked": true,
+      "reason": "Edge target node 'n_phantom' not found in DAG."
+    },
+    {
+      "attack_id": "ATTACK_04_CYCLE_INJECTION",
+      "name": "Undeclared Infinite Cycle Injection",
+      "blocked": true,
+      "reason": "Cycle detected in non-loop workflow DAG."
+    },
+    {
+      "attack_id": "ATTACK_05_FORGED_HASH",
+      "name": "Forged Semantic Hash (Body Tampering without Hash Update)",
+      "blocked": true,
+      "reason": "Tampered body resulted in cryptographic hash mismatch."
+    }
+  ]
+}

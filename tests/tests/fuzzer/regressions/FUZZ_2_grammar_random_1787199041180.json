@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787199041180.json",
+  "timestamp": "2026-08-20T04:10:41.180Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:int,_1:int|null){?(0){?(('!f(){}'==-1)){?((3.14<'^(return)')){?((true-'?=if #=for')){#(_i=0;_i<4;_i++){_s='?=if #=for'}}:{};_s=1}:{};_4=(0&&'?=if #=for');?(('^(return)'%x)){?(1){_6=(null%1)}:{};_6=(x&&b)}:{}}:{}}:{}}\n!f1() -> any{_3='$';^((0%b));#(_i=0;_i<4;_i++){#(_i=0;_i<3;_i++){?((b!=\"$K\")){#(_i=0;_i<1;_i++){#(_i=0;_i<3;_i++){?(true){^(y);_6=('!f(){}'>='!f(){}');_4='?=if #=for'}:{};#(_i=0;_i<1;_i++){_4='world'};_s=\"$K\";_s=a};#(_i=0;_i<2;_i++){_1=(y+1)};_8=('?=if #=for'!='world')};^((42%'world'))}:{}};?(x){_7=(b<='!f(){}');?((-1==x)){#(_i=0;_i<3;_i++){?((\"$K\"&&true)){_4=\"hello\";_s='^(return)';#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){_1=\"$K\";_9=\"a+b\"};#(_i=0;_i<4;_i++){_1=(a||true)};?((3.14/'$')){^(\"a+b\")}:{}};^((b*'@LIN:L1c:0.2'))}:{};_s=\"hello\"};?(\"hello\"){#(_i=0;_i<1;_i++){_s=\"$K\";?((-1%3.14)){^((false>false));_6=('#(i=0;i<10;i++)'*false);_s=3.14;?((x||'^(return)')){^(y);#(_i=0;_i<1;_i++){?(('@LIN:L1c:0.2'>='#(i=0;i<10;i++)')){_s=\"a+b\";_s=b;#(_i=0;_i<4;_i++){^((x/a));_7=(\"a+b\"*y);?((3.14>'world')){^('#(i=0;i<10;i++)');#(_i=0;_i<5;_i++){_9=\"$K\";^('#(i=0;i<10;i++)');^((\"a+b\"=='^(return)'))};_s=-1}:{};_8=1}}:{};?(('@LIN:L1c:0.2'&&b)){_s=a;_s=42;?((\"a+b\"*-1)){^(y);#(_i=0;_i<2;_i++){^(null)}}:{};_s='^(return)'}:{}};?(('!f(){}'/3.14)){_0=('$'>='?=if #=for')}:{}}:{}}:{};_9=\"$K\"}}:{}}:{}}:{};#(_i=0;_i<5;_i++){_1=('^(return)'&&x);_1=('?=if #=for'%true);_5=b};?((\"a+b\">=-1)){#(_i=0;_i<1;_i++){?((x>='@LIN:L1c:0.2')){_6=true;_4=(-1&&0);_0=\"a+b\"}:{};_s='$'};^((\"$K\"+3.14));_s=1}:{}}}\n!f2(_0:int,_1:str|num) -> str{?((\"$K\"||'world')){_s='$';_1=('@LIN:L1c:0.2'<3.14);_s=false}:{};^((a+y))}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){^(\"a+b\")}: > 0\nrepairs: refine '$')){^(\"a+b\")}::int{>0} | require '$')){^(\"a+b\")}:>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){^(\"a+b\")}: > 0\nrepairs: refine '$')){^(\"a+b\")}::int{>0} | require '$')){^(\"a+b\")}:>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

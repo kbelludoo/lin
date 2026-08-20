@@ -1,0 +1,76 @@
+{
+  "C1_COMPOSITE_SELECTIVE": {
+    "by_tier": {
+      "T1_LOCAL_IMPL": {
+        "classification_accuracy": "30/30 (100.0%)",
+        "unnecessary_churn": "0/30 (0.0%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 0,
+        "avg_nodes_invalidated": 1
+      },
+      "T2_EFFECT_SANDBOX": {
+        "classification_accuracy": "30/30 (100.0%)",
+        "unnecessary_churn": "0/30 (0.0%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 0,
+        "avg_nodes_invalidated": 1
+      },
+      "T3_TYPE_CONTRACT": {
+        "classification_accuracy": "30/30 (100.0%)",
+        "unnecessary_churn": "0/30 (0.0%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 0,
+        "avg_nodes_invalidated": 4
+      },
+      "T4_STRUCTURAL_DAG": {
+        "classification_accuracy": "30/30 (100.0%)",
+        "unnecessary_churn": "0/30 (0.0%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 2,
+        "avg_nodes_invalidated": 5
+      }
+    },
+    "total_trials": 120,
+    "total_correct": 120,
+    "total_unnecessary_churn": 0,
+    "total_missed_crossing": 0,
+    "SELECTIVITY_SCORE": 1
+  },
+  "C2_COARSE_WORKFLOW": {
+    "by_tier": {
+      "T1_LOCAL_IMPL": {
+        "classification_accuracy": "19/30 (63.3%)",
+        "unnecessary_churn": "11/30 (36.7%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 0,
+        "avg_nodes_invalidated": 1.37
+      },
+      "T2_EFFECT_SANDBOX": {
+        "classification_accuracy": "0/30 (0.0%)",
+        "unnecessary_churn": "30/30 (100.0%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 1,
+        "avg_nodes_invalidated": 3
+      },
+      "T3_TYPE_CONTRACT": {
+        "classification_accuracy": "0/30 (0.0%)",
+        "unnecessary_churn": "30/30 (100.0%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 1.2,
+        "avg_nodes_invalidated": 5.5
+      },
+      "T4_STRUCTURAL_DAG": {
+        "classification_accuracy": "30/30 (100.0%)",
+        "unnecessary_churn": "0/30 (0.0%)",
+        "missed_crossing": "0/30 (0.0%)",
+        "avg_edges_modified": 2,
+        "avg_nodes_invalidated": 5
+      }
+    },
+    "total_trials": 120,
+    "total_correct": 49,
+    "total_unnecessary_churn": 71,
+    "total_missed_crossing": 0,
+    "SELECTIVITY_SCORE": 0.408
+  }
+}

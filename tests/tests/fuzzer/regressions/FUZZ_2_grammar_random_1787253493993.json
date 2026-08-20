@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787253493993.json",
+  "timestamp": "2026-08-20T19:18:13.993Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:int|null,_1:int|null) -> any{^('@LIN:L1c:0.2');_8=(0!=n);#(_i=0;_i<4;_i++){^((y+0));_s=false;^(('$'+'^(return)'));#(_i=0;_i<2;_i++){_s=\"$K\"}}}\n!f1(_0:any,_1:str){?((x/'@LIN:L1c:0.2')){#(_i=0;_i<3;_i++){_4=\"a+b\";?((\"a+b\"*'world')){?(42){#(_i=0;_i<2;_i++){_1=('#(i=0;i<10;i++)'+3.14);#(_i=0;_i<4;_i++){?((\"$K\"-'$')){#(_i=0;_i<5;_i++){_5=y;_s=x};#(_i=0;_i<5;_i++){_3=(\"hello\"/'world');_4=(x*'world')};_s='#(i=0;i<10;i++)';_3=(1<=1)}:{}}}}:{};#(_i=0;_i<3;_i++){_s=y;_2=(3.14*1);_s=a;_s='@LIN:L1c:0.2'};?((n+b)){_4=(y=='#(i=0;i<10;i++)');#(_i=0;_i<5;_i++){_7=('#(i=0;i<10;i++)'*3.14);?('!f(){}'){_6=1;_6=(false!=b);_5=(\"hello\">=y)}:{};_s='^(return)';?(\"hello\"){_s=false;?((\"hello\"&&'!f(){}')){?((a*\"hello\")){_3=(1/'?=if #=for')}:{};^(-1);#(_i=0;_i<3;_i++){_7=(b>='@LIN:L1c:0.2');_1=(0<3.14);_s=\"$K\"};_8='$'}:{};^((42--1));#(_i=0;_i<5;_i++){?(('$'*'#(i=0;i<10;i++)')){#(_i=0;_i<1;_i++){^(1)};_2=('#(i=0;i<10;i++)'<'^(return)')}:{};^('?=if #=for')}}:{}}}:{}}:{};#(_i=0;_i<2;_i++){_9=('world'&&\"a+b\");_s='^(return)';_6=(3.14+x)};#(_i=0;_i<1;_i++){_0=(a<=b);_s=true;?((n%'!f(){}')){^(0);^((\"$K\">='world'))}:{};^(('^(return)'*'world'))}}}:{};_2=('^(return)'*false);_1=('?=if #=for'||1)}\n!f2(){?(a){^((\"$K\"-true));_2=(\"a+b\">=a)}:{};#(_i=0;_i<4;_i++){_s=42;_6=true;?((y<='world')){_5=(x==false);?(null){#(_i=0;_i<3;_i++){?((null/42)){_0=false}:{};_6=(n*'#(i=0;i<10;i++)');?((\"$K\">='world')){_s='world'}:{}};_s=x}:{};^((1%'$'))}:{}}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')) > 0\nrepairs: refine '@LIN:L1c:0.2')):int{>0} | require '@LIN:L1c:0.2'))>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')) > 0\nrepairs: refine '@LIN:L1c:0.2')):int{>0} | require '@LIN:L1c:0.2'))>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

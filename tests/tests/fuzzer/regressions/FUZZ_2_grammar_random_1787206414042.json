@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787206414042.json",
+  "timestamp": "2026-08-20T06:13:34.042Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int|null,_1:str|num) -> num{^(3.14);?((y/y)){#(_i=0;_i<2;_i++){_s=a;_s=0}}:{};?(('#(i=0;i<10;i++)'||false)){?(b){^((x<'!f(){}'));#(_i=0;_i<4;_i++){_s=\"$K\";#(_i=0;_i<4;_i++){?(1){_s=3.14;_s='@LIN:L1c:0.2';?((\"$K\">=null)){_0=(\"hello\"-'^(return)');_3=-1;?(('#(i=0;i<10;i++)'||-1)){^((x*null));_s=null;_s=1}:{}}:{};?((b&&n)){^(('$'>=false));_5=('$'!='^(return)');_1=x}:{}}:{};#(_i=0;_i<4;_i++){_6=(1!=b);?((null-1)){_0=('?=if #=for'||a)}:{};^(null)};_s='#(i=0;i<10;i++)';^((a!='@LIN:L1c:0.2'))};?(\"a+b\"){?((y!=1)){?(y){_9=(\"a+b\"-'?=if #=for');^((1==42));^('!f(){}')}:{};#(_i=0;_i<3;_i++){?(('world'==b)){#(_i=0;_i<4;_i++){?((\"a+b\"%n)){^((n&&0))}:{};_2=('#(i=0;i<10;i++)'&&a)};_s=42;#(_i=0;_i<4;_i++){?(('@LIN:L1c:0.2'%42)){_s='!f(){}';^((x||3.14));?((42==\"$K\")){_s='#(i=0;i<10;i++)';_6=(y>='@LIN:L1c:0.2')}:{};_s=b}:{}}}:{};_9='!f(){}'}}:{}}:{};^(\"$K\")};_s=0}:{}}:{};#(_i=0;_i<3;_i++){_2=('@LIN:L1c:0.2'||a);#(_i=0;_i<2;_i++){_s=a;?(('world'||1)){_0=(null/x);_0=('$'!='$');_7=y;_s=true}:{}};^((-1*'$'));#(_i=0;_i<3;_i++){_s=-1;?(n){_s=true;_s=x;_3='#(i=0;i<10;i++)'}:{}}}}\n!f1(_0:str,_1:str){_9=\"a+b\";#(_i=0;_i<4;_i++){_5='!f(){}';?((-1-'world')){#(_i=0;_i<3;_i++){_s='?=if #=for';?((-1+n)){_3=(n-y);?((b+'@LIN:L1c:0.2')){_4=0;?(\"hello\"){^((n<=\"a+b\"));_9=('$'<\"a+b\")}:{};_8='world'}:{};_s='world';_0=(1-true)}:{}};?('!f(){}'){^(n);?(0){_s=n;_0=('^(return)'||'$');#(_i=0;_i<5;_i++){_s=a;^((3.14/true))}}:{};_1=-1}:{};^(null)}:{}};_6=(\"$K\"*true);?(('$'>n)){_5='$';?((false/null)){_s=n;#(_i=0;_i<1;_i++){?('^(return)'){_6=0;_s=y;#(_i=0;_i<4;_i++){_s='world';^(\"a+b\")}}:{};?((x>=x)){^((0>y));#(_i=0;_i<1;_i++){?((null||true)){_1=(\"a+b\"/a)}:{};?((3.14==\"hello\")){_5=('@LIN:L1c:0.2'%\"a+b\");?(('?=if #=for'||1)){_6=(true!='$')}:{}}:{};_3=(y/42);_4=(\"$K\"/null)}}:{};_0=42;^('$')};_0=(\"hello\">=42)}:{};_s=a}:{}}\n!f2(_0:int|null) -> bool{_s=\"a+b\";^(('?=if #=for'||'@LIN:L1c:0.2'));^((n%'$'));^(\"hello\")}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: y > 0\nrepairs: refine y:int{>0} | require y>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: y > 0\nrepairs: refine y:int{>0} | require y>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

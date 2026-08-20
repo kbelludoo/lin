@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787222499559.json",
+  "timestamp": "2026-08-20T10:41:39.559Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:any,_1:bool,_2:any){_s=n}\n!f1(_0:str,_1:any) -> bool{_s='$'}\n!f2(_0:str|num,_1:str|num,_2:any) -> int{^((\"$K\"--1))}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_WwPTG7/emit.cjs:4\n/* effect:Read */function f2(_0, _1, _2){return ((\"$K\"--1));}\n                                                  ^^^^\n\nSyntaxError: Invalid left-hand side expression in postfix operation\n    at wrapSafe (nod",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_WwPTG7/emit.cjs:4\n/* effect:Read */function f2(_0, _1, _2){return ((\"$K\"--1));}\n                                                  ^^^^\n\nSyntaxError: Invalid left-hand side expression in postfix operation\n    at wrapSafe (nod",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,64 @@
+{
+  "benchmark": "AINL_LIN_COMPOSITION_002",
+  "version": "0.1.0",
+  "title": "Large-Scale Multi-Node DAG Composition and Continuous Mutation Benchmark",
+  "goal": "Empirically evaluate whether the functional separation (AINL for macro-orchestration vs LIN for micro-semantic contracts) remains stable as DAG complexity scales (10, 25, and 50 nodes) across 50 consecutive semantic mutations.",
+  "freeze_before_execution": true,
+  "topologies": [
+    {
+      "id": "DAG_10",
+      "nodes": 10,
+      "edges": 14,
+      "depth": 4,
+      "description": "Small Pipeline / Microservice Task Graph"
+    },
+    {
+      "id": "DAG_25",
+      "nodes": 25,
+      "edges": 38,
+      "depth": 7,
+      "description": "Medium Pipeline / Enterprise ETL & Inference Graph"
+    },
+    {
+      "id": "DAG_50",
+      "nodes": 50,
+      "edges": 82,
+      "depth": 11,
+      "description": "Large Pipeline / Multi-Agent Autonomous Engineering Mesh"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "C0_PYTHON_MONOLITH",
+      "label": "Monolithic Python Pipeline",
+      "description": "Sequential/Modular Python scripts without fine-grained symbol-level semantic caching"
+    },
+    {
+      "id": "C1_LIN_STANDALONE",
+      "label": "LIN Standalone IR",
+      "description": "LIN semantic IR handling both individual node logic and intra-module dependencies"
+    },
+    {
+      "id": "C2_AINL_STANDALONE",
+      "label": "AINL Standalone DAG",
+      "description": "AINL workflow orchestrator with standard task nodes without LIN micro-contracts"
+    },
+    {
+      "id": "C3_HYBRID_COMPOSITE",
+      "label": "Composite (AINL Workflow + LIN Micro-Contracts)",
+      "description": "AINL orchestrates DAG topology/scheduling; LIN encapsulates node invariants and symbol hash-cons"
+    }
+  ],
+  "consecutive_mutations": 50,
+  "repetitions": 20,
+  "total_trials": 240,
+  "metrics": [
+    "cumulative_rebuild_overhead_ms",
+    "avg_nodes_invalidated_per_mutation",
+    "over_invalidation_rate",
+    "under_invalidation_rate",
+    "transitive_drift_rate",
+    "peak_memory_mb",
+    "scaling_linearity_r2"
+  ]
+}

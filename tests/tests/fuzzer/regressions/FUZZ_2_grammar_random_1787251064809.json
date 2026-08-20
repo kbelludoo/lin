@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787251064809.json",
+  "timestamp": "2026-08-20T18:37:44.809Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){_s=x;#(_i=0;_i<3;_i++){_8=(1/1);?((-1<=42)){?(\"hello\"){?((null<=true)){#(_i=0;_i<2;_i++){_3=1;^(false);?(('#(i=0;i<10;i++)'<=true)){^(('@LIN:L1c:0.2'||\"a+b\"))}:{};?(b){#(_i=0;_i<2;_i++){_0=(0&&'$');?((b!=false)){?((true!=-1)){?(('?=if #=for'<42)){_9=(b<='world');?(y){?((-1==42)){_9='?=if #=for';_8=(a&&1)}:{};^((\"$K\"||'^(return)'));^((3.14&&y));_s='^(return)'}:{};?(('?=if #=for'%'!f(){}')){_s=3.14}:{}}:{};^(('#(i=0;i<10;i++)'/\"a+b\"));?(('?=if #=for'<=null)){?(true){_s=1;_s=y;_s='$'}:{};_7=(1--1);_s=true;_2=('?=if #=for'>1)}:{}}:{}}:{};?((0&&42)){?(('!f(){}'<b)){_s=n;_s=n;_s=true;#(_i=0;_i<5;_i++){_s=3.14;_0=(null-b)}}:{};^((y&&3.14))}:{}};_2=(b%'@LIN:L1c:0.2');_4=(y!=\"a+b\")}:{}};#(_i=0;_i<4;_i++){^((y!='?=if #=for'));_5=(\"$K\"<null);_6=(42<\"$K\")}}:{};?('#(i=0;i<10;i++)'){?(('world'<'?=if #=for')){#(_i=0;_i<3;_i++){_1=0;^(('?=if #=for'<'#(i=0;i<10;i++)'));#(_i=0;_i<4;_i++){_s=\"a+b\";^(\"a+b\")};?(3.14){_s='@LIN:L1c:0.2';^('!f(){}');^((42!=-1));_2=(null*-1)}:{}}}:{};_s='$';_s=42}:{}}:{};_2=(42&&'!f(){}')}:{};_2=a;^((0*y))};_s=42}\n!f1(_0:str|num,_1:any,_2:int|null) -> num{_4=(null!=true);#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){?(0){^((1*\"hello\"));_0=-1;?((false>n)){_5=(3.14||null)}:{};#(_i=0;_i<2;_i++){_s=b;_1=x}}:{};_1=('#(i=0;i<10;i++)'>='^(return)');#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){^('^(return)');_5=(true&&null);_s=\"$K\"}};_4=1};^((\"hello\"<null));_5='world'};_7=('#(i=0;i<10;i++)'*3.14);^((3.14+'!f(){}'))}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_TpnjjX/emit.cjs:2\n/* effect:Write */function f0(){var _s,_8,_3,_0,_9,_7,_2,_4,_5,_6,_1,_i,i;_s=x;for(_i=0;_i<3;_i++){_8=(1/1);if((-1<=42)){if(\"hello\"){if((null<=true)){for(_i=0;_i<2;_i++){_3=1;return (false);if(('for(i=0;i<1",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_TpnjjX/emit.cjs:2\n/* effect:Write */function f0(){var _s,_8,_3,_0,_9,_7,_2,_4,_5,_6,_1,_i,i;_s=x;for(_i=0;_i<3;_i++){_8=(1/1);if((-1<=42)){if(\"hello\"){if((null<=true)){for(_i=0;_i<2;_i++){_3=1;return (false);if(('for(i=0;i<1",
+    "testable": false
+  },
+  "fixed": false
+}

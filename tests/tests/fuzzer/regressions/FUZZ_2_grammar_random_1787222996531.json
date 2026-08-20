@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787222996531.json",
+  "timestamp": "2026-08-20T10:49:56.531Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:num,_1:int|null,_2:str) -> int|null{#(_i=0;_i<2;_i++){#(_i=0;_i<2;_i++){_s=false;_s='$';^('#(i=0;i<10;i++)');_s='$'};?(a){?((null!=\"a+b\")){_1=('$'>=false)}:{};_s=1;?(('world'-'world')){_s='@LIN:L1c:0.2';_s='#(i=0;i<10;i++)';_9=(null<'^(return)');^((y*\"hello\"))}:{};#(_i=0;_i<3;_i++){_s=3.14;#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){^((-1/'world'));?((a%'world')){#(_i=0;_i<4;_i++){_4=(x/'$');_s='?=if #=for'};_s='@LIN:L1c:0.2'}:{};#(_i=0;_i<4;_i++){_s=\"hello\"};?((x%b)){?((0!='#(i=0;i<10;i++)')){_4=('?=if #=for'%x);^(-1);_2=(b/\"$K\");?((y||-1)){#(_i=0;_i<1;_i++){_s=null;?('world'){?(('!f(){}'!=true)){_s='world';?(('@LIN:L1c:0.2'==a)){#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){?(false){^((x&&true));_s=b;?(('?=if #=for'+1)){_8='?=if #=for';_1=(true||null)}:{};_4=(false==3.14)}:{}};_4=('world'-'@LIN:L1c:0.2');?((\"$K\"==\"hello\")){_s=false}:{}}}:{};_1=(b&&-1)}:{};?((42>=42)){?((\"hello\"!='^(return)')){_s=42}:{};_s=\"a+b\";_6='world'}:{};_5=(false<=y)}:{}};_8=(42*'@LIN:L1c:0.2')}:{}}:{};^((0-'^(return)'))}:{}};^(0);?(42){_8=(1%b);^((0>=n));_8='@LIN:L1c:0.2';_7=(true>'world')}:{}}}}:{}}}\n!f1(_0:str){_s=0;?((\"a+b\"<b)){^((true&&\"$K\"));_s='#(i=0;i<10;i++)';_7=(a/'^(return)')}:{};?('^(return)'){_s='@LIN:L1c:0.2';_8=(\"a+b\"+n)}:{};_6=(a>\"$K\")}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world'));?((a%' > 0\nrepairs: refine 'world'));?((a%':int{>0} | require 'world'));?((a%'>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world'));?((a%' > 0\nrepairs: refine 'world'));?((a%':int{>0} | require 'world'));?((a%'>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787240764803.json",
+  "timestamp": "2026-08-20T15:46:04.803Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int|null) -> any{^(('$'!=n))}\n!f1(){_7=(n<\"a+b\");_2=(true--1);?((-1!=null)){_s=false}:{};^('^(return)')}\n!f2(){_9=x}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_LFDQxV/emit.cjs:3\n/* effect:Read */function f1(){var _7,_2,_s;_7=(n<\"a+b\");_2=(true--1);if((-1!=null)){_s=false;}else{};return ('^(return)');}\n                                                             ^^^^\n\nSyntaxError: I",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_LFDQxV/emit.cjs:3\n/* effect:Read */function f1(){var _7,_2,_s;_7=(n<\"a+b\");_2=(true--1);if((-1!=null)){_s=false;}else{};return ('^(return)');}\n                                                             ^^^^\n\nSyntaxError: I",
+    "testable": false
+  },
+  "fixed": false
+}

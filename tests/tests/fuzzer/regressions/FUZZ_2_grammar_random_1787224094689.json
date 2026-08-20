@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787224094689.json",
+  "timestamp": "2026-08-20T11:08:14.689Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str,_1:any,_2:bool){#(_i=0;_i<1;_i++){_s='world'}}\n!f1(_0:num){?((n<null)){#(_i=0;_i<4;_i++){^(a);?(('#(i=0;i<10;i++)'>'#(i=0;i<10;i++)')){^(('^(return)'<=1));#(_i=0;_i<3;_i++){_8=(y/x);_0=true;_s='world';_s='$'};_9='?=if #=for';#(_i=0;_i<2;_i++){?(('@LIN:L1c:0.2'%\"$K\")){^(3.14);?(('@LIN:L1c:0.2'>=b)){_8='$'}:{}}:{};^((0>=\"hello\"));#(_i=0;_i<4;_i++){^((0<=\"hello\"));#(_i=0;_i<5;_i++){_s=x;_3=(true>true)}}}}:{};_s='@LIN:L1c:0.2'};_9=(null&&b);_7=(\"hello\"&&true);#(_i=0;_i<4;_i++){?((null&&'!f(){}')){_s=b;#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_s=null;#(_i=0;_i<1;_i++){?((0||x)){_s=true;^((null-0));?(-1){_0=('^(return)'/0);_s=-1}:{};^((42==3.14))}:{};^((\"hello\"/42))};?((true<'$')){#(_i=0;_i<3;_i++){_3=(n*\"$K\");?(y){^(('?=if #=for'=='@LIN:L1c:0.2'));?('?=if #=for'){_5=(y*y);#(_i=0;_i<3;_i++){_0=(\"$K\"==\"hello\");#(_i=0;_i<5;_i++){?((x/\"a+b\")){?((-1/\"hello\")){_6=(\"hello\"<=y);_s=\"a+b\";_2=(a>=b)}:{};_1='#(i=0;i<10;i++)';?((\"a+b\"-\"a+b\")){?(('^(return)'&&a)){_9=-1}:{};#(_i=0;_i<4;_i++){_s=n};^((42==false))}:{}}:{};_s='$';_6=(null+b)};^((true&&42))}}:{};?(('#(i=0;i<10;i++)'+y)){?('world'){?((a>=1)){_s=null}:{};^('?=if #=for')}:{};_7='@LIN:L1c:0.2'}:{};_7=(a>-1)}:{};^((\"hello\">='?=if #=for'));_s=0};^((\"a+b\">=null));?('^(return)'){_s=\"$K\";_3=('@LIN:L1c:0.2'+-1);_2=0;_1=('^(return)'%\"hello\")}:{};_s='^(return)'}:{}};#(_i=0;_i<3;_i++){_4=0;_s=b};?(y){_s=y;_s=b;_3=(-1<false)}:{}};_6=(a>=y)}:{}}}:{}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787212812454.json",
+  "timestamp": "2026-08-20T08:00:12.454Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int){#(_i=0;_i<5;_i++){?(\"$K\"){?(('#(i=0;i<10;i++)'<n)){#(_i=0;_i<4;_i++){?('?=if #=for'){_4=(-1&&1)}:{};_s=-1};#(_i=0;_i<1;_i++){?((y+null)){_s=-1;?((a||'$')){_s='world';#(_i=0;_i<2;_i++){_3=(null!=-1);?((\"$K\"-false)){_0=(false%\"hello\");_s=0}:{};^((b/\"$K\"));_s='!f(){}'};_6=('@LIN:L1c:0.2'%'$')}:{}}:{}};#(_i=0;_i<5;_i++){?(\"a+b\"){_0=(0*false);_1=(42>1);_8=false}:{};#(_i=0;_i<2;_i++){?((\"a+b\"<=true)){?((3.14=='^(return)')){_8=('$'>=null);?(42){_s='^(return)';#(_i=0;_i<2;_i++){?(-1){?(-1){#(_i=0;_i<4;_i++){^(('@LIN:L1c:0.2'<=a));_6=('!f(){}'+0)};_0='!f(){}'}:{};#(_i=0;_i<5;_i++){_2=(1>=false);_s=-1;_s=a;^('world')}}:{};_s='!f(){}';_8=(true&&null);_4=('$'==false)};?((b<=1)){?((3.14!='$')){^((x*true));^((\"hello\"=='?=if #=for'))}:{};#(_i=0;_i<1;_i++){#(_i=0;_i<4;_i++){?((\"$K\"*-1)){#(_i=0;_i<4;_i++){_7=(1<42)};?((-1&&42)){_7=-1;_3=(a||true);_4=3.14}:{}}:{};^(('#(i=0;i<10;i++)'%'!f(){}'))};^((0/x));_s='!f(){}';?((x-'!f(){}')){_s='$';_9=(b+'$')}:{}}}:{};^((b%\"hello\"))}:{};_9=('$'<=\"a+b\")}:{};_s='$';_s=3.14}:{};^((3.14%'^(return)'));_5=('world'/'@LIN:L1c:0.2');^(true)}}}:{};_6=(a!=x);_1=('@LIN:L1c:0.2'/\"$K\")}:{};_1=('?=if #=for'*'^(return)');_s='world';?((\"$K\"%0)){_s=a;_s=\"a+b\";_s=\"hello\";_3=(1/x)}:{}};^(('@LIN:L1c:0.2'&&'^(return)'));^((b==-1))}\n!f1(_0:any){?(-1){#(_i=0;_i<5;_i++){_1='?=if #=for';_4=(n&&0)};_1=(-1=='^(return)');_s='^(return)';_2=y}:{};^((x%\"a+b\"))}\n!f2(_0:int,_1:str|num){?((42==x)){_s=\"$K\";_4=('^(return)'>3.14)}:{};_s=true}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\"));_s='!f(){ > 0\nrepairs: refine \"$K\"));_s='!f(){:int{>0} | require \"$K\"));_s='!f(){>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\"));_s='!f(){ > 0\nrepairs: refine \"$K\"));_s='!f(){:int{>0} | require \"$K\"));_s='!f(){>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

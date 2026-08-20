@@ -1,0 +1,59 @@
+@RULEL:AINL_LIN_COMPOSITION_002:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=AINL_LIN_COMPOSITION_002
+  status=ACTIVE_BENCHMARK
+  domain="ai_agent_architecture_scale"
+  date=2026-08-20
+  purpose="Measure structural evolution, graph stability, and invalidation dynamics under 100 classified mutations on a 30-node enterprise workflow"
+  parent=AINL_LIN_COMPOSITION_001
+}
+
+.h{
+  id=H_COMPOSITION_002
+  claim="In a 30+ node workflow subjected to 100 classified mutations, C1 (AINL + LIN) exhibits bounded, localized change vectors with zero unnecessary DAG invalidation for semantic/pure mutations, while C2 (pure AINL) suffers cascading topological changes."
+}
+
+.c{
+  workflow_blocks=[
+    "pricing",
+    "inventory",
+    "fraud",
+    "payment",
+    "accounting",
+    "notifications"
+  ]
+  conditions=["C1_AINL_LIN", "C2_AINL_PURE"]
+  mutations_total=100
+  mutation_classes={
+    "M01_M20": "numeric_rule_change",
+    "M21_M35": "new_parameter",
+    "M36_M50": "condition_alteration",
+    "M51_M65": "business_rule_addition",
+    "M66_M80": "effect_change",
+    "M81_M90": "contract_refinement",
+    "M91_M100": "composite_mutation"
+  }
+}
+
+.mtr{
+  primary=[
+    "nodes_changed",
+    "edges_changed",
+    "nodes_invalidated",
+    "cache_entries_invalidated",
+    "tokens_changed",
+    "compile_ms",
+    "execution_ms",
+    "invariant_status",
+    "behavior_equivalent",
+    "over_invalidation",
+    "under_invalidation"
+  ]
+}
+
+.r{
+  R1=mutations_must_be_blindly_generated_before_condition_lowering
+  R2=measure_raw_metrics_separately_no_composite_ratios_in_raw_ledger
+  R3=oracle_evaluates_correctness_and_invariants_independently
+}

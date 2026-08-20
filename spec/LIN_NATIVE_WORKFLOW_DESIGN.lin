@@ -1,0 +1,28 @@
+@LIN:L1c:1.0
+^schema_once ^ops=lin_native_workflow
+~G{?=if #=for ^=ret :else}
+~effects{pure,io,async}
+
+$K{MODULE="checkout_orchestration"}
+
+// 1. Unidades Semânticas com Refinamento de Tipos e Efeitos
+!validate_cart(cart: {total: num{>0}, items: [str]}): {valid: bool, err: str} {
+  ?(cart.total <= 0) { ^{valid: false, err: "INVALID_TOTAL"} }
+  ^{valid: true, err: "NONE"}
+}
+
+!calc_fee(total: num{>0}): num{>=0} {
+  ^total * 0.02
+}
+
+// 2. Camada Nativa de DAG / Orquestração do LIN (~workflow / @FLOW)
+// Em vez de depender do runtime externo AINL, o LIN compila tanto o nó quanto o DAG!
+~workflow{
+  step: fetch_cart -> http_get("https://api.internal/cart")
+  step: validate   -> validate_cart(fetch_cart) ?(validate.valid) -> reserve_stock : -> abort_flow
+  step: reserve_stock -> memory_put("stock", "reserved")
+  step: charge     -> http_post("https://bank.gw/charge", calc_fee(fetch_cart.total))
+  step: notify     -> http_post("https://notify.internal", "Paid")
+}
+
+=ex{validate_cart,calc_fee}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787254362544.json",
+  "timestamp": "2026-08-20T19:32:42.544Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:bool,_1:any){_s=a;#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){^((n-n));#(_i=0;_i<4;_i++){_s='@LIN:L1c:0.2';_3=('#(i=0;i<10;i++)'&&0);_6=(y==1)}};_s='^(return)'};?((x*b)){#(_i=0;_i<3;_i++){?((null<=null)){?((y!='?=if #=for')){_s=b;_s=\"$K\"}:{};^(('^(return)'>null))}:{}};?((true%true)){_5=('^(return)'/y);#(_i=0;_i<5;_i++){_9=('^(return)'>1);#(_i=0;_i<5;_i++){_2=(\"hello\"<=0)};^((42%true))};#(_i=0;_i<1;_i++){#(_i=0;_i<1;_i++){_s='@LIN:L1c:0.2';?((n||\"hello\")){^(\"$K\");_s=b}:{}};_s=n;^((true>n));^(0)};_4=(y<'@LIN:L1c:0.2')}:{};_s=\"a+b\"}:{};_6=('#(i=0;i<10;i++)'=='!f(){}')}\n!f1() -> str{_s='#(i=0;i<10;i++)';_2='?=if #=for'}\n!f2(_0:bool,_1:bool){_4=(n-a);_3=(true+42);_7=-1;?((0<a)){^((\"a+b\"*1));?(y){^((true*n))}:{};#(_i=0;_i<1;_i++){_s=3.14;_s=x;?(0){?((\"$K\"+'world')){#(_i=0;_i<3;_i++){_s=x};_s=\"a+b\";^((1*\"hello\"));#(_i=0;_i<3;_i++){_2='$';?((-1+\"a+b\")){_7=(3.14<=1);_s=true;^(('^(return)'>y));_s=a}:{}}}:{};^((true=='world'));#(_i=0;_i<3;_i++){_s='^(return)';?((0-null)){_s=false}:{};#(_i=0;_i<5;_i++){?(('#(i=0;i<10;i++)'+42)){^(('^(return)'<=y));_s=true;_2=0}:{}}}}:{}};?(null){?((b/'$')){_7=(n%'@LIN:L1c:0.2');_s=null;^('^(return)')}:{};?((false!=x)){_8=(-1+true)}:{};?((n>='^(return)')){_s='world';?(n){^((42%'?=if #=for'))}:{}}:{}}:{}}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){_7=(n%'@LI > 0\nrepairs: refine '$')){_7=(n%'@LI:int{>0} | require '$')){_7=(n%'@LI>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){_7=(n%'@LI > 0\nrepairs: refine '$')){_7=(n%'@LI:int{>0} | require '$')){_7=(n%'@LI>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

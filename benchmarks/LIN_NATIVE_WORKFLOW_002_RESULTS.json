@@ -1,0 +1,88 @@
+{
+  "benchmark_id": "LIN_NATIVE_WORKFLOW_002_DIFFERENTIAL_EQUIVALENCE",
+  "total_scenarios": 4,
+  "equivalent_count": 4,
+  "equivalence_rate": 1,
+  "results": [
+    {
+      "workflow_id": "wf_standard_payment",
+      "desc": "Fluxo padrão de sucesso",
+      "tsOutput": {
+        "status": "OK",
+        "charge": 102,
+        "retries": 0
+      },
+      "rustOutput": {
+        "status": "OK",
+        "charge": 102,
+        "retries": 0
+      },
+      "baselineOutput": {
+        "status": "OK",
+        "charge": 102,
+        "retries": 0
+      },
+      "equivalent_all_backends": true
+    },
+    {
+      "workflow_id": "wf_unauthorized",
+      "desc": "Fluxo com falha de autorização (rejeição no nó 1)",
+      "tsOutput": {
+        "status": "ERR_UNAUTHORIZED",
+        "charge": 0,
+        "retries": 0
+      },
+      "rustOutput": {
+        "status": "ERR_UNAUTHORIZED",
+        "charge": 0,
+        "retries": 0
+      },
+      "baselineOutput": {
+        "status": "ERR_UNAUTHORIZED",
+        "charge": 0,
+        "retries": 0
+      },
+      "equivalent_all_backends": true
+    },
+    {
+      "workflow_id": "wf_retry_recovery",
+      "desc": "Fluxo com falha transitória de rede e recuperação no 2º retry",
+      "tsOutput": {
+        "status": "OK",
+        "charge": 204,
+        "retries": 1
+      },
+      "rustOutput": {
+        "status": "OK",
+        "charge": 204,
+        "retries": 1
+      },
+      "baselineOutput": {
+        "status": "OK",
+        "charge": 204,
+        "retries": 1
+      },
+      "equivalent_all_backends": true
+    },
+    {
+      "workflow_id": "wf_retry_exhausted",
+      "desc": "Fluxo com esgotamento de retries (falha persistente)",
+      "tsOutput": {
+        "status": "ERR_GATEWAY_TIMEOUT",
+        "charge": 0,
+        "retries": 3
+      },
+      "rustOutput": {
+        "status": "ERR_GATEWAY_TIMEOUT",
+        "charge": 0,
+        "retries": 3
+      },
+      "baselineOutput": {
+        "status": "ERR_GATEWAY_TIMEOUT",
+        "charge": 0,
+        "retries": 3
+      },
+      "equivalent_all_backends": true
+    }
+  ]
+}

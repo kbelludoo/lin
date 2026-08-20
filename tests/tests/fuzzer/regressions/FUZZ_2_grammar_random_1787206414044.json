@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787206414044.json",
+  "timestamp": "2026-08-20T06:13:34.044Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0() -> int|null{?((n&&b)){#(_i=0;_i<2;_i++){^((-1-n));#(_i=0;_i<4;_i++){^(b);?(null){^(('!f(){}'/'!f(){}'));_s=y;#(_i=0;_i<3;_i++){^(n);#(_i=0;_i<3;_i++){^('$')};#(_i=0;_i<5;_i++){^('#(i=0;i<10;i++)');?((\"$K\">='?=if #=for')){?((true-true)){#(_i=0;_i<5;_i++){_9=(1&&'!f(){}');_2='@LIN:L1c:0.2'};^(('^(return)'&&'!f(){}'))}:{}}:{};?(\"hello\"){?((x<=\"hello\")){#(_i=0;_i<4;_i++){_s=\"a+b\";^((a||y));_s=a};_s=\"hello\"}:{};_s=-1;_s=0}:{};_1=1};#(_i=0;_i<4;_i++){_s=y;^(0);#(_i=0;_i<3;_i++){_5=('world'>=\"hello\");^(null)};?((-1!=42)){_s=x;_9=(b>='!f(){}');_s=n;_4=(\"a+b\"<=1)}:{}}};?('world'){^(1)}:{}}:{}};_s=\"hello\";^(x)};_4=('$'<'$');#(_i=0;_i<1;_i++){#(_i=0;_i<4;_i++){?((-1/true)){_7=(1||b)}:{};_s='!f(){}';?(('@LIN:L1c:0.2'==1)){?(('$'>false)){_s=n}:{};_3=(null<y)}:{}};_8=('?=if #=for'!=false)}}:{}}\n!f1(){_3=('?=if #=for'>='?=if #=for');#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_s=true;?(('$'<n)){^((\"a+b\"<\"$K\"));_6='?=if #=for';#(_i=0;_i<1;_i++){?((\"a+b\"==false)){?(('world'/a)){_s=1;_0=(\"a+b\"||b)}:{};_5=(y%false);_2='!f(){}';?(n){#(_i=0;_i<5;_i++){^(('$'>1));_7=(\"a+b\"*x);^((y%'^(return)'))};_0=(false*true)}:{}}:{}};?((null>\"a+b\")){_7=(null||'?=if #=for');_4=0;_5=('world'+42);#(_i=0;_i<2;_i++){_6=('world'&&'@LIN:L1c:0.2');?((3.14==\"hello\")){_3=('!f(){}'||\"hello\");_5=('$'>='@LIN:L1c:0.2')}:{};^((0-b))}}:{}}:{}};_s=0;_s=-1;_4=(42--1)}}\n!f2(){#(_i=0;_i<5;_i++){_0=('@LIN:L1c:0.2'!='@LIN:L1c:0.2')};_8='$';^('?=if #=for');^(('world'+1))}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_IKOwtM/emit.cjs:4\n/* effect:Write */function f1(){var _3,_s,_6,_0,_5,_2,_7,_4,_i;_3=('?=if #=for'>='?=if #=for');for(_i=0;_i<3;_i++){for(_i=0;_i<5;_i++){_s=true;if(('$'<n)){return ((\"a+b\"<\"$K\"));_6='?=if #=for';for(_i=0;_i<1",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_IKOwtM/emit.cjs:4\n/* effect:Write */function f1(){var _3,_s,_6,_0,_5,_2,_7,_4,_i;_3=('?=if #=for'>='?=if #=for');for(_i=0;_i<3;_i++){for(_i=0;_i<5;_i++){_s=true;if(('$'<n)){return ((\"a+b\"<\"$K\"));_6='?=if #=for';for(_i=0;_i<1",
+    "testable": false
+  },
+  "fixed": false
+}

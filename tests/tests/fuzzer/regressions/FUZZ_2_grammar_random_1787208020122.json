@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787208020122.json",
+  "timestamp": "2026-08-20T06:40:20.122Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:int,_1:int) -> bool{_s=1;^(('!f(){}'/'$'));?((42/\"$K\")){_1=(a+0)}:{};?(0){#(_i=0;_i<2;_i++){_1=(null!=-1);_s=x};_9=(b/-1);?((42-'^(return)')){_s=42}:{};#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){?(a){_8=\"hello\";_1=('$'+b);_9=('world'<=\"$K\");#(_i=0;_i<3;_i++){?('@LIN:L1c:0.2'){?(('world'>=3.14)){#(_i=0;_i<5;_i++){_s='#(i=0;i<10;i++)';_s='!f(){}';_8=(y!='^(return)');_s=0};#(_i=0;_i<4;_i++){^((\"a+b\"+true));_3=1;_7=(\"$K\"*a)};#(_i=0;_i<4;_i++){#(_i=0;_i<4;_i++){#(_i=0;_i<1;_i++){_1=('@LIN:L1c:0.2'==1)};_5=(a/\"a+b\")};?(x){_s=0;_4=(null-'^(return)')}:{}}}:{};_s=3.14;^(null)}:{};?((true+'world')){_4=(a%n);_4=true;#(_i=0;_i<1;_i++){_s=b;_s=-1;_5=(42||null);^('world')};_4=(3.14<false)}:{}}}:{};_s=null;?('^(return)'){_4=b}:{}};?('$'){_4=(b&&'!f(){}');#(_i=0;_i<4;_i++){^((1||42));_s='#(i=0;i<10;i++)'};_6='@LIN:L1c:0.2';#(_i=0;_i<1;_i++){_0=(0=='world');#(_i=0;_i<3;_i++){_s=3.14;_1=(-1-\"a+b\");?((null<=n)){#(_i=0;_i<1;_i++){_s=\"a+b\"}}:{}};_5=(3.14<=b)}}:{};?((b>=true)){_s='$';?(-1){^(\"$K\");_s=null;_3=(null+'@LIN:L1c:0.2');_9='#(i=0;i<10;i++)'}:{};?(('$'*\"$K\")){_1='$';_s=x;^((x-y))}:{};^((3.14<'$'))}:{};#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){?(('#(i=0;i<10;i++)'*a)){_0=\"$K\"}:{}};^(('#(i=0;i<10;i++)'||false))}}}:{}}\n!f1(_0:any,_1:any){_2=('^(return)'%'^(return)');_2=0;_1=(\"a+b\"<'^(return)')}\n!f2(_0:str|num,_1:int|null,_2:bool){_6=(\"$K\"%y);^((\"hello\"||y));_4=(1-'$')}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: -1);?((42-'^(ret > 0\nrepairs: refine -1);?((42-'^(ret:int{>0} | require -1);?((42-'^(ret>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: -1);?((42-'^(ret > 0\nrepairs: refine -1);?((42-'^(ret:int{>0} | require -1);?((42-'^(ret>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

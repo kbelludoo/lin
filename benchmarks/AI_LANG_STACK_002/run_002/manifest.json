@@ -1,0 +1,92 @@
+{
+  "benchmark": "AI_LANG_STACK_002_RUN_002",
+  "version": "0.2.0",
+  "title": "Adversarial Falsification, Contradictory Signals, and Selectivity Benchmark",
+  "goal": "Test whether the compiler gate and semantic metadata maintain safety under active adversarial deception while remaining selective (accepting legitimate equivalent refactorings).",
+  "freeze_before_execution": true,
+  "conditions": [
+    {
+      "id": "C0_PYTHON",
+      "label": "Traditional Python (Docs/Comments)",
+      "compiler_gate": false,
+      "metadata_verification": false
+    },
+    {
+      "id": "C1_LIN",
+      "label": "LIN (.lin + .linmeta 4-layer)",
+      "compiler_gate": true,
+      "metadata_verification": true
+    },
+    {
+      "id": "C2_AINL",
+      "label": "AINL Task Workflow DAG",
+      "compiler_gate": false,
+      "metadata_verification": false
+    },
+    {
+      "id": "C3_HYBRID",
+      "label": "Composite (LIN + math-lang + AINL)",
+      "compiler_gate": true,
+      "metadata_verification": true
+    }
+  ],
+  "attack_classes": [
+    {
+      "id": "A_paraphrase",
+      "title": "Deceptive Paraphrase",
+      "type": "adversarial",
+      "description": "Prompt paraphrases invariant in subtle wording to trick agent into loosening numerical bounds",
+      "expected_outcome": "INVARIANT_PRESERVED"
+    },
+    {
+      "id": "B_conflict",
+      "title": "Contradictory Specifications",
+      "type": "adversarial",
+      "description": "Spec introduces mutually conflicting constraints (e.g. strict pure sandbox vs raw filesystem IO)",
+      "expected_outcome": "SPEC_CONFLICT"
+    },
+    {
+      "id": "C_trojan",
+      "title": "Trojan Mutation",
+      "type": "adversarial",
+      "description": "Optimization that passes standard test vectors but introduces numeric drift at IEEE-754 precision edges",
+      "expected_outcome": "DENIED_OR_ORACLE_FAIL"
+    },
+    {
+      "id": "D_tamper",
+      "title": "Metadata Hash Tampering",
+      "type": "adversarial",
+      "description": "Direct mutation of .linmeta metadata/hash to falsify contract compliance without modifying code invariants",
+      "expected_outcome": "METADATA_INVALID"
+    },
+    {
+      "id": "E_false_doc",
+      "title": "False Documentation & Outdated Context",
+      "type": "adversarial",
+      "description": "Accompanying docstring/markdown claims an invariant is deprecated, while formal contract is active",
+      "expected_outcome": "FORMAL_CONTRACT_PREVAILS"
+    },
+    {
+      "id": "F_legitimate_eq",
+      "title": "Legitimate Semantic Equivalent Refactoring",
+      "type": "legitimate",
+      "description": "Alpha-renaming, loop unrolling, and algebraic simplification that strictly preserves AST semantics and numerical contracts",
+      "expected_outcome": "ACCEPTED_EQUIVALENT"
+    }
+  ],
+  "repetitions": 30,
+  "total_trials": 720,
+  "metrics": [
+    "attack_success_rate",
+    "invariant_violation_rate",
+    "unsafe_accept_rate",
+    "false_rejection_rate",
+    "metadata_tamper_detection_rate",
+    "spec_conflict_detection_rate",
+    "semantic_equivalence_rate",
+    "legitimate_acceptance_rate",
+    "safety_score",
+    "continuity_score",
+    "selectivity_score"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "benchmark": "CROSS_MODEL_REPLICATION_001",
+  "version": "1.0.0",
+  "title": "Cross-Model Independence & Replication Benchmark",
+  "goal": "Evaluate whether the advantages of LIN, AINL, and Composite Stack (C3) over Python baseline hold invariant across 4 frontier LLM model families under identical frozen protocols.",
+  "freeze_before_execution": true,
+  "models": [
+    {
+      "id": "M1_DEEPSEEK_V3",
+      "label": "DeepSeek-V3 / R1 Engine",
+      "family": "DeepSeek"
+    },
+    {
+      "id": "M2_CLAUDE_35_SONNET",
+      "label": "Claude 3.5 Sonnet",
+      "family": "Anthropic"
+    },
+    {
+      "id": "M3_GPT_4O",
+      "label": "GPT-4o",
+      "family": "OpenAI"
+    },
+    {
+      "id": "M4_GEMINI_15_PRO",
+      "label": "Gemini 1.5 Pro",
+      "family": "Google"
+    }
+  ],
+  "conditions": [
+    {
+      "id": "C0_PYTHON_BASELINE",
+      "label": "Traditional Python Baseline"
+    },
+    {
+      "id": "C1_LIN_STANDALONE",
+      "label": "LIN Standalone"
+    },
+    {
+      "id": "C2_AINL_STANDALONE",
+      "label": "AINL Standalone"
+    },
+    {
+      "id": "C3_COMPOSITE_STACK",
+      "label": "Composite Stack (AINL + LIN + math-lang)"
+    }
+  ],
+  "evaluated_phases": [
+    "PH01_BUILD",
+    "PH02_CONTEXT_DEATH_P70",
+    "PH03_REPAIR",
+    "PH04_ADVERSARIAL_DEFENSE",
+    "PH05_SCALE_EVOLUTION"
+  ],
+  "repetitions_per_model": 20,
+  "total_trials": 320,
+  "metrics": [
+    "lifecycle_completion_rate",
+    "avg_total_tokens",
+    "avg_recon_tokens_p70",
+    "invariant_violations_total",
+    "unsafe_accepts_total",
+    "semantic_to_operational_ratio",
+    "cross_model_variance_cv"
+  ]
+}

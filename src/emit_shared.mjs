@@ -23,7 +23,7 @@ export const TARGETS = [
 ];
 
 /** Real nucleus: compile + toolchain check. Stub langs may emit but are not suite_rate. */
-export const REAL_TARGETS = ['ts', 'js', 'py', 'go', 'rust', 'c', 'java', 'zig', 'cs'];
+export const REAL_TARGETS = ['ts', 'js', 'py', 'go', 'rust', 'c', 'java', 'zig', 'cs', 'kotlin', 'swift', 'cpp', 'haskell', 'elixir', 'lua', 'julia'];
 export const STUB_TARGETS = TARGETS.filter((t) => !REAL_TARGETS.includes(t));
 export const GATE_REQUIRED = ['ts', 'js', 'py', 'go', 'rust', 'java'];
 
@@ -215,7 +215,7 @@ export function rewriteFnValues(body, fnNames, stub) {
 
 export function isNumishId(id) {
   const s = String(id || '').replace(/^_+|_+$/g, '');
-  return /^(len|n|i|j|k|idx|count|num|ms|msAbs|a|b|c|x|y|z|val|res|sum|diff|product|acc|total|start|limit|step|tier|factor|den|scale|scaled|delta|min|max|offset|orig|temp|quotient)$/i.test(s);
+  return /^(len|n|i|j|k|idx|count|num|ms|msAbs|a|b|c|d|e|x|y|z|lo|hi|val|res|sum|diff|product|acc|total|start|limit|step|tier|factor|den|scale|scaled|delta|min|max|offset|orig|temp|quotient|result|r|t|base|exp)$/i.test(s);
 }
 
 export function isBoolFnName(name) {

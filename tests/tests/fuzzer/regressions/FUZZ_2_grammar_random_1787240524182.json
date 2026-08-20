@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787240524182.json",
+  "timestamp": "2026-08-20T15:42:04.182Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str,_1:num,_2:str){_s=null;_s='@LIN:L1c:0.2';#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){?((\"$K\"<=n)){?(('?=if #=for'<'@LIN:L1c:0.2')){^((0&&42));_s=\"$K\"}:{}}:{};#(_i=0;_i<2;_i++){^(('!f(){}'%'@LIN:L1c:0.2'));_2=(42/\"a+b\");#(_i=0;_i<4;_i++){_s=b;?((a||'?=if #=for')){_s=a}:{};_9=(b/a);_8=(false!=a)}}};_s=\"a+b\"};_6=(true||-1)}\n!f1(_0:int,_1:num,_2:num){?((\"hello\"!=b)){_s='@LIN:L1c:0.2'}:{};_8=('!f(){}'<\"a+b\")}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\");#(_i=0;_i > 0\nrepairs: refine \"a+b\");#(_i=0;_i:int{>0} | require \"a+b\");#(_i=0;_i>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\");#(_i=0;_i > 0\nrepairs: refine \"a+b\");#(_i=0;_i:int{>0} | require \"a+b\");#(_i=0;_i>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,51 @@
+{
+  "benchmark": "AINL_TO_LIN_PARITY_MIGRATION_001",
+  "version": "1.0.0",
+  "title": "Comprehensive Parity Migration Benchmark: External AINL Workflows → LIN Native Unified IR",
+  "goal": "Empirically verify that 100% of historical workflow corpora and test suites previously evaluated on external AINL (Small Workflows, Topologies T1-T3, Selective Locality T1-T4, Lifecycle 5-Phase, Real Repos) can be projected to LIN Native Workflow (C4) with 100% observable behavioral parity and zero property regression.",
+  "freeze_before_execution": true,
+  "corpora": [
+    {
+      "id": "CORPUS_01_SMALL",
+      "name": "Small Analytical DAG Workflows",
+      "cases_count": 8,
+      "source_benchmark": "AI_LANG_STACK_001"
+    },
+    {
+      "id": "CORPUS_02_TOPOLOGIES",
+      "name": "Composition Topologies (Linear, Fan-out, Mesh)",
+      "cases_count": 3,
+      "source_benchmark": "AINL_LIN_COMPOSITION_003_TOPOLOGIES"
+    },
+    {
+      "id": "CORPUS_03_SELECTIVITY",
+      "name": "Selective Locality Boundary Cases (T1-T4)",
+      "cases_count": 4,
+      "source_benchmark": "AINL_LIN_SELECTIVE_LOCALITY_001"
+    },
+    {
+      "id": "CORPUS_04_LIFECYCLE",
+      "name": "Full 5-Phase Agent Engineering Lifecycle",
+      "cases_count": 5,
+      "source_benchmark": "AGENT_ENGINEERING_001"
+    },
+    {
+      "id": "CORPUS_05_REAL_REPOS",
+      "name": "Production OSS Repositories (Day.js, Underscore, Chalk)",
+      "cases_count": 3,
+      "source_benchmark": "AGENT_ENGINEERING_003_REAL_REPO"
+    }
+  ],
+  "repetitions": 20,
+  "total_trials": 100,
+  "metrics": [
+    "transpilation_success_rate",
+    "observable_behavioral_parity_rate",
+    "semantic_hash_match_rate",
+    "invariant_preservation_rate",
+    "over_invalidation_rate",
+    "selective_locality_retention",
+    "token_reduction_vs_external_ainl",
+    "latency_speedup_ratio"
+  ]
+}

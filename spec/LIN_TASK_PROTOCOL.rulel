@@ -1,0 +1,58 @@
+@RULEL:LIN_TASK_PROTOCOL:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .c=contract .x=steps .p=path .s=stage .t=task}
+.m{lang=LIN status=SPEC date=2026-08-19 why=kanban_organizes_work_LIN_verifies_completion}
+.t{stages=TODO|CLAIMED|IMPLEMENTING|VERIFIED|MULTI_TARGET_OK|REVIEW|CERTIFIED|FAILED}
+
+.s{TODO=task_created agent_available}
+.s{CLAIMED=agent_has_taken_ownership pre=TODO}
+.s{IMPLEMENTING=agent_is_writing_code pre=CLAIMED}
+.s{VERIFIED=lin_verify_passes pre=IMPLEMENTING gate=semantic_hash_stable+parse_ok+emit_ok}
+.s{MULTI_TARGET_OK=all_required_targets_compile pre=VERIFIED gate=targets_compile}
+.s{REVIEW=human_or_agent_review pre=MULTI_TARGET_OK}
+.s{CERTIFIED=all_tests_pass+invariants_hold+review_approved pre=REVIEW gate=all_gates_pass}
+.s{FAILED=blocker_discovered pre=CLAIMED|IMPLEMENTING action=create_followup_task}
+
+.c{task_contract={
+  id: "T-nnn",
+  title: "string",
+  priority: "low|medium|high|blocker",
+  scope: ["symbol.path"],
+  preconditions: ["lin_verify passes on deps"],
+  postconditions: ["semantic_hash unchanged OR expected delta"],
+  effects: ["io|db|crypto|pure"],
+  targets: ["ts","py","go","rust","c","java","zig","cs"],
+  tests: ["TEST_ID"],
+  semantic_hash: "current_hash",
+  done_when: { semantic_diff: true, tests: "pass", targets: "parity" }
+}}
+
+.c{auto_generation={
+  trigger: "fuzzer finds bug OR agent encounters error",
+  classify: "COMPILER_BUG|EMITTER_BUG|PARSER_BUG|SEMANTIC_BUG|PERF_REGRESSION",
+  inherit: "scope+effects+targets from failed task",
+  priority: "auto: blocker_for_compiler, high_for_emitter, medium_for_perf"
+}}
+
+.c{verification_gates={
+  VERIFIED: "lin verify passes (semantic_hash + parse + emit)",
+  MULTI_TARGET_OK: "all target.emit succeeds",
+  CERTIFIED: "tests[task.tests] all pass AND invariants hold"
+}}
+
+.c{agent_contract={
+  claim: "agent sets CLAIMED, must not skip preconditions",
+  implement: "agent writes code, must not modify nucleus",
+  verify: "agent calls lin verify, NOT self-declares done",
+  repair: "on failure agent attempts repair OR creates followup",
+  finish: "agent calls lin finish, system checks all gates"
+}}
+
+.p{cli={
+  "lin task create": "create new task from spec or bug report",
+  "lin task claim T-nnn": "agent claims task",
+  "lin task implement T-nnn": "start implementation",
+  "lin task verify T-nnn": "run verification gates",
+  "lin task finish T-nnn": "attempt to certify",
+  "lin task status": "show all tasks and stages",
+  "lin task from-bug": "auto-create task from fuzzer finding"
+}}

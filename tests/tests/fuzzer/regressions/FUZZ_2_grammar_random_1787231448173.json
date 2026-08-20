@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787231448173.json",
+  "timestamp": "2026-08-20T13:10:48.173Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0() -> bool{^(('?=if #=for'<='@LIN:L1c:0.2'));?((0/a)){_5=(b>\"a+b\");#(_i=0;_i<1;_i++){_s=false;_s=42;_8=(\"hello\"||n)}}:{};?((true>=a)){#(_i=0;_i<5;_i++){_s=3.14;?((3.14+false)){^((x||a));?(\"$K\"){_s=3.14;_5=(\"$K\"-'$');?((a==null)){?(('world'==b)){_1=y;^((\"a+b\"<'#(i=0;i<10;i++)'));?((a/'#(i=0;i<10;i++)')){?(('world'-'^(return)')){#(_i=0;_i<4;_i++){_3=n;^(('?=if #=for'&&y));#(_i=0;_i<5;_i++){_6=(0&&true)}};_2=(1+y);?('#(i=0;i<10;i++)'){#(_i=0;_i<2;_i++){?(3.14){_s='world';?((0/a)){#(_i=0;_i<3;_i++){?(('@LIN:L1c:0.2'&&x)){_9=('?=if #=for'<=\"$K\");_s=\"hello\";_9=(\"a+b\"/'#(i=0;i<10;i++)')}:{}}}:{};#(_i=0;_i<2;_i++){^('?=if #=for');^(true)}}:{};?((\"hello\"=='$')){#(_i=0;_i<4;_i++){?(('world'>=1)){_0=1;?((\"a+b\"+\"$K\")){?((a<='$')){#(_i=0;_i<1;_i++){^((\"a+b\"==null));^(('!f(){}'%-1))}}:{}}:{};#(_i=0;_i<5;_i++){_s='!f(){}'}}:{};?('world'){^(('!f(){}'*0));_s=1;#(_i=0;_i<4;_i++){_9=('@LIN:L1c:0.2'!=0);^(('#(i=0;i<10;i++)'==a));_3=\"a+b\";?((a/b)){_s=-1;_3=(b&&y);_s=\"a+b\";_s=b}:{}}}:{}};#(_i=0;_i<3;_i++){^('world');^((-1||'$'));_7=(0!='^(return)')}}:{};_s=-1;?(('^(return)'!=false)){_4=('$'+n)}:{}}}:{}}:{};_4=('#(i=0;i<10;i++)'>3.14)}:{}}:{};^((\"a+b\"||'world'));_s=y;_0=('#(i=0;i<10;i++)'*-1)}:{}}:{}}:{};_5=('^(return)'/null);_s=b}}:{};#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_6=(\"$K\"<x);_s=true}}}\n!f1(_0:str){?(('^(return)'+0)){_s=0;#(_i=0;_i<1;_i++){#(_i=0;_i<1;_i++){_s='@LIN:L1c:0.2'}}}:{};#(_i=0;_i<2;_i++){^(3.14);_s='?=if #=for'}}\n!f2(){_2=(1<=x)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: a > 0\nrepairs: refine a:int{>0} | require a>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: a > 0\nrepairs: refine a:int{>0} | require a>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

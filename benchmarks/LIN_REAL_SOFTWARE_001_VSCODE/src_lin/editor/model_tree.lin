@@ -1,0 +1,25 @@
+@LIN:L2w:1.0
+^schema_once ^ops=vscode_editor_model
+~G{?=if #=for ^=ret :else}
+~effects{pure,io,async}
+
+!create_text_model(uri: str, initial_text: str): {uri: str, version: int, length: int, dirty: bool} {
+  ^{uri: uri, version: 1, length: initial_text.length, dirty: false}
+}
+
+!apply_edit(model: {uri: str, version: int}, range: {start: int, end: int}, new_text: str): {version: int, dirty: bool} {
+  ^{version: model.version + 1, dirty: true}
+}
+
+!scan_project_tree(root_dir: str): {tree: [str], total_files: int} {
+  $files = fs_scandir(root_dir)
+  ^{tree: files, total_files: files.length}
+}
+
+~workflow {
+  step mount_tree  -> scan_project_tree("/workspace/project")
+  step open_model  -> create_text_model("/workspace/project/main.ts", "console.log('LIN');")
+  step edit_model  -> apply_edit(open_model, {start: 0, end: 7}, "console.info")
+}
+
+=ex{create_text_model,apply_edit,scan_project_tree}

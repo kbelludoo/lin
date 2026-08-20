@@ -52,7 +52,7 @@ function zigRetType(fn, bodyStmts) {
   const rets = [];
   const walk = (list) => {
     for (const st of list || []) {
-      if (st.type === 'return' && st.expr) rets.push(String(st.expr).trim());
+      if (st.type === 'return' && st.expr) { let _e = String(st.expr).trim(); if (_e.startsWith('(') && _e.endsWith(')')) _e = _e.slice(1, -1); rets.push(_e); }
       if (st.then) walk(st.then);
       for (const e of st.elseIf || []) walk(e.body);
       if (st.else) walk(st.else);

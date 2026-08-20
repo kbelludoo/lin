@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787235179884.json",
+  "timestamp": "2026-08-20T14:12:59.884Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num,_1:int,_2:int) -> any{_s=true;^(('^(return)'<=-1));_8=('?=if #=for'--1)}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_YXDqtD/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _s,_8;_s=true;return (('^(return)'<=-1));_8=('?=if #=for'--1);}\n                                                                                          ^^^^^^^",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_YXDqtD/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _s,_8;_s=true;return (('^(return)'<=-1));_8=('?=if #=for'--1);}\n                                                                                          ^^^^^^^",
+    "testable": false
+  },
+  "fixed": false
+}

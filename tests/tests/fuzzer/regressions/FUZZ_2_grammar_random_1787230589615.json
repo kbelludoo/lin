@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787230589615.json",
+  "timestamp": "2026-08-20T12:56:29.615Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:int|null){^((b||\"a+b\"))}\n!f1(_0:str|num,_1:bool) -> any{?((\"a+b\"--1)){?(('!f(){}'&&\"hello\")){^(('?=if #=for'+\"a+b\"));#(_i=0;_i<1;_i++){#(_i=0;_i<3;_i++){_s=y}};^(\"a+b\")}:{};_4=(n>'#(i=0;i<10;i++)')}:{};_s=\"$K\";^((3.14+x));_0=(42||false)}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_SMaONZ/emit.cjs:4\n/* effect:Read */function f1(_0, _1){var _s,_4,_i,i;if((\"a+b\"--1)){if(('!f(){}'&&\"hello\")){return (('?=if #=for'+\"a+b\"));for(_i=0;_i<1;_i++){for(_i=0;_i<3;_i++){_s=y;}};return (\"a+b\");}else{};_4=(n>'for(i=0",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_SMaONZ/emit.cjs:4\n/* effect:Read */function f1(_0, _1){var _s,_4,_i,i;if((\"a+b\"--1)){if(('!f(){}'&&\"hello\")){return (('?=if #=for'+\"a+b\"));for(_i=0;_i<1;_i++){for(_i=0;_i<3;_i++){_s=y;}};return (\"a+b\");}else{};_4=(n>'for(i=0",
+    "testable": false
+  },
+  "fixed": false
+}

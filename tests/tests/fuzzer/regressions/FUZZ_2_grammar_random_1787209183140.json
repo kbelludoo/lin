@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787209183140.json",
+  "timestamp": "2026-08-20T06:59:43.140Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:num,_1:int|null,_2:str|num){_5=(\"a+b\"+false);?(y){^((\"$K\"*-1));_s=true}:{}}\n!f1(_0:int|null,_1:int|null) -> str{_7=(true-1);#(_i=0;_i<4;_i++){?(x){?((\"$K\"||1)){_7=(3.14&&3.14);?((\"a+b\"+'?=if #=for')){#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_s='!f(){}';_4='#(i=0;i<10;i++)';_s=\"$K\"};?((\"a+b\"!=0)){_4=(1>='!f(){}');_s=null;_0=null}:{};_s=x};_s=3.14;_s='@LIN:L1c:0.2';_s='!f(){}'}:{};_6=(42<-1);^('$')}:{};?((null+\"hello\")){_s='^(return)';#(_i=0;_i<2;_i++){_2=(x&&42);#(_i=0;_i<3;_i++){_7=(b>='world');#(_i=0;_i<2;_i++){_6=(n!=\"$K\")}};?((-1!=a)){_s=null}:{}};?((\"hello\"/\"$K\")){_1=(false==n)}:{};_8=(-1==y)}:{}}:{};_s=b};_3=(\"a+b\"/true);?(('#(i=0;i<10;i++)'||3.14)){_s='^(return)';#(_i=0;_i<2;_i++){_3='^(return)';?('$'){?((y>=-1)){?('@LIN:L1c:0.2'){?(0){#(_i=0;_i<4;_i++){_7=-1;_s=x;_s=null;_s='^(return)'}}:{};_s=42}:{}}:{};#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){^('!f(){}');?('@LIN:L1c:0.2'){#(_i=0;_i<4;_i++){_7=(x>false);^(('$'>x));_s='#(i=0;i<10;i++)'}}:{};?('#(i=0;i<10;i++)'){?((true+null)){_s=0;_5=\"$K\"}:{};?((3.14<='!f(){}')){_5='#(i=0;i<10;i++)';^(('^(return)'*'@LIN:L1c:0.2'))}:{};_s=false;_9=('!f(){}'/0)}:{};_1=(false%3.14)};_9=(-1*false);^((0<'?=if #=for'));?((n<b)){_s='^(return)';?((b%false)){_1=(n>='!f(){}')}:{};_4=('^(return)'=='@LIN:L1c:0.2')}:{}};_5=(null--1)}:{};#(_i=0;_i<2;_i++){?((1>n)){_2=('@LIN:L1c:0.2'*b);#(_i=0;_i<2;_i++){_4=(false%'#(i=0;i<10;i++)')};_1=(3.14&&42);?(('#(i=0;i<10;i++)'||'@LIN:L1c:0.2')){_7=('!f(){}'!=\"$K\")}:{}}:{};#(_i=0;_i<3;_i++){?((\"a+b\"+'$')){^((x||'world'));_9=(y!=null);?('?=if #=for'){_5=(a*x);^('!f(){}');#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_4=(\"$K\">-1)}};?(n){_s=b;_7=true}:{}}:{}}:{};_0=('@LIN:L1c:0.2'/b);_8=(null!='^(return)')};?(0){^((1!='^(return)'));^((b!=0));?('?=if #=for'){_3=('world'%3.14);_s='?=if #=for';#(_i=0;_i<5;_i++){^((\"hello\">=y));_2='world'};_8=(false/null)}:{};_s=null}:{}};?((null+'?=if #=for')){?((null%true)){_3=(3.14+y);?('world'){_s=3.14;#(_i=0;_i<3;_i++){^(('$'>3.14));^(\"hello\")};^(a);_s=\"$K\"}:{};_4=('?=if #=for'!=n)}:{};_0='?=if #=for';_4=true}:{}}}:{}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

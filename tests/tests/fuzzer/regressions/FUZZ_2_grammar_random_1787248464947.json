@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787248464947.json",
+  "timestamp": "2026-08-20T17:54:24.947Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:num,_1:num,_2:num){_4=(42--1)}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_bwthIY/emit.cjs:2\n/* effect:Pure */function f0(_0, _1, _2){var _4;_4=(42--1);}\n                                                    ^^\n\nSyntaxError: Invalid left-hand side expression in postfix operation\n    at wrapSafe (node",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_bwthIY/emit.cjs:2\n/* effect:Pure */function f0(_0, _1, _2){var _4;_4=(42--1);}\n                                                    ^^\n\nSyntaxError: Invalid left-hand side expression in postfix operation\n    at wrapSafe (node",
+    "testable": false
+  },
+  "fixed": false
+}

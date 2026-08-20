@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787255734188.json",
+  "timestamp": "2026-08-20T19:55:34.188Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){?(y){#(_i=0;_i<5;_i++){_s=x}}:{};_s=a;_s=y;#(_i=0;_i<4;_i++){?((\"a+b\"-'#(i=0;i<10;i++)')){#(_i=0;_i<3;_i++){?('world'){_5=(3.14*0)}:{};_0=(null<'?=if #=for');?((-1&&b)){#(_i=0;_i<3;_i++){^((3.14!=3.14));_s='?=if #=for';_0=(true>=3.14)};?(('!f(){}'%'?=if #=for')){_0=('^(return)'*'@LIN:L1c:0.2');_s=x;^((null-true))}:{}}:{};_4=(b/'$')}}:{};^((\"$K\"*0));?(('?=if #=for'>=\"$K\")){_1=(b!=y);_7=0;?((\"hello\"<\"hello\")){?((false*false)){#(_i=0;_i<5;_i++){#(_i=0;_i<2;_i++){?((\"hello\"<=true)){^(3.14);_5=(a<n);?((false<1)){_s=true}:{}}:{}};_s=false};#(_i=0;_i<1;_i++){_s=n;?((42!=y)){?((\"$K\"||'#(i=0;i<10;i++)')){?((a||0)){_1=(y+\"hello\")}:{};#(_i=0;_i<2;_i++){_s='^(return)';^((null/'^(return)'))};#(_i=0;_i<3;_i++){#(_i=0;_i<4;_i++){_8=(\"$K\"||1);_8='$';_7='#(i=0;i<10;i++)';#(_i=0;_i<5;_i++){_6=(\"hello\"||'world');_s=n;_0=(\"a+b\"-y)}};_s=\"a+b\";^((y>'^(return)'))}}:{};^(('world'-'@LIN:L1c:0.2'));_s=1;_s='?=if #=for'}:{};#(_i=0;_i<5;_i++){^(b)};#(_i=0;_i<3;_i++){_4=true;?((x||n)){_0=('?=if #=for'%42);?((42&&a)){_0=('^(return)'||1);^(false);_4=(null+1);?((y!='^(return)')){?((b>=\"a+b\")){^(42);^((y<-1));_s=y}:{};^(false)}:{}}:{};_s='@LIN:L1c:0.2'}:{};_8='?=if #=for';?((3.14/0)){_s=-1;?((0*b)){#(_i=0;_i<2;_i++){_s=0;_s=false;_0=\"hello\"};_s='#(i=0;i<10;i++)'}:{};#(_i=0;_i<1;_i++){_8=(n*y);_s=y;_s=\"$K\"};^((3.14<false))}:{}}};_s='!f(){}';^((0<='$'))}:{}}:{};_5=(\"$K\"+n)}:{}}}\n!f1(_0:int,_1:str|num,_2:any){#(_i=0;_i<2;_i++){?('?=if #=for'){_0=(-1||x)}:{};?(-1){_s='^(return)';^(('^(return)'<='$'));_s=0}:{}}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')}}:{};^((\"$K > 0\nrepairs: refine '$')}}:{};^((\"$K:int{>0} | require '$')}}:{};^((\"$K>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')}}:{};^((\"$K > 0\nrepairs: refine '$')}}:{};^((\"$K:int{>0} | require '$')}}:{};^((\"$K>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

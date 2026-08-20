@@ -1,0 +1,32 @@
+@LIN:L2w:1.0
+^schema_once ^ops=vscode_base_lifecycle
+~G{?=if #=for ^=ret :else}
+~effects{pure,io,async}
+
+!init_environment(app_root: str): {ready: bool, root: str} {
+  ?(app_root == "") { ^{ready: false, root: "/default"} }
+  ^{ready: true, root: app_root}
+}
+
+!validate_file_path(path: str{len>0}): bool {
+  ^(path.startsWith("/") || path.startsWith("./"))
+}
+
+!read_file_buffer(path: str): {path: str, content: str, lines: int} {
+  $content = fs_read(path)
+  ^{path: path, content: content, lines: content.split("\n").length}
+}
+
+!write_file_buffer(path: str, content: str): {success: bool, bytes: int} {
+  fs_write(path, content)
+  ^{success: true, bytes: content.length}
+}
+
+~workflow {
+  step start_env  -> init_environment("/workspace/project")
+  step verify_src -> validate_file_path("/workspace/project/main.ts")
+  step load_doc   -> read_file_buffer("/workspace/project/main.ts")
+  step save_doc   -> retry(2, exp) write_file_buffer("/workspace/project/main.ts", load_doc.content)
+}
+
+=ex{init_environment,validate_file_path,read_file_buffer,write_file_buffer}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787227807382.json",
+  "timestamp": "2026-08-20T12:10:07.382Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){_2=(false<n);_5=(y<=0);^(('#(i=0;i<10;i++)'||null));^(\"a+b\")}\n!f1(_0:int,_1:any,_2:str|num) -> str|num{?((null+'?=if #=for')){?(('world'*-1)){?((a*42)){?(\"$K\"){_7=(0>\"hello\")}:{};_0=0}:{};_4=null;?((\"$K\"<\"a+b\")){_6=(\"hello\"&&'#(i=0;i<10;i++)');?((x==null)){#(_i=0;_i<2;_i++){?(('world'>b)){_7=y}:{};?(('world'==-1)){_s=-1;_2='world';_2=('#(i=0;i<10;i++)'-'$');_9=('!f(){}'<'@LIN:L1c:0.2')}:{}};?(false){_1=('world'-'!f(){}');_6=a}:{};^((0<=b));_2=(0>=x)}:{};_3=(y*true);^('world')}:{};_s=y}:{}}:{};?(x){_1=('@LIN:L1c:0.2'>=y);?(0){_3=(null-\"a+b\");^((x>='#(i=0;i<10;i++)'));^((0+'@LIN:L1c:0.2'));?('#(i=0;i<10;i++)'){_1=(null<'!f(){}');^('!f(){}')}:{}}:{}}:{};?(('$'==\"$K\")){?((n&&'#(i=0;i<10;i++)')){_s=x;#(_i=0;_i<3;_i++){^(('^(return)'>=false));_5=\"hello\";_7=(x&&true);_6=(true==\"a+b\")}}:{};^(false);_s=\"$K\"}:{};_4=('@LIN:L1c:0.2'>=x)}\n!f2(_0:str,_1:bool,_2:num) -> any{#(_i=0;_i<4;_i++){_s=y;_s=1;#(_i=0;_i<3;_i++){#(_i=0;_i<4;_i++){?('^(return)'){?('!f(){}'){?((y>=1)){?((x||42)){_5=(x!=3.14);_2=(\"$K\"-n)}:{}}:{};_8=(\"a+b\">=0)}:{};?(n){_s=1}:{};_s=42}:{};?(42){_1=y;#(_i=0;_i<1;_i++){_s='!f(){}';#(_i=0;_i<5;_i++){_1=(a-\"$K\")};_s=n}}:{};_s=42;?((1>'world')){_s='!f(){}'}:{}};?((true-\"hello\")){?(\"a+b\"){^(('?=if #=for'||42));?((y/\"a+b\")){_3=(3.14*'?=if #=for');_9=(x&&a)}:{}}:{}}:{};_2=(n!=\"a+b\");_1=(n/\"hello\")};?(n){^((x!=3.14))}:{}};_7=(a||1)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\")){_3=(3.14 > 0\nrepairs: refine \"a+b\")){_3=(3.14:int{>0} | require \"a+b\")){_3=(3.14>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\")){_3=(3.14 > 0\nrepairs: refine \"a+b\")){_3=(3.14:int{>0} | require \"a+b\")){_3=(3.14>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

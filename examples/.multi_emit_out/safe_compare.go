@@ -24,37 +24,37 @@ func _lia_typeof(x interface{}) string {
 func _lia_at(s interface{}, i interface{}) string {
 	str := _lia_str(s)
 	n := _lia_num(i)
-	if n < 0 || n >= len(str) { return "" }
+	if n < 0 || n >= int64(len(str)) { return "" }
 	return str[n:n+1]
 }
-func _lia_code_at(s interface{}, i interface{}) int {
+func _lia_code_at(s interface{}, i interface{}) int64 {
 	str := _lia_str(s)
 	n := _lia_num(i)
-	if n < 0 || n >= len(str) { return 0 }
-	return int(str[n])
+	if n < 0 || n >= int64(len(str)) { return 0 }
+	return int64(str[n])
 }
 func _lia_isfinite(x interface{}) bool { return true }
 func _lia_isnan(x interface{}) bool { return false }
 func _lia_falsy(x interface{}) bool {
-	if x == nil || x == false || x == 0 || x == "" { return true }
+	if x == nil || x == false || x == int64(0) || x == 0 || x == "" { return true }
 	return false
 }
-func _lia_len(x interface{}) int {
+func _lia_len(x interface{}) int64 {
 	switch v := x.(type) {
 	case string:
-		return len(v)
+		return int64(len(v))
 	default:
 		return 0
 	}
 }
-func _lia_num(x interface{}) int {
+func _lia_num(x interface{}) int64 {
 	switch v := x.(type) {
 	case int:
-		return v
+		return int64(v)
 	case int64:
-		return int(v)
+		return v
 	case float64:
-		return int(v)
+		return int64(v)
 	default:
 		return 0
 	}
@@ -63,6 +63,10 @@ func _lia_obj(_ ...interface{}) interface{} { return nil }
 func _lia_or(a interface{}, b interface{}) interface{} {
 	if _lia_falsy(a) { return b }
 	return a
+}
+func _lia_or_str(a string, b string) string {
+	if a != "" { return a }
+	return b
 }
 func _lia_cat(a interface{}, b interface{}) string { return _lia_str(a) + _lia_str(b) }
 func _lia_str(x interface{}) string {
@@ -86,12 +90,12 @@ func _lia_str(x interface{}) string {
 		return ""
 	}
 }
-func _lia_abs(x interface{}) int {
+func _lia_abs(x interface{}) int64 {
 	n := _lia_num(x)
 	if n < 0 { return -n }
 	return n
 }
-func _lia_round(x interface{}) int { return _lia_num(x) }
+func _lia_round(x interface{}) int64 { return _lia_num(x) }
 func _lia_get(_ interface{}, _ string) interface{} { return nil }
 func _lia_includes(_ interface{}, _ interface{}) bool { return false }
 func _lia_re_exec(_ interface{}) string { return "" }
@@ -123,14 +127,14 @@ func _lia_itoa(n int) string {
 	return string(b[i:])
 }
 
-func safeCompare(a interface{}, b interface{}) bool {
+func safeCompare(a int64, b int64) bool {
 	var A interface{}
 	_ = A
 	var B interface{}
 	_ = B
-	var n int
-	var r int
-	var i int
+	var n int64
+	var r int64
+	var i int64
 	_ = n
 	_ = r
 	_ = i
@@ -147,7 +151,7 @@ func safeCompare(a interface{}, b interface{}) bool {
 	}
 	return _lia_num(r) == 0
 }
-func nativeTimingSafeEqual(a interface{}, b interface{}) bool {
+func nativeTimingSafeEqual(a int64, b int64) bool {
 	_ = a
 	_ = b
 	panic("LIA_EMIT_GO: JS-runtime-only (nativeTimingSafeEqual)")

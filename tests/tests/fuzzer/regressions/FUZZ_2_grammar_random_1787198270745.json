@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787198270745.json",
+  "timestamp": "2026-08-20T03:57:50.745Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int|null) -> int{?('!f(){}'){#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_3=0;#(_i=0;_i<5;_i++){?((n||null)){^(b);_0=\"a+b\";?((x%'#(i=0;i<10;i++)')){?(('@LIN:L1c:0.2'>y)){_s=-1;_1=\"$K\";^((true%'!f(){}'))}:{};_s=1;_9=('@LIN:L1c:0.2'<-1);^(b)}:{};?(('^(return)'<=\"a+b\")){_8=true;_8=(a=='@LIN:L1c:0.2');_s=y}:{}}:{}}};_1=(\"$K\"%'$');^(('?=if #=for'-\"a+b\"));_4=(42==false)}}:{};_6=(1<false);#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){_s=1;_s=3.14;^((false<='#(i=0;i<10;i++)'));_s=x};#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){^(('world'>'$'));?((\"$K\"&&'#(i=0;i<10;i++)')){?('$'){_2='$';_s=a;?((1&&null)){#(_i=0;_i<4;_i++){_3=('world'&&'#(i=0;i<10;i++)');_s=1;_s='@LIN:L1c:0.2'};#(_i=0;_i<3;_i++){_s='#(i=0;i<10;i++)';_s=-1};_s='$';#(_i=0;_i<4;_i++){_s='@LIN:L1c:0.2';?((3.14<='?=if #=for')){?((a!=false)){_9=(42<='@LIN:L1c:0.2');_0=(false&&b);_0=(x>=\"hello\")}:{};?(('world'<=false)){_7=('@LIN:L1c:0.2'-0);#(_i=0;_i<5;_i++){^('$')};_1=(true*'$')}:{};_s=b;?((x/'^(return)')){_0=\"hello\"}:{}}:{}}}:{}}:{};_5=3.14}:{}};_9='@LIN:L1c:0.2';_0=x};_4=(\"$K\">=x)}}\n!f1(_0:int|null,_1:num,_2:num) -> str|num{#(_i=0;_i<5;_i++){^((0>=true));_5=(3.14*'world')};^((x-true));_s=-1;?((y>='!f(){}')){?((b>'!f(){}')){?(('!f(){}'&&a)){_3=('?=if #=for'/\"a+b\");_6=(a>=3.14);^(y)}:{};_s=-1}:{}}:{}}\n!f2(_0:str,_1:any){?((-1>a)){^((b<=null))}:{};^(('@LIN:L1c:0.2'+'^(return)'));?(('#(i=0;i<10;i++)'/'world')){_6=(42/'^(return)');_1=true}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)')){_0 > 0\nrepairs: refine '^(return)')){_0:int{>0} | require '^(return)')){_0>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)')){_0 > 0\nrepairs: refine '^(return)')){_0:int{>0} | require '^(return)')){_0>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787251589518.json",
+  "timestamp": "2026-08-20T18:46:29.518Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:num,_1:str,_2:int){_s='#(i=0;i<10;i++)'}\n!f1() -> int|null{^((\"hello\"-true));#(_i=0;_i<4;_i++){_1=b};_8=(null--1);#(_i=0;_i<3;_i++){_3=null}}\n!f2(_0:bool,_1:int|null,_2:str|num){_s=a;^(n);_3=(null<=false)}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_U8uleJ/emit.cjs:4\n/* effect:Write */function f1(){var _1,_8,_3,_i;return ((\"hello\"-true));for(_i=0;_i<4;_i++){_1=b;};_8=(null--1);for(_i=0;_i<3;_i++){_3=null;}}\n                                                               ",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_U8uleJ/emit.cjs:4\n/* effect:Write */function f1(){var _1,_8,_3,_i;return ((\"hello\"-true));for(_i=0;_i<4;_i++){_1=b;};_8=(null--1);for(_i=0;_i<3;_i++){_3=null;}}\n                                                               ",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787240634876.json",
+  "timestamp": "2026-08-20T15:43:54.876Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(){_5=(n<\"$K\");?('?=if #=for'){#(_i=0;_i<2;_i++){_7=(false/'#(i=0;i<10;i++)');_s='^(return)';?(('$'==y)){?('!f(){}'){_3=false;_7=(3.14+a);_s=null}:{};#(_i=0;_i<1;_i++){_4=(0<=true)}}:{}}}:{};?('world'){#(_i=0;_i<5;_i++){?((3.14&&'world')){_s=a;#(_i=0;_i<1;_i++){_s=\"hello\"}}:{}};?(true){_2=(y!='#(i=0;i<10;i++)');^((x<=\"hello\"));_s=\"hello\";_8=('!f(){}'==null)}:{};^((1=='!f(){}'))}:{}}\n!f1(_0:num,_1:int|null,_2:num){#(_i=0;_i<4;_i++){_s='#(i=0;i<10;i++)';#(_i=0;_i<1;_i++){#(_i=0;_i<3;_i++){?(('^(return)'!=3.14)){?(b){_5=(\"a+b\"<=\"$K\");^((\"a+b\"<'#(i=0;i<10;i++)'));#(_i=0;_i<1;_i++){?(false){_7=(n/true)}:{}}}:{};#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_2=('^(return)'==y);^((\"hello\"/true));^(y);^(0)};_s=null};#(_i=0;_i<2;_i++){#(_i=0;_i<2;_i++){?(('#(i=0;i<10;i++)'>=a)){_s=0;?((b<1)){_s=a}:{};?((n||a)){?((42%3.14)){?('world'){#(_i=0;_i<5;_i++){^('$');_2=('!f(){}'<=y)};_s=null}:{}}:{};_8=3.14;#(_i=0;_i<4;_i++){^((1!=\"$K\"));?((b!=3.14)){_s=false}:{};^('?=if #=for')};?(true){#(_i=0;_i<5;_i++){?(('#(i=0;i<10;i++)'<'@LIN:L1c:0.2')){_8=(3.14<=0)}:{}};^(-1)}:{}}:{};_s=n}:{}}}}:{};_s='$'};_4=(a==1);?(42){?(('$'<=1)){^(('?=if #=for'%false));?(false){^(('#(i=0;i<10;i++)'<y));^((n/'^(return)'))}:{};_6=(false%'@LIN:L1c:0.2');_s=3.14}:{}}:{}};_s=y;?(1){^((0*1));^(1);#(_i=0;_i<3;_i++){_s=true;^((b!=b))}}:{}};_1=('world'/true);?((false+b)){#(_i=0;_i<3;_i++){_5='$';#(_i=0;_i<3;_i++){_1=('^(return)'<'!f(){}')};_s='#(i=0;i<10;i++)';_s=x};?('^(return)'){#(_i=0;_i<1;_i++){^(n)}}:{}}:{}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '#(i=0;i<10;i++) > 0\nrepairs: refine '#(i=0;i<10;i++):int{>0} | require '#(i=0;i<10;i++)>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '#(i=0;i<10;i++) > 0\nrepairs: refine '#(i=0;i<10;i++):int{>0} | require '#(i=0;i<10;i++)>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

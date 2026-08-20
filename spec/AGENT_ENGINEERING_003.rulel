@@ -1,0 +1,45 @@
+@RULEL:AGENT_ENGINEERING_003:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=AGENT_ENGINEERING_003_REAL_REPOSITORY
+  status=ACTIVE_BENCHMARK_SPEC
+  domain="ai_agent_engineering_real_codebase"
+  date=2026-08-20
+  purpose="Evaluate end-to-end multi-turn software engineering across a realistic multi-module repository under context-death events"
+  parent=AGENT_ENGINEERING_002
+}
+
+.h{
+  id=H_AGENT_ENG_003
+  claim="In a realistic multi-module repository with 25+ files and regression test suites subjected to 5 sequential real-world engineering tasks under context-death resets, S4 (LIN+AINL) achieves the highest Engineering Efficiency, maintaining >45% token reduction vs S1 (Python), 0 invariant violations, 0 regressions, and minimal DAG churn vs S2 (AINL)."
+}
+
+.c{
+  repo_scale="25+_modules_enterprise_service"
+  tasks=["T1_tiered_pricing", "T2_security_refactor", "T3_amnesia_regression_fix", "T4_workflow_resilience", "T5_adversarial_audit"]
+  stacks=["S1_python", "S2_ainl", "S3_lin", "S4_hybrid"]
+  context_death_points=["between_T2_and_T3", "between_T3_and_T4"]
+}
+
+.mtr{
+  primary=[
+    "build_success_rate",
+    "first_pass_correctness",
+    "repair_rounds",
+    "tokens_consumed",
+    "reconstruction_tokens",
+    "invariant_violations",
+    "regression_rate",
+    "dag_churn",
+    "changed_files_count",
+    "invalidated_units_count",
+    "wall_clock_time_ms",
+    "engineering_efficiency"
+  ]
+}
+
+.r{
+  R1=all_stacks_must_implement_the_exact_same_functional_system_spec
+  R2=regression_suite_runs_blindly_after_every_task_turn
+  R3=context_death_resets_chat_completely_providing_only_disk_files
+}

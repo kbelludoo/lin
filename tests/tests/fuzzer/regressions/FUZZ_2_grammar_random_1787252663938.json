@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787252663938.json",
+  "timestamp": "2026-08-20T19:04:23.938Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str,_1:str|num,_2:any){_5=(n||'$');?('!f(){}'){#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){^(x);_7=y;^(-1)};?((42<=1)){_7='@LIN:L1c:0.2';?((0+-1)){^('!f(){}');_s=0;#(_i=0;_i<1;_i++){?('!f(){}'){?(('?=if #=for'&&false)){_7=\"$K\";_s=3.14;_4=(null%'@LIN:L1c:0.2');_s=b}:{};_s=-1;?((42%'world')){_s=42}:{};_s='#(i=0;i<10;i++)'}:{};_9=(true-b);?((false-b)){?(('^(return)'||x)){#(_i=0;_i<3;_i++){_5=(n||x);?((3.14+\"a+b\")){#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){?(3.14){_2=(0-\"a+b\");^((\"hello\"+'$'))}:{};?((a>=x)){?(\"$K\"){_3=(-1+3.14);_s='$'}:{};^((1==x))}:{};?((null/\"hello\")){_s=b;?('^(return)'){_4=(\"a+b\"!=\"a+b\")}:{};_s=\"a+b\"}:{};_1=\"a+b\"};^((false--1));_2=(\"$K\">=b);_s='$'};_7=(y=='world');^('#(i=0;i<10;i++)')}:{}};_3=true;#(_i=0;_i<4;_i++){#(_i=0;_i<4;_i++){?((-1>=0)){_2=(a>=-1);#(_i=0;_i<4;_i++){_0=(3.14!=42);^(('@LIN:L1c:0.2'=='world'));_s=-1};^((a+'$'));?((y!=-1)){_2=a;_s='$';?((false<a)){?(('@LIN:L1c:0.2'>'#(i=0;i<10;i++)')){?(-1){#(_i=0;_i<2;_i++){?(('world'-false)){_8=(-1&&3.14);?((3.14&&\"$K\")){^(b);#(_i=0;_i<1;_i++){_s=true;?((b/'world')){_s=\"hello\"}:{}};^(a)}:{};_2=(n%1)}:{};?((\"a+b\"=='@LIN:L1c:0.2')){#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_s='?=if #=for'};_s=3.14;_s=0;_4=(y||'$')};_s='@LIN:L1c:0.2'}:{}}}:{};_s='?=if #=for'}:{};_8=(y*y);_5=(n<true)}:{}}:{}}:{}}}}:{};^((a||\"$K\"));^('#(i=0;i<10;i++)')}:{}}}:{};_8=('world'+'$');_s='!f(){}'}:{};_s=\"a+b\"}}:{}}\n!f1(_0:any) -> str{^(false);_3='$';#(_i=0;_i<5;_i++){^('^(return)');_0=(b%true);_5=3.14;_9=(0&&null)}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\")){_s=b;? > 0\nrepairs: refine \"hello\")){_s=b;?:int{>0} | require \"hello\")){_s=b;?>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\")){_s=b;? > 0\nrepairs: refine \"hello\")){_s=b;?:int{>0} | require \"hello\")){_s=b;?>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,25 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_fuzzer_core
+~G{?=if #=for ^=ret :else $K=b:1 kb:1024}
+
+!mkTest(name,category,input,expect){t={};t.name=name;t.category=category;t.input=input;t.expect=expect;t.status='pending';t.error=null;^t}
+!mkBug(id,layer,category,input,error,severity){b={};b.id=id;b.layer=layer;b.category=category;b.input=input;b.error=error;b.severity=severity;b.minimized=null;b.patch=null;^b}
+!mkReport(){r={};r.total=0;r.passed=0;r.failed=0;r.bugs=[];r.regressions=[];r.patches=[];r.layers={};^r}
+!addBug(report,bug){report.bugs.push(bug);report.failed=report.failed+1;^report}
+!addPass(report){report.passed=report.pass+1;^report}
+!hasSub(s,sub){^(String(s||'').indexOf(sub)>=0)}
+!classifySeverity(layer){?(layer==1){^'lexer'};?(layer==2){^'parser'};?(layer==3){^'backend'};?(layer==4){^'mutation'};^'unknown'}
+!extractEffects(body){s=String(body||'');effs=[];?(hasSub(s,'throw')){effs.push('throw')};?(hasSub(s,'console.')){effs.push('io')};?(hasSub(s,'fetch(')){effs.push('network')};?(hasSub(s,'require(')){effs.push('module')};?(hasSub(s,'process.')){effs.push('system')};?(hasSub(s,'document.')||hasSub(s,'window.')){effs.push('dom')};?(hasSub(s,'setTimeout')||hasSub(s,'setInterval')){effs.push('async')};?(effs.length==0){effs.push('pure')};^effs}
+!classifyCategory(property){s=String(property).toLowerCase();?(hasSub(s,'alpha')||hasSub(s,'renaming')){^'alpha_renaming'};?(hasSub(s,'type')){^'type_preservation'};?(hasSub(s,'cross')){^'cross_target_parity'};?(hasSub(s,'semantic')||hasSub(s,'hash')){^'semantic_stability'};?(hasSub(s,'string')||hasSub(s,'literal')){^'string_integrity'};?(hasSub(s,'constant')||hasSub(s,'const')){^'constant_inlining'};?(hasSub(s,'effect')){^'effect_tracking'};?(hasSub(s,'number')||hasSub(s,'numeric')){^'numeric_edge'};?(hasSub(s,'parse')||hasSub(s,'syntax')){^'parse_roundtrip'};?(hasSub(s,'operator')){^'operator_norm'};^'semantic_stability'}
+!pickOracleStep1(cat){?(cat=='alpha_renaming'){^'semantic_hash'};?(cat=='type_preservation'){^'emit_success'};^(cat)}
+!pickOracleStep2(cat){?(cat=='cross_target_parity'){^'differential'};^(cat)}
+!pickOracleStep3(cat){?(cat=='string_integrity'){^'parse_success'};^(cat)}
+!pickOracle(cat){r=pickOracleStep1(cat);?(r=='alpha_renaming'||r=='type_preservation'){^r};r=pickOracleStep2(r);?(r=='cross_target_parity'){^'differential'};r=pickOracleStep3(r);?(r=='string_integrity'){^'parse_success'};?(r=='constant_inlining'||r=='numeric_edge'||r=='operator_norm'){^'execution_equality'};^'parse_success'}
+!pickGenStep1(cat){?(cat=='alpha_renaming'){^'rename_local'};?(cat=='string_integrity'){^'string_reserved'};^(cat)}
+!pickGenStep2(cat){?(cat=='operator_norm'){^'operator_chain'};?(cat=='constant_inlining'||cat=='numeric_edge'){^'boundary_values'};^(cat)}
+!pickGenerator(cat){r=pickGenStep1(cat);?(r=='alpha_renaming'||r=='string_integrity'){^r};r=pickGenStep2(r);?(r=='operator_norm'||r=='boundary_values'){^r};^'parse_roundtrip'}
+!strLen(s){^(String(s||'').length)}
+!strSlice(s,a,b){^(String(s||'').slice(a,b))}
+!strSplit(s,sep){^(String(s||'').split(sep))}
+!dedup(arr){seen={};out=[];#(i=0;i<arr.length;i++){v=String(arr[i]);?(seen[v]!=1){seen[v]=1;out.push(arr[i])}};^out}
+=ex{mkTest,mkBug,mkReport,addBug,addPass,classifySeverity,hasSub,extractEffects,classifyCategory,pickOracle,pickGenerator,strLen,strSlice,strSplit,dedup}

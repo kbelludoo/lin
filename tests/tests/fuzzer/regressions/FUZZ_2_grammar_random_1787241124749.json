@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787241124749.json",
+  "timestamp": "2026-08-20T15:52:04.749Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num,_1:str,_2:int|null){?((false>=x)){_s=true;?(0){_s=false;^((1||1));_s=false;_6=null}:{};#(_i=0;_i<4;_i++){#(_i=0;_i<3;_i++){^((b==\"hello\"));#(_i=0;_i<1;_i++){^(('$'*'!f(){}'))};?((y-'$')){_s=n;?((false%x)){#(_i=0;_i<3;_i++){_9=(-1>=n)};#(_i=0;_i<4;_i++){?((-1/false)){?('world'){?(true){_0=(n%1)}:{};_9=(\"a+b\"!='@LIN:L1c:0.2')}:{};^(('$'/x));_s='?=if #=for'}:{}}}:{}}:{}}};_s='world'}:{};_6=('^(return)'%\"$K\")}\n!f1(){_6=(null||3.14);_4=(n-'!f(){}');#(_i=0;_i<3;_i++){?((y<\"$K\")){_s='@LIN:L1c:0.2';?('world'){?(\"$K\"){#(_i=0;_i<1;_i++){?(42){#(_i=0;_i<4;_i++){#(_i=0;_i<3;_i++){?(x){_6=-1;?(\"hello\"){_4=(null-b);_4=(\"$K\">\"$K\");?((a<=\"$K\")){_9='$';?(n){_9=(\"hello\"%a)}:{};_2=(42!=false);_9=(0<'$')}:{};_2='^(return)'}:{};_4='@LIN:L1c:0.2'}:{};?((b==0)){^((0+\"hello\"));_s=a}:{};^((x>x));_7=('world'-\"a+b\")};_s=null;?((x<x)){#(_i=0;_i<3;_i++){^(('@LIN:L1c:0.2'||'world'));_7=(a<=0);^(b);_7=(x==3.14)}}:{};#(_i=0;_i<5;_i++){_s='!f(){}'}};_5=(\"$K\"&&'world');_s='world';#(_i=0;_i<1;_i++){#(_i=0;_i<2;_i++){_2=('!f(){}'>null);_s=null;_5=(\"a+b\"||\"a+b\");_0=(3.14*'?=if #=for')};_7=(\"a+b\"<=\"a+b\")}}:{};^(true)}}:{};_9=(true+'!f(){}')}:{};#(_i=0;_i<1;_i++){_s=\"a+b\";^(('$'-null));^('$')};_s='world'}:{};#(_i=0;_i<3;_i++){_9=(-1*a);_s=null;?(('!f(){}'||0)){?((42%'!f(){}')){?((0&&0)){^((3.14/null));_2='$';_s='!f(){}';^(('@LIN:L1c:0.2'%'@LIN:L1c:0.2'))}:{};_3=('^(return)'<false);_7='$'}:{};_1=(-1>='$');_s='$';?(-1){_s=42}:{}}:{}};_s='$'}}\n!f2(_0:any){_s=true}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: false > 0\nrepairs: refine false:int{>0} | require false>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: false > 0\nrepairs: refine false:int{>0} | require false>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

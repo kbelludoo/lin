@@ -1,0 +1,130 @@
+{
+  "C0_PYTHON": {
+    "label": "C0_PYTHON",
+    "by_tier": {
+      "CD0_FULL": {
+        "compliance_rate": "90/120 (75.0%)",
+        "avg_reconstruction_tokens": 470,
+        "ignored_signals": 30,
+        "unsafe_attempts": 30
+      },
+      "CD1_P30": {
+        "compliance_rate": "73/120 (60.8%)",
+        "avg_reconstruction_tokens": 649,
+        "ignored_signals": 47,
+        "unsafe_attempts": 47
+      },
+      "CD2_P50": {
+        "compliance_rate": "53/120 (44.2%)",
+        "avg_reconstruction_tokens": 770,
+        "ignored_signals": 28,
+        "unsafe_attempts": 67
+      },
+      "CD3_P70": {
+        "compliance_rate": "33/120 (27.5%)",
+        "avg_reconstruction_tokens": 889,
+        "ignored_signals": 31,
+        "unsafe_attempts": 87
+      }
+    },
+    "total_ignored_signal": 136,
+    "total_unsafe_attempts": 231,
+    "adversarial_denied_rate": "0/120 (0.0%)"
+  },
+  "C1_LIN": {
+    "label": "C1_LIN",
+    "by_tier": {
+      "CD0_FULL": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 190,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      },
+      "CD1_P30": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 214,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      },
+      "CD2_P50": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 231,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      },
+      "CD3_P70": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 245,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      }
+    },
+    "total_ignored_signal": 0,
+    "total_unsafe_attempts": 0,
+    "adversarial_denied_rate": "120/120 (100.0%)"
+  },
+  "C2_AINL": {
+    "label": "C2_AINL",
+    "by_tier": {
+      "CD0_FULL": {
+        "compliance_rate": "90/120 (75.0%)",
+        "avg_reconstruction_tokens": 274,
+        "ignored_signals": 30,
+        "unsafe_attempts": 30
+      },
+      "CD1_P30": {
+        "compliance_rate": "90/120 (75.0%)",
+        "avg_reconstruction_tokens": 312,
+        "ignored_signals": 30,
+        "unsafe_attempts": 30
+      },
+      "CD2_P50": {
+        "compliance_rate": "86/120 (71.7%)",
+        "avg_reconstruction_tokens": 336,
+        "ignored_signals": 34,
+        "unsafe_attempts": 34
+      },
+      "CD3_P70": {
+        "compliance_rate": "85/120 (70.8%)",
+        "avg_reconstruction_tokens": 359,
+        "ignored_signals": 28,
+        "unsafe_attempts": 35
+      }
+    },
+    "total_ignored_signal": 122,
+    "total_unsafe_attempts": 129,
+    "adversarial_denied_rate": "0/120 (0.0%)"
+  },
+  "C3_HYBRID": {
+    "label": "C3_HYBRID",
+    "by_tier": {
+      "CD0_FULL": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 210,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      },
+      "CD1_P30": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 232,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      },
+      "CD2_P50": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 245,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      },
+      "CD3_P70": {
+        "compliance_rate": "120/120 (100.0%)",
+        "avg_reconstruction_tokens": 259,
+        "ignored_signals": 0,
+        "unsafe_attempts": 0
+      }
+    },
+    "total_ignored_signal": 0,
+    "total_unsafe_attempts": 0,
+    "adversarial_denied_rate": "120/120 (100.0%)"
+  }
+}

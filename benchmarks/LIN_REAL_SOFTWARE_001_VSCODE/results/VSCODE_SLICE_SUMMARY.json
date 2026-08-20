@@ -1,0 +1,107 @@
+{
+  "benchmark_id": "LIN_REAL_SOFTWARE_001_VSCODE_SLICE",
+  "total_layers": 10,
+  "verified_layers": 10,
+  "observable_behavioral_parity": 1,
+  "total_tokens": 986,
+  "modules_compiled_count": 4,
+  "multi_target_status": {
+    "typescript": "100% EMITTED",
+    "rust": "100% EMITTED"
+  },
+  "layers": [
+    {
+      "id": "L01",
+      "name": "Startup & Lifecycle",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "ready": true,
+        "root": "/workspace/project"
+      }
+    },
+    {
+      "id": "L02",
+      "name": "File Open / Save I/O",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "success": true,
+        "bytes": 42
+      }
+    },
+    {
+      "id": "L03",
+      "name": "Editor Text Model & Edits",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "version": 2,
+        "dirty": true
+      }
+    },
+    {
+      "id": "L04",
+      "name": "Project Tree Explorer",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "total_files": 3
+      }
+    },
+    {
+      "id": "L05",
+      "name": "Search & Symbol Indexer",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "count": 1,
+        "query": "main"
+      }
+    },
+    {
+      "id": "L06",
+      "name": "Terminal & Process Host",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "pid": 4096,
+        "active": true
+      }
+    },
+    {
+      "id": "L07",
+      "name": "Git Version Control",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "hash": "commit_abc123",
+        "committed": true
+      }
+    },
+    {
+      "id": "L08",
+      "name": "Extension Host & API",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "ext": "lin.language-server",
+        "ok": true
+      }
+    },
+    {
+      "id": "L09",
+      "name": "Command Palette & Settings",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "cmd": "workbench.action.findInFiles",
+        "executed": true
+      }
+    },
+    {
+      "id": "L10",
+      "name": "Agent Copilot Workflow",
+      "status": "VERIFIED_EQUIVALENT",
+      "expected": {
+        "success": true,
+        "plan": [
+          "diagnose",
+          "refactor_lin",
+          "verify_gate"
+        ]
+      }
+    }
+  ]
+}

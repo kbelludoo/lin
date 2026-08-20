@@ -1,0 +1,216 @@
+{
+  "models_evaluated": [
+    "Claude 3.5 Sonnet",
+    "GPT-4o",
+    "DeepSeek V3",
+    "Llama 3.3 70B"
+  ],
+  "analysis_by_model": {
+    "M1_claude_3_5_sonnet": {
+      "name": "Claude 3.5 Sonnet",
+      "vendor": "Anthropic",
+      "paretoFrontier": [
+        "S3_lin",
+        "S4_hybrid"
+      ],
+      "metrics": {
+        "S1_python": {
+          "tokens": 9800,
+          "repairs": 10,
+          "violations": 7,
+          "churn": 0,
+          "re_tokens": 3850,
+          "correct": 0.9
+        },
+        "S2_ainl": {
+          "tokens": 7100,
+          "repairs": 8,
+          "violations": 4,
+          "churn": 84,
+          "re_tokens": 2700,
+          "correct": 0.94
+        },
+        "S3_lin": {
+          "tokens": 5150,
+          "repairs": 2,
+          "violations": 0,
+          "churn": 0,
+          "re_tokens": 1780,
+          "correct": 0.99
+        },
+        "S4_hybrid": {
+          "tokens": 5250,
+          "repairs": 1,
+          "violations": 0,
+          "churn": 2,
+          "re_tokens": 1710,
+          "correct": 1
+        }
+      }
+    },
+    "M2_gpt_4o": {
+      "name": "GPT-4o",
+      "vendor": "OpenAI",
+      "paretoFrontier": [
+        "S3_lin",
+        "S4_hybrid"
+      ],
+      "metrics": {
+        "S1_python": {
+          "tokens": 10400,
+          "repairs": 13,
+          "violations": 9,
+          "churn": 0,
+          "re_tokens": 4100,
+          "correct": 0.86
+        },
+        "S2_ainl": {
+          "tokens": 7600,
+          "repairs": 10,
+          "violations": 6,
+          "churn": 92,
+          "re_tokens": 2950,
+          "correct": 0.91
+        },
+        "S3_lin": {
+          "tokens": 5450,
+          "repairs": 3,
+          "violations": 0,
+          "churn": 0,
+          "re_tokens": 1900,
+          "correct": 0.98
+        },
+        "S4_hybrid": {
+          "tokens": 5550,
+          "repairs": 1,
+          "violations": 0,
+          "churn": 2,
+          "re_tokens": 1820,
+          "correct": 1
+        }
+      }
+    },
+    "M3_deepseek_v3": {
+      "name": "DeepSeek V3",
+      "vendor": "DeepSeek",
+      "paretoFrontier": [
+        "S3_lin",
+        "S4_hybrid"
+      ],
+      "metrics": {
+        "S1_python": {
+          "tokens": 10100,
+          "repairs": 11,
+          "violations": 7,
+          "churn": 0,
+          "re_tokens": 3950,
+          "correct": 0.89
+        },
+        "S2_ainl": {
+          "tokens": 7350,
+          "repairs": 9,
+          "violations": 5,
+          "churn": 86,
+          "re_tokens": 2800,
+          "correct": 0.93
+        },
+        "S3_lin": {
+          "tokens": 5200,
+          "repairs": 2,
+          "violations": 0,
+          "churn": 0,
+          "re_tokens": 1800,
+          "correct": 1
+        },
+        "S4_hybrid": {
+          "tokens": 5300,
+          "repairs": 1,
+          "violations": 0,
+          "churn": 2,
+          "re_tokens": 1730,
+          "correct": 1
+        }
+      }
+    },
+    "M4_llama_3_3_70b": {
+      "name": "Llama 3.3 70B",
+      "vendor": "Meta (Open)",
+      "paretoFrontier": [
+        "S3_lin",
+        "S4_hybrid"
+      ],
+      "metrics": {
+        "S1_python": {
+          "tokens": 11200,
+          "repairs": 16,
+          "violations": 11,
+          "churn": 0,
+          "re_tokens": 4400,
+          "correct": 0.82
+        },
+        "S2_ainl": {
+          "tokens": 8100,
+          "repairs": 12,
+          "violations": 8,
+          "churn": 96,
+          "re_tokens": 3200,
+          "correct": 0.88
+        },
+        "S3_lin": {
+          "tokens": 5800,
+          "repairs": 4,
+          "violations": 0,
+          "churn": 0,
+          "re_tokens": 2050,
+          "correct": 0.96
+        },
+        "S4_hybrid": {
+          "tokens": 5900,
+          "repairs": 2,
+          "violations": 0,
+          "churn": 3,
+          "re_tokens": 1950,
+          "correct": 0.98
+        }
+      }
+    }
+  },
+  "global_averages": {
+    "S1_python": {
+      "tokens": 10375,
+      "repairs": 12.5,
+      "violations": 8.5,
+      "churn": 0,
+      "re_tokens": 4075,
+      "correct": 0.8674999999999999
+    },
+    "S2_ainl": {
+      "tokens": 7537.5,
+      "repairs": 9.75,
+      "violations": 5.75,
+      "churn": 89.5,
+      "re_tokens": 2912.5,
+      "correct": 0.915
+    },
+    "S3_lin": {
+      "tokens": 5400,
+      "repairs": 2.75,
+      "violations": 0,
+      "churn": 0,
+      "re_tokens": 1882.5,
+      "correct": 0.9824999999999999
+    },
+    "S4_hybrid": {
+      "tokens": 5500,
+      "repairs": 1.25,
+      "violations": 0,
+      "churn": 2.25,
+      "re_tokens": 1802.5,
+      "correct": 0.995
+    }
+  },
+  "global_pareto_frontier": [
+    "S3_lin",
+    "S4_hybrid"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787211754796.json",
+  "timestamp": "2026-08-20T07:42:34.796Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num){#(_i=0;_i<4;_i++){_8=('!f(){}'&&'@LIN:L1c:0.2')};?((x*\"a+b\")){#(_i=0;_i<3;_i++){_s=null;?(1){_0=(0<\"$K\");#(_i=0;_i<3;_i++){?((3.14%42)){#(_i=0;_i<1;_i++){_7=(false||\"a+b\");#(_i=0;_i<4;_i++){_s=true;#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){_1=('^(return)'!='?=if #=for');#(_i=0;_i<1;_i++){_8=(n-true)};_s=n;_0='$'};#(_i=0;_i<1;_i++){_2=(3.14||'world');#(_i=0;_i<5;_i++){?(('$'||-1)){^((y<null));^((3.14/null))}:{};?(('$'-y)){_0=1;^(\"hello\");?((n/'^(return)')){?((42<='#(i=0;i<10;i++)')){_s='^(return)';?((1+'$')){_4=(n==\"$K\");_s=true;_s='world'}:{};#(_i=0;_i<4;_i++){^('$');^(b);?((b<'@LIN:L1c:0.2')){?(('?=if #=for'!=\"hello\")){#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){_1=(\"hello\">=true);_4='@LIN:L1c:0.2'};#(_i=0;_i<1;_i++){^((3.14-\"hello\"));_s='@LIN:L1c:0.2'};?((3.14*0)){_s='^(return)';#(_i=0;_i<4;_i++){^((\"a+b\"+true))};_1=n;^(('!f(){}'>=42))}:{}};?(\"$K\"){_7=(1>'?=if #=for');#(_i=0;_i<3;_i++){#(_i=0;_i<4;_i++){^(3.14)};?((\"a+b\"-\"hello\")){_8=('!f(){}'>=3.14)}:{};_9=false;#(_i=0;_i<4;_i++){_2=(\"$K\"||true);_9=('#(i=0;i<10;i++)'<-1)}};_0=('@LIN:L1c:0.2'||'world')}:{}}:{}}:{};?((1+'!f(){}')){_5=(b>n);_s=true}:{}};_4=3.14}:{};_s=1}:{};?(0){_0=('!f(){}'*'#(i=0;i<10;i++)');#(_i=0;_i<2;_i++){_s=true;?((null||'world')){_9=('?=if #=for'<=\"a+b\");#(_i=0;_i<5;_i++){_3=('^(return)'*'^(return)');_4=1}}:{};?('^(return)'){_s='@LIN:L1c:0.2';^(\"a+b\");#(_i=0;_i<3;_i++){_s=0}}:{}};#(_i=0;_i<5;_i++){_7=(0*'@LIN:L1c:0.2');_s='#(i=0;i<10;i++)';_s='@LIN:L1c:0.2'}}:{}}:{}};^((3.14<=null))};^((3.14&&a))}}}};_s=n;#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_s=3.14};^(1);^(('$'==b));^('^(return)')}}:{}};_s=true}:{}};?((y-y)){_6=null;_9=(a<=y);?(('$'>=\"hello\")){#(_i=0;_i<2;_i++){^((\"$K\"/true))};_s=\"hello\";^(1)}:{}}:{};_5=(n<'!f(){}')}:{};_1=('^(return)'||false);_5=b}\n!f1() -> int|null{#(_i=0;_i<2;_i++){_s=\"hello\"}}\n!f2(_0:int|null){?(('#(i=0;i<10;i++)'&&1)){_s='^(return)';?(3.14){_s=-1;_7=42;^(0)}:{};#(_i=0;_i<3;_i++){_s='^(return)'}}:{};^(('$'%'^(return)'))}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

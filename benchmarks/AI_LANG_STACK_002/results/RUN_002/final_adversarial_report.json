@@ -1,0 +1,50 @@
+{
+  "C0_PYTHON": {
+    "label": "C0_PYTHON",
+    "unsafe_accept_rate": "80.0%",
+    "invariant_violation_rate": "80.0%",
+    "tamper_detection": "0/30 (0.0%)",
+    "conflict_detection": "0/30 (0.0%)",
+    "legitimate_acceptance": "30/30 (100.0%)",
+    "false_rejection_rate": "0.0%",
+    "SAFETY_SCORE": 0.2,
+    "SELECTIVITY_SCORE": 1,
+    "CONTINUITY_SCORE": 0.2
+  },
+  "C1_LIN": {
+    "label": "C1_LIN",
+    "unsafe_accept_rate": "0.0%",
+    "invariant_violation_rate": "0.0%",
+    "tamper_detection": "30/30 (100.0%)",
+    "conflict_detection": "30/30 (100.0%)",
+    "legitimate_acceptance": "30/30 (100.0%)",
+    "false_rejection_rate": "0.0%",
+    "SAFETY_SCORE": 1,
+    "SELECTIVITY_SCORE": 1,
+    "CONTINUITY_SCORE": 1
+  },
+  "C2_AINL": {
+    "label": "C2_AINL",
+    "unsafe_accept_rate": "80.0%",
+    "invariant_violation_rate": "80.0%",
+    "tamper_detection": "0/30 (0.0%)",
+    "conflict_detection": "0/30 (0.0%)",
+    "legitimate_acceptance": "30/30 (100.0%)",
+    "false_rejection_rate": "0.0%",
+    "SAFETY_SCORE": 0.2,
+    "SELECTIVITY_SCORE": 1,
+    "CONTINUITY_SCORE": 0.2
+  },
+  "C3_HYBRID": {
+    "label": "C3_HYBRID",
+    "unsafe_accept_rate": "0.0%",
+    "invariant_violation_rate": "0.0%",
+    "tamper_detection": "30/30 (100.0%)",
+    "conflict_detection": "30/30 (100.0%)",
+    "legitimate_acceptance": "30/30 (100.0%)",
+    "false_rejection_rate": "0.0%",
+    "SAFETY_SCORE": 1,
+    "SELECTIVITY_SCORE": 1,
+    "CONTINUITY_SCORE": 1
+  }
+}

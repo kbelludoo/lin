@@ -1,0 +1,69 @@
+{
+  "benchmark": "LIN_NATIVE_WORKFLOW_003_REAL_LARGE",
+  "version": "1.0.0",
+  "title": "Public Language Surface (@LIN:L2w:1.0) Real-World Stress Benchmark (1,240 Modules, 112.4k LOC, 5,800 Nodes, 1,000 Mutations)",
+  "goal": "Empirically verify that the frozen public language surface (@LIN:L2w:1.0) can fully ingest, represent, compile, and maintain a large-scale enterprise repository (1,240 modules, 112.4k LOC, 5,800 nodes, 12,400 edges) across 1,000 consecutive mutations with zero semantic regression, 100% surface-to-IR fidelity, and 0% over-invalidation.",
+  "freeze_before_execution": true,
+  "scale_profile": {
+    "repository_name": "enterprise-multi-service-engine",
+    "total_modules": 1240,
+    "total_loc": 112400,
+    "semantic_workflow_nodes": 5800,
+    "workflow_edges": 12400,
+    "services_count": 18,
+    "surface_grammar_version": "@LIN:L2w:1.0"
+  },
+  "campaigns": [
+    {
+      "id": "R0_SURFACE_INGEST",
+      "name": "Full Surface Ingest & AST Generation",
+      "mutations": 0
+    },
+    {
+      "id": "R1_SURFACE_MUT_10",
+      "name": "10 Real Surface Mutations",
+      "mutations": 10
+    },
+    {
+      "id": "R2_SURFACE_MUT_100",
+      "name": "100 Real Surface Mutations",
+      "mutations": 100
+    },
+    {
+      "id": "R3_SURFACE_MUT_1000",
+      "name": "1,000 Real Surface Mutations Stress",
+      "mutations": 1000
+    }
+  ],
+  "frozen_acceptance_criteria": {
+    "transpilation_rate": "100.0%",
+    "behavioral_parity_rate": "100.0%",
+    "invariant_preservation_rate": "100.0%",
+    "under_invalidation_rate": "0.0%",
+    "over_invalidation_rate": "0.0%",
+    "regression_count": 0,
+    "surface_to_ir_fidelity_rate": "100.0%",
+    "surface_to_backend_fidelity_rate": "100.0%"
+  },
+  "repetitions": 10,
+  "total_trials": 40,
+  "metrics": [
+    "parse_success_rate",
+    "compile_success_rate",
+    "behavioral_equivalence_rate",
+    "invariant_preservation_rate",
+    "under_invalidation_rate",
+    "over_invalidation_rate",
+    "nodes_invalidated_per_mut",
+    "edges_changed_per_mut",
+    "avg_rebuild_ms",
+    "cumulative_rebuild_ms",
+    "peak_ram_mb",
+    "surface_tokens",
+    "reconstruction_tokens_p70",
+    "first_pass_success_rate",
+    "regression_count",
+    "surface_to_ir_fidelity",
+    "surface_to_backend_fidelity"
+  ]
+}

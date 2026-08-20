@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787219682249.json",
+  "timestamp": "2026-08-20T09:54:42.249Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(){^(('!f(){}'==false));?((1&&1)){_s='!f(){}';_3=(y>=42);_s=\"a+b\"}:{};?(true){?((\"a+b\">\"a+b\")){?(('#(i=0;i<10;i++)'*0)){?((0>\"$K\")){?((n-1)){_s='!f(){}';_6=('!f(){}'/3.14);?((0*y)){_9=b;^((n+\"hello\"));?(('!f(){}'>=a)){#(_i=0;_i<3;_i++){?('^(return)'){?((true>n)){_s=x}:{};?(n){_2=(true>=0);#(_i=0;_i<2;_i++){_4=(0/1)}}:{}}:{};_5=(\"$K\"%false);?(('world'!=y)){_2=(3.14&&null);?('$'){^(\"$K\");^((1!=b));?(('#(i=0;i<10;i++)'-'@LIN:L1c:0.2')){_1=(42>=y)}:{};#(_i=0;_i<4;_i++){#(_i=0;_i<4;_i++){?((x||a)){_1=(1*'$')}:{};#(_i=0;_i<4;_i++){_7=('^(return)'<null)};_4=(\"$K\"%'$')};_2=(\"a+b\"||n);?(('^(return)'<\"hello\")){_s='!f(){}';?(('?=if #=for'&&\"a+b\")){_7=(a<'^(return)')}:{};_s=0;_s=false}:{}}}:{};?((\"a+b\"--1)){#(_i=0;_i<1;_i++){_7=(42!=0);_7='#(i=0;i<10;i++)';^(('?=if #=for'%\"$K\"))}}:{};_2=(a<0)}:{}};^(('$'>'!f(){}'));_s=0}:{};_s=\"$K\"}:{}}:{};?((\"$K\"&&\"a+b\")){_s='^(return)';^(('@LIN:L1c:0.2'-\"$K\"))}:{}}:{};_3=(null&&null);_s=0;_3=(x%'!f(){}')}:{};_s=null}:{}}:{};#(_i=0;_i<2;_i++){_8=('@LIN:L1c:0.2'=='world');^((true>true));_s=n;_s='!f(){}'}}\n!f1(){?(('world'<=b)){#(_i=0;_i<2;_i++){_3=(a||true);_3=(0%\"hello\")};_2=(b>y)}:{}}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_eNm7wv/emit.cjs:3\n/* effect:Write */function f0(){var _s,_3,_6,_9,_2,_4,_5,_1,_7,_8,i,_i;return (('!f(){}'===false));if((1&&1)){_s='!f(){}';_3=(y>=42);_s=\"a+b\";}else{};if(true){if((\"a+b\">\"a+b\")){if(('for(i=0;i<10;i++)'*0)){i",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_eNm7wv/emit.cjs:3\n/* effect:Write */function f0(){var _s,_3,_6,_9,_2,_4,_5,_1,_7,_8,i,_i;return (('!f(){}'===false));if((1&&1)){_s='!f(){}';_3=(y>=42);_s=\"a+b\";}else{};if(true){if((\"a+b\">\"a+b\")){if(('for(i=0;i<10;i++)'*0)){i",
+    "testable": false
+  },
+  "fixed": false
+}

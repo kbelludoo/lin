@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787249813025.json",
+  "timestamp": "2026-08-20T18:16:53.025Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num,_1:num,_2:num) -> int{_1=(a%'#(i=0;i<10;i++)');_7=(\"a+b\"%'@LIN:L1c:0.2');?(('?=if #=for'<'?=if #=for')){_s=\"hello\";_4=1;?(0){?(42){^((null<'@LIN:L1c:0.2'))}:{}}:{}}:{};_7=(true%-1)}\n!f1() -> int|null{^((n>='#(i=0;i<10;i++)'));_9=('$'&&'!f(){}');#(_i=0;_i<5;_i++){_1=(\"a+b\">'#(i=0;i<10;i++)');#(_i=0;_i<5;_i++){^((a+42));#(_i=0;_i<2;_i++){^((1||'^(return)'));?((false&&'!f(){}')){?((x=='#(i=0;i<10;i++)')){?('@LIN:L1c:0.2'){_s=false;?((1/42)){_2=(y<=y);#(_i=0;_i<5;_i++){^((0&&a));?((b>=\"hello\")){_8=('#(i=0;i<10;i++)'<\"a+b\");^((0*'world'));_5=(1%'@LIN:L1c:0.2')}:{};?(1){?(('#(i=0;i<10;i++)'>'^(return)')){#(_i=0;_i<5;_i++){^((n!=\"a+b\"));^((b*false));^(x);?((y/true)){_0=(null>'^(return)')}:{}};_8=(true+'^(return)')}:{};_s=false}:{};?((true<='@LIN:L1c:0.2')){_6=(0||y);_0=('world'||\"$K\")}:{}}}:{};_s=false}:{}}:{};?((\"hello\"&&'?=if #=for')){#(_i=0;_i<2;_i++){_s=null;_s=42;?(('@LIN:L1c:0.2'-'@LIN:L1c:0.2')){#(_i=0;_i<3;_i++){_2=('@LIN:L1c:0.2'==42);_s=n;?((a%'?=if #=for')){?(('?=if #=for'==\"a+b\")){#(_i=0;_i<3;_i++){?((\"hello\">='#(i=0;i<10;i++)')){?(\"a+b\"){_s='?=if #=for';?((x==x)){_5=(null+b)}:{};#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){#(_i=0;_i<5;_i++){_3=true;^((3.14==\"$K\"))}};_s=42};_s=1}:{}}:{}}}:{}}:{};#(_i=0;_i<2;_i++){_2=(x&&false);^((0||y))}};?((b>true)){_s='?=if #=for';_5=(y-'^(return)');_5=(false>\"hello\");^(0)}:{}}:{}};_s='#(i=0;i<10;i++)'}:{};?(('world'>true)){?((\"$K\">y)){_s=0}:{};^(a)}:{}}:{};_7='@LIN:L1c:0.2';_9=\"$K\"}};_8=(x>false)}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

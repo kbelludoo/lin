@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787200104059.json",
+  "timestamp": "2026-08-20T04:28:24.059Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:int) -> int|null{_9=(a/\"a+b\");^(42);_0=3.14}\n!f1(_0:str,_1:num){_3=3.14;_s=null;^((1/n))}\n!f2(_0:int) -> any{?(x){?(('?=if #=for'%0)){_s=n;_2=(-1||\"$K\");_9=(y==0)}:{}}:{};_3=(false*x);_8=1;_7=1}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\");^(42);_0= > 0\nrepairs: refine \"a+b\");^(42);_0=:int{>0} | require \"a+b\");^(42);_0=>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\");^(42);_0= > 0\nrepairs: refine \"a+b\");^(42);_0=:int{>0} | require \"a+b\");^(42);_0=>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

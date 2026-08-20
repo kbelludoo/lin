@@ -29,9 +29,7 @@ fn _lia_cache_get(cache: &[String], i: i32) -> String {
     let u = if i < 0 { 0 } else { i as usize };
     if u < cache.len() { cache[u].clone() } else { String::new() }
 }
-pub fn safe_compare(a: impl ToString, b: impl ToString) -> bool {
-    let mut a = a.to_string();
-    let mut b = b.to_string();
+pub fn safe_compare(mut a: i64, mut b: i64) -> bool {
     let A = String::new();
     let B = String::new();
     let mut A: String = String::new();

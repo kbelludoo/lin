@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787218697043.json",
+  "timestamp": "2026-08-20T09:38:17.043Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:any){#(_i=0;_i<5;_i++){^(('^(return)'||\"a+b\"));_3=(3.14||\"$K\");_9=('?=if #=for'*'!f(){}')};^(('#(i=0;i<10;i++)'>=a));^((a+'!f(){}'))}\n!f1(_0:num) -> str{#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){_8=y;#(_i=0;_i<1;_i++){_1=x};_6='$';_s=false}};_7=(true+n);?((42!='^(return)')){_0='^(return)';?(('world'*null)){_s=x;?(1){^((y&&x));?((y*b)){_s='@LIN:L1c:0.2';_3=(\"a+b\"%'@LIN:L1c:0.2')}:{};_9=('#(i=0;i<10;i++)'<='!f(){}')}:{}}:{}}:{};?((\"$K\"||\"a+b\")){#(_i=0;_i<1;_i++){_s=a;_s=\"a+b\";#(_i=0;_i<2;_i++){_s=null;^((0||y));#(_i=0;_i<2;_i++){_6=3.14;^((b>=\"hello\"));#(_i=0;_i<5;_i++){_7='#(i=0;i<10;i++)';^('$');_s=42;#(_i=0;_i<2;_i++){_s=\"a+b\";?(('$'>y)){^((true<=false));#(_i=0;_i<1;_i++){_s=\"$K\";_6=b};_2=(false!=\"a+b\");_1='@LIN:L1c:0.2'}:{};_7=('$'>=x)}};_2=b};#(_i=0;_i<2;_i++){?((true>'#(i=0;i<10;i++)')){^(-1);_3=(b<0);^(('^(return)'*42));_s=\"a+b\"}:{}}};#(_i=0;_i<4;_i++){?((x+'?=if #=for')){_0=x;?(x){^(('world'<1));?((3.14/true)){#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){?((false+42)){?(('!f(){}'=='#(i=0;i<10;i++)')){_3=(-1||\"a+b\");#(_i=0;_i<1;_i++){_8=(a==-1);_4=(\"hello\"!='$')};#(_i=0;_i<4;_i++){^('!f(){}')}}:{};?(('@LIN:L1c:0.2'=='#(i=0;i<10;i++)')){_s=\"hello\";^((\"$K\"-y));^(0)}:{};_7=('^(return)'||\"$K\");^(0)}:{};_5=('!f(){}'>-1)};_0=(\"a+b\">true)};?((false-true)){^((\"$K\"*0))}:{};_5=y;_s=0}:{};_2=x}:{}}:{};_8=('world'/true)}};_s=\"hello\";?(42){_1=(n%a);_0=(true*y);^((3.14<'?=if #=for'))}:{}}:{}}\n!f2() -> num{_3=(y%0)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: true > 0\nrepairs: refine true:int{>0} | require true>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

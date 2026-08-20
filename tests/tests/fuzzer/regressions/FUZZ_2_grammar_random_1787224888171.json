@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787224888171.json",
+  "timestamp": "2026-08-20T11:21:28.171Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int,_1:int|null,_2:int|null){_9=('@LIN:L1c:0.2'=='^(return)');?(('#(i=0;i<10;i++)'!=42)){?(('world'>\"hello\")){#(_i=0;_i<1;_i++){_2=false;_6=(3.14>b);#(_i=0;_i<1;_i++){?('#(i=0;i<10;i++)'){_4='^(return)';#(_i=0;_i<2;_i++){^(3.14);_2=('world'%'world');_2=true;^((0>=n))};_s=b}:{};_3=(false==n);?(x){_9=\"$K\";_s='world';_s=false;?(('?=if #=for'+x)){_s='?=if #=for';_s=0;_s=n}:{}}:{};^('^(return)')}};#(_i=0;_i<2;_i++){^((\"a+b\"<=true));#(_i=0;_i<5;_i++){?('world'){^((1+\"hello\"));?(('world'%a)){#(_i=0;_i<3;_i++){_9=(y||true);^(\"$K\");_7=0;_2=\"a+b\"};_5=(b-0);^((\"a+b\"!=0));^(1)}:{};_s=x;_s='world'}:{};_1='^(return)'}};_3='$';?((0>b)){_s=\"hello\";#(_i=0;_i<2;_i++){_4=('^(return)'||'#(i=0;i<10;i++)');_3=('?=if #=for'-0);_s=null;_5='!f(){}'}}:{}}:{};^((n<='$'));?(null){^(('^(return)'+\"hello\"))}:{}}:{};_7=(0/42)}\n!f1(_0:str|num){_s='world';?(x){_0=('^(return)'>'?=if #=for');?((1>-1)){?((-1&&\"a+b\")){_s=42;?((b>'$')){_s=1;^((true<b));_s=false}:{};^(('!f(){}'!=false));#(_i=0;_i<1;_i++){?((0==b)){_s=\"$K\";^((0>'@LIN:L1c:0.2'));_9=(42/'!f(){}');_3=x}:{};#(_i=0;_i<3;_i++){_1=(y<=a)};^((3.14<=\"a+b\"))}}:{};^((true<'^(return)'));?((a*true)){^(null);#(_i=0;_i<4;_i++){^(('$'>=\"$K\"));?((n||b)){_s=false;_s=b}:{};^(x)};_5=1;?((n>3.14)){_5=(b>42)}:{}}:{};?((a/b)){_s=0}:{}}:{}}:{};_5=(false<=42)}\n!f2(_0:str|num,_1:str|num,_2:int){#(_i=0;_i<3;_i++){?((3.14>=a)){_s=n;_9=(true<='^(return)');_s=\"hello\";_1=(false||a)}:{};_s=\"a+b\";^((\"$K\">-1))}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}');_3=x}: > 0\nrepairs: refine '!f(){}');_3=x}::int{>0} | require '!f(){}');_3=x}:>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}');_3=x}: > 0\nrepairs: refine '!f(){}');_3=x}::int{>0} | require '!f(){}');_3=x}:>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

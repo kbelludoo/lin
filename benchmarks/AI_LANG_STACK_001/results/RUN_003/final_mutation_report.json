@@ -1,0 +1,32 @@
+{
+  "run_id": "RUN_003",
+  "timestamp": "2026-08-20T20:40:09.221Z",
+  "total_mutation_trials": 100,
+  "pipeline_depth": 5,
+  "metrics": {
+    "C0_PYTHON": {
+      "total_modules_rebuilt": 500,
+      "avg_modules_per_mutation": 5,
+      "over_invalidation_rate": "80.0%",
+      "under_invalidation_rate": "0.0%"
+    },
+    "C1_LIN": {
+      "total_modules_rebuilt": 150,
+      "avg_modules_per_mutation": 1.5,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%"
+    },
+    "C2_AINL": {
+      "total_modules_rebuilt": 200,
+      "avg_modules_per_mutation": 2,
+      "over_invalidation_rate": "20.0%",
+      "under_invalidation_rate": "0.0%"
+    },
+    "C3_HYBRID": {
+      "total_modules_rebuilt": 150,
+      "avg_modules_per_mutation": 1.5,
+      "over_invalidation_rate": "0.0%",
+      "under_invalidation_rate": "0.0%"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787200346058.json",
+  "timestamp": "2026-08-20T04:32:26.058Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str,_1:str|num,_2:int) -> str|num{#(_i=0;_i<4;_i++){_s=0;^(('!f(){}'-'#(i=0;i<10;i++)'));?(a){_4=(\"hello\"-\"$K\");?('#(i=0;i<10;i++)'){^(('world'>=x));?(('!f(){}'>y)){^(('?=if #=for'!=x));_8=(42<'@LIN:L1c:0.2');#(_i=0;_i<1;_i++){_s=1;_4='world';#(_i=0;_i<2;_i++){_6=('world'!=true);#(_i=0;_i<5;_i++){_s=y};_2=('!f(){}'!=0)}}}:{};_3=(\"hello\"+'^(return)')}:{};?(('@LIN:L1c:0.2'*-1)){#(_i=0;_i<3;_i++){?(('^(return)'<=null)){_3=(\"$K\">=y)}:{};_3=\"hello\";_s=false;#(_i=0;_i<3;_i++){_7=(0==-1)}};^((\"hello\"<'$'));_6=('$'!='^(return)')}:{}}:{}}}\n!f1(){_s=1}\n!f2(){#(_i=0;_i<3;_i++){_6=(true&&1);#(_i=0;_i<1;_i++){_s=b};?((null==y)){_s=0;#(_i=0;_i<5;_i++){?(\"hello\"){?((y/'^(return)')){^(('$'!=false));_4=('$'>3.14);?((3.14||'@LIN:L1c:0.2')){_1=\"$K\";#(_i=0;_i<5;_i++){_s=3.14;_8=b;_5=(3.14>'world')};#(_i=0;_i<2;_i++){^(true);^((n!=y))}}:{};#(_i=0;_i<1;_i++){?(('!f(){}'>=1)){_s='$'}:{};#(_i=0;_i<5;_i++){_4=('world'>=\"$K\");_s=\"hello\";_s=42;_s=42};^(y);_s=null}}:{};_s=false;_s=n;^('?=if #=for')}:{};?('$'){?((true&&'@LIN:L1c:0.2')){#(_i=0;_i<4;_i++){_5='?=if #=for'};?('#(i=0;i<10;i++)'){?(true){_4=0;_4='@LIN:L1c:0.2'}:{}}:{}}:{};?((42+'@LIN:L1c:0.2')){^(('@LIN:L1c:0.2'-b));?('?=if #=for'){_3=('!f(){}'==\"hello\");#(_i=0;_i<3;_i++){_0=x};?((1==42)){_9='?=if #=for'}:{};_s=42}:{};#(_i=0;_i<1;_i++){_1=\"hello\"}}:{}}:{};?((false>=a)){_1=('^(return)'>='@LIN:L1c:0.2');_s=3.14;_s=null;^((true||true))}:{}}}:{}}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)')){^( > 0\nrepairs: refine '^(return)')){^(:int{>0} | require '^(return)')){^(>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)')){^( > 0\nrepairs: refine '^(return)')){^(:int{>0} | require '^(return)')){^(>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

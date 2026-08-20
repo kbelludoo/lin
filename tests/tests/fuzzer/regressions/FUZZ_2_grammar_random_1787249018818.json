@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787249018818.json",
+  "timestamp": "2026-08-20T18:03:38.818Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0() -> num{#(_i=0;_i<3;_i++){^('$');_s=\"$K\";#(_i=0;_i<5;_i++){^(('!f(){}'>3.14));?(('?=if #=for'<\"hello\")){?(('!f(){}'!=0)){#(_i=0;_i<2;_i++){_7=1;?((y==\"$K\")){_s='?=if #=for';?(('^(return)'<'@LIN:L1c:0.2')){_5=(false-'#(i=0;i<10;i++)')}:{};#(_i=0;_i<3;_i++){_3=(3.14/x);_2='?=if #=for';_s=-1}}:{}}}:{};_s=y;_9=(42*false)}:{};_1=(0||a)}};?((1%true)){^(x)}:{};_0=(3.14<-1)}\n!f1() -> any{_2=(42=='#(i=0;i<10;i++)');#(_i=0;_i<4;_i++){_s='?=if #=for'}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

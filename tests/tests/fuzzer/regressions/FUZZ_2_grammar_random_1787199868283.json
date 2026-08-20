@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787199868283.json",
+  "timestamp": "2026-08-20T04:24:28.283Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:str,_1:str|num,_2:str|num){#(_i=0;_i<4;_i++){#(_i=0;_i<3;_i++){^('!f(){}');^(('world'>=42));?((null*42)){_9=(42>1);_1=(0/\"$K\")}:{}};?(\"a+b\"){_2=(\"hello\"<=\"a+b\");^(false)}:{};#(_i=0;_i<3;_i++){_4='@LIN:L1c:0.2';_s=b};?(('@LIN:L1c:0.2'||\"hello\")){_4=(42*\"hello\");?('!f(){}'){?(('!f(){}'+'#(i=0;i<10;i++)')){#(_i=0;_i<4;_i++){_0=('@LIN:L1c:0.2'*42);?((x/-1)){_3=(1>=1);#(_i=0;_i<3;_i++){?((null>null)){#(_i=0;_i<2;_i++){_s=3.14;?((true+1)){_2=(true>x);_s='?=if #=for';?(('@LIN:L1c:0.2'!='?=if #=for')){?((a=='$')){_3=(false<=null);_s=3.14;#(_i=0;_i<4;_i++){#(_i=0;_i<1;_i++){?((n<=-1)){?(('#(i=0;i<10;i++)'=='?=if #=for')){_s=b;_9='@LIN:L1c:0.2';_s=null;^((\"$K\">=0))}:{};_7=(y&&\"$K\");?((\"$K\"&&'#(i=0;i<10;i++)')){_s=\"hello\";_1=(null*'@LIN:L1c:0.2')}:{};_s=n}:{};_s='$';_s=true};^((42%0));?('!f(){}'){_s=-1;#(_i=0;_i<1;_i++){_5=(0%-1)};?(false){_s=true}:{};^(('!f(){}'<b))}:{};_s=3.14};_s=true}:{};^(\"a+b\")}:{}}:{};?(('@LIN:L1c:0.2'<='$')){?(false){_1=true;?((true<=1)){^(y)}:{};_s=42;^(('!f(){}'<=\"hello\"))}:{};?((42+b)){_0=('world'!=y)}:{}}:{};^((null||\"$K\"))}}:{}}}:{};?('@LIN:L1c:0.2'){?(('!f(){}'*'^(return)')){?((a<='world')){_s=-1}:{};_s='world';_s=\"a+b\"}:{}}:{};_s='$'};_1=(\"hello\">='#(i=0;i<10;i++)')}:{}}:{}}:{}};_9=('^(return)'<y);_7=('?=if #=for'!='@LIN:L1c:0.2');_3=42}\n!f1(_0:str,_1:bool,_2:num) -> str|num{?(('^(return)'||n)){#(_i=0;_i<4;_i++){?(y){_4=n;_1=('$'+\"$K\");_4=(\"a+b\"+'world')}:{};?(('^(return)'!='#(i=0;i<10;i++)')){_9=(-1=='world');_7=(false||'#(i=0;i<10;i++)')}:{}}}:{}}\n!f2(_0:int) -> bool{^(42);?((3.14/y)){_s='!f(){}';#(_i=0;_i<1;_i++){^((\"hello\"==3.14));_s=true};^((y&&'$'))}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")}:{}};?(\"a+ > 0\nrepairs: refine \"$K\")}:{}};?(\"a+:int{>0} | require \"$K\")}:{}};?(\"a+>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\")}:{}};?(\"a+ > 0\nrepairs: refine \"$K\")}:{}};?(\"a+:int{>0} | require \"$K\")}:{}};?(\"a+>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787246098353.json",
+  "timestamp": "2026-08-20T17:14:58.353Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:num,_1:num,_2:str) -> str{#(_i=0;_i<4;_i++){?((\"a+b\"-n)){#(_i=0;_i<1;_i++){#(_i=0;_i<5;_i++){_8=(1--1);_s=\"hello\";_s=\"$K\";_s=-1};^(3.14)};_s=x}:{};_2=('^(return)'-\"$K\")};_6=('?=if #=for'+true);_7='^(return)'}\n!f1(){_s=true;^(('#(i=0;i<10;i++)'/y));_1=('?=if #=for'<=false)}\n!f2() -> int{_0=(\"a+b\"/42);^('?=if #=for');_9='?=if #=for'}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_yukG11/emit.cjs:3\n/* effect:Write */function f0(_0, _1, _2){var _8,_s,_6,_7,_i;for(_i=0;_i<4;_i++){if((\"a+b\"-n)){for(_i=0;_i<1;_i++){for(_i=0;_i<5;_i++){_8=(1--1);_s=\"hello\";_s=\"$K\";_s=-1;};return (3.14);};_s=x;}else{};_2=('",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_yukG11/emit.cjs:3\n/* effect:Write */function f0(_0, _1, _2){var _8,_s,_6,_7,_i;for(_i=0;_i<4;_i++){if((\"a+b\"-n)){for(_i=0;_i<1;_i++){for(_i=0;_i<5;_i++){_8=(1--1);_s=\"hello\";_s=\"$K\";_s=-1;};return (3.14);};_s=x;}else{};_2=('",
+    "testable": false
+  },
+  "fixed": false
+}

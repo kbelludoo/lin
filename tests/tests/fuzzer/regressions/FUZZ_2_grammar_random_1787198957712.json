@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787198957712.json",
+  "timestamp": "2026-08-20T04:09:17.712Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0() -> int{?((null==\"a+b\")){?(true){?(('?=if #=for'-x)){?((42>=false)){#(_i=0;_i<1;_i++){_6=('world'<x);_s=3.14;_s=b}}:{}}:{};_4=42;_s=\"$K\";?(n){#(_i=0;_i<5;_i++){_s='@LIN:L1c:0.2';?((\"$K\">'!f(){}')){_3=('?=if #=for'>b);_s='$';#(_i=0;_i<5;_i++){_s=1};?(('world'>=null)){_6=true}:{}}:{};?(('?=if #=for'+x)){#(_i=0;_i<5;_i++){_2=('?=if #=for'*'@LIN:L1c:0.2');?('world'){_1='world'}:{}};_3=('!f(){}'!=a);_s=3.14}:{};#(_i=0;_i<5;_i++){_s=1;_s=-1}}}:{}}:{};^((42==\"hello\"));#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){_s=b;_4=(false>=42)};?((a/'!f(){}')){_s=\"hello\";#(_i=0;_i<1;_i++){#(_i=0;_i<5;_i++){?((a-\"$K\")){_s=x}:{}};_9=('?=if #=for'>=0);^((y<b))};_4=\"a+b\"}:{};?(('$'-n)){_2=(\"a+b\"/'@LIN:L1c:0.2');_s=0;_4=('world'==y);_s=\"a+b\"}:{};?((\"a+b\"%-1)){_3=(y>b)}:{}};?(('$'=='!f(){}')){^('!f(){}');_0=(true>=0)}:{}}:{}}\n!f1(_0:any) -> int{_7=(1!=42);#(_i=0;_i<1;_i++){?(y){_5=('$'>'^(return)')}:{};^((\"a+b\">='^(return)'));_9=('#(i=0;i<10;i++)'*false)};?((a*42)){^((1!=n));#(_i=0;_i<2;_i++){^(3.14);?((x%y)){#(_i=0;_i<2;_i++){^((\"$K\"==0));_s='^(return)'};?((y%'@LIN:L1c:0.2')){_6=('!f(){}'-true);_6=(b&&'$');#(_i=0;_i<5;_i++){?(42){_7=(true||'!f(){}')}:{};?('!f(){}'){^(-1);?(('$'-y)){_0=('world'&&\"$K\");_s=\"hello\";^((false*\"hello\"));_9=(42*1)}:{}}:{};^((true+\"hello\"))};_2=('world'*42)}:{};_s='!f(){}';_s=b}:{}}}:{}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}')){_s=\"h > 0\nrepairs: refine '!f(){}')){_s=\"h:int{>0} | require '!f(){}')){_s=\"h>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}')){_s=\"h > 0\nrepairs: refine '!f(){}')){_s=\"h:int{>0} | require '!f(){}')){_s=\"h>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

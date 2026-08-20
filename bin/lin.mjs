@@ -35,6 +35,15 @@ Commands:
   ingest-ir <file.json>                         alias → agent-ir
   ain-lb-clr                                    CLR-001 LIN-only harness (ACCEPT/DENIED)
   rulel-check <file.rulel>                      parse + validate RULEL/COMMS file
+  task create <title> [priority]                 create new task (blocker|high|medium|low)
+  task claim <id> [agent]                        agent claims task
+  task implement <id>                            start implementation
+  task verify <id> [hash] [targets_ok]           run verification gates
+  task review <id>                               human/agent review
+  task finish <id>                               attempt to certify
+  task fail <id> [error]                         mark as failed
+  task from-bug <bugId> <layer> <cat> <input> <err>  auto-create from fuzzer
+  task status                                    show board summary
   version
 
 Policy: WRITE=LIN; on_error=FIX_COMPILER_OUTSIDE_NUCLEUS; LIN_ge_Dicel; RULEL=rules
@@ -193,6 +202,105 @@ if (cmd === 'rulel-check') {
   const validation = validateComms(parsed);
   console.log(JSON.stringify({ parsed, validation }, null, 2));
   process.exit(validation.ok ? 0 : 1);
+}
+
+if (cmd === 'task') {
+  const { mkTaskBoard, mkTask, addTask, getTask, nextId, claim, implement, verify: vrf, review, certify, fail: tFail, createFollowup, tasksByStage, tasksByAgent, boardSummary, fromBug, toJsonTask } = await import('../src/lin_task_engine_load.mjs');
+  const sub = rest[0];
+  const TASK_FILE = path.join(process.cwd(), '.lin', 'tasks.json');
+
+  function loadBoard() {
+    try { return JSON.parse(fs.readFileSync(TASK_FILE, 'utf8')); }
+    catch { return mkTaskBoard(); }
+  }
+  function saveBoard(board) {
+    const dir = path.dirname(TASK_FILE);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(TASK_FILE, JSON.stringify(board, null, 2));
+  }
+
+  if (sub === 'create') {
+    const board = loadBoard();
+    const id = nextId(board);
+    const title = rest[1] || 'unnamed task';
+    const priority = rest[2] || 'medium';
+    const task = mkTask(id, title, priority);
+    addTask(board, task);
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(task), null, 2));
+    process.exit(0);
+  } else if (sub === 'claim') {
+    const board = loadBoard();
+    const id = rest[1]; const agent = rest[2] || 'opencode';
+    const result = claim(board, id, agent);
+    if (result.ok === false) { console.error(result.error); process.exit(1); }
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(result), null, 2));
+    process.exit(0);
+  } else if (sub === 'implement') {
+    const board = loadBoard();
+    const result = implement(board, rest[1]);
+    if (result.ok === false) { console.error(result.error); process.exit(1); }
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(result), null, 2));
+    process.exit(0);
+  } else if (sub === 'verify') {
+    const board = loadBoard();
+    const id = rest[1]; const hash = rest[2] || ''; const targetsOk = rest[3] === '1' ? 1 : 0;
+    const result = vrf(board, id, hash, targetsOk);
+    if (result.ok === false) { console.error(result.error); process.exit(1); }
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(result), null, 2));
+    process.exit(0);
+  } else if (sub === 'review') {
+    const board = loadBoard();
+    const result = review(board, rest[1]);
+    if (result.ok === false) { console.error(result.error); process.exit(1); }
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(result), null, 2));
+    process.exit(0);
+  } else if (sub === 'finish') {
+    const board = loadBoard();
+    const r1 = certify(board, rest[1]);
+    if (r1.ok === false) { console.error(r1.error); process.exit(1); }
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(r1), null, 2));
+    process.exit(0);
+  } else if (sub === 'fail') {
+    const board = loadBoard();
+    const result = tFail(board, rest[1], rest[2] || 'unknown error');
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(result), null, 2));
+    process.exit(0);
+  } else if (sub === 'from-bug') {
+    const board = loadBoard();
+    const bugId = rest[1] || 'FUZZ_0'; const layer = parseInt(rest[2]) || 1;
+    const category = rest[3] || 'unknown'; const input = rest[4] || '';
+    const error = rest[5] || '';
+    const result = fromBug(board, bugId, layer, category, input, error);
+    saveBoard(board);
+    console.log(JSON.stringify(toJsonTask(result), null, 2));
+    process.exit(0);
+  } else if (sub === 'status') {
+    const board = loadBoard();
+    const summary = boardSummary(board);
+    console.log('=== LIN Task Board ===');
+    console.log('Total:', summary.total);
+    for (const stage of ['TODO','CLAIMED','IMPLEMENTING','VERIFIED','MULTI_TARGET_OK','REVIEW','CERTIFIED','FAILED']) {
+      if (summary[stage] > 0) console.log('  ' + stage + ':', summary[stage]);
+    }
+    // Show active tasks
+    for (const stage of ['TODO','CLAIMED','IMPLEMENTING','FAILED']) {
+      const tasks = tasksByStage(board, stage);
+      for (const t of tasks) {
+        console.log('  [' + t.id + '] ' + t.title + ' (' + t.priority + ')');
+      }
+    }
+    process.exit(0);
+  } else {
+    console.error('Usage: lin task <create|claim|implement|verify|review|finish|fail|from-bug|status> [args]');
+    process.exit(1);
+  }
 }
 
 usage();

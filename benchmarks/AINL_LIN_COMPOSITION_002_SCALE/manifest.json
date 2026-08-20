@@ -1,0 +1,42 @@
+{
+  "benchmark": "AINL_LIN_COMPOSITION_002_SCALE",
+  "version": "0.3.0",
+  "title": "30-Node Workflow with 100 Consecutive Mutations Benchmark",
+  "goal": "Quantify the operational change ratio (semantic_change / operational_change) and maintenance cost curve across 100 consecutive mutations in a 30-node DAG.",
+  "freeze_before_execution": true,
+  "workflow": {
+    "nodes": 30,
+    "edges": 46,
+    "critical_path_depth": 8,
+    "topology_type": "directed_acyclic_graph"
+  },
+  "mutations_total": 100,
+  "conditions": [
+    {
+      "id": "C1_AINL_PLUS_LIN",
+      "label": "Hybrid Composite (AINL Macro + LIN Micro-Contracts)",
+      "description": "AINL coordinates workflow scheduling; LIN handles symbol-level semantic hashcons and node-level contracts."
+    },
+    {
+      "id": "C2_AINL_STANDALONE",
+      "label": "Standalone AINL Workflow",
+      "description": "AINL coordinates workflow with coarse task nodes (standard code without fine-grained semantic hashcons)."
+    }
+  ],
+  "repetitions": 30,
+  "total_trials": 60,
+  "metrics": [
+    "nodes_changed",
+    "edges_changed",
+    "nodes_invalidated",
+    "cache_invalidated_entries",
+    "tokens_changed",
+    "compile_ms",
+    "behavior_equivalent_rate",
+    "invariant_status",
+    "over_invalidation_rate",
+    "under_invalidation_rate",
+    "semantic_to_operational_ratio",
+    "cumulative_maintenance_cost_ms"
+  ]
+}

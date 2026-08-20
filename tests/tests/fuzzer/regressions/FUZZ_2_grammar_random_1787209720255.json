@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787209720255.json",
+  "timestamp": "2026-08-20T07:08:40.255Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0() -> str|num{?((b%'@LIN:L1c:0.2')){#(_i=0;_i<3;_i++){_8=(y>-1);^(('@LIN:L1c:0.2'>'@LIN:L1c:0.2'));#(_i=0;_i<1;_i++){_s=\"$K\";_5=false;#(_i=0;_i<4;_i++){?((\"$K\"+\"a+b\")){_s=\"a+b\";_s='?=if #=for';_6=(-1<=\"$K\");_2=(false>=x)}:{};#(_i=0;_i<2;_i++){_s=1;^((x>=1))};_6=(null*'$')};_5=(null/-1)};_s=n};_s=b}:{}}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: -1)};_s=n};_s=b} > 0\nrepairs: refine -1)};_s=n};_s=b}:int{>0} | require -1)};_s=n};_s=b}>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: -1)};_s=n};_s=b} > 0\nrepairs: refine -1)};_s=n};_s=b}:int{>0} | require -1)};_s=n};_s=b}>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,3308 @@
+{
+  "benchmark": "AGENT_ENGINEERING_001",
+  "run_id": "RUN_001",
+  "timestamp": "2026-08-20T21:00:46.803Z",
+  "total_trials": 100,
+  "records": [
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 1,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 2,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 3,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 4,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 5,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 6,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 7,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 8,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 9,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 10,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 11,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 12,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 13,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 14,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 15,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 16,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 17,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 18,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 19,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 20,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 21,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 22,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 23,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 24,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C0_PYTHON_BASELINE",
+      "rep": 25,
+      "phase1_build": {
+        "tokens": 6200,
+        "latency_ms": 145
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 920,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 1450,
+        "latency_ms": 160
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 5800,
+        "latency_ms": 820,
+        "unnecessary_edges": 15
+      },
+      "total_lifecycle_tokens": 14370,
+      "total_lifecycle_latency_ms": 1275,
+      "reconstruction_tokens_p70": 920,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 15,
+      "semantic_to_operational_ratio": 0.2,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 1,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 2,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 3,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 4,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 5,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 6,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 7,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 8,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 9,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 10,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 11,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 12,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 13,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 14,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 15,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 16,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 17,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 18,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 19,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 20,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 21,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 22,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 23,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 24,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C1_LIN_STANDALONE",
+      "rep": 25,
+      "phase1_build": {
+        "tokens": 4750,
+        "latency_ms": 32
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 250,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 420,
+        "latency_ms": 18
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1450,
+        "latency_ms": 24.5,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6870,
+      "total_lifecycle_latency_ms": 94.5,
+      "reconstruction_tokens_p70": 250,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 1,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 2,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 3,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 4,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 5,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 6,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 7,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 8,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 9,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 10,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 11,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 12,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 13,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 14,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 15,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 16,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 17,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 18,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 19,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 20,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 21,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 22,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 23,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": false
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 24,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C2_AINL_STANDALONE",
+      "rep": 25,
+      "phase1_build": {
+        "tokens": 5400,
+        "latency_ms": 78
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 380,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 750,
+        "latency_ms": 45
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 2,
+        "invariant_violations": 2
+      },
+      "phase5_evolution": {
+        "tokens": 3100,
+        "latency_ms": 95,
+        "unnecessary_edges": 8
+      },
+      "total_lifecycle_tokens": 9630,
+      "total_lifecycle_latency_ms": 277,
+      "reconstruction_tokens_p70": 380,
+      "unsafe_accept_count": 2,
+      "invariant_violation_count": 2,
+      "unnecessary_topology_churn_edges": 8,
+      "semantic_to_operational_ratio": 0.45,
+      "lifecycle_completed": false
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 1,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 2,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 3,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 4,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 5,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 6,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 7,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 8,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 9,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 10,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 11,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 12,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 13,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 14,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 15,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 16,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 17,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 18,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 19,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 20,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 21,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 22,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 23,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 24,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    },
+    {
+      "condition": "C3_COMPOSITE_STACK",
+      "rep": 25,
+      "phase1_build": {
+        "tokens": 4820,
+        "latency_ms": 28.5
+      },
+      "phase2_context_death": {
+        "reconstruction_tokens": 265,
+        "success": true
+      },
+      "phase3_repair": {
+        "tokens": 390,
+        "latency_ms": 14
+      },
+      "phase4_defense": {
+        "unsafe_accepts": 0,
+        "invariant_violations": 0
+      },
+      "phase5_evolution": {
+        "tokens": 1490,
+        "latency_ms": 21,
+        "unnecessary_edges": 0
+      },
+      "total_lifecycle_tokens": 6965,
+      "total_lifecycle_latency_ms": 81.5,
+      "reconstruction_tokens_p70": 265,
+      "unsafe_accept_count": 0,
+      "invariant_violation_count": 0,
+      "unnecessary_topology_churn_edges": 0,
+      "semantic_to_operational_ratio": 0.76,
+      "lifecycle_completed": true
+    }
+  ]
+}

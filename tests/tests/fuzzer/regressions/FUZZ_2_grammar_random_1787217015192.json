@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787217015192.json",
+  "timestamp": "2026-08-20T09:10:15.192Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:str|num,_1:num) -> num{_s=y}\n!f1() -> int|null{_s=y;_0=(null>=a);^((false*null));#(_i=0;_i<2;_i++){?((x*'!f(){}')){?((-1||'!f(){}')){?((true+1)){_3=('$'&&42)}:{};_s='!f(){}';_s=b;?(('?=if #=for'*'@LIN:L1c:0.2')){?((false%\"a+b\")){#(_i=0;_i<2;_i++){#(_i=0;_i<4;_i++){^((a>\"a+b\"));?(('#(i=0;i<10;i++)'<=true)){_s='^(return)';?(b){_s='^(return)';_3=(0<='$');?(\"hello\"){_5=42;_2=('!f(){}'!=42);#(_i=0;_i<1;_i++){_s='#(i=0;i<10;i++)'};?(\"$K\"){^((b>=\"hello\"));^((false<n));?((1--1)){_3=(\"a+b\">a);_9=(false||'?=if #=for')}:{}}:{}}:{}}:{};?(b){?(x){^('#(i=0;i<10;i++)')}:{}}:{}}:{};_0=(\"$K\"||false);_1=42};_8=(-1-1);?(('?=if #=for'<\"$K\")){_s=n;_9=null}:{}}}:{}}:{}}:{};#(_i=0;_i<5;_i++){^(42);_s=null;?((1>=42)){_s=\"hello\"}:{};^((3.14>=n))};#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){_s=n};_s=\"a+b\";?('^(return)'){_s='!f(){}';_2=('^(return)'==\"hello\")}:{};#(_i=0;_i<1;_i++){^('?=if #=for');_s=b;?(42){?((true<=y)){^((-1%0));_s='?=if #=for';?((\"a+b\"!=3.14)){?((false<0)){#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){_4=(null<'world');_5=('?=if #=for'>=x);_0=(\"a+b\"&&\"hello\")};_3=('?=if #=for'<'?=if #=for')};#(_i=0;_i<1;_i++){_s='world'}}:{}}:{};_5=(true*b)}:{};_s=3.14}:{}}}}:{};^((\"hello\"<=0))}}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_dU3GYX/emit.cjs:4\n/* effect:Write */function f1(){var _s,_0,_3,_5,_2,_9,_1,_8,_4,_i,i;_s=y;_0=(null>=a);return ((false*null));for(_i=0;_i<2;_i++){if((x*'!f(){}')){if((-1||'!f(){}')){if((true+1)){_3=('$'&&42);}else{};_s='!f()",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_dU3GYX/emit.cjs:4\n/* effect:Write */function f1(){var _s,_0,_3,_5,_2,_9,_1,_8,_4,_i,i;_s=y;_0=(null>=a);return ((false*null));for(_i=0;_i<2;_i++){if((x*'!f(){}')){if((-1||'!f(){}')){if((true+1)){_3=('$'&&42);}else{};_s='!f()",
+    "testable": false
+  },
+  "fixed": false
+}

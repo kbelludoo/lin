@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787248102215.json",
+  "timestamp": "2026-08-20T17:48:22.215Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str|num,_1:any,_2:int|null) -> int|null{_s=3.14;#(_i=0;_i<2;_i++){^((\"hello\"+1))};?((null*false)){#(_i=0;_i<5;_i++){_5=42;^(('@LIN:L1c:0.2'%-1));#(_i=0;_i<2;_i++){^((42<y));_6=(b+true);_7=42;_4=n}}}:{}}\n!f1() -> int{_3=(x==n)}\n!f2() -> str{_6=(a-'!f(){}');_2=(0-\"a+b\");_8=(n--1);_5=('!f(){}'&&\"$K\")}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_GEcseQ/emit.cjs:4\n/* effect:Write */function f2(){var _6,_2,_8,_5;_6=(a-'!f(){}');_2=(0-\"a+b\");_8=(n--1);_5=('!f(){}'&&\"$K\");}\n                                                                                    ^\n\nSyntaxErro",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_GEcseQ/emit.cjs:4\n/* effect:Write */function f2(){var _6,_2,_8,_5;_6=(a-'!f(){}');_2=(0-\"a+b\");_8=(n--1);_5=('!f(){}'&&\"$K\");}\n                                                                                    ^\n\nSyntaxErro",
+    "testable": false
+  },
+  "fixed": false
+}

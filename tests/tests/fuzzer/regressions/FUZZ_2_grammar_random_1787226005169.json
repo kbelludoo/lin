@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787226005169.json",
+  "timestamp": "2026-08-20T11:40:05.169Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool,_1:bool,_2:int){_6=3.14;#(_i=0;_i<4;_i++){^(('$'%y))};?((0<42)){?(('#(i=0;i<10;i++)'<1)){^('!f(){}');_9=(x<=42)}:{};_0=true;?(\"$K\"){#(_i=0;_i<1;_i++){^((\"a+b\"*'?=if #=for'));#(_i=0;_i<1;_i++){?(-1){_s='^(return)';^(('$'>false));_s=b;?((x+42)){#(_i=0;_i<5;_i++){?(42){?((y/'$')){^(('^(return)'<='#(i=0;i<10;i++)'))}:{}}:{};_s=-1;_s=3.14};_s='@LIN:L1c:0.2'}:{}}:{};^((0*'@LIN:L1c:0.2'));_5=x};?('^(return)'){?((42/x)){#(_i=0;_i<4;_i++){_s='world'};_2=('#(i=0;i<10;i++)'+n);?(3.14){_s='$';_s=null;?((a>='?=if #=for')){_8=\"a+b\";_6=(\"$K\"/null);_s='!f(){}';^((false+3.14))}:{};?('!f(){}'){#(_i=0;_i<3;_i++){?((\"$K\"<='^(return)')){_7=(n-'!f(){}');^(1)}:{};_1=true;_s=\"$K\"};_8=3.14;?(\"$K\"){_s='^(return)';_s=null;?('!f(){}'){#(_i=0;_i<4;_i++){^((\"a+b\"*\"hello\"));_7=(1>=3.14);#(_i=0;_i<5;_i++){_4=(\"hello\"<\"$K\");_s='?=if #=for'};?(('#(i=0;i<10;i++)'&&'#(i=0;i<10;i++)')){^((\"a+b\">\"a+b\"));?('world'){_8=1;_s=\"a+b\";?('!f(){}'){#(_i=0;_i<3;_i++){_5=('?=if #=for'*'$');_6=(1+'@LIN:L1c:0.2')}}:{};_6=('#(i=0;i<10;i++)'<'?=if #=for')}:{};_s=true;_9=x}:{}};^('#(i=0;i<10;i++)');_9=(42<=null);#(_i=0;_i<5;_i++){_8=(n-n)}}:{}}:{}}:{}}:{};_8=(\"$K\">'world')}:{};^(('^(return)'||'?=if #=for'));_5=(3.14<\"hello\")}:{};_3=(false>='$')};_1=0}:{};_8=('$'*-1)}:{};_s='world'}\n!f1(_0:any){#(_i=0;_i<5;_i++){_s=1;#(_i=0;_i<2;_i++){?('@LIN:L1c:0.2'){_s=n;_7=\"a+b\"}:{};_4='?=if #=for';?('^(return)'){_3=('world'==n);_2=(y*'world');_8=(3.14&&\"a+b\");_1=(b>null)}:{};^((0-a))};_s=true}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){^(('^(retu > 0\nrepairs: refine '$')){^(('^(retu:int{>0} | require '$')){^(('^(retu>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){^(('^(retu > 0\nrepairs: refine '$')){^(('^(retu:int{>0} | require '$')){^(('^(retu>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

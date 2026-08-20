@@ -1,0 +1,25 @@
+@LIN:L2w:1.0
+^schema_once ^ops=vscode_workbench_agent
+~G{?=if #=for ^=ret :else}
+~effects{pure,io,async}
+
+!dispatch_command(cmd_id: str, args: any): {cmd: str, executed: bool} {
+  ^{cmd: cmd_id, executed: true}
+}
+
+!invoke_extension(ext_id: str, api_method: str): {ext: str, ok: bool} {
+  ^{ext: ext_id, ok: true}
+}
+
+!agent_plan_and_execute(prompt: str, context: any): {plan: [str], changes: [str], success: bool} {
+  $plan = ["diagnose", "refactor_lin", "verify_gate"]
+  ^{plan: plan, changes: ["main.ts"], success: true}
+}
+
+~workflow {
+  step execute_cmd  -> dispatch_command("workbench.action.findInFiles", {query: "TODO"})
+  step run_ext      -> invoke_extension("lin.language-server", "provideDiagnostics")
+  step copilot_task -> agent_plan_and_execute("Refactor module to LIN @L2w", execute_cmd)
+}
+
+=ex{dispatch_command,invoke_extension,agent_plan_and_execute}

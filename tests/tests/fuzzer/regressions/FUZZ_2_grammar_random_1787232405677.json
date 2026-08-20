@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787232405677.json",
+  "timestamp": "2026-08-20T13:26:45.677Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:any,_1:str|num,_2:bool) -> int|null{_s=null;^(('!f(){}'||y));_s=\"hello\";#(_i=0;_i<2;_i++){?(('$'>=b)){?((null*1)){_s=\"$K\";_8=('#(i=0;i<10;i++)'<=3.14);^((42+'world'))}:{};#(_i=0;_i<1;_i++){#(_i=0;_i<5;_i++){_s=\"hello\"};?((0%y)){_8=(a*y);_s=x;_s=0;_s='#(i=0;i<10;i++)'}:{};_2=(b||'world');?((false>='^(return)')){_s=\"$K\";_0=(true*\"a+b\");_3=('world'||n);#(_i=0;_i<5;_i++){_s='@LIN:L1c:0.2';#(_i=0;_i<4;_i++){?(('$'!=3.14)){_4=('@LIN:L1c:0.2'>=b)}:{};_s=y;_s=y;#(_i=0;_i<2;_i++){#(_i=0;_i<4;_i++){_s=null;^((a>=n));?('?=if #=for'){?(('world'*0)){?((3.14<='@LIN:L1c:0.2')){#(_i=0;_i<4;_i++){_s=1;_1=(1||\"a+b\");_6=('!f(){}'%n)}}:{};_8=0;?('world'){_9=n;_8=(n=='!f(){}')}:{}}:{};_5=(3.14<=1);_s=\"a+b\";_5=\"a+b\"}:{};_3=('$'<x)};#(_i=0;_i<4;_i++){#(_i=0;_i<1;_i++){^((false/null));?((y==a)){_s=\"a+b\"}:{};_5=true;^(42)};_5=y;?(\"hello\"){#(_i=0;_i<3;_i++){_s=-1;_7=(true/'^(return)')}}:{};^((0/'?=if #=for'))}}};_2=1}}:{}}}:{};_1='^(return)'}}\n!f1(_0:int,_1:int|null,_2:num){?(('?=if #=for'+'world')){_2=(0||\"hello\");?(('@LIN:L1c:0.2'>true)){_6=('!f(){}'*0);_5=(x*false)}:{}}:{};^(42);?((true>=\"$K\")){_3=('$'>='#(i=0;i<10;i++)');^(42);?((\"$K\"+'$')){^((null/'?=if #=for'));_s=y;?((\"hello\"=='^(return)')){_s=x}:{}}:{};_0=(42&&a)}:{}}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

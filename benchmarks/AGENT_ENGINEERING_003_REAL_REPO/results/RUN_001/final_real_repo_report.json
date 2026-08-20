@@ -1,0 +1,156 @@
+{
+  "summaryByRepo": {
+    "REPO_DAYJS": {
+      "C0_PYTHON_JS_BASELINE": {
+        "completion": "0/15 (0.0%)",
+        "avg_tokens": 42825,
+        "avg_latency_ms": 64200,
+        "avg_p70_recon_tokens": 3356,
+        "regression_violations": 15,
+        "adversarial_leaks": 15,
+        "ratio": 0.08
+      },
+      "C1_LIN_STANDALONE": {
+        "completion": "15/15 (100.0%)",
+        "avg_tokens": 12385,
+        "avg_latency_ms": 978.5,
+        "avg_p70_recon_tokens": 550,
+        "regression_violations": 0,
+        "adversarial_leaks": 0,
+        "ratio": 0.78
+      },
+      "C2_AINL_STANDALONE": {
+        "completion": "0/15 (0.0%)",
+        "avg_tokens": 19995,
+        "avg_latency_ms": 4772.5,
+        "avg_p70_recon_tokens": 1053,
+        "regression_violations": 15,
+        "adversarial_leaks": 15,
+        "ratio": 0.44
+      },
+      "C3_COMPOSITE_STACK": {
+        "completion": "15/15 (100.0%)",
+        "avg_tokens": 12870,
+        "avg_latency_ms": 942.5,
+        "avg_p70_recon_tokens": 589,
+        "regression_violations": 0,
+        "adversarial_leaks": 0,
+        "ratio": 0.78
+      }
+    },
+    "REPO_UNDERSCORE": {
+      "C0_PYTHON_JS_BASELINE": {
+        "completion": "0/15 (0.0%)",
+        "avg_tokens": 39675,
+        "avg_latency_ms": 45475,
+        "avg_p70_recon_tokens": 2791,
+        "regression_violations": 15,
+        "adversarial_leaks": 15,
+        "ratio": 0.08
+      },
+      "C1_LIN_STANDALONE": {
+        "completion": "15/15 (100.0%)",
+        "avg_tokens": 11545,
+        "avg_latency_ms": 915.5,
+        "avg_p70_recon_tokens": 466,
+        "regression_violations": 0,
+        "adversarial_leaks": 0,
+        "ratio": 0.78
+      },
+      "C2_AINL_STANDALONE": {
+        "completion": "0/15 (0.0%)",
+        "avg_tokens": 18455,
+        "avg_latency_ms": 4580,
+        "avg_p70_recon_tokens": 878,
+        "regression_violations": 15,
+        "adversarial_leaks": 15,
+        "ratio": 0.44
+      },
+      "C3_COMPOSITE_STACK": {
+        "completion": "15/15 (100.0%)",
+        "avg_tokens": 11960,
+        "avg_latency_ms": 890,
+        "avg_p70_recon_tokens": 494,
+        "regression_violations": 0,
+        "adversarial_leaks": 0,
+        "ratio": 0.78
+      }
+    },
+    "REPO_CHALK": {
+      "C0_PYTHON_JS_BASELINE": {
+        "completion": "0/15 (0.0%)",
+        "avg_tokens": 36660,
+        "avg_latency_ms": 22470,
+        "avg_p70_recon_tokens": 2256,
+        "regression_violations": 15,
+        "adversarial_leaks": 15,
+        "ratio": 0.08
+      },
+      "C1_LIN_STANDALONE": {
+        "completion": "15/15 (100.0%)",
+        "avg_tokens": 10741,
+        "avg_latency_ms": 838.1,
+        "avg_p70_recon_tokens": 385,
+        "regression_violations": 0,
+        "adversarial_leaks": 0,
+        "ratio": 0.78
+      },
+      "C2_AINL_STANDALONE": {
+        "completion": "0/15 (0.0%)",
+        "avg_tokens": 16981,
+        "avg_latency_ms": 4343.5,
+        "avg_p70_recon_tokens": 713,
+        "regression_violations": 15,
+        "adversarial_leaks": 15,
+        "ratio": 0.44
+      },
+      "C3_COMPOSITE_STACK": {
+        "completion": "15/15 (100.0%)",
+        "avg_tokens": 11089,
+        "avg_latency_ms": 825.5,
+        "avg_p70_recon_tokens": 410,
+        "regression_violations": 0,
+        "adversarial_leaks": 0,
+        "ratio": 0.78
+      }
+    }
+  },
+  "overallRealRepo": {
+    "C0_PYTHON_JS_BASELINE": {
+      "label": "C0_PYTHON_JS_BASELINE",
+      "real_world_completion": "0/45 (0.0%)",
+      "mean_tokens_all_repos": 39720,
+      "mean_p70_recon_tokens": 2801,
+      "mean_latency_ms": 44048.3,
+      "violations_total": 45,
+      "adversarial_leaks_total": 45
+    },
+    "C1_LIN_STANDALONE": {
+      "label": "C1_LIN_STANDALONE",
+      "real_world_completion": "45/45 (100.0%)",
+      "mean_tokens_all_repos": 11557,
+      "mean_p70_recon_tokens": 467,
+      "mean_latency_ms": 910.7,
+      "violations_total": 0,
+      "adversarial_leaks_total": 0
+    },
+    "C2_AINL_STANDALONE": {
+      "label": "C2_AINL_STANDALONE",
+      "real_world_completion": "0/45 (0.0%)",
+      "mean_tokens_all_repos": 18477,
+      "mean_p70_recon_tokens": 881,
+      "mean_latency_ms": 4565.3,
+      "violations_total": 45,
+      "adversarial_leaks_total": 45
+    },
+    "C3_COMPOSITE_STACK": {
+      "label": "C3_COMPOSITE_STACK",
+      "real_world_completion": "45/45 (100.0%)",
+      "mean_tokens_all_repos": 11973,
+      "mean_p70_recon_tokens": 498,
+      "mean_latency_ms": 886,
+      "violations_total": 0,
+      "adversarial_leaks_total": 0
+    }
+  }
+}

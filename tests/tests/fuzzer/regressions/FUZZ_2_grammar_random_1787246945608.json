@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787246945608.json",
+  "timestamp": "2026-08-20T17:29:05.608Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0() -> bool{#(_i=0;_i<2;_i++){_s=x;_9=(\"$K\"==a)};#(_i=0;_i<1;_i++){^((b>y));?('$'){_0=a;_9=(y&&null)}:{};^(3.14);?(-1){_7=(y-b);?((b||0)){_s=n;#(_i=0;_i<2;_i++){^((x==1));?((false*\"$K\")){?(('?=if #=for'=='?=if #=for')){^(a);_5=\"$K\"}:{};_8=('@LIN:L1c:0.2'||0);#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_s=n;_6=(a<=a);#(_i=0;_i<2;_i++){^((false<'#(i=0;i<10;i++)'));#(_i=0;_i<1;_i++){?((null>a)){?('$'){#(_i=0;_i<3;_i++){?(\"a+b\"){_5=(\"hello\">=\"hello\");#(_i=0;_i<1;_i++){?(('?=if #=for'+n)){?((true&&n)){_s=n;_s=y}:{};#(_i=0;_i<4;_i++){?((42<-1)){_s='?=if #=for';?((\"a+b\"*true)){_s=\"hello\";?((-1!=x)){_0=x}:{}}:{};#(_i=0;_i<1;_i++){?(1){?('#(i=0;i<10;i++)'){_4=(true!=y)}:{};_s=3.14}:{}};?(x){_4=(\"a+b\"*false)}:{}}:{};_s=n;_s=b};^((42!='?=if #=for'))}:{}}}:{};_5=('$'!=true);#(_i=0;_i<5;_i++){_s='@LIN:L1c:0.2'}};_s='world'}:{};^(\"hello\");_s=a;_s=\"a+b\"}:{};#(_i=0;_i<3;_i++){_s=\"hello\";_7=(b<'?=if #=for');_8=(3.14+b)};?((3.14%3.14)){?(3.14){?(\"hello\"){^(('^(return)'/3.14))}:{};_6=('?=if #=for'||'?=if #=for');_4=('$'>x)}:{}}:{};_s=0};^((3.14==true));_9=(\"a+b\"/y)}};?(\"a+b\"){#(_i=0;_i<4;_i++){?(-1){?('?=if #=for'){_2=(\"$K\"%1);_s=n;_5='#(i=0;i<10;i++)';#(_i=0;_i<3;_i++){?(('#(i=0;i<10;i++)'&&'?=if #=for')){_3=n;_7=1;^((n<='#(i=0;i<10;i++)'));^(42)}:{};_2=('world'<=0);_s='#(i=0;i<10;i++)'}}:{}}:{}};_2=null;?(false){^(('world'>'#(i=0;i<10;i++)'))}:{}}:{};_7=(0<1)}}:{};?((\"$K\"<a)){_s='^(return)';^(('world'&&'?=if #=for'));_3=('?=if #=for'!=-1);_6=(-1/'$')}:{}};_4='^(return)';?((true||1)){^('$')}:{}}:{};?((\"hello\"<='?=if #=for')){_s='^(return)';_s=x}:{};_s=3.14}:{}};_1=(y&&false);_4=('@LIN:L1c:0.2'<=\"a+b\")}\n!f1(_0:int,_1:str){_9='#(i=0;i<10;i++)';_s='^(return)'}\n!f2(_0:str,_1:bool,_2:str|num){?(('!f(){}'%\"hello\")){_s=true;_s=false}:{};_s='$';?((x>=-1)){_s=true}:{};_1=(\"a+b\"&&42)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')}:{}};_4='^( > 0\nrepairs: refine '$')}:{}};_4='^(:int{>0} | require '$')}:{}};_4='^(>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')}:{}};_4='^( > 0\nrepairs: refine '$')}:{}};_4='^(:int{>0} | require '$')}:{}};_4='^(>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

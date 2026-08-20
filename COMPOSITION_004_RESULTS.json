@@ -1,0 +1,198 @@
+{
+  "summary": {
+    "total_mutations": 100,
+    "semantic_count": 50,
+    "topological_count": 50,
+    "C1_metrics": {
+      "semantic_dag_zero_ratio": 1,
+      "topological_elevation_ratio": 1,
+      "total_under_invalidation": 0,
+      "total_over_invalidation": 0,
+      "total_invariant_leakage": 0
+    },
+    "C2_metrics": {
+      "semantic_dag_zero_ratio": 0,
+      "topological_elevation_ratio": 1,
+      "total_under_invalidation": 0,
+      "total_over_invalidation": 800
+    }
+  },
+  "sample": [
+    {
+      "mutation_id": "S01",
+      "class": "SEMANTIC_PURE",
+      "subType": "local_refinement_bound",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    },
+    {
+      "mutation_id": "S02",
+      "class": "SEMANTIC_PURE",
+      "subType": "branch_predicate_local",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    },
+    {
+      "mutation_id": "S03",
+      "class": "SEMANTIC_PURE",
+      "subType": "internal_lookup_table",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    },
+    {
+      "mutation_id": "S04",
+      "class": "SEMANTIC_PURE",
+      "subType": "local_state_transformation",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    },
+    {
+      "mutation_id": "S05",
+      "class": "SEMANTIC_PURE",
+      "subType": "arithmetic_formula",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    },
+    {
+      "mutation_id": "S06",
+      "class": "SEMANTIC_PURE",
+      "subType": "local_refinement_bound",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    },
+    {
+      "mutation_id": "S07",
+      "class": "SEMANTIC_PURE",
+      "subType": "branch_predicate_local",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    },
+    {
+      "mutation_id": "S08",
+      "class": "SEMANTIC_PURE",
+      "subType": "internal_lookup_table",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_changed": 2,
+        "invalidated": 1,
+        "over_invalidation": 0,
+        "under_invalidation": 0,
+        "leakage": 0
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "invalidated": 7,
+        "over_invalidation": 6,
+        "under_invalidation": 0
+      }
+    }
+  ]
+}

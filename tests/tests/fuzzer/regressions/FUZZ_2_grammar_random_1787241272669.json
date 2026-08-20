@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787241272669.json",
+  "timestamp": "2026-08-20T15:54:32.669Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:str,_1:bool,_2:any){_s=42;_9=(y/3.14);_s='world'}\n!f1(_0:int,_1:num) -> str{_6=('?=if #=for'%true);#(_i=0;_i<2;_i++){_9=('!f(){}'+'#(i=0;i<10;i++)')}}\n!f2(_0:bool,_1:int) -> str{?((\"a+b\"<=-1)){_3=(null>=b);?('!f(){}'){_s='$';#(_i=0;_i<1;_i++){#(_i=0;_i<2;_i++){?((a+-1)){?(1){?(('!f(){}'=='!f(){}')){_s='#(i=0;i<10;i++)'}:{}}:{};_s=null;_s=1;^((0!='world'))}:{};?((\"hello\"/false)){#(_i=0;_i<3;_i++){_s='world';^(\"hello\");_s=\"a+b\"};^(1)}:{};?((null/'^(return)')){?((\"hello\"*1)){#(_i=0;_i<3;_i++){?((3.14>3.14)){_s=null}:{};?((3.14/'$')){_5='?=if #=for';?(\"$K\"){^((null*'@LIN:L1c:0.2'));^((3.14*'world'));^(3.14)}:{};#(_i=0;_i<4;_i++){?((n-3.14)){?(y){^('?=if #=for')}:{};_4=\"hello\"}:{}};?((0%false)){#(_i=0;_i<1;_i++){^(('#(i=0;i<10;i++)'%1));?((x-42)){#(_i=0;_i<2;_i++){?('!f(){}'){^(('?=if #=for'>='!f(){}'));_7=true;^(('^(return)'||'?=if #=for'))}:{};_5=(y>x);^((42||n));^((y<='#(i=0;i<10;i++)'))}}:{};_s=-1;_1=(y||'#(i=0;i<10;i++)')};?(null){^((1&&n));?((-1/'#(i=0;i<10;i++)')){?((0-'world')){#(_i=0;_i<2;_i++){_2=(\"$K\">\"hello\");_0=('?=if #=for'+\"a+b\");_0=(y>=false)};^('?=if #=for');^(('world'%x));_3=(0&&'$')}:{};_s=\"$K\";#(_i=0;_i<5;_i++){_s='!f(){}';_s=y;_s=\"a+b\";_s='#(i=0;i<10;i++)'};?((false/n)){_s=1}:{}}:{}}:{};_s=\"$K\";#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){_s=b;_s=y;_2=(n>=\"$K\")}}}:{}}:{};?(x){_s=0}:{}}}:{};^('^(return)')}:{}};_9=('@LIN:L1c:0.2'>=x)}}:{};_s=null}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){_5='?=if # > 0\nrepairs: refine '$')){_5='?=if #:int{>0} | require '$')){_5='?=if #>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){_5='?=if # > 0\nrepairs: refine '$')){_5='?=if #:int{>0} | require '$')){_5='?=if #>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

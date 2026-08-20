@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787225548591.json",
+  "timestamp": "2026-08-20T11:32:28.591Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool) -> str{_0=(-1*'$')}\n!f1(_0:int|null,_1:str|num,_2:int|null){^((y<='@LIN:L1c:0.2'))}\n!f2(_0:any) -> num{?((0=='?=if #=for')){_2=(a>\"a+b\");_1=(false==null)}:{};#(_i=0;_i<5;_i++){?(('#(i=0;i<10;i++)'%n)){?((false/\"hello\")){#(_i=0;_i<3;_i++){_6=1;_s=42;#(_i=0;_i<1;_i++){#(_i=0;_i<3;_i++){?(null){^(('!f(){}'&&'!f(){}'));#(_i=0;_i<1;_i++){#(_i=0;_i<2;_i++){?((null&&'!f(){}')){_9=('!f(){}'/true);_9=('world'/'!f(){}');?('^(return)'){_s=3.14;_9=\"$K\";_8=('?=if #=for'-\"a+b\")}:{}}:{};_s=\"hello\"};_5=(a<n);^((false>='^(return)'));_5=-1};#(_i=0;_i<3;_i++){?(('#(i=0;i<10;i++)'*'$')){_s=\"$K\";?((x*\"$K\")){^(('^(return)'<false));_s=\"hello\"}:{};^((a<true))}:{};^((a>0));#(_i=0;_i<3;_i++){_9=(42-null);_6=null;^(('!f(){}'%\"$K\"));_s=y}}}:{}};#(_i=0;_i<1;_i++){?(('?=if #=for'==\"$K\")){^((false>null));_s=\"hello\";#(_i=0;_i<5;_i++){^((\"$K\"==\"a+b\"));^(\"$K\");^(('world'<=\"a+b\"));_s=3.14}}:{};_0=1};?((-1/n)){?((\"hello\"==y)){#(_i=0;_i<1;_i++){_1='@LIN:L1c:0.2';^((true<=b))};_s=1}:{};^((n/n))}:{}}};_s=1;?((0>=null)){_s=n;_s=a;_s=y;_4=(\"a+b\"=='$')}:{}}:{};_6=(-1>'#(i=0;i<10;i++)');_1=(n=='!f(){}')}:{};?(('^(return)'>'!f(){}')){#(_i=0;_i<1;_i++){^((true<=b));_9=\"hello\";#(_i=0;_i<4;_i++){_9=('$'=='?=if #=for')};_s='?=if #=for'};_9=(\"a+b\">\"hello\");?((x%n)){_8=(1*'!f(){}')}:{}}:{};#(_i=0;_i<5;_i++){_s='@LIN:L1c:0.2';_1=('^(return)'-'^(return)');_s=true};#(_i=0;_i<3;_i++){_s='$';_2=(\"$K\"<=y)}}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\")){#(_i=0 > 0\nrepairs: refine \"hello\")){#(_i=0:int{>0} | require \"hello\")){#(_i=0>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\")){#(_i=0 > 0\nrepairs: refine \"hello\")){#(_i=0:int{>0} | require \"hello\")){#(_i=0>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

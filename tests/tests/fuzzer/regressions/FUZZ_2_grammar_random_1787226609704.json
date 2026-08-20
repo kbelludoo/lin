@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787226609704.json",
+  "timestamp": "2026-08-20T11:50:09.704Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str) -> any{_s=42;_s=\"a+b\";^(-1);?('world'){_6=('@LIN:L1c:0.2'!=b);_s=n;^(b);?((x<=\"a+b\")){_6=42;_9=('world'%'?=if #=for');?((0>true)){^((true||\"$K\"));^((x--1));#(_i=0;_i<2;_i++){?(y){_0=(false<='#(i=0;i<10;i++)')}:{}};?('#(i=0;i<10;i++)'){_9=-1;^(3.14);_1=(x&&\"hello\");_5=false}:{}}:{};^((\"hello\"*y))}:{}}:{}}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_bJGHeV/emit.cjs:2\n/* effect:Read */function f0(_0){var _s,_6,_9,_1,_5,_i,i;_s=42;_s=\"a+b\";return (-1);if('world'){_6=('@LIN:L1c:0.2'!==b);_s=n;return (b);if((x<=\"a+b\")){_6=42;_9=('world'%'?=if #=for');if((0>true)){return ((t",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_bJGHeV/emit.cjs:2\n/* effect:Read */function f0(_0){var _s,_6,_9,_1,_5,_i,i;_s=42;_s=\"a+b\";return (-1);if('world'){_6=('@LIN:L1c:0.2'!==b);_s=n;return (b);if((x<=\"a+b\")){_6=42;_9=('world'%'?=if #=for');if((0>true)){return ((t",
+    "testable": false
+  },
+  "fixed": false
+}

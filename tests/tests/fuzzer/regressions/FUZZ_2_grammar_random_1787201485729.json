@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787201485729.json",
+  "timestamp": "2026-08-20T04:51:25.729Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:bool,_1:str,_2:any) -> int{#(_i=0;_i<1;_i++){^((true==\"hello\"));#(_i=0;_i<4;_i++){_s=a;^((false>'@LIN:L1c:0.2'));_s=a};?((a+false)){_8=('!f(){}'-\"a+b\");_s=42;_s='@LIN:L1c:0.2';_8=-1}:{};_3=(true=='#(i=0;i<10;i++)')}}\n!f1(_0:any) -> int{_9=('world'||true);#(_i=0;_i<3;_i++){?((\"a+b\"-y)){_0=('@LIN:L1c:0.2'+3.14)}:{};#(_i=0;_i<5;_i++){_2=('?=if #=for'>1);?(('#(i=0;i<10;i++)'&&'?=if #=for')){_1=('!f(){}'<1);_s=null;#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){_s=3.14};_s=0;#(_i=0;_i<1;_i++){_s=-1;_1=('@LIN:L1c:0.2'!=\"$K\")};?((true&&'?=if #=for')){^(n);#(_i=0;_i<5;_i++){?(('@LIN:L1c:0.2'>'@LIN:L1c:0.2')){^(('!f(){}'/42));_3=('$'<\"hello\");^('@LIN:L1c:0.2')}:{};^((42%true));#(_i=0;_i<1;_i++){^(true);_2=y}}}:{}}}:{}}};_s=a;_3=(b+42)}\n!f2(_0:any,_1:str|num,_2:str) -> int|null{?(y){_s=\"a+b\";#(_i=0;_i<5;_i++){_3=('^(return)'||false);_2=(42==0)};_3=(false>=a)}:{};?(0){^((-1/42));?(x){?(('^(return)'%'world')){_s='!f(){}';_s=b;^((3.14<'?=if #=for'))}:{};_s='@LIN:L1c:0.2'}:{};#(_i=0;_i<2;_i++){?(('#(i=0;i<10;i++)'*'world')){_0=(a%n);_3=('!f(){}'||true);^(a);#(_i=0;_i<1;_i++){^((y<=\"a+b\"));_5=(x+a);_8=(1-'!f(){}')}}:{};#(_i=0;_i<4;_i++){_s='!f(){}';?('?=if #=for'){_s=\"a+b\";?(42){#(_i=0;_i<2;_i++){_s=1;_6=n;^(true)};_s=b}:{};_s=false;_0=(-1&&y)}:{}};^((3.14--1))};#(_i=0;_i<4;_i++){^(('!f(){}'*y));_s='^(return)'}}:{};_s=a}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_G1WHvM/emit.cjs:5\n/* effect:Write */function f2(_0, _1, _2){var _s,_3,_5,_8,_6,_i,i;if(y){_s=\"a+b\";for(_i=0;_i<5;_i++){_3=('^(return)'||false);_2=(42===0);};_3=(false>=a);}else{};if(0){return ((-1/42));if(x){if(('^(return)'%",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_G1WHvM/emit.cjs:5\n/* effect:Write */function f2(_0, _1, _2){var _s,_3,_5,_8,_6,_i,i;if(y){_s=\"a+b\";for(_i=0;_i<5;_i++){_3=('^(return)'||false);_2=(42===0);};_3=(false>=a);}else{};if(0){return ((-1/42));if(x){if(('^(return)'%",
+    "testable": false
+  },
+  "fixed": false
+}

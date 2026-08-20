@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787231182007.json",
+  "timestamp": "2026-08-20T13:06:22.007Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:int,_1:int,_2:int|null){?(('^(return)'>=\"hello\")){#(_i=0;_i<1;_i++){_8=(\"hello\">=null);?((\"$K\"==a)){_2=(42%3.14);_9=(false||'#(i=0;i<10;i++)');#(_i=0;_i<3;_i++){_3=0;_s=42;_8=(null!=42)};_1=(\"a+b\">'^(return)')}:{};^(('@LIN:L1c:0.2'<\"a+b\"))};_2=(a*x);_8=(a/'^(return)')}:{};^((1/a));_0=(n*null)}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)')}:{} > 0\nrepairs: refine '^(return)')}:{}:int{>0} | require '^(return)')}:{}>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '^(return)')}:{} > 0\nrepairs: refine '^(return)')}:{}:int{>0} | require '^(return)')}:{}>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

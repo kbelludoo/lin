@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787238370292.json",
+  "timestamp": "2026-08-20T15:06:10.292Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(){_s=x;?(\"a+b\"){^(('world'>42));?(('?=if #=for'+false)){?('$'){_6=(n<'?=if #=for')}:{};?(('world'<\"$K\")){_s=\"$K\";_6=(x>0);?((-1/'$')){_6='^(return)';#(_i=0;_i<2;_i++){_1='$';^(('?=if #=for'&&1));?(y){?('#(i=0;i<10;i++)'){?('!f(){}'){_7=('^(return)'&&'!f(){}');?((0/0)){?((b%'#(i=0;i<10;i++)')){_s=-1}:{}}:{};_s=-1}:{};_3=(\"hello\"<'@LIN:L1c:0.2')}:{};_5=('@LIN:L1c:0.2'-1)}:{}};_s=42;#(_i=0;_i<2;_i++){_s=\"hello\";_s=\"a+b\"}}:{};_6=(\"hello\"=='$')}:{};_s='!f(){}'}:{}}:{};_s='world'}\n!f1(_0:any,_1:int){?('$'){?((\"hello\"/'#(i=0;i<10;i++)')){_s=y;?(('@LIN:L1c:0.2'<\"a+b\")){^((42<='^(return)'));_5=('world'>n);?(('$'-null)){_9=(false<='$');_6=3.14;?('#(i=0;i<10;i++)'){_9=(false==\"$K\");?((\"$K\"||1)){_s=b;?(('^(return)'&&\"a+b\")){_6=(-1<=1)}:{};_6=('@LIN:L1c:0.2'%-1)}:{};^(42)}:{}}:{}}:{}}:{};_4=(3.14+'world')}:{};_8=(null+'!f(){}');?(x){?((x%'?=if #=for')){?(\"hello\"){_s=true;#(_i=0;_i<3;_i++){^(null);_9=(false==a);^((n||a));_4=('^(return)'>='$')}}:{};#(_i=0;_i<3;_i++){_s=\"a+b\"};_2='world'}:{};?((-1>false)){#(_i=0;_i<5;_i++){_7=true};_4=a;_0=true}:{}}:{};?((\"hello\"-'!f(){}')){#(_i=0;_i<2;_i++){_3=0;_8='^(return)';?((null<=false)){#(_i=0;_i<1;_i++){^((x+'@LIN:L1c:0.2'));_6=x;_5=(\"$K\"=='world')};_s=false}:{};_s='^(return)'};?(('#(i=0;i<10;i++)'+y)){?(('^(return)'!=0)){^(\"$K\")}:{}}:{};#(_i=0;_i<5;_i++){_1=a};?((1>=-1)){#(_i=0;_i<5;_i++){_s=null;_s=false;?('world'){_s=\"a+b\";_1=(\"a+b\"*\"hello\");_6=(-1+0);_s='^(return)'}:{}}}:{}}:{}}\n!f2(){^((42||42));_0=(0%1)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){_6='^(retu > 0\nrepairs: refine '$')){_6='^(retu:int{>0} | require '$')){_6='^(retu>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '$')){_6='^(retu > 0\nrepairs: refine '$')){_6='^(retu:int{>0} | require '$')){_6='^(retu>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

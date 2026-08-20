@@ -1,0 +1,56 @@
+{
+  "experiment": "H_TRANSFER-02",
+  "timestamp": "2026-08-20T02:49:15.733Z",
+  "corpus": 34,
+  "backends": 11,
+  "totalTests": 374,
+  "s2Pass": 374,
+  "s2Fail": 0,
+  "sharedCorrections": [
+    {
+      "cause": "isNumishId expansion",
+      "layer": "emit_shared.mjs",
+      "originTarget": "cpp/kotlin/swift",
+      "benefitedTargets": [
+        "ts",
+        "py",
+        "go",
+        "rust",
+        "c",
+        "java",
+        "zig",
+        "cs"
+      ],
+      "patchSpecific": 0,
+      "transferRate": "100.0"
+    }
+  ],
+  "nonSharedCorrections": [
+    {
+      "cause": "empty-else fix",
+      "layer": "emit_kotlin.lin",
+      "target": "kotlin"
+    },
+    {
+      "cause": "empty-else fix",
+      "layer": "emit_swift.lin",
+      "target": "swift"
+    },
+    {
+      "cause": "type-inference parens-strip",
+      "layer": "emit_kotlin.lin",
+      "target": "kotlin"
+    },
+    {
+      "cause": "type-inference parens-strip",
+      "layer": "emit_swift.lin",
+      "target": "swift"
+    }
+  ],
+  "frozenFailures": [
+    "kb is not defined ($K constant table)",
+    "Maximum call stack size (recursive)",
+    "layer 4 mutation count",
+    "unicode identifier export"
+  ]
+}

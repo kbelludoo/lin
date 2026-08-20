@@ -1,0 +1,26 @@
+{
+  "C1_AINL_PLUS_LIN": {
+    "label": "C1_AINL_PLUS_LIN",
+    "avg_nodes_invalidated_per_mut": 1.32,
+    "cumulative_maintenance_ms": 59.7,
+    "avg_tokens_changed_per_mut": 46,
+    "total_edges_changed": 10,
+    "total_cache_invalidated": 132,
+    "over_invalidation_rate": "0.0%",
+    "SEMANTIC_TO_OPERATIONAL_RATIO": 0.758,
+    "invariants_preserved": "100.0%",
+    "behavior_equivalence": "100.0%"
+  },
+  "C2_AINL_STANDALONE": {
+    "label": "C2_AINL_STANDALONE",
+    "avg_nodes_invalidated_per_mut": 2.2,
+    "cumulative_maintenance_ms": 196,
+    "avg_tokens_changed_per_mut": 155,
+    "total_edges_changed": 18.000000000000004,
+    "total_cache_invalidated": 321,
+    "over_invalidation_rate": "24.5%",
+    "SEMANTIC_TO_OPERATIONAL_RATIO": 0.455,
+    "invariants_preserved": "100.0%",
+    "behavior_equivalence": "100.0%"
+  }
+}

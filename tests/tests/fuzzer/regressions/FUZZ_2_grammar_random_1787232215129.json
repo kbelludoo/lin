@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787232215129.json",
+  "timestamp": "2026-08-20T13:23:35.129Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0() -> int{#(_i=0;_i<3;_i++){?('world'){_9=('!f(){}'-b);_4='#(i=0;i<10;i++)'}:{};#(_i=0;_i<5;_i++){^((3.14==a));_7=(n&&n);_s=x};^(n);_s=\"hello\"};#(_i=0;_i<1;_i++){?((false/null)){_2=(\"a+b\">=-1);#(_i=0;_i<4;_i++){_9=(1<='?=if #=for')};_6=(1>'@LIN:L1c:0.2');?((1<true)){^(('?=if #=for'||'world'));_3=x;#(_i=0;_i<5;_i++){^((n*'?=if #=for'));^(('@LIN:L1c:0.2'--1))};#(_i=0;_i<2;_i++){^((true&&'?=if #=for'));#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){_8=(42>'world');^((0%0));?(('^(return)'=='?=if #=for')){_s=false}:{};_0='$'};_0=1;_9=('$'*-1)}}}:{}}:{}};?(('?=if #=for'&&0)){_s='world';#(_i=0;_i<3;_i++){_7=('@LIN:L1c:0.2'/\"$K\");#(_i=0;_i<4;_i++){^(('!f(){}'=='@LIN:L1c:0.2'))}};^(false);#(_i=0;_i<5;_i++){_5=(a/1);_4=('^(return)'>'$');_6='^(return)';#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){?((b>-1)){_0=('^(return)'!='world');_s=null}:{};#(_i=0;_i<3;_i++){_2=(n<=\"$K\");_s=-1;^((\"$K\"&&n));?((1||b)){_0=(true!=42)}:{}};_1=(y<'$');_s=42}}}}:{}}\n!f1(_0:str,_1:int|null) -> any{?(\"hello\"){_s=true;?(\"hello\"){#(_i=0;_i<2;_i++){_3=true;#(_i=0;_i<2;_i++){_s=\"hello\"};#(_i=0;_i<1;_i++){_0=\"hello\";^((x%a));_7='@LIN:L1c:0.2';?((\"a+b\"||'world')){_3='#(i=0;i<10;i++)'}:{}}}}:{};_8=(n+-1);_8=('!f(){}'-'@LIN:L1c:0.2')}:{};_s=x;#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){#(_i=0;_i<2;_i++){?(false){?(3.14){_5='@LIN:L1c:0.2';_8=0;?((-1>=\"hello\")){#(_i=0;_i<3;_i++){#(_i=0;_i<4;_i++){?((3.14!=\"a+b\")){_6=(x||null);_9=('!f(){}'<0);_6=1;_0=('^(return)'+0)}:{}};_2=(x/\"a+b\");_s=\"a+b\"}}:{};_4=(3.14||'^(return)')}:{};_3=('!f(){}'/a);_s=0}:{};_s='!f(){}'};_0='@LIN:L1c:0.2';^((\"hello\">=null))};#(_i=0;_i<2;_i++){_3=(1-y);_2=(b<\"a+b\");_0='@LIN:L1c:0.2';_s=\"a+b\"};?((-1>=a)){_s=a}:{}}}\n!f2(_0:any,_1:bool) -> int{_2=(x<42);_0=('@LIN:L1c:0.2'-n)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: null > 0\nrepairs: refine null:int{>0} | require null>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

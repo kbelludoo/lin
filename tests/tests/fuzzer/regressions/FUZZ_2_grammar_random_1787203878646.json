@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787203878646.json",
+  "timestamp": "2026-08-20T05:31:18.646Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:str,_1:num) -> int|null{?(0){#(_i=0;_i<1;_i++){^(y)};?(true){_s='?=if #=for';^((b/'?=if #=for'))}:{};_s=\"hello\";_s=false}:{};_5=(\"$K\"<=null)}\n!f1(_0:int|null) -> str|num{^(x);_7='$';_0=x}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '?=if #=for'))}: > 0\nrepairs: refine '?=if #=for'))}::int{>0} | require '?=if #=for'))}:>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '?=if #=for'))}: > 0\nrepairs: refine '?=if #=for'))}::int{>0} | require '?=if #=for'))}:>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

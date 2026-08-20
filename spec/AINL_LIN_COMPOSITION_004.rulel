@@ -1,0 +1,24 @@
+@RULEL:AINL_LIN_COMPOSITION_004:1.1.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=AINL_LIN_COMPOSITION_004_ORTHOGONAL_MUTATION_ROUTING
+  status=SUPPORTED_EMPIRICAL_CORPUS
+  domain="ai_agent_architecture_mutation_routing"
+  date=2026-08-20
+  purpose="Measure semantic localization vs topological elevation across a controlled corpus of 100 balanced mutations (50 pure semantic, 50 topological)"
+  parent=AINL_LIN_COMPOSITION_003
+}
+
+.h{
+  id=H_COMPOSITION_004
+  claim="Within the evaluated 100-mutation corpus, LIN+AINL composition achieved accurate change routing: 50/50 pure semantic mutations yielded delta DAG == 0 with localized LIN updates, while 50/50 topological mutations correctly elevated to minimal DAG adjustments with zero under-invalidation or effect leakage."
+  result=SUPPORTED_EMPIRICAL_CORPUS
+}
+
+.c{
+  evaluated_corpus={
+    semantic_pure_count=50
+    topological_count=50
+    classes=["arithmetic", "refinement_bounds", "predicates", "lookup_tables", "state_transforms", "service_deps", "fanout", "external_routing", "retries"]
+  }
+}

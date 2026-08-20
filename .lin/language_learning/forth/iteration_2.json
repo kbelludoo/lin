@@ -1,0 +1,271 @@
+{"lang":"forth","cycle":2,"knowledge":{"model":"qwen2.5-coder:7b","created_at":"2026-08-20T15:12:50.252945156Z","response":"```json\n{\n  \"primitives\": {\n    \"isNumishId\": [\"d\", \"e\", \"lo\", \"hi\", \"r\", \"t\", \"base\", \"exp\"],\n    \"type_inference\": true,\n    \"functions\": true,\n    \"control_flow\": true,\n    \"error_handling\": true,\n    \"memory_model\": true,\n    \"stdlib\": true,\n    \"modules\": true,\n    \"edge_cases\": true,\n    \"emit_template\": true\n  }\n}\n```","done":true,"done_reason":"stop","context":[151644,8948,198,2610,525,1207,16948,11,3465,553,54364,14817,13,1446,525,264,10950,17847,13,151645,198,151644,872,198,23824,279,15473,4128,13241,17247,3322,311,3270,264,64789,19415,19163,369,432,624,63127,374,264,1555,35085,31969,4128,429,1367,3658,311,220,16,21,1182,1412,13,32117,25,753,606,8917,6098,2599,51185,1688,716,87,87529,28,947,369,1956,28,16,4696,8203,77,4696,21397,10,16,6098,51185,1958,421,66285,6098,51185,333,421,66285,6098,92,3269,1503,11730,333,14,1503,6306,9413,28,689,3968,38,6257,28,41094,569,4578,57520,25,423,28,2708,198,48206,504,1008,11550,25,6841,1412,25,272,23071,728,85812,1642,10532,21527,29362,46824,702,74,613,655,941,404,20357,40538,685,13,374,4651,812,764,25,294,384,775,15588,435,259,2331,1343,284,5109,624,2461,13241,470,4718,25,314,649,35209,11,943,1243,2202,11,5746,11,2524,27441,11,1465,75642,11,4938,5047,11,1460,2740,11,13454,11,6821,41427,11,16691,8693,7810,8278,4718,11,902,16148,13,151645,198,151644,77091,198,73594,2236,198,515,220,330,649,35209,788,341,262,330,285,4651,812,764,788,4383,67,497,330,68,497,330,385,497,330,6023,497,330,81,497,330,83,497,330,3152,497,330,4580,8097,262,330,1313,1243,2202,788,830,345,262,330,21409,788,830,345,262,330,2865,27441,788,830,345,262,330,841,75642,788,830,345,262,330,17269,5047,788,830,345,262,330,13149,788,830,345,262,330,11525,788,830,345,262,330,7186,41427,788,830,345,262,330,18712,8693,788,830,198,220,456,532,73594],"total_duration":8242418801,"load_duration":431489535,"prompt_eval_count":206,"prompt_eval_duration":38730000,"eval_count":107,"eval_duration":4044433000},"tests":═══ LIN Language Fuzzer — Regression Suite ═══
+
+── Layer 1: Quoted Literal Parsing ──
+
+── Layer 1: String Edge Cases ──
+
+── Layer 1: Identifier Traps ──
+
+── Layer 1: Nesting Traps ──
+
+── Layer 3: Multi-Backend Emit ──
+
+── Layer 3: JS Oracle Execution ──
+
+── Layer 4: Mutation Testing ──
+
+── Full Fuzzer Pipeline (50 samples) ──
+
+── Repair Engine: Known Bug Diagnosis ──
+
+═══ Fuzzer Summary ═══
+  Passed: 168
+  Failed: 4
+  Fuzzer pipeline: 113 samples, 19 failures
+  Bugs found: 19
+    [lexer] identifier_trap: unicode identifier — LIN_EXPORT_NO_FN: café
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: b > 0
+repair
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: "hello")){#(
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: "$K")){_1=("
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: 'world')){_s
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: 'world')){_1
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: x > 0
+repair
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: "$K")){?(("$
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: '?=if #=for'
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: "a+b")){#(_i
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: x > 0
+repair
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: -1);^((0||tr
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: true > 0
+rep
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: 0 > 0
+repair
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: '@LIN:L1c:0.
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: true > 0
+rep
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: '?=if #=for'
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: '^(return)')
+    [parser] grammar_random: undefined — EMIT BLOCKED INV_REFINEMENT_SOUND
+Node: BinaryExpression /
+Missing: null > 0
+rep
+
+Failures:
+  ✗ oracle: f() = 1
+    kb is not defined
+  ✗ oracle: f() = 1
+    Maximum call stack size exceeded
+  ✗ oracle: f() = 1
+    Maximum call stack size exceeded
+  ✗ pipeline: tracks layer counts
+    layer 4 should have results
+
+  ✓ quoted literal: dollar in single quotes
+  ✓ quoted literal: dollar in double quotes
+  ✓ quoted literal: $K in single quotes
+  ✓ quoted literal: $K in double quotes
+  ✓ quoted literal: hash in single quotes
+  ✓ quoted literal: hash in double quotes
+  ✓ quoted literal: header in single quotes
+  ✓ quoted literal: function syntax in double quotes
+  ✓ quoted literal: return sigil in single quotes
+  ✓ quoted literal: sigil config in double quotes
+  ✓ quoted literal: escaped dollar in single quotes
+  ✓ quoted literal: escaped newline in double quotes
+  ✓ quoted literal: escaped tabs/carriage return
+  ✓ quoted literal: full constant decl in quotes
+  ✓ string edge: simple single-quoted string
+  ✓ string edge: simple double-quoted string
+  ✓ string edge: escaped quote in string
+  ✓ string edge: operators inside string
+  ✓ string edge: function syntax inside string
+  ✓ string edge: for-loop syntax inside string
+  ✓ string edge: return syntax inside string
+  ✓ string edge: sigil config inside string
+  ✓ string edge: constant table inside string
+  ✓ string edge: header inside string
+  ✓ string edge: dollar in nested quotes in string
+  ✓ identifier trap: dollar-prefixed identifier
+  ✓ identifier trap: dollar-suffixed identifier
+  ✓ identifier trap: dollar-middled identifier
+  ✓ identifier trap: underscore-dollar identifier
+  ✓ identifier trap: if with underscore
+  ✓ identifier trap: underscore if
+  ✓ identifier trap: return prefix
+  ✓ identifier trap: else_if compound
+  ✓ identifier trap: unicode identifier
+  ✓ identifier trap: underscore start
+  ✓ identifier trap: bare $K as identifier
+  ✓ nesting: triple nested if
+  ✓ nesting: triple nested for
+  ✓ nesting: for inside if inside for
+  ✓ nesting: if-for-if chain
+  ✓ emit ts: f
+  ✓ emit py: f
+  ✓ emit go: f
+  ✓ emit rust: f
+  ✓ emit c: f
+  ✓ emit java: f
+  ✓ emit zig: f
+  ✓ emit kotlin: f
+  ✓ emit swift: f
+  ✓ emit cpp: f
+  ✓ emit cs: f
+  ✓ emit ts: add
+  ✓ emit py: add
+  ✓ emit go: add
+  ✓ emit rust: add
+  ✓ emit c: add
+  ✓ emit java: add
+  ✓ emit zig: add
+  ✓ emit kotlin: add
+  ✓ emit swift: add
+  ✓ emit cpp: add
+  ✓ emit cs: add
+  ✓ emit ts: f
+  ✓ emit py: f
+  ✓ emit go: f
+  ✓ emit rust: f
+  ✓ emit c: f
+  ✓ emit java: f
+  ✓ emit zig: f
+  ✓ emit kotlin: f
+  ✓ emit swift: f
+  ✓ emit cpp: f
+  ✓ emit cs: f
+  ✓ emit ts: f
+  ✓ emit py: f
+  ✓ emit go: f
+  ✓ emit rust: f
+  ✓ emit c: f
+  ✓ emit java: f
+  ✓ emit zig: f
+  ✓ emit kotlin: f
+  ✓ emit swift: f
+  ✓ emit cpp: f
+  ✓ emit cs: f
+  ✓ emit ts: greet
+  ✓ emit py: greet
+  ✓ emit go: greet
+  ✓ emit rust: greet
+  ✓ emit c: greet
+  ✓ emit java: greet
+  ✓ emit zig: greet
+  ✓ emit kotlin: greet
+  ✓ emit swift: greet
+  ✓ emit cpp: greet
+  ✓ emit cs: greet
+  ✓ emit ts: fact
+  ✓ emit py: fact
+  ✓ emit go: fact
+  ✓ emit rust: fact
+  ✓ emit c: fact
+  ✓ emit java: fact
+  ✓ emit zig: fact
+  ✓ emit kotlin: fact
+  ✓ emit swift: fact
+  ✓ emit cpp: fact
+  ✓ emit cs: fact
+  ✓ emit ts: sum
+  ✓ emit py: sum
+  ✓ emit go: sum
+  ✓ emit rust: sum
+  ✓ emit c: sum
+  ✓ emit java: sum
+  ✓ emit zig: sum
+  ✓ emit kotlin: sum
+  ✓ emit swift: sum
+  ✓ emit cpp: sum
+  ✓ emit cs: sum
+  ✓ emit ts: fib
+  ✓ emit py: fib
+  ✓ emit go: fib
+  ✓ emit rust: fib
+  ✓ emit c: fib
+  ✓ emit java: fib
+  ✓ emit zig: fib
+  ✓ emit kotlin: fib
+  ✓ emit swift: fib
+  ✓ emit cpp: fib
+  ✓ emit cs: fib
+  ✓ emit ts: clamp
+  ✓ emit py: clamp
+  ✓ emit go: clamp
+  ✓ emit rust: clamp
+  ✓ emit c: clamp
+  ✓ emit java: clamp
+  ✓ emit zig: clamp
+  ✓ emit kotlin: clamp
+  ✓ emit swift: clamp
+  ✓ emit cpp: clamp
+  ✓ emit cs: clamp
+  ✓ emit ts: abs
+  ✓ emit py: abs
+  ✓ emit go: abs
+  ✓ emit rust: abs
+  ✓ emit c: abs
+  ✓ emit java: abs
+  ✓ emit zig: abs
+  ✓ emit kotlin: abs
+  ✓ emit swift: abs
+  ✓ emit cpp: abs
+  ✓ emit cs: abs
+  ✓ oracle: f() = 1
+  ✓ oracle: add(2,3) = 5
+  ✓ oracle: f() = 1
+  ✗ oracle: f() = 1: kb is not defined
+  ✓ oracle: greet("World") = Hello World
+  ✗ oracle: f() = 1: Maximum call stack size exceeded
+  ✓ oracle: fact(5) = 120
+  ✓ oracle: sum([1,2,3,4,5]) = 15
+  ✗ oracle: f() = 1: Maximum call stack size exceeded
+  ✓ oracle: fib(10) = 55
+  ✓ oracle: clamp(5,0,10) = 5
+  ✓ oracle: clamp(-1,0,10) = 0
+  ✓ oracle: clamp(15,0,10) = 10
+  ✓ oracle: abs(5) = 5
+  ✓ oracle: abs(-5) = 5
+  ✓ oracle: abs(0) = 0
+  ✓ mutation: if→for mutation
+  ✓ pipeline: completes without crash
+  ✗ pipeline: tracks layer counts: layer 4 should have results
+  ✓ pipeline: produces bug report
+  ✓ repair: $ literal bug diagnosis
+  ✓ repair: minimize function works
+,"failures":{"model":"qwen2.5-coder:7b","created_at":"2026-08-20T15:15:09.745057396Z","response":"```json\n{\n  \"hypotheses\": [\n    \"isNumishId\",\n    \"type_inference\",\n    \"functions\",\n    \"control_flow\",\n    \"error_handling\",\n    \"memory_model\",\n    \"stdlib\",\n    \"modules\",\n    \"edge_cases\",\n    \"emit_template\"\n  ],\n  \"candidates\": [\n    \"c\",\n    \"rust\",\n    \"go\",\n    \"zig\",\n    \"java\",\n    \"cs\",\n    \"kotlin\",\n    \"swift\",\n    \"cpp\",\n    \"haskell\",\n    \"elixir\",\n    \"lua\",\n    \"julia\"\n  ]\n}\n```","done":true,"done_reason":"stop","context":[151644,8948,198,2610,525,1207,16948,11,3465,553,54364,14817,13,1446,525,264,10950,17847,13,151645,198,151644,872,198,63127,11550,25,272,15883,590,11,3346,22669,343,11,10042,11,4837,16147,15345,11,70642,10109,602,19806,42758,11,67718,404,22206,4284,10327,69745,13,13241,6540,3685,13,15920,13064,8317,30,3411,4718,25,314,71,59300,38322,11,11178,532,80334,510,4913,2528,3252,80,16948,17,13,20,1786,4316,25,22,65,2198,7120,3752,3252,17,15,17,21,12,15,23,12,17,15,51,16,20,25,16,17,25,20,15,13,17,20,17,24,19,20,16,20,21,57,2198,2322,3252,73594,2236,1699,35702,77,220,7245,649,35209,11693,28152,77,262,7245,285,4651,812,764,11693,508,2105,67,16215,7245,68,16215,7245,385,16215,7245,6023,16215,7245,81,16215,7245,83,16215,7245,3152,16215,7245,4580,2105,1125,59,77,262,7245,1313,1243,2202,11693,830,26266,77,262,7245,21409,11693,830,26266,77,262,7245,2865,27441,11693,830,26266,77,262,7245,841,75642,11693,830,26266,77,262,7245,17269,5047,11693,830,26266,77,262,7245,13149,11693,830,26266,77,262,7245,11525,11693,830,26266,77,262,7245,7186,41427,11693,830,26266,77,262,7245,18712,8693,11693,830,1699,220,51300,77,11035,77,73594,2198,10438,788,1866,1335,10438,38229,3252,9495,2198,2147,8899,16,20,16,21,19,19,11,23,24,19,23,11,16,24,23,11,17,21,16,15,11,20,17,20,11,16,17,15,22,11,16,21,24,19,23,11,16,16,11,18,19,21,20,11,20,20,18,11,20,19,18,21,19,11,16,19,23,16,22,11,16,18,11,16,19,19,21,11,20,17,20,11,17,21,19,11,16,15,24,20,15,11,16,22,23,19,22,11,16,18,11,16,20,16,21,19,20,11,16,24,23,11,16,20,16,21,19,19,11,23,22,17,11,16,24,23,11,17,18,23,17,19,11,17,22,24,11,16,20,19,22,18,11,19,16,17,23,11,16,18,17,19,16,11,16,22,17,19,22,11,18,18,17,17,11,18,16,16,11,18,17,22,15,11,17,21,19,11,21,19,22,23,24,11,16,24,19,16,20,11,16,24,16,21,18,11,18,21,24,11,19,18,17,11,21,17,19,11,21,18,16,17,22,11,18,22,19,11,17,21,19,11,16,20,20,20,11,18,20,15,23,20,11,18,16,24,21,24,11,19,16,17,23,11,19,17,24,11,16,18,21,22,11,18,21,20,23,11,18,16,16,11,17,17,15,11,16,21,11,17,16,11,16,16,23,17,11,16,19,16,17,11,16,18,11,18,17,16,16,22,11,17,20,11,22,20,18,11,21,15,21,11,23,24,16,22,11,21,15,24,23,11,17,20,24,24,11,20,16,16,23,20,11,16,21,23,23,11,22,16,21,11,23,22,11,23,22,20,17,24,11,17,23,11,24,19,22,11,18,21,24,11,16,24,20,21,11,17,23,11,16,21,11,19,21,24,21,11,23,17,15,18,11,22,22,11,19,21,24,21,11,17,16,18,24,22,11,16,15,11,16,21,11,21,15,24,23,11,20,16,16,23,20,11,16,24,20,23,11,19,17,16,11,21,21,17,23,20,11,21,15,24,23,11,20,16,16,23,20,11,18,18,18,11,19,17,16,11,21,21,17,23,20,11,21,15,24,23,11,24,17,11,18,17,21,24,11,16,20,15,18,11,16,16,22,18,15,11,18,18,18,11,16,19,11,16,20,15,18,11,21,18,15,21,11,24,19,16,18,11,17,23,11,21,23,24,11,18,24,21,23,11,18,23,11,21,17,20,22,11,17,23,11,19,16,15,24,19,11,20,21,24,11,19,20,22,23,11,20,22,20,17,15,11,17,20,11,19,17,18,11,17,23,11,17,22,15,23,11,16,24,23,11,19,23,17,15,21,11,20,15,19,11,16,15,15,23,11,16,16,20,20,15,11,17,20,11,21,23,19,16,11,16,19,16,17,11,17,20,11,17,22,17,11,17,18,15,22,16,11,22,17,23,11,23,20,23,16,17,11,16,21,19,17,11,16,15,20,18,17,11,17,16,20,17,22,11,17,24,18,21,17,11,19,21,23,17,19,11,22,15,17,11,22,19,11,21,16,18,11,21,20,20,11,24,19,16,11,19,15,19,11,17,15,18,20,22,11,19,15,20,18,23,11,21,23,20,11,16,18,11,18,22,19,11,19,21,20,16,11,23,16,17,11,22,21,19,11,17,20,11,17,24,19,11,18,23,19,11,22,22,20,11,16,20,20,23,23,11,19,18,20,11,17,20,24,11,17,18,18,16,11,16,18,19,18,11,17,23,19,11,20,16,15,24,11,21,17,19,11,17,19,21,16,11,16,18,17,19,16,11,19,22,15,11,19,22,16,23,11,17,20,11,18,16,19,11,21,19,24,11,18,20,17,15,24,11,16,16,11,24,19,18,11,16,17,19,18,11,17,17,15,17,11,16,16,11,20,22,19,21,11,16,16,11,17,20,17,19,11,17,22,19,19,16,11,16,16,11,16,19,21,20,11,22,20,21,19,17,11,16,16,11,19,24,18,23,11,20,15,19,22,11,16,16,11,16,19,21,15,11,17,22,19,15,11,16,16,11,16,18,19,20,19,11,16,16,11,21,23,17,16,11,19,16,19,17,22,11,16,16,11,16,21,21,24,16,11,23,21,24,18,11,22,23,16,15,11,23,17,22,23,11,19,22,16,23,11,16,16,11,24,15,17,11,16,21,16,19,23,11,16,18,11,16,20,16,21,19,20,11,16,24,23,11,16,20,16,21,19,19,11,22,22,15,24,16,11,16,24,23,11,22,18,20,24,19,11,17,17,18,21,11,16,24,23,11,20,16,20,11,17,17,15,11,18,18,15,11,21,19,24,11,18,20,17,15,24,11,22,23,23,11,18,19,16,11,17,21,17,11,18,18,15,11,17,23,20,11,19,21,20,16,11,23,16,17,11,22,21,19,11,22,23,23,11,19,18,23,18,11,21,22,11,19,24,22,11,18,18,15,11,21,23,11,19,24,22,11,18,18,15,11,18,23,20,11,19,24,22,11,18,18,15,11,21,15,17,18,11,19,24,22,11,18,18,15,11,23,16,11,19,24,22,11,18,18,15,11,23,18,11,19,24,22,11,18,18,15,11,18,16,20,17,11,19,24,22,11,18,18,15,11,19,20,23,15,11,23,15,24,22,11,17,21,17,11,18,18,15,11,16,18,16,18,11,16,17,19,18,11,17,17,15,17,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,17,16,19,15,24,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,17,23,21,20,11,17,22,19,19,16,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,23,19,16,11,22,20,21,19,17,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,16,22,17,21,24,11,20,15,19,22,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,16,18,16,19,24,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,16,16,20,17,20,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,22,16,23,21,11,19,16,19,17,22,11,22,23,23,11,23,18,15,11,18,19,20,11,17,21,17,11,18,18,15,11,16,23,22,16,17,11,23,21,24,18,11,22,23,23,11,23,18,15,11,16,24,23,11,17,17,15,11,19,20,21,11,20,18,17,11,22,18,20,24,19,28503,5035,25454,788,23,17,19,17,19,16,23,23,15,16,1335,1078,25454,788,19,18,16,19,23,24,20,18,20,1335,40581,21296,3180,788,17,15,21,1335,40581,21296,25454,788,18,23,22,18,15,15,15,15,1335,14170,3180,788,16,15,22,1335,14170,25454,788,19,15,19,19,19,18,18,15,15,15,532,36934,1870,510,66,15883,590,11,3346,22669,343,11,10042,11,4837,16147,15345,11,70642,10109,602,19806,42758,11,67718,404,22206,4284,10327,69745,151645,198,151644,77091,198,73594,2236,198,515,220,330,71,59300,38322,788,2278,262,330,285,4651,812,764,756,262,330,1313,1243,2202,756,262,330,21409,756,262,330,2865,27441,756,262,330,841,75642,756,262,330,17269,5047,756,262,330,13149,756,262,330,11525,756,262,330,7186,41427,756,262,330,18712,8693,698,220,3211,220,330,91345,788,2278,262,330,66,756,262,330,35788,756,262,330,3346,756,262,330,35363,756,262,330,10042,756,262,330,4837,756,262,330,74,15345,756,262,330,70642,756,262,330,10821,756,262,330,71,42758,756,262,330,67718,404,756,262,330,27623,756,262,330,73,69745,698,220,5133,532,73594],"total_duration":14242864002,"load_duration":404396707,"prompt_eval_count":1769,"prompt_eval_duration":3050086000,"eval_count":129,"eval_duration":5099004000},"transfer":PENDING,"status":"undefined"}

@@ -1,0 +1,27 @@
+@RULEL:LIN_WORKFLOW_IR_SPEC_FREEZE:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis}
+.m{
+  name=LIN_WORKFLOW_IR_SPEC_FREEZE
+  status=FROZEN_CANONICAL
+  domain="lin_core_architecture"
+  date=2026-08-20
+  purpose="Freeze the formal specification of LIN Native Workflow IR, unifying semantic contracts and DAG orchestration into a single multi-target language architecture"
+}
+
+.c{
+  control_primitives=["step", "dependency", "if", "parallel", "retry", "await", "return", "effects"]
+  hash_layers=["H_node", "H_edges", "H_workflow"]
+  target_emitters=["typescript", "rust", "c_go_wasm_planned"]
+  retired_external_dependencies=["ainl_external_runtime"]
+}
+
+.r{
+  R1=workflow_DAG_must_remain_formally_decoupled_from_node_body_ast
+  R2=edge_hash_must_be_strictly_invariant_under_internal_node_mutations
+  R3=types_and_effects_must_be_statically_enforced_across_dag_edges
+  R4=ainl_external_is_retired_as_system_dependency_and_retained_only_as_independent_baseline
+}
+
+.g{
+  pass=workflow_verify_clean AND hierarchical_hash_ok AND multi_target_emit_ok
+}

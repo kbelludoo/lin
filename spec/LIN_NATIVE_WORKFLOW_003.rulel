@@ -1,0 +1,41 @@
+@RULEL:LIN_NATIVE_WORKFLOW_003:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_NATIVE_WORKFLOW_003_REAL_LARGE_SURFACE
+  status=ACTIVE_BENCHMARK_SPEC
+  domain="real_large_scale_surface_compilation"
+  date=2026-08-20
+  purpose="Evaluate direct LIN Surface (@LIN:L2w:1.0) compilation, behavioral parity, invariant preservation, and invalidation dynamics across a large 1,240-module corpus subjected to 1,000 synthetic and real-world mutations"
+  parent=LIN_AGENT_GENERATION_001
+}
+
+.h{
+  id=H_NATIVE_WF_003
+  claim="Across a 1,240-module real corpus with 1,000 continuous mutations, the public LIN Surface L2w lowers to Unified IR with 100% syntactic fidelity, 0 invariant regressions, 0 over-invalidation of topological edge hashes under pure node mutations, and >50% token reduction vs conventional multi-file representations."
+}
+
+.c{
+  corpus_size=1240
+  modules_domain=["auth", "pricing", "risk", "inventory", "payment", "accounting", "webhooks", "audit", "observability", "fanout"]
+  mutations_total=1000
+  header_spec="@LIN:L2w:1.0"
+}
+
+.mtr{
+  primary=[
+    "surface_to_ir_parse_fidelity",
+    "behavioral_parity_rate",
+    "edge_hash_invariance_under_pure_mutations",
+    "invariant_retention_rate",
+    "under_invalidation_count",
+    "over_invalidation_count",
+    "mean_tokens_per_module",
+    "mean_compilation_time_per_module_ms"
+  ]
+}
+
+.r{
+  R1=all_1240_modules_must_be_represented_in_LIN_Surface_L2w
+  R2=1000_mutations_must_be_blindly_applied_across_semantic_and_topological_classes
+  R3=oracle_must_verify_static_type_effect_soundness_and_hierarchical_hash_stability
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787215798127.json",
+  "timestamp": "2026-08-20T08:49:58.127Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n!f0(_0:bool,_1:num){#(_i=0;_i<5;_i++){?(a){?((42||1)){#(_i=0;_i<4;_i++){_s=true;_s='#(i=0;i<10;i++)';_5=('?=if #=for'--1);?((\"hello\"!=1)){_s='$'}:{}};_s='#(i=0;i<10;i++)';#(_i=0;_i<5;_i++){_s='^(return)';?(('world'||3.14)){?((\"a+b\"=='$')){#(_i=0;_i<3;_i++){^(false);#(_i=0;_i<1;_i++){_5=null};#(_i=0;_i<5;_i++){?((y<=-1)){_s='!f(){}';#(_i=0;_i<4;_i++){_s='#(i=0;i<10;i++)';#(_i=0;_i<2;_i++){_7=(0!='$')};_3=\"hello\"}}:{}}};#(_i=0;_i<4;_i++){_3=3.14};^((0<=false));#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_5='#(i=0;i<10;i++)';_s=true};?(-1){_s=3.14;_4=('^(return)'-b);#(_i=0;_i<5;_i++){_s=3.14;^((b>'?=if #=for'));_6=false};^(\"a+b\")}:{};?(\"$K\"){^((0<true));^('?=if #=for')}:{};_5=b}}:{};#(_i=0;_i<5;_i++){?((y*'^(return)')){_4=(y=='?=if #=for')}:{}}}:{};?((a!=\"$K\")){_s=-1}:{};_2=(false>='#(i=0;i<10;i++)')};_5='#(i=0;i<10;i++)'}:{};_s='@LIN:L1c:0.2';_0=a}:{};?(\"a+b\"){_6=(y-'#(i=0;i<10;i++)');_5=(42>'#(i=0;i<10;i++)')}:{};_7=('!f(){}'<=1)};^((true+'!f(){}'));_4=null;?((b>=n)){_s='^(return)';?((\"a+b\">\"$K\")){?(n){?((null&&a)){^((n+'!f(){}'))}:{}}:{};_1=n;_0=('^(return)'*true);_s=0}:{};^('#(i=0;i<10;i++)');?(('$'/b)){_s='^(return)';_0=('!f(){}'>'#(i=0;i<10;i++)');_5=(null==y)}:{}}:{}}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_KLzAdc/emit.cjs:3\n/* effect:Read */function f0(_0, _1){var _s,_5,_7,_3,_4,_6,_2,_i,i;for(_i=0;_i<5;_i++){if(a){if((42||1)){for(_i=0;_i<4;_i++){_s=true;_s='for(i=0;i<10;i++)';_5=('?=if #=for'--1);if((\"hello\"!==1)){_s='$';}els",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_KLzAdc/emit.cjs:3\n/* effect:Read */function f0(_0, _1){var _s,_5,_7,_3,_4,_6,_2,_i,i;for(_i=0;_i<5;_i++){if(a){if((42||1)){for(_i=0;_i<4;_i++){_s=true;_s='for(i=0;i<10;i++)';_5=('?=if #=for'--1);if((\"hello\"!==1)){_s='$';}els",
+    "testable": false
+  },
+  "fixed": false
+}

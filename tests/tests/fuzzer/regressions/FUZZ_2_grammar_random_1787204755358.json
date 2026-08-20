@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787204755358.json",
+  "timestamp": "2026-08-20T05:45:55.358Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:any){?(1){_s=null;_s=3.14;#(_i=0;_i<5;_i++){?((3.14+x)){?(('@LIN:L1c:0.2'||b)){_7=(b>3.14);#(_i=0;_i<5;_i++){_1=(42<=b);_9=(a-'world');#(_i=0;_i<2;_i++){_2=('#(i=0;i<10;i++)'<42);_1=42;_s=\"a+b\";?((y&&'$')){?((0-n)){_2=(null==b);_6=(false-3.14);_2=('@LIN:L1c:0.2'-'^(return)');#(_i=0;_i<1;_i++){_s=-1;_s=y;^((y<'#(i=0;i<10;i++)'));#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){_3=(x&&'^(return)');_s='!f(){}';_5=(null/\"a+b\");^((n<='@LIN:L1c:0.2'))};_8=(b/y);#(_i=0;_i<1;_i++){_3=(42%a)}}}}:{};^(('!f(){}'>=3.14));^(\"hello\");#(_i=0;_i<1;_i++){?(y){?((\"a+b\"<'#(i=0;i<10;i++)')){_6=0;_3=(n/'$')}:{};^(1);_1=('^(return)'||3.14)}:{};_2=(n==true);_5=('!f(){}'/\"a+b\")}}:{}};^('?=if #=for')};#(_i=0;_i<3;_i++){_1=1;_6=('$'-\"$K\");?((\"$K\"+3.14)){?(('@LIN:L1c:0.2'-'world')){#(_i=0;_i<2;_i++){_s=3.14;?(('$'-a)){#(_i=0;_i<3;_i++){_7=3.14};_9=(1<-1);_s=b;_s='world'}:{};#(_i=0;_i<2;_i++){_7=(x+y)};_2=(\"a+b\"*'^(return)')}}:{};?((1&&'!f(){}')){?(('#(i=0;i<10;i++)'>42)){_s=\"$K\";^((false<=1));?(('@LIN:L1c:0.2'/0)){_8=(\"a+b\"<=x);^((y!=-1));_s='^(return)'}:{}}:{}}:{};#(_i=0;_i<1;_i++){_8=(x*-1);?(x){^(\"a+b\");_8=('$'&&\"$K\");_1='$';_2=('@LIN:L1c:0.2'>=b)}:{}}}:{};_1=null};?(('^(return)'-a)){_s='^(return)';_5=(\"a+b\"<b);_7=null}:{}}:{};_0=(false*3.14);^((true*n));^(('#(i=0;i<10;i++)'>n))}:{};^((-1==b))}}:{}}\n=ex{f0}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\");^((n<='@L > 0\nrepairs: refine \"a+b\");^((n<='@L:int{>0} | require \"a+b\");^((n<='@L>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"a+b\");^((n<='@L > 0\nrepairs: refine \"a+b\");^((n<='@L:int{>0} | require \"a+b\");^((n<='@L>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

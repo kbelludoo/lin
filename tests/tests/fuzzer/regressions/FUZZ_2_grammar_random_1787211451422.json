@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787211451422.json",
+  "timestamp": "2026-08-20T07:37:31.422Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:any,_1:num){?(('@LIN:L1c:0.2'==x)){?(42){_s=x;#(_i=0;_i<3;_i++){#(_i=0;_i<5;_i++){_2=null;_8=(0%a);^((x!=\"a+b\"))};?(('@LIN:L1c:0.2'%'!f(){}')){?('world'){#(_i=0;_i<3;_i++){?((x+a)){?((3.14&&\"hello\")){^(('#(i=0;i<10;i++)'!='^(return)'));_8=('#(i=0;i<10;i++)'>n)}:{};^(b)}:{};?((n||x)){^(('world'%'$'))}:{};#(_i=0;_i<4;_i++){_s='!f(){}';_s='?=if #=for';_s=true;^(y)};^(3.14)};_s='world';_4='!f(){}'}:{};#(_i=0;_i<2;_i++){_6=(n+\"a+b\");^((x-\"$K\"));^(('!f(){}'>=y));?((y||\"a+b\")){_6=(a%'!f(){}')}:{}};^((y=='#(i=0;i<10;i++)'));?((null<=1)){_0=(1%'^(return)');#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){#(_i=0;_i<4;_i++){_s='#(i=0;i<10;i++)'};#(_i=0;_i<4;_i++){^((0*b));_s='@LIN:L1c:0.2'};#(_i=0;_i<1;_i++){?((null%\"$K\")){_6=(1>3.14)}:{};#(_i=0;_i<4;_i++){^((n&&0));_s=42;^((n>false))};_s='^(return)';_s=null};_9='$'};_s=\"hello\";_s=a;^((false&&'^(return)'))};_s=x}:{}}:{};_s=\"$K\"};^((n<true))}:{};^((\"$K\"=='^(return)'));_s=42}:{};^((1>1));_2=0;#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){_s=a};_8=('#(i=0;i<10;i++)'*n);?(42){_9=(\"hello\"<'@LIN:L1c:0.2');#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){#(_i=0;_i<1;_i++){_2=('@LIN:L1c:0.2'!='@LIN:L1c:0.2');_s=-1;_s='@LIN:L1c:0.2';?(1){_s=1;_2='$'}:{}};?((a||y)){#(_i=0;_i<5;_i++){_0=(a--1)};_3=(false<=1)}:{};_8=('world'<true)};_2=(\"a+b\"%'world')};^(('world'/n));^('?=if #=for')}:{};?(\"a+b\"){#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){#(_i=0;_i<1;_i++){_8='@LIN:L1c:0.2'};?(n){_s=a;?((null%0)){_9=(true>'$')}:{};_2=(true>'world')}:{};_s=null}};_3='!f(){}';^((\"a+b\"%0))}:{}}}\n!f1(_0:str|num,_1:str|num){_s=y;?(('^(return)'/'?=if #=for')){_s=n}:{}}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_btN5bF/emit.cjs:2\n/* effect:Write */function f0(_0, _1){var _s,_2,_8,_4,_6,_9,_3,_i,i;if(('@LIN:L1c:0.2'===x)){if(42){_s=x;for(_i=0;_i<3;_i++){for(_i=0;_i<5;_i++){_2=null;_8=(0%a);return ((x!==\"a+b\"));};if(('@LIN:L1c:0.2'%'!",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_btN5bF/emit.cjs:2\n/* effect:Write */function f0(_0, _1){var _s,_2,_8,_4,_6,_9,_3,_i,i;if(('@LIN:L1c:0.2'===x)){if(42){_s=x;for(_i=0;_i<3;_i++){for(_i=0;_i<5;_i++){_2=null;_8=(0%a);return ((x!==\"a+b\"));};if(('@LIN:L1c:0.2'%'!",
+    "testable": false
+  },
+  "fixed": false
+}

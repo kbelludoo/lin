@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787208454461.json",
+  "timestamp": "2026-08-20T06:47:34.461Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0() -> str|num{_9=(y*'!f(){}');_s='!f(){}';_s=1;?((y!=\"hello\")){?((0>y)){_s='^(return)'}:{};_s=n;_3=('?=if #=for'>n);#(_i=0;_i<1;_i++){#(_i=0;_i<4;_i++){?((\"hello\"%b)){_s=1;?(0){?('^(return)'){#(_i=0;_i<5;_i++){?((1||3.14)){_8=\"hello\";_s='world'}:{};^((y<\"a+b\"));?('!f(){}'){#(_i=0;_i<4;_i++){_0=a;_4=(\"hello\"<=-1);_s=0};_s=1;^('!f(){}');_4=(a<\"$K\")}:{};_s='@LIN:L1c:0.2'};#(_i=0;_i<2;_i++){^(b);?((\"$K\"<null)){_6=(0/42);#(_i=0;_i<4;_i++){_8=(n--1);#(_i=0;_i<3;_i++){_9=(0&&'world')};_s=true;?((y-b)){#(_i=0;_i<4;_i++){^(a)};#(_i=0;_i<1;_i++){?(('@LIN:L1c:0.2'%1)){_1=true;?((42&&3.14)){^((y>1));#(_i=0;_i<1;_i++){_3=(n<false)};#(_i=0;_i<3;_i++){_3=(3.14||\"hello\");_1=0;?(false){_3=(42<'$');_s='^(return)';_5=\"a+b\"}:{}};_s='@LIN:L1c:0.2'}:{}}:{}};_s=y}:{}}}:{};_s=n;^(('?=if #=for'&&a))};_s=-1}:{};_8=(-1+0);_2=(1&&'?=if #=for')}:{}}:{};_8=('^(return)'<\"$K\");_4=('?=if #=for'%'#(i=0;i<10;i++)');?(\"$K\"){_6=0;^((-1*'!f(){}'))}:{}};^(false);?((42<'world')){^((a>'world'))}:{};_8=(-1>=-1)}}:{}}\n!f1(_0:any,_1:str) -> str|num{?('?=if #=for'){#(_i=0;_i<3;_i++){_5=null;_1='$';_7=(n%'$');_8=null}}:{}}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_LFHK3o/emit.cjs:2\n/* effect:Write */function f0(){var _9,_s,_3,_8,_0,_4,_6,_1,_5,_2,_i,i;_9=(y*'!f(){}');_s='!f(){}';_s=1;if((y!==\"hello\")){if((0>y)){_s='^(return)';}else{};_s=n;_3=('?=if #=for'>n);for(_i=0;_i<1;_i++){for(_i",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_LFHK3o/emit.cjs:2\n/* effect:Write */function f0(){var _9,_s,_3,_8,_0,_4,_6,_1,_5,_2,_i,i;_9=(y*'!f(){}');_s='!f(){}';_s=1;if((y!==\"hello\")){if((0>y)){_s='^(return)';}else{};_s=n;_3=('?=if #=for'>n);for(_i=0;_i<1;_i++){for(_i",
+    "testable": false
+  },
+  "fixed": false
+}

@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787226639711.json",
+  "timestamp": "2026-08-20T11:50:39.711Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:int|null,_1:int|null) -> str{#(_i=0;_i<3;_i++){^((b<='@LIN:L1c:0.2'));#(_i=0;_i<2;_i++){_6=('$'>='#(i=0;i<10;i++)')}};?(true){?((null==-1)){_s=false;_8=(3.14&&3.14);#(_i=0;_i<5;_i++){^((42-a));_s=42;#(_i=0;_i<1;_i++){?('#(i=0;i<10;i++)'){?((false>=3.14)){_2=(n+'@LIN:L1c:0.2');_1=('!f(){}'<=\"$K\");^((null!='@LIN:L1c:0.2'))}:{};_6=1}:{};?(('world'>=42)){?((\"hello\"!=a)){_1=(\"$K\"==x)}:{};^((\"a+b\">null));#(_i=0;_i<4;_i++){#(_i=0;_i<5;_i++){?((42>=a)){?((a<='!f(){}')){#(_i=0;_i<3;_i++){_7=(42&&n);#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){_8=('^(return)'&&a);#(_i=0;_i<3;_i++){^(\"a+b\");_s=false};_5=(3.14!=b)};?(\"a+b\"){_s=1;_3=('?=if #=for'-'@LIN:L1c:0.2')}:{};_2=(x%null)};?((\"$K\"+null)){_5=(\"hello\"<\"hello\");^((a+-1));#(_i=0;_i<5;_i++){^((\"$K\"%y));_9=('!f(){}'<='#(i=0;i<10;i++)');^((42%y))}}:{}}}:{};?(('$'-a)){_2=(\"$K\"+x)}:{}}:{}}};?(n){_s=x;_s='@LIN:L1c:0.2'}:{}}:{}};#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){_s=n;_2=(false/'@LIN:L1c:0.2')};^('?=if #=for');?(('^(return)'||'world')){_s=3.14;^(y);_s='?=if #=for';#(_i=0;_i<3;_i++){^((n+'world'))}}:{}}};^(('$'>'^(return)'))}:{}}:{};?(y){^((false!='@LIN:L1c:0.2'));?(42){_s=n}:{};?(('@LIN:L1c:0.2'*y)){?(('#(i=0;i<10;i++)'!=null)){_1='world';_s=null}:{};?(1){_s=0;_s=y;_s=false}:{};^((\"$K\"||\"$K\"))}:{};?((true/null)){^((null<0));^(('#(i=0;i<10;i++)'>\"a+b\"));_s='^(return)'}:{}}:{}}\n!f1(_0:str|num,_1:any){_s='^(return)'}\n!f2(_0:str|num) -> int{_s=-1}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')} > 0\nrepairs: refine '@LIN:L1c:0.2')}:int{>0} | require '@LIN:L1c:0.2')}>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2')} > 0\nrepairs: refine '@LIN:L1c:0.2')}:int{>0} | require '@LIN:L1c:0.2')}>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

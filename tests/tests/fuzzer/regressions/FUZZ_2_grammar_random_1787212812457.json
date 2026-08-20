@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787212812457.json",
+  "timestamp": "2026-08-20T08:00:12.457Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n$K{b=1 kb=1024}\n?(@debug){!(console.log(\"d\"))}:{}\n!f0() -> any{?((b+\"a+b\")){_s='$';#(_i=0;_i<1;_i++){#(_i=0;_i<3;_i++){_s=b;_s='#(i=0;i<10;i++)'};^((1-false));_7=(b>42);^((true>=y))}}:{};#(_i=0;_i<5;_i++){_5=(null=='$');_2=(0<n);_s=\"hello\";#(_i=0;_i<4;_i++){_9=('$'>x)}}}\n!f1(_0:any,_1:bool) -> str|num{_9=('#(i=0;i<10;i++)'<y)}\n!f2(_0:int|null) -> num{?(('world'<=null)){?(('#(i=0;i<10;i++)'=='?=if #=for')){#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){_4=(1||x)};_9=\"$K\"};?((42<='world')){_4=(0=='!f(){}');_0=x;?(('?=if #=for'>='@LIN:L1c:0.2')){#(_i=0;_i<4;_i++){?((x&&n)){_s='world';?(('^(return)'/1)){?((\"hello\"/x)){_s=\"$K\";_s='^(return)';^((\"$K\"+'^(return)'))}:{};_6=(1>=1);?((3.14*y)){?(1){_0=(42-null);_0=(0&&b);_8=(a&&b);_s=true}:{};_1=\"$K\";?(('#(i=0;i<10;i++)'*y)){?('#(i=0;i<10;i++)'){_s=x;_0=(true/'@LIN:L1c:0.2');_2=('^(return)'&&3.14)}:{};^((\"a+b\"/a))}:{};_5='world'}:{}}:{}}:{};_4=1};?(\"a+b\"){_2=('#(i=0;i<10;i++)'>=\"hello\");_s=null;_s=b;_6=('world'%1)}:{};_s=1}:{};?(('?=if #=for'%\"a+b\")){_9=(0/3.14)}:{}}:{};_s=n}:{};_s=42}:{};_s=-1;#(_i=0;_i<2;_i++){_1=(x-a);?((b==b)){_5=('#(i=0;i<10;i++)'||null);^((\"a+b\"!='$'))}:{};?(('world'*'$')){?(x){#(_i=0;_i<1;_i++){_s='world'};^((\"hello\"<42))}:{};?(('world'>='@LIN:L1c:0.2')){?((null/42)){_6=('world'==\"$K\");^((true>=null));^(n);_3=a}:{}}:{};?(x){_s=y;_s=-1;_s='^(return)';_8=(0*3.14)}:{}}:{};_1=('world'||3.14)}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2'); > 0\nrepairs: refine '@LIN:L1c:0.2');:int{>0} | require '@LIN:L1c:0.2');>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '@LIN:L1c:0.2'); > 0\nrepairs: refine '@LIN:L1c:0.2');:int{>0} | require '@LIN:L1c:0.2');>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

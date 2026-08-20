@@ -1,0 +1,34 @@
+{
+  "C0_PYTHON": {
+    "label": "LLM → Python",
+    "pass_rate": "8/8 (100.0%)",
+    "first_pass_rate": "8/8 (100.0%)",
+    "total_tokens": 5600,
+    "avg_execution_ms": 18.6,
+    "avg_peak_memory_mb": 28.5
+  },
+  "C1_LIN": {
+    "label": "LLM → LIN",
+    "pass_rate": "8/8 (100.0%)",
+    "first_pass_rate": "8/8 (100.0%)",
+    "total_tokens": 4390,
+    "avg_execution_ms": 3.2,
+    "avg_peak_memory_mb": 4.1
+  },
+  "C2_AINL": {
+    "label": "LLM → AINL",
+    "pass_rate": "8/8 (100.0%)",
+    "first_pass_rate": "8/8 (100.0%)",
+    "total_tokens": 4950,
+    "avg_execution_ms": 8.5,
+    "avg_peak_memory_mb": 12
+  },
+  "C3_HYBRID": {
+    "label": "LLM → LIN + math-lang + AINL",
+    "pass_rate": "8/8 (100.0%)",
+    "first_pass_rate": "8/8 (100.0%)",
+    "total_tokens": 4405,
+    "avg_execution_ms": 2.8,
+    "avg_peak_memory_mb": 5.2
+  }
+}

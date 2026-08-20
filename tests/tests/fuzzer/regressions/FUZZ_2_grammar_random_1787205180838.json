@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787205180838.json",
+  "timestamp": "2026-08-20T05:53:00.838Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str) -> bool{?((\"$K\"--1)){_s=\"a+b\";_9=('#(i=0;i<10;i++)'!=3.14);_s=true}:{}}\n!f1() -> str{_s=\"hello\";_2=x;_8=(true*y);_9=(false<false)}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_6M8yoJ/emit.cjs:2\n/* effect:Write */function f0(_0){var _s,_9,i;if((\"$K\"--1)){_s=\"a+b\";_9=('for(i=0;i<10;i++)'!==3.14);_s=true;}else{}}\n                                                  ^^^^\n\nSyntaxError: Invalid left-hand s",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_6M8yoJ/emit.cjs:2\n/* effect:Write */function f0(_0){var _s,_9,i;if((\"$K\"--1)){_s=\"a+b\";_9=('for(i=0;i<10;i++)'!==3.14);_s=true;}else{}}\n                                                  ^^^^\n\nSyntaxError: Invalid left-hand s",
+    "testable": false
+  },
+  "fixed": false
+}

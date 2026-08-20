@@ -1,0 +1,52 @@
+{
+  "CORPUS_01_SMALL": {
+    "corpus_name": "Small Analytical DAG Workflows",
+    "transpilation": "20/20 (100.0%)",
+    "behavioral_parity": "1280/1280 (100.0%)",
+    "semantic_hash_match": "20/20 (100.0%)",
+    "invariants_preserved": "20/20 (100.0%)",
+    "over_invalidation": "0.0%",
+    "token_savings": "4.43%",
+    "latency_speedup": "1.3x"
+  },
+  "CORPUS_02_TOPOLOGIES": {
+    "corpus_name": "Composition Topologies (Linear, Fan-out, Mesh)",
+    "transpilation": "20/20 (100.0%)",
+    "behavioral_parity": "3600/3600 (100.0%)",
+    "semantic_hash_match": "20/20 (100.0%)",
+    "invariants_preserved": "20/20 (100.0%)",
+    "over_invalidation": "0.0%",
+    "token_savings": "70.13%",
+    "latency_speedup": "6.44x"
+  },
+  "CORPUS_03_SELECTIVITY": {
+    "corpus_name": "Selective Locality Boundary (T1-T4)",
+    "transpilation": "20/20 (100.0%)",
+    "behavioral_parity": "2400/2400 (100.0%)",
+    "semantic_hash_match": "20/20 (100.0%)",
+    "invariants_preserved": "20/20 (100.0%)",
+    "over_invalidation": "0.0%",
+    "token_savings": "22.22%",
+    "latency_speedup": "1.52x"
+  },
+  "CORPUS_04_LIFECYCLE": {
+    "corpus_name": "Full 5-Phase Lifecycle (15-node)",
+    "transpilation": "20/20 (100.0%)",
+    "behavioral_parity": "2000/2000 (100.0%)",
+    "semantic_hash_match": "20/20 (100.0%)",
+    "invariants_preserved": "20/20 (100.0%)",
+    "over_invalidation": "0.0%",
+    "token_savings": "6.53%",
+    "latency_speedup": "1.41x"
+  },
+  "CORPUS_05_REAL_REPOS": {
+    "corpus_name": "Production Repos (Day.js, Underscore, Chalk)",
+    "transpilation": "20/20 (100.0%)",
+    "behavioral_parity": "3000/3000 (100.0%)",
+    "semantic_hash_match": "20/20 (100.0%)",
+    "invariants_preserved": "20/20 (100.0%)",
+    "over_invalidation": "0.0%",
+    "token_savings": "6.37%",
+    "latency_speedup": "1.38x"
+  }
+}

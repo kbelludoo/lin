@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787224724441.json",
+  "timestamp": "2026-08-20T11:18:44.441Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:num,_1:num){_s=-1;?((-1<=y)){#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){#(_i=0;_i<3;_i++){^((b<=a));^((3.14-b));?(\"hello\"){_1=('!f(){}'+a);?(b){#(_i=0;_i<5;_i++){^(42);_s='@LIN:L1c:0.2'};#(_i=0;_i<3;_i++){^(\"a+b\");?((a<=42)){_3=(\"hello\"-'world')}:{}};_3=(1%b);_8=\"a+b\"}:{};^((false%b))}:{}};^((b/'world'));_s='#(i=0;i<10;i++)';_s=b}}}:{};_3=(true&&1);#(_i=0;_i<3;_i++){_3=('^(return)'&&b);#(_i=0;_i<5;_i++){_s=\"a+b\";?((\"$K\"/b)){_6=('?=if #=for'*'$');?(('$'!=null)){_s=y;^((b<true));_1=(0<=\"a+b\");?((\"hello\"<=-1)){#(_i=0;_i<2;_i++){#(_i=0;_i<2;_i++){_9=('$'%b);^(1);_s=y;_7=(b+-1)};#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){_5=\"hello\";_0=\"a+b\"};_8=a;^(('$'>='world'))};^((-1>=n));?((\"$K\"-\"a+b\")){?(('^(return)'*\"hello\")){_s=42;_5=b;?('@LIN:L1c:0.2'){_s=n;?(y){?((y&&\"$K\")){#(_i=0;_i<4;_i++){_6=x;#(_i=0;_i<5;_i++){_s=b};_s='!f(){}'};#(_i=0;_i<4;_i++){_s=y;_7=(y>='$');_s=true;#(_i=0;_i<4;_i++){_s=x;^(n)}};^((42-\"a+b\"))}:{};_s='world';_s='$';_6=42}:{}}:{};_9=(42>=\"$K\")}:{};?((x||42)){_s='world'}:{};^('?=if #=for');?((0/a)){^((y==a));_s=y}:{}}:{}}}:{}}:{}}:{};^(('^(return)'<42));_9=(n*false)};_2=('!f(){}'=='?=if #=for');^((true>'!f(){}'))}}\n!f1(_0:bool) -> int{_8=(y||a);#(_i=0;_i<4;_i++){_0=('?=if #=for'>x);_3=(true>=3.14);_4=(null!=b);_7=y};^((1!='!f(){}'));_0=(y||n)}\n!f2(){?((null/'?=if #=for')){?((false/y)){^((1!=-1));^((-1==false));_s=n;#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){_s=42;_1=b}}}}:{};_2=(3.14<=false);_4=\"a+b\"}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world'));_s='#( > 0\nrepairs: refine 'world'));_s='#(:int{>0} | require 'world'));_s='#(>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: 'world'));_s='#( > 0\nrepairs: refine 'world'));_s='#(:int{>0} | require 'world'));_s='#(>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

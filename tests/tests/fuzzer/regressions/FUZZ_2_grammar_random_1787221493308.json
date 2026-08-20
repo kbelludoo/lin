@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787221493308.json",
+  "timestamp": "2026-08-20T10:24:53.308Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:str) -> int{^((true>\"hello\"));_5=(\"hello\">3.14);#(_i=0;_i<4;_i++){#(_i=0;_i<1;_i++){_s='world';#(_i=0;_i<1;_i++){_3=(y=='^(return)');_8=(-1<42)};_s=true;?((false+b)){_8=(false%1);#(_i=0;_i<2;_i++){^((b<b));_s=b;_1=(n<1)};_3='$'}:{}}}}\n!f1(_0:str,_1:int|null){_3=(1/x);_8=(true<=\"$K\");#(_i=0;_i<1;_i++){_s='!f(){}'}}\n!f2(_0:any){?(\"hello\"){?(1){_s=true;_s=y;_s=42}:{};?('?=if #=for'){?((0<a)){_s=42}:{}}:{};_1='?=if #=for';_6=(a||'world')}:{};#(_i=0;_i<2;_i++){_5=('@LIN:L1c:0.2'&&'?=if #=for');_4=(x=='@LIN:L1c:0.2');_9=('@LIN:L1c:0.2'*'?=if #=for')};?(('$'>='#(i=0;i<10;i++)')){?((true<=0)){?((null!='$')){^(('world'<=x))}:{};_9=(\"$K\"&&'#(i=0;i<10;i++)');#(_i=0;_i<5;_i++){?('?=if #=for'){?(('!f(){}'-0)){?((\"hello\">\"$K\")){?((\"$K\"%'#(i=0;i<10;i++)')){#(_i=0;_i<3;_i++){^(\"$K\");_0=-1;#(_i=0;_i<1;_i++){_2=(1||n)};_s=x};_5=a;#(_i=0;_i<1;_i++){^((null>=-1));^(\"hello\")};_7=(false-1)}:{};_6=(true&&\"a+b\")}:{};?((a!='$')){_s=true;?('$'){?('@LIN:L1c:0.2'){_1=(true*'world');?(b){_s=0;_2=(42%true)}:{}}:{}}:{};^('^(return)');_4='#(i=0;i<10;i++)'}:{};^('@LIN:L1c:0.2');#(_i=0;_i<3;_i++){^((a*a))}}:{};?((a/false)){^((a/y))}:{};?(('?=if #=for'&&y)){^(('@LIN:L1c:0.2'-0));_s='world';#(_i=0;_i<4;_i++){_8=('world'>=true);?((a!=\"hello\")){_2='world';#(_i=0;_i<2;_i++){?((\"$K\"/'@LIN:L1c:0.2')){_s='$'}:{}}}:{}};_s=a}:{}}:{};_5='!f(){}';^(('?=if #=for'&&-1))};^((null/'world'))}:{};_1=('#(i=0;i<10;i++)'!=3.14);_1=('#(i=0;i<10;i++)'*'!f(){}')}:{};?(('?=if #=for'<=false)){_s=y}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: x > 0\nrepairs: refine x:int{>0} | require x>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

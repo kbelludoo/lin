@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787248647954.json",
+  "timestamp": "2026-08-20T17:57:27.954Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int|null,_1:any){#(_i=0;_i<1;_i++){_4='!f(){}'};?((-1+'!f(){}')){^((0||'#(i=0;i<10;i++)'));^(a);_s=\"hello\";_1=(y/false)}:{}}\n!f1(_0:any,_1:num) -> str|num{_4=y}\n!f2(_0:any,_1:bool){_1=(3.14||a)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: false > 0\nrepairs: refine false:int{>0} | require false>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: false > 0\nrepairs: refine false:int{>0} | require false>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

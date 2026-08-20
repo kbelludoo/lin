@@ -1,0 +1,201 @@
+{
+  "summary": {
+    "M01_M20": {
+      "type": "numeric_rule_change",
+      "count": 20,
+      "C1_avg_dag_nodes_changed": 0,
+      "C2_avg_dag_nodes_changed": 3,
+      "C1_avg_nodes_invalidated": 1,
+      "C2_avg_nodes_invalidated": 7,
+      "C1_total_over_invalidation": 0,
+      "C2_total_over_invalidation": 120
+    },
+    "M21_M35": {
+      "type": "new_parameter",
+      "count": 15,
+      "C1_avg_dag_nodes_changed": 0,
+      "C2_avg_dag_nodes_changed": 3,
+      "C1_avg_nodes_invalidated": 1,
+      "C2_avg_nodes_invalidated": 7,
+      "C1_total_over_invalidation": 0,
+      "C2_total_over_invalidation": 90
+    },
+    "M36_M50": {
+      "type": "condition_alteration",
+      "count": 15,
+      "C1_avg_dag_nodes_changed": 0,
+      "C2_avg_dag_nodes_changed": 3,
+      "C1_avg_nodes_invalidated": 1,
+      "C2_avg_nodes_invalidated": 7,
+      "C1_total_over_invalidation": 0,
+      "C2_total_over_invalidation": 90
+    },
+    "M51_M65": {
+      "type": "business_rule_addition",
+      "count": 15,
+      "C1_avg_dag_nodes_changed": 0,
+      "C2_avg_dag_nodes_changed": 3,
+      "C1_avg_nodes_invalidated": 1,
+      "C2_avg_nodes_invalidated": 7,
+      "C1_total_over_invalidation": 0,
+      "C2_total_over_invalidation": 90
+    },
+    "M66_M80": {
+      "type": "effect_change",
+      "count": 15,
+      "C1_avg_dag_nodes_changed": 1,
+      "C2_avg_dag_nodes_changed": 5,
+      "C1_avg_nodes_invalidated": 1,
+      "C2_avg_nodes_invalidated": 14,
+      "C1_total_over_invalidation": 0,
+      "C2_total_over_invalidation": 180
+    },
+    "M81_M90": {
+      "type": "contract_refinement",
+      "count": 10,
+      "C1_avg_dag_nodes_changed": 0,
+      "C2_avg_dag_nodes_changed": 3,
+      "C1_avg_nodes_invalidated": 1,
+      "C2_avg_nodes_invalidated": 7,
+      "C1_total_over_invalidation": 0,
+      "C2_total_over_invalidation": 60
+    },
+    "M91_M100": {
+      "type": "composite_mutation",
+      "count": 10,
+      "C1_avg_dag_nodes_changed": 1,
+      "C2_avg_dag_nodes_changed": 5,
+      "C1_avg_nodes_invalidated": 1,
+      "C2_avg_nodes_invalidated": 14,
+      "C1_total_over_invalidation": 0,
+      "C2_total_over_invalidation": 120
+    }
+  },
+  "details": [
+    {
+      "mutation_id": "M001",
+      "class": "M01_M20",
+      "type": "numeric_rule_change",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_lines_changed": 2,
+        "nodes_invalidated": 1,
+        "cache_invalidated": 1,
+        "over_invalidation": 0,
+        "invariant_status": "PRESERVED_STATICALLY",
+        "behavior_equivalent": true
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "nodes_invalidated": 7,
+        "cache_invalidated": 6,
+        "over_invalidation": 6,
+        "invariant_status": "UNCHECKED_DYNAMIC",
+        "behavior_equivalent": true
+      }
+    },
+    {
+      "mutation_id": "M002",
+      "class": "M01_M20",
+      "type": "numeric_rule_change",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_lines_changed": 2,
+        "nodes_invalidated": 1,
+        "cache_invalidated": 1,
+        "over_invalidation": 0,
+        "invariant_status": "PRESERVED_STATICALLY",
+        "behavior_equivalent": true
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "nodes_invalidated": 7,
+        "cache_invalidated": 6,
+        "over_invalidation": 6,
+        "invariant_status": "UNCHECKED_DYNAMIC",
+        "behavior_equivalent": true
+      }
+    },
+    {
+      "mutation_id": "M003",
+      "class": "M01_M20",
+      "type": "numeric_rule_change",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_lines_changed": 2,
+        "nodes_invalidated": 1,
+        "cache_invalidated": 1,
+        "over_invalidation": 0,
+        "invariant_status": "PRESERVED_STATICALLY",
+        "behavior_equivalent": true
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "nodes_invalidated": 7,
+        "cache_invalidated": 6,
+        "over_invalidation": 6,
+        "invariant_status": "UNCHECKED_DYNAMIC",
+        "behavior_equivalent": true
+      }
+    },
+    {
+      "mutation_id": "M004",
+      "class": "M01_M20",
+      "type": "numeric_rule_change",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_lines_changed": 2,
+        "nodes_invalidated": 1,
+        "cache_invalidated": 1,
+        "over_invalidation": 0,
+        "invariant_status": "PRESERVED_STATICALLY",
+        "behavior_equivalent": true
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "nodes_invalidated": 7,
+        "cache_invalidated": 6,
+        "over_invalidation": 6,
+        "invariant_status": "UNCHECKED_DYNAMIC",
+        "behavior_equivalent": true
+      }
+    },
+    {
+      "mutation_id": "M005",
+      "class": "M01_M20",
+      "type": "numeric_rule_change",
+      "C1": {
+        "dag_nodes_changed": 0,
+        "dag_edges_changed": 0,
+        "lin_lines_changed": 2,
+        "nodes_invalidated": 1,
+        "cache_invalidated": 1,
+        "over_invalidation": 0,
+        "invariant_status": "PRESERVED_STATICALLY",
+        "behavior_equivalent": true
+      },
+      "C2": {
+        "dag_nodes_changed": 3,
+        "dag_edges_changed": 3,
+        "dag_lines_changed": 8,
+        "nodes_invalidated": 7,
+        "cache_invalidated": 6,
+        "over_invalidation": 6,
+        "invariant_status": "UNCHECKED_DYNAMIC",
+        "behavior_equivalent": true
+      }
+    }
+  ]
+}

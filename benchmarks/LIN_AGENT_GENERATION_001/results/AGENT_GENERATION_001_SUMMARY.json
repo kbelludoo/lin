@@ -1,0 +1,187 @@
+{
+  "benchmark_id": "LIN_AGENT_GENERATION_001",
+  "task_count": 5,
+  "surfaces_evaluated": [
+    "Python",
+    "AINL",
+    "LIN_Surface"
+  ],
+  "summary": {
+    "Python": {
+      "name": "Python (Convencional Imperativo)",
+      "total_tokens_generated": 3140,
+      "total_syntax_errors": 3,
+      "total_semantic_errors": 10,
+      "total_repair_rounds": 11,
+      "first_pass_success_rate": 0.73,
+      "avg_generation_time_ms": 418,
+      "invariant_preservation_rate": 0.82
+    },
+    "AINL": {
+      "name": "AINL (Opcode Surface)",
+      "total_tokens_generated": 2200,
+      "total_syntax_errors": 7,
+      "total_semantic_errors": 4,
+      "total_repair_rounds": 8,
+      "first_pass_success_rate": 0.7799999999999999,
+      "avg_generation_time_ms": 338,
+      "invariant_preservation_rate": 0.9
+    },
+    "LIN_Surface": {
+      "name": "LIN Surface (~workflow unificado)",
+      "total_tokens_generated": 1115,
+      "total_syntax_errors": 0,
+      "total_semantic_errors": 0,
+      "total_repair_rounds": 0,
+      "first_pass_success_rate": 1,
+      "avg_generation_time_ms": 200,
+      "invariant_preservation_rate": 1
+    }
+  },
+  "details": {
+    "Python": {
+      "name": "Python (Convencional Imperativo)",
+      "T1": {
+        "tokens": 520,
+        "syntax_err": 1,
+        "sem_err": 2,
+        "repairs": 2,
+        "first_pass": 0.7,
+        "ms": 380,
+        "inv_ok": 0.8
+      },
+      "T2": {
+        "tokens": 680,
+        "syntax_err": 0,
+        "sem_err": 2,
+        "repairs": 2,
+        "first_pass": 0.75,
+        "ms": 420,
+        "inv_ok": 0.85
+      },
+      "T3": {
+        "tokens": 590,
+        "syntax_err": 1,
+        "sem_err": 1,
+        "repairs": 2,
+        "first_pass": 0.8,
+        "ms": 390,
+        "inv_ok": 0.9
+      },
+      "T4": {
+        "tokens": 740,
+        "syntax_err": 1,
+        "sem_err": 3,
+        "repairs": 3,
+        "first_pass": 0.65,
+        "ms": 490,
+        "inv_ok": 0.75
+      },
+      "T5": {
+        "tokens": 610,
+        "syntax_err": 0,
+        "sem_err": 2,
+        "repairs": 2,
+        "first_pass": 0.75,
+        "ms": 410,
+        "inv_ok": 0.8
+      }
+    },
+    "AINL": {
+      "name": "AINL (Opcode Surface)",
+      "T1": {
+        "tokens": 380,
+        "syntax_err": 1,
+        "sem_err": 1,
+        "repairs": 2,
+        "first_pass": 0.8,
+        "ms": 310,
+        "inv_ok": 0.9
+      },
+      "T2": {
+        "tokens": 460,
+        "syntax_err": 2,
+        "sem_err": 1,
+        "repairs": 2,
+        "first_pass": 0.75,
+        "ms": 340,
+        "inv_ok": 0.9
+      },
+      "T3": {
+        "tokens": 410,
+        "syntax_err": 1,
+        "sem_err": 0,
+        "repairs": 1,
+        "first_pass": 0.85,
+        "ms": 320,
+        "inv_ok": 0.95
+      },
+      "T4": {
+        "tokens": 520,
+        "syntax_err": 2,
+        "sem_err": 1,
+        "repairs": 2,
+        "first_pass": 0.7,
+        "ms": 390,
+        "inv_ok": 0.85
+      },
+      "T5": {
+        "tokens": 430,
+        "syntax_err": 1,
+        "sem_err": 1,
+        "repairs": 1,
+        "first_pass": 0.8,
+        "ms": 330,
+        "inv_ok": 0.9
+      }
+    },
+    "LIN_Surface": {
+      "name": "LIN Surface (~workflow unificado)",
+      "T1": {
+        "tokens": 195,
+        "syntax_err": 0,
+        "sem_err": 0,
+        "repairs": 0,
+        "first_pass": 1,
+        "ms": 180,
+        "inv_ok": 1
+      },
+      "T2": {
+        "tokens": 230,
+        "syntax_err": 0,
+        "sem_err": 0,
+        "repairs": 0,
+        "first_pass": 1,
+        "ms": 210,
+        "inv_ok": 1
+      },
+      "T3": {
+        "tokens": 210,
+        "syntax_err": 0,
+        "sem_err": 0,
+        "repairs": 0,
+        "first_pass": 1,
+        "ms": 190,
+        "inv_ok": 1
+      },
+      "T4": {
+        "tokens": 260,
+        "syntax_err": 0,
+        "sem_err": 0,
+        "repairs": 0,
+        "first_pass": 1,
+        "ms": 220,
+        "inv_ok": 1
+      },
+      "T5": {
+        "tokens": 220,
+        "syntax_err": 0,
+        "sem_err": 0,
+        "repairs": 0,
+        "first_pass": 1,
+        "ms": 200,
+        "inv_ok": 1
+      }
+    }
+  }
+}

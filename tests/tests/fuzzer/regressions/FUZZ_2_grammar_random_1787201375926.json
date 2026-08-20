@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787201375926.json",
+  "timestamp": "2026-08-20T04:49:35.926Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int,_1:str,_2:int|null){^(\"$K\");_s=null;?(('#(i=0;i<10;i++)'-y)){^(('world'>null));#(_i=0;_i<2;_i++){_2=(y<='$');_0=('#(i=0;i<10;i++)'*'^(return)');_6=\"$K\";#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){_s=0;_1=1;_4=('world'>n);_8=('^(return)'/true)};?(('?=if #=for'&&'^(return)')){?((\"$K\"<=n)){#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){_6=0;_s=n;_8=('#(i=0;i<10;i++)'==x)};^(\"hello\");_2=(n||1);#(_i=0;_i<3;_i++){_7=(\"hello\">x)}};_s=b;^(('?=if #=for'||false));_5=42}:{};_s='?=if #=for';_s=\"a+b\";#(_i=0;_i<5;_i++){?(null){?(('$'*'#(i=0;i<10;i++)')){?((42>'!f(){}')){?(('?=if #=for'&&3.14)){?((false+null)){_7='@LIN:L1c:0.2';?((0>0)){?((a>42)){_6=(-1!=\"hello\");?((y!=3.14)){_4=(b>='world');_4=0;^((b!='@LIN:L1c:0.2'));_2=(\"hello\"*true)}:{};^((42*42))}:{}}:{}}:{}}:{};?('!f(){}'){_s='!f(){}';?((a-\"$K\")){_9=(null*-1);?((b%'@LIN:L1c:0.2')){^(('#(i=0;i<10;i++)'<=\"$K\"));#(_i=0;_i<1;_i++){?(('$'--1)){?((\"hello\"<'^(return)')){_8=('?=if #=for'>-1);_6=(3.14&&y)}:{};_8=(x>0)}:{};_s=\"hello\";_6=('!f(){}'!=a);^(null)};^(('$'>='?=if #=for'));_s=null}:{};#(_i=0;_i<1;_i++){?((1*x)){_s='world';_5=(false%'$')}:{};#(_i=0;_i<2;_i++){?((3.14&&x)){_7=('!f(){}'!=y);#(_i=0;_i<5;_i++){^((null&&\"$K\"));?((1&&'@LIN:L1c:0.2')){_s='$'}:{}};_s=null;_s=a}:{};_2=('$'&&42);_9=('#(i=0;i<10;i++)'+x);_2=(\"hello\">=0)};#(_i=0;_i<5;_i++){_9=(null==true)};#(_i=0;_i<3;_i++){_s=true;?(\"a+b\"){?((\"a+b\"*x)){_9=(42*'world');^('?=if #=for');?(('world'||'!f(){}')){_4=(true<='$');_3='world';_2=(false*a)}:{}}:{};_s='^(return)'}:{};_s=\"hello\"}};_5=(\"a+b\">\"a+b\")}:{}}:{};#(_i=0;_i<3;_i++){_s=n;_s='?=if #=for';?(x){?((-1%-1)){^((\"$K\"-null))}:{};#(_i=0;_i<1;_i++){_3='$';#(_i=0;_i<2;_i++){_4=(x<=n)};?(('^(return)'&&'^(return)')){_s=3.14;_1=(\"hello\"&&'!f(){}');#(_i=0;_i<4;_i++){^((1-\"hello\"));_3=('^(return)'==\"hello\");_8=a;_s=\"hello\"}}:{}}}:{}}}:{}}:{};_s=b}:{}}}:{};_3=\"a+b\"}}}:{};_9=y}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_w73Qfn/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _s,_6,_4,_8,_7,_5,_9,_3,i,_i;return (\"$K\");_s=null;if(('for(i=0;i<10;i++)'-y)){return (('world'>null));for(_i=0;_i<2;_i++){_2=(y<='$');_0=('for(i=0;i<10;i++)'*'^",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_w73Qfn/emit.cjs:2\n/* effect:Read */function f0(_0, _1, _2){var _s,_6,_4,_8,_7,_5,_9,_3,i,_i;return (\"$K\");_s=null;if(('for(i=0;i<10;i++)'-y)){return (('world'>null));for(_i=0;_i<2;_i++){_2=(y<='$');_0=('for(i=0;i<10;i++)'*'^",
+    "testable": false
+  },
+  "fixed": false
+}

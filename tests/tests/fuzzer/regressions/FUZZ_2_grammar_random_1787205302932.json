@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787205302932.json",
+  "timestamp": "2026-08-20T05:55:02.932Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:bool,_1:int,_2:str|num){_s=\"hello\";^((x-0))}\n!f1(_0:int,_1:str) -> num{^(n);?(42){_7=(a>null);_s=3.14}:{};_2=(\"$K\">-1);?((x%'$')){?(42){#(_i=0;_i<4;_i++){_4=(-1&&'!f(){}');#(_i=0;_i<3;_i++){_7=('!f(){}'>false);?((3.14-'@LIN:L1c:0.2')){#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_s=false;_7=(y<=a)};#(_i=0;_i<5;_i++){#(_i=0;_i<4;_i++){_4='!f(){}';_3=(\"hello\"<\"a+b\");_0=y};?(('world'-true)){?((\"$K\">=a)){_3=('!f(){}'<=x);_s=a}:{};?((\"a+b\"&&y)){_s=y;_s='^(return)';#(_i=0;_i<3;_i++){_s=0;_3=('?=if #=for'%1)};?((y--1)){_0=(a==\"hello\");_s=y;#(_i=0;_i<2;_i++){?(('?=if #=for'==\"hello\")){_1=('@LIN:L1c:0.2'&&\"a+b\");^((null<=true));_5=(0==\"a+b\")}:{};?((a>=a)){_3=(true||b);_s='^(return)'}:{};_6=(null%b)}}:{}}:{};^(\"hello\")}:{}}}}:{};_s=b};#(_i=0;_i<3;_i++){_s=0;_7=('^(return)'=='^(return)')};#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){_s='$';_s='$';#(_i=0;_i<2;_i++){^(y);_9='?=if #=for';_s='?=if #=for'};^((true!='#(i=0;i<10;i++)'))};_s=3.14;?(0){_s='@LIN:L1c:0.2'}:{}}};?((\"hello\"!=3.14)){?((\"$K\"&&'?=if #=for')){#(_i=0;_i<1;_i++){_4=0;_7=('!f(){}'*'?=if #=for');#(_i=0;_i<3;_i++){_2=0}};?(('#(i=0;i<10;i++)'||a)){_9=(42<\"a+b\");^('#(i=0;i<10;i++)')}:{}}:{};?((y*'!f(){}')){^((\"$K\"<=false));?((y<='$')){_s=1;_2='?=if #=for';_s=\"$K\";_1=(\"hello\"%a)}:{};_9='world'}:{}}:{};?('#(i=0;i<10;i++)'){_7=0}:{};_8=('@LIN:L1c:0.2'>'@LIN:L1c:0.2')}:{};_s=false}:{}}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_busSUR/emit.cjs:3\n/* effect:Write */function f1(_0, _1){var _7,_s,_2,_4,_3,_5,_6,_9,_8,_i,i;return (n);if(42){_7=(a>null);_s=3.14;}else{};_2=(\"$K\">-1);if((x%'$')){if(42){for(_i=0;_i<4;_i++){_4=(-1&&'!f(){}');for(_i=0;_i<3;_i",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_busSUR/emit.cjs:3\n/* effect:Write */function f1(_0, _1){var _7,_s,_2,_4,_3,_5,_6,_9,_8,_i,i;return (n);if(42){_7=(a>null);_s=3.14;}else{};_2=(\"$K\">-1);if((x%'$')){if(42){for(_i=0;_i<4;_i++){_4=(-1&&'!f(){}');for(_i=0;_i<3;_i",
+    "testable": false
+  },
+  "fixed": false
+}

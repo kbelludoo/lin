@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787204180727.json",
+  "timestamp": "2026-08-20T05:36:20.727Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int,_1:str,_2:num) -> int|null{?('#(i=0;i<10;i++)'){?(42){?((\"hello\"<=true)){?('?=if #=for'){_8=false;#(_i=0;_i<5;_i++){_9=(null+a);?((0==\"a+b\")){?(('?=if #=for'*x)){_s=true}:{}}:{}}}:{};?(-1){#(_i=0;_i<5;_i++){#(_i=0;_i<1;_i++){?(-1){_s=42;^((n==0))}:{};?((n||x)){_s='!f(){}';^('world');_6=('$'||n);^(('#(i=0;i<10;i++)'||null))}:{}};^((n&&'!f(){}'));_s=y}}:{};_9=(-1==y)}:{};_s='^(return)';#(_i=0;_i<2;_i++){#(_i=0;_i<5;_i++){^((false+'^(return)'));?((b*a)){#(_i=0;_i<3;_i++){?((a+false)){_s='world';?(('^(return)'-true)){_1=(false*42);_4=(42||'?=if #=for');_6=42;_8=(\"$K\">=1)}:{}}:{};#(_i=0;_i<3;_i++){#(_i=0;_i<4;_i++){_0=b;^((a==\"$K\"))}};_s=null;#(_i=0;_i<4;_i++){?(('^(return)'*'?=if #=for')){_0=1;_s='@LIN:L1c:0.2';#(_i=0;_i<5;_i++){_0=(0<'!f(){}');^(('?=if #=for'<'#(i=0;i<10;i++)'))}}:{};?((n==3.14)){#(_i=0;_i<2;_i++){_0=(a%'!f(){}')}}:{};_1=(1&&'^(return)')}};#(_i=0;_i<4;_i++){^((true!='world'));?((\"a+b\">\"hello\")){_s=1;_s='world';_s=a}:{};_7=(42>=a);_s='#(i=0;i<10;i++)'}}:{}}};_9=1}:{};#(_i=0;_i<1;_i++){?(n){#(_i=0;_i<5;_i++){?(-1){?((null/n)){_s='$';?(b){_s=false;_0=\"$K\";_2=('!f(){}'>'world')}:{};?(\"$K\"){_3=(n<=n);_0=('@LIN:L1c:0.2'+b)}:{};_s='$'}:{};_s='?=if #=for';_0=n}:{};_s=0};_6=(null*\"$K\");^(('$'>'$'))}:{};_4=(0<1);_3=1}}:{};_4=(false%y)}\n!f1(_0:str|num,_1:str,_2:int|null) -> any{_s='world'}\n!f2(_0:bool) -> int|null{#(_i=0;_i<3;_i++){?((null>true)){_6=(0>=n)}:{};^((\"a+b\"*null));^((0==true));_s=42};_s='@LIN:L1c:0.2';_3=b;?(x){^(('?=if #=for'!='@LIN:L1c:0.2'));_s=true}:{}}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: n > 0\nrepairs: refine n:int{>0} | require n>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: n > 0\nrepairs: refine n:int{>0} | require n>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

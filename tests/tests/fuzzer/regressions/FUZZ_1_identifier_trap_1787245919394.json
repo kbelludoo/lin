@@ -1,0 +1,16 @@
+{
+  "id": "FUZZ_1_identifier_trap_1787245919394.json",
+  "timestamp": "2026-08-20T17:11:59.394Z",
+  "layer": 1,
+  "category": "identifier_trap",
+  "severity": "lexer",
+  "input": "café",
+  "desc": "unicode identifier",
+  "error": "LIN_EXPORT_NO_FN: café",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in identifier_trap: LIN_EXPORT_NO_FN: café",
+    "testable": false
+  },
+  "fixed": false
+}

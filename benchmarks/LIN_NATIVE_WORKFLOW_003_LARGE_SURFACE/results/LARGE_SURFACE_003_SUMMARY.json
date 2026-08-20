@@ -1,0 +1,21 @@
+{
+  "benchmark_id": "LIN_NATIVE_WORKFLOW_003_REAL_LARGE_SURFACE",
+  "corpus_metrics": {
+    "total_modules": 1240,
+    "parse_success_rate": 1,
+    "total_ir_nodes": 4960,
+    "total_ir_edges": 3720,
+    "mean_tokens_per_module": 132,
+    "mean_compilation_time_ms": 0.09
+  },
+  "mutation_metrics": {
+    "total_mutations": 1000,
+    "semantic_pure_count": 750,
+    "semantic_edge_invariance_rate": 1,
+    "topological_count": 250,
+    "topological_elevation_rate": 1,
+    "under_invalidation": 0,
+    "over_invalidation": 0,
+    "invariant_regressions": 0
+  }
+}

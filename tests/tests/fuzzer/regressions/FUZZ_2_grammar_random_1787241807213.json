@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787241807213.json",
+  "timestamp": "2026-08-20T16:03:27.213Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n?(@debug){!(console.log(\"d\"))}:{}\n!f0(_0:str) -> int{_s=\"hello\";^(('^(return)'*0));?(false){_s=\"a+b\";^((a*'world'));_3=0}:{}}\n!f1() -> any{^(('!f(){}'--1));^((y||a));?(('?=if #=for'<='$')){#(_i=0;_i<1;_i++){_5=\"hello\";^((42>null));_s='^(return)'}}:{}}\n=ex{f0,f1}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_JYB5N2/emit.cjs:3\n/* effect:Write */function f1(){var _5,_s,_i;return (('!f(){}'--1));return ((y||a));if(('?=if #=for'<='$')){for(_i=0;_i<1;_i++){_5=\"hello\";return ((42>null));_s='^(return)';}}else{}}\n                       ",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_JYB5N2/emit.cjs:3\n/* effect:Write */function f1(){var _5,_s,_i;return (('!f(){}'--1));return ((y||a));if(('?=if #=for'<='$')){for(_i=0;_i<1;_i++){_5=\"hello\";return ((42>null));_s='^(return)';}}else{}}\n                       ",
+    "testable": false
+  },
+  "fixed": false
+}

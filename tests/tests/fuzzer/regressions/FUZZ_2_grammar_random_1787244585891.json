@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787244585891.json",
+  "timestamp": "2026-08-20T16:49:45.891Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int,_1:any){?('?=if #=for'){_0=(3.14!=a);_s=\"hello\";^((3.14&&'!f(){}'))}:{}}\n!f1(_0:int,_1:int|null,_2:str|num) -> bool{?((42>=-1)){_s=\"hello\";_4=('@LIN:L1c:0.2'>false);_6=(3.14&&42);_s='?=if #=for'}:{};_3=(3.14<=42);_9=(x/\"hello\");_s=\"hello\"}\n=ex{f0,f1}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\");_s=\"hel > 0\nrepairs: refine \"hello\");_s=\"hel:int{>0} | require \"hello\");_s=\"hel>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"hello\");_s=\"hel > 0\nrepairs: refine \"hello\");_s=\"hel:int{>0} | require \"hello\");_s=\"hel>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

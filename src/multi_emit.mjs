@@ -15,6 +15,13 @@ import { emitC } from './emit_c.mjs';
 import { emitJava } from './emit_java.mjs';
 import { emitZig } from './emit_zig.mjs';
 import { emitCs } from './emit_cs.mjs';
+import { emitKotlin } from './emit_kotlin_load.mts';
+import { emitSwift } from './emit_swift_load.mts';
+import { emitCpp } from './emit_cpp_load.mts';
+import { emitHaskell } from './emit_haskell_load.mts';
+import { emitElixir } from './emit_elixir_load.mts';
+import { emitLua } from './emit_lua_load.mts';
+import { emitJulia } from './emit_julia_load.mts';
 import { TARGETS, DEFAULT_EMIT_TARGET, defaultOutPath, STUB_TARGETS, REAL_TARGETS } from './emit_shared.mjs';
 
 export { TARGETS, DEFAULT_EMIT_TARGET, defaultOutPath, REAL_TARGETS };
@@ -44,6 +51,13 @@ export function compileLia(liaText, opts = {}) {
   else if (target === 'java') result = emitJava(liaText, opts);
   else if (target === 'zig') result = emitZig(liaText, opts);
   else if (target === 'cs' || target === 'csharp') result = emitCs(liaText, opts);
+  else if (target === 'kotlin') result = emitKotlin(liaText, opts);
+  else if (target === 'swift') result = emitSwift(liaText, opts);
+  else if (target === 'cpp') result = emitCpp(liaText, opts);
+  else if (target === 'haskell') result = emitHaskell(liaText, opts);
+  else if (target === 'elixir') result = emitElixir(liaText, opts);
+  else if (target === 'lua') result = emitLua(liaText, opts);
+  else if (target === 'julia') result = emitJulia(liaText, opts);
   else result = emitRust(liaText, opts);
   if (formalReport) result = { ...result, formalReport };
   return result;

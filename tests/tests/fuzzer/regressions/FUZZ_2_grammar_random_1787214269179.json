@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787214269179.json",
+  "timestamp": "2026-08-20T08:24:29.179Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){_s=1;_9=('#(i=0;i<10;i++)'*1)}\n!f1(_0:bool,_1:int,_2:int) -> any{_s=0}\n!f2(_0:int){_s=3.14;?((\"a+b\"<n)){_2=(\"a+b\"%n);_9='!f(){}'}:{};_5=('^(return)'--1)}\n=ex{f0,f1,f2}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_pydFX5/emit.cjs:4\n/* effect:Write */function f2(_0){var _s,_2,_9,_5;_s=3.14;if((\"a+b\"<n)){_2=(\"a+b\"%n);_9='!f(){}';}else{};_5=('^(return)'--1);}\n                                                                               ",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_pydFX5/emit.cjs:4\n/* effect:Write */function f2(_0){var _s,_2,_9,_5;_s=3.14;if((\"a+b\"<n)){_2=(\"a+b\"%n);_9='!f(){}';}else{};_5=('^(return)'--1);}\n                                                                               ",
+    "testable": false
+  },
+  "fixed": false
+}

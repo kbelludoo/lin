@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787235383539.json",
+  "timestamp": "2026-08-20T14:16:23.539Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool,_1:any) -> num{#(_i=0;_i<1;_i++){_5=('@LIN:L1c:0.2'--1)}}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_hBBsCz/emit.cjs:2\n/* effect:Read */function f0(_0, _1){var _5,_i;for(_i=0;_i<1;_i++){_5=('@LIN:L1c:0.2'--1);}}\n                                                                       ^^^^^^^^^^^^^^\n\nSyntaxError: Invalid left-",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_hBBsCz/emit.cjs:2\n/* effect:Read */function f0(_0, _1){var _5,_i;for(_i=0;_i<1;_i++){_5=('@LIN:L1c:0.2'--1);}}\n                                                                       ^^^^^^^^^^^^^^\n\nSyntaxError: Invalid left-",
+    "testable": false
+  },
+  "fixed": false
+}

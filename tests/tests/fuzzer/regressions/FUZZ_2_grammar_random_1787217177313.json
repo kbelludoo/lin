@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787217177313.json",
+  "timestamp": "2026-08-20T09:12:57.313Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:bool,_1:int){_s=null;_3=(\"$K\">='?=if #=for');#(_i=0;_i<5;_i++){_7=42};_7=(y!=b)}\n!f1(_0:any,_1:any,_2:str|num){?((a/'!f(){}')){?('world'){^((n>='world'));?((n||b)){^((y+x))}:{};_s='#(i=0;i<10;i++)';_4='#(i=0;i<10;i++)'}:{};_1='#(i=0;i<10;i++)'}:{};#(_i=0;_i<3;_i++){?((true||0)){#(_i=0;_i<2;_i++){_6=(0||n);_s=3.14;#(_i=0;_i<1;_i++){_9=('!f(){}'<=true);_5=('!f(){}'<x);_s=a;#(_i=0;_i<3;_i++){?((a>=x)){^(x);^(0);^(('$'>'?=if #=for'));^((n==true))}:{};^((3.14||'#(i=0;i<10;i++)'));?((-1*'!f(){}')){?((y%\"hello\")){_7='$';#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_0=3.14};?(('!f(){}'-0)){_0=('^(return)'%n)}:{};^(b);_6=(false-x)};_s=x;_3=('@LIN:L1c:0.2'==1)}:{};_s=b;^((-1==a));?((a+3.14)){_s=null;_0=(1||3.14)}:{}}:{}}};_9=\"hello\"};^((3.14-b))}:{};?(('^(return)'*true)){_s='^(return)';?((1*true)){_5=x;^((x==x));_4=('^(return)'>=\"a+b\");_s=1}:{};_s='@LIN:L1c:0.2'}:{}}}\n!f2(_0:bool,_1:num,_2:any){_3=false;?(('^(return)'>=0)){_s='world';#(_i=0;_i<3;_i++){?((3.14==\"$K\")){#(_i=0;_i<5;_i++){_s=false;?((b&&\"$K\")){_6=(false>null);_s='$';_1=null;?((y-'world')){_6=\"a+b\"}:{}}:{};#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){_s='#(i=0;i<10;i++)';_8=(3.14||\"a+b\");^((x/x));^((\"$K\"+true))}}}}:{};?(('^(return)'+'@LIN:L1c:0.2')){^((42<=1));_0=(1+y)}:{};_s=0};^('?=if #=for')}:{};_5=(\"a+b\">=\"hello\");_s=false}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}')){?('wo > 0\nrepairs: refine '!f(){}')){?('wo:int{>0} | require '!f(){}')){?('wo>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: '!f(){}')){?('wo > 0\nrepairs: refine '!f(){}')){?('wo:int{>0} | require '!f(){}')){?('wo>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

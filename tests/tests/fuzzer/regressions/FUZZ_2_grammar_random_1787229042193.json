@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787229042193.json",
+  "timestamp": "2026-08-20T12:30:42.193Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(){#(_i=0;_i<3;_i++){_9=(\"hello\"==3.14);_s='^(return)'};_3=(-1>=n);?('!f(){}'){^((1/\"$K\"))}:{};_s=true}\n!f1(){#(_i=0;_i<1;_i++){#(_i=0;_i<2;_i++){#(_i=0;_i<1;_i++){_2=\"a+b\";?((3.14&&1)){_s='$';#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){_s=\"a+b\";#(_i=0;_i<5;_i++){_1=true}};_2=n}}:{};_s=a;_s='@LIN:L1c:0.2'};?((y>\"$K\")){#(_i=0;_i<4;_i++){?(('^(return)'!='world')){#(_i=0;_i<3;_i++){_s=x;^('#(i=0;i<10;i++)')};_0=(true/x);^((\"$K\"+n));_4=('^(return)'/n)}:{};_s=-1}}:{};_9='!f(){}';^(('@LIN:L1c:0.2'==false))}};#(_i=0;_i<5;_i++){_7=(n<x);_s='^(return)';?((true+'@LIN:L1c:0.2')){#(_i=0;_i<5;_i++){_2='!f(){}';_s='?=if #=for';_s=y;_5=(true+x)};_8=\"hello\";_8=(a<=y)}:{};_s=true};?((a>=0)){_0='#(i=0;i<10;i++)'}:{}}\n!f2() -> bool{#(_i=0;_i<3;_i++){?(('$'<=\"$K\")){_7=(n/-1);?(\"hello\"){_9='?=if #=for';#(_i=0;_i<4;_i++){?((x||null)){?('$'){^(\"hello\")}:{}}:{};_s=true};_8=(true&&42)}:{}}:{};#(_i=0;_i<5;_i++){_0=(1/y);_6=(\"$K\"*b);#(_i=0;_i<1;_i++){^((b!='!f(){}'))}};#(_i=0;_i<1;_i++){_s=n};_s=\"a+b\"};#(_i=0;_i<5;_i++){#(_i=0;_i<5;_i++){?(('#(i=0;i<10;i++)'-'world')){#(_i=0;_i<3;_i++){#(_i=0;_i<2;_i++){^(('#(i=0;i<10;i++)'<3.14));_s=true;?((b&&'world')){_s=a;?(('world'/'^(return)')){#(_i=0;_i<3;_i++){_4=(b+'^(return)');#(_i=0;_i<4;_i++){_s=x;_s=x;?(('world'==a)){_3=true;?((42<=0)){_s='$';_7=(n>=1);_5=\"hello\"}:{};#(_i=0;_i<5;_i++){^((3.14!=-1));?(3.14){_3=x}:{};^((\"hello\"-false))};_3=(3.14<1)}:{}}};#(_i=0;_i<4;_i++){?(\"hello\"){^(('?=if #=for'&&'?=if #=for'));_9=1;?((a*false)){_s='world'}:{};_9=('$'>='!f(){}')}:{};_s=3.14};?(0){_s=x;?(('@LIN:L1c:0.2'&&'@LIN:L1c:0.2')){_s=3.14;_s=a}:{};_2=(-1+3.14)}:{}}:{};#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){?('#(i=0;i<10;i++)'){_1=-1}:{};_0=(-1-42)}}}:{};_8=('$'/'?=if #=for')};_4=(\"$K\"<'?=if #=for');_s=\"hello\"};_s=\"$K\"}:{}};?((true!='?=if #=for')){?((\"a+b\"!=\"hello\")){_s=true;_s='#(i=0;i<10;i++)'}:{};_s='$';_7=(false+'#(i=0;i<10;i++)')}:{};_s=3.14;#(_i=0;_i<5;_i++){_s=0;?(('#(i=0;i<10;i++)'>a)){_4=(b>'^(return)')}:{}}};_6=('!f(){}'!=n)}\n=ex{f0,f1,f2}",
+  "error": "EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\"))}:{};_s=tr > 0\nrepairs: refine \"$K\"))}:{};_s=tr:int{>0} | require \"$K\"))}:{};_s=tr>0 | insert check",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: EMIT BLOCKED INV_REFINEMENT_SOUND\nNode: BinaryExpression /\nMissing: \"$K\"))}:{};_s=tr > 0\nrepairs: refine \"$K\"))}:{};_s=tr:int{>0} | require \"$K\"))}:{};_s=tr>0 | insert check",
+    "testable": false
+  },
+  "fixed": false
+}

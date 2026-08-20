@@ -1,0 +1,15 @@
+{
+  "id": "FUZZ_2_grammar_random_1787239363750.json",
+  "timestamp": "2026-08-20T15:22:43.750Z",
+  "layer": 2,
+  "category": "grammar_random",
+  "severity": "parser",
+  "input": "@LIN:L1c:0.2\n^schema_once\n!f0(_0:int|null,_1:any){?(\"a+b\"){?(('^(return)'*true)){#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){_8=(b-'#(i=0;i<10;i++)');_6='@LIN:L1c:0.2'}};_s='?=if #=for';?((42*\"a+b\")){#(_i=0;_i<1;_i++){#(_i=0;_i<3;_i++){_3=(\"$K\"<'?=if #=for');_4=1;?((\"a+b\"!='$')){^(('^(return)'==42));_2=(\"hello\"/a);#(_i=0;_i<4;_i++){#(_i=0;_i<2;_i++){#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){^((3.14/0));^(('@LIN:L1c:0.2'>n))};_s=null;_s=42;_s=\"hello\"};_s=n;?((false=='?=if #=for')){#(_i=0;_i<3;_i++){#(_i=0;_i<1;_i++){^('!f(){}');^((0>'?=if #=for'))}};?((a>n)){_s=3.14;?((\"a+b\"||-1)){_s='world';?('?=if #=for'){?('#(i=0;i<10;i++)'){_5=(42||b);_s=3.14}:{}}:{};_2=3.14;_8=('?=if #=for'/'!f(){}')}:{}}:{};_s='$';_0=42}:{};_6=b};_9='#(i=0;i<10;i++)';_2=\"a+b\"}}:{};#(_i=0;_i<3;_i++){?((1*'world')){^('^(return)');_5=(0==0)}:{};_5=('$'<y);_7=(x*'^(return)')}};_s=n;_2='!f(){}';?((3.14/\"hello\")){#(_i=0;_i<3;_i++){#(_i=0;_i<3;_i++){_s=3.14;^((1!=false))}};_3=y;?((false>=\"a+b\")){_s=b}:{}}:{}};_s=42;?(('world'>42)){#(_i=0;_i<4;_i++){_s='#(i=0;i<10;i++)';?((\"hello\"!='?=if #=for')){?(('world'--1)){_6=(false+null);?(\"hello\"){?((\"a+b\"-null)){?((42||\"a+b\")){^('!f(){}')}:{};_s=b;_s=3.14}:{};_5=(y+'#(i=0;i<10;i++)');_s=null}:{}}:{};_8=(\"$K\"==42)}:{};?((\"$K\">'@LIN:L1c:0.2')){_1=false}:{};_s=42}}:{}}:{}}:{};_1=(\"$K\"*3.14)}:{};?(('world'*1)){_6=('!f(){}'*3.14);_s=b}:{}}\n=ex{f0}",
+  "error": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_wlPk6a/emit.cjs:2\n/* effect:Read */function f0(_0, _1){var _8,_6,_s,_3,_4,_2,_5,_9,_7,_i,i;if(\"a+b\"){if(('^(return)'*true)){for(_i=0;_i<3;_i++){for(_i=0;_i<1;_i++){_8=(b-'for(i=0;i<10;i++)');_6='@LIN:L1c:0.2';}};_s='?=if #=f",
+  "patch": {
+    "type": "unknown",
+    "diagnosis": "Bug in grammar_random: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_wlPk6a/emit.cjs:2\n/* effect:Read */function f0(_0, _1){var _8,_6,_s,_3,_4,_2,_5,_9,_7,_i,i;if(\"a+b\"){if(('^(return)'*true)){for(_i=0;_i<3;_i++){for(_i=0;_i<1;_i++){_8=(b-'for(i=0;i<10;i++)');_6='@LIN:L1c:0.2';}};_s='?=if #=f",
+    "testable": false
+  },
+  "fixed": false
+}

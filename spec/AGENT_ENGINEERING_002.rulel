@@ -1,0 +1,40 @@
+@RULEL:AGENT_ENGINEERING_002:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=AGENT_ENGINEERING_002_CROSS_MODEL_REPLICATION
+  status=ACTIVE_BENCHMARK_SPEC
+  domain="ai_agent_engineering_cross_model"
+  date=2026-08-20
+  purpose="Evaluate invariance of architectural advantages across 4 distinct LLM families under identical workloads and context-death protocols"
+  parent=AGENT_ENGINEERING_001
+}
+
+.h{
+  id=H_AGENT_ENG_002
+  claim="Across 4 distinct LLM families (M1 Claude-3.5, M2 GPT-4o, M3 DeepSeek-V3, M4 Llama-3.3-70B), S4 (LIN+AINL) consistently occupies the Pareto Frontier, maintaining >40% token reduction vs S1 (Python), >85% DAG churn reduction vs S2 (AINL), and 0 invariant violations across all models."
+}
+
+.c{
+  models=["M1_claude_3_5_sonnet", "M2_gpt_4o", "M3_deepseek_v3", "M4_llama_3_3_70b"]
+  stacks=["S1_python", "S2_ainl", "S3_lin", "S4_hybrid"]
+  workloads=["W1", "W2", "W3", "W4", "W5"]
+  total_runs=80
+}
+
+.mtr{
+  primary=[
+    "tokens_consumed",
+    "repair_rounds",
+    "invariant_violations",
+    "dag_churn",
+    "reconstruction_tokens",
+    "first_pass_success_rate",
+    "pareto_retention_rate"
+  ]
+}
+
+.r{
+  R1=workloads_and_prompts_must_be_strictly_identical_across_all_models
+  R2=blind_oracle_verifies_without_model_identity_knowledge
+  R3=pareto_frontier_analyzed_per_model_and_aggregated
+}
