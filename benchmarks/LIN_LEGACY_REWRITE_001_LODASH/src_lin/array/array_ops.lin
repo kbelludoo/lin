@@ -1,0 +1,67 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_array_core
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!chunk(arr: [any], size: int{>0}): [[any]] {
+  $res = []
+  $curr = []
+  #i=0..arr.length-1 {
+    curr.push(arr[i])
+    ?(curr.length == size) {
+      res.push(curr)
+      curr = []
+    }
+  }
+  ?(curr.length > 0) { res.push(curr) }
+  ^res
+}
+
+!compact(arr: [any]): [any] {
+  $res = []
+  #i=0..arr.length-1 {
+    $v = arr[i]
+    ?(v != null && v != false && v != 0 && v != "" && !Number.isNaN(v)) {
+      res.push(v)
+    }
+  }
+  ^res
+}
+
+!drop(arr: [any], n: int{>=0}): [any] {
+  $res = []
+  #i=n..arr.length-1 {
+    res.push(arr[i])
+  }
+  ^res
+}
+
+!flatten(arr: [any]): [any] {
+  $res = []
+  #i=0..arr.length-1 {
+    $item = arr[i]
+    ?(Array.isArray(item)) {
+      #j=0..item.length-1 { res.push(item[j]) }
+    }:{
+      res.push(item)
+    }
+  }
+  ^res
+}
+
+!uniq(arr: [any]): [any] {
+  $res = []
+  #i=0..arr.length-1 {
+    $v = arr[i]
+    ?(!res.includes(v)) { res.push(v) }
+  }
+  ^res
+}
+
+~workflow {
+  step chunk_sample -> chunk([1, 2, 3, 4, 5], 2)
+  step compact_step -> compact([0, 1, false, 2, "", 3])
+  step uniq_step    -> uniq([2, 1, 2])
+}
+
+=ex{chunk,compact,drop,flatten,uniq}

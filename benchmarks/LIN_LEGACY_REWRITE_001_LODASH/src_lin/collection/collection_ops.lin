@@ -1,0 +1,39 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_collection_core
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!groupBy(arr: [any], key_fn: any): any {
+  $res = {}
+  #i=0..arr.length-1 {
+    $item = arr[i]
+    $k = typeof key_fn == "function" ? key_fn(item) : item[key_fn]
+    ?(res[k] == null) { res[k] = [] }
+    res[k].push(item)
+  }
+  ^res
+}
+
+!keyBy(arr: [any], key_prop: str): any {
+  $res = {}
+  #i=0..arr.length-1 {
+    $item = arr[i]
+    $k = item[key_prop]
+    res[k] = item
+  }
+  ^res
+}
+
+!sortBy(arr: [any], prop: str): [any] {
+  $copy = [...arr]
+  copy.sort((a, b) => a[prop] > b[prop] ? 1 : -1)
+  ^copy
+}
+
+~workflow {
+  step group_step -> groupBy([6.1, 4.2, 6.3], Math.floor)
+  step key_step   -> keyBy([{id: "a", val: 1}, {id: "b", val: 2}], "id")
+  step sort_step  -> sortBy([{user: "fred", age: 48}, {user: "barney", age: 36}], "age")
+}
+
+=ex{groupBy,keyBy,sortBy}

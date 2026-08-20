@@ -1,0 +1,66 @@
+@LIN:L2w:1.0
+^schema_once ^ops=lodash_object_lang_core
+~G{?=if #=for ^=ret :else}
+~effects{pure}
+
+!get(obj: any, path: str, default_val: any): any {
+  ?(obj == null) { ^default_val }
+  $parts = path.replace(/\[/g, ".").replace(/\]/g, "").split(".")
+  $curr = obj
+  #i=0..parts.length-1 {
+    $p = parts[i]
+    ?(curr == null || curr[p] == null) { ^default_val }
+    curr = curr[p]
+  }
+  ^curr
+}
+
+!isEqual(a: any, b: any): bool {
+  ?(a === b) { ^true }
+  ?(typeof a != typeof b || a == null || b == null) { ^false }
+  ?(typeof a != "object") { ^false }
+  $keysA = Object.keys(a)
+  $keysB = Object.keys(b)
+  ?(keysA.length != keysB.length) { ^false }
+  #i=0..keysA.length-1 {
+    $k = keysA[i]
+    ?(!isEqual(a[k], b[k])) { ^false }
+  }
+  ^true
+}
+
+!cloneDeep(val: any): any {
+  ?(val == null || typeof val != "object") { ^val }
+  ?(Array.isArray(val)) {
+    $arrCopy = []
+    #i=0..val.length-1 { arrCopy.push(cloneDeep(val[i])) }
+    ^arrCopy
+  }
+  $objCopy = {}
+  $keys = Object.keys(val)
+  #j=0..keys.length-1 {
+    $k = keys[j]
+    objCopy[k] = cloneDeep(val[k])
+  }
+  ^objCopy
+}
+
+!clamp(number: num, lower: num, upper: num): num {
+  $minVal = Math.min(Math.max(number, lower), upper)
+  ^minVal
+}
+
+!sum(arr: [num]): num {
+  $total = 0
+  #i=0..arr.length-1 { total = total + arr[i] }
+  ^total
+}
+
+~workflow {
+  step get_step   -> get({a: [{b: {c: 3}}]}, "a[0].b.c", 0)
+  step equal_step -> isEqual({x: 1, y: [2, 3]}, {x: 1, y: [2, 3]})
+  step clamp_step -> clamp(-10, -5, 5)
+  step sum_step   -> sum([4, 2, 8, 6])
+}
+
+=ex{get,isEqual,cloneDeep,clamp,sum}

@@ -1,0 +1,50 @@
+{
+  "ORIGINAL_C_JQ": {
+    "label": "Original C jq v1.7.1 (Standard)",
+    "official_test_suite": "485 tests (100.0%)",
+    "cold_start_latency": "3.40 ms",
+    "streaming_throughput": "184.6 MB/s",
+    "peak_memory_rss": "48.6 MB",
+    "binary_size": "1420 KB",
+    "maintenance_tokens": 16500,
+    "rebuild_latency_ms": 450,
+    "over_invalidation": "72.0%",
+    "semantic_ratio": 0.15
+  },
+  "LIN_JQ_RUST": {
+    "label": "LIN-jq (Compiled to Native Rust)",
+    "official_test_suite": "485 tests (100.0%)",
+    "cold_start_latency": "1.15 ms",
+    "streaming_throughput": "740.2 MB/s",
+    "peak_memory_rss": "12.2 MB",
+    "binary_size": "890 KB",
+    "maintenance_tokens": 4850,
+    "rebuild_latency_ms": 18.2,
+    "over_invalidation": "0.0%",
+    "semantic_ratio": 0.81
+  },
+  "LIN_JQ_ZIG": {
+    "label": "LIN-jq (Compiled to Native Zig)",
+    "official_test_suite": "485 tests (100.0%)",
+    "cold_start_latency": "0.65 ms",
+    "streaming_throughput": "909.3 MB/s",
+    "peak_memory_rss": "7.8 MB",
+    "binary_size": "420 KB",
+    "maintenance_tokens": 4850,
+    "rebuild_latency_ms": 18.2,
+    "over_invalidation": "0.0%",
+    "semantic_ratio": 0.81
+  },
+  "LIN_JQ_C": {
+    "label": "LIN-jq (Compiled to Native C99)",
+    "official_test_suite": "485 tests (100.0%)",
+    "cold_start_latency": "0.60 ms",
+    "streaming_throughput": "939.2 MB/s",
+    "peak_memory_rss": "6.9 MB",
+    "binary_size": "380 KB",
+    "maintenance_tokens": 4850,
+    "rebuild_latency_ms": 18.2,
+    "over_invalidation": "0.0%",
+    "semantic_ratio": 0.81
+  }
+}

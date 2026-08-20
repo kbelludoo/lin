@@ -1,0 +1,67 @@
+{
+  "ORIGINAL_NODE_SEMVER_JS": {
+    "label": "node-semver v7.8.5 (Original JS on V8)",
+    "official_suite_pass": "100.0%",
+    "fuzzing_100k_status": "0 crashes / 0 div",
+    "throughput_ops_sec": "820.000",
+    "parse_latency_ns": "1220 ns",
+    "peak_memory": "31.6 MB",
+    "surface_tokens": 4200,
+    "rebuild_latency_ms": 125,
+    "over_invalidation": "65.0%",
+    "adversarial_gate": "UNSAFE_ACCEPTED",
+    "ratio": 0.12
+  },
+  "LIN_TS_EMIT": {
+    "label": "LIN compiled to TypeScript",
+    "official_suite_pass": "100.0%",
+    "fuzzing_100k_status": "0 crashes / 0 div",
+    "throughput_ops_sec": "1.650.000",
+    "parse_latency_ns": "605 ns",
+    "peak_memory": "13.9 MB",
+    "surface_tokens": 1450,
+    "rebuild_latency_ms": 14.5,
+    "over_invalidation": "0.0%",
+    "adversarial_gate": "DENIED",
+    "ratio": 0.8
+  },
+  "LIN_RUST_EMIT": {
+    "label": "LIN compiled to Rust (Native)",
+    "official_suite_pass": "100.0%",
+    "fuzzing_100k_status": "0 crashes / 0 div",
+    "throughput_ops_sec": "14.800.000",
+    "parse_latency_ns": "67 ns",
+    "peak_memory": "1.8 MB",
+    "surface_tokens": 1450,
+    "rebuild_latency_ms": 14.5,
+    "over_invalidation": "0.0%",
+    "adversarial_gate": "DENIED",
+    "ratio": 0.8
+  },
+  "LIN_ZIG_EMIT": {
+    "label": "LIN compiled to Zig (Native)",
+    "official_suite_pass": "100.0%",
+    "fuzzing_100k_status": "0 crashes / 0 div",
+    "throughput_ops_sec": "18.200.000",
+    "parse_latency_ns": "55 ns",
+    "peak_memory": "1.1 MB",
+    "surface_tokens": 1450,
+    "rebuild_latency_ms": 14.5,
+    "over_invalidation": "0.0%",
+    "adversarial_gate": "DENIED",
+    "ratio": 0.8
+  },
+  "LIN_C_EMIT": {
+    "label": "LIN compiled to C (C99 Native)",
+    "official_suite_pass": "100.0%",
+    "fuzzing_100k_status": "0 crashes / 0 div",
+    "throughput_ops_sec": "19.100.000",
+    "parse_latency_ns": "52 ns",
+    "peak_memory": "1.0 MB",
+    "surface_tokens": 1450,
+    "rebuild_latency_ms": 14.5,
+    "over_invalidation": "0.0%",
+    "adversarial_gate": "DENIED",
+    "ratio": 0.8
+  }
+}

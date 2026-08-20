@@ -1,0 +1,93 @@
+{
+  "benchmark": "FIRE_TEST_003_NODE_SEMVER",
+  "version": "1.0.0",
+  "target_package": "npm/node-semver",
+  "target_version_baseline": "7.8.5",
+  "title": "Comprehensive Node-Semver Rewrite, Verification, Fuzzing & Multi-Target Benchmark",
+  "goal": "Re-implement node-semver in LIN Native Workflow (@LIN:L2w:1.0), proving 100% test-suite parity, fuzzing robustness, sub-microsecond parsing, 0% over-invalidation across 100 mutations, and compile-time rejection of adversarial optimizations.",
+  "freeze_before_execution": true,
+  "modules_under_test": [
+    {
+      "id": "parse",
+      "name": "SemVer Core Parser & Normalizer"
+    },
+    {
+      "id": "valid",
+      "name": "Strict & Loose Validation"
+    },
+    {
+      "id": "compare",
+      "name": "Comparison Matrix (gt, lt, eq, neq, gte, lte, cmp, rcompare)"
+    },
+    {
+      "id": "satisfies",
+      "name": "Range Satisfaction Engine (hyphen, tilde, caret, wildcard, x-range)"
+    },
+    {
+      "id": "inc",
+      "name": "Version Incrementing (major, premajor, minor, preminor, patch, prepatch, prerelease)"
+    },
+    {
+      "id": "diff",
+      "name": "Version Difference Classifier"
+    },
+    {
+      "id": "coerce",
+      "name": "Lenient Version Coercion"
+    },
+    {
+      "id": "max_satisfying",
+      "name": "Optimal Range Solver (maxSatisfying, minSatisfying)"
+    }
+  ],
+  "evaluated_targets": [
+    "js",
+    "ts",
+    "rust",
+    "zig",
+    "c"
+  ],
+  "campaigns": [
+    {
+      "id": "C_OFFICIAL_SUITE",
+      "name": "1. Official node-semver Test Suite Parity (1,480 test vectors)"
+    },
+    {
+      "id": "C_FUZZING_100K",
+      "name": "2. High-Entropy Fuzzing (100,000 synthetic malformed & edge inputs)"
+    },
+    {
+      "id": "C_PERFORMANCE_BENCH",
+      "name": "3. Throughput, Cold Start, and Memory Benchmark vs Original JS"
+    },
+    {
+      "id": "C_MUTATIONS_100",
+      "name": "4. 100 Consecutive Mutations Incremental Maintenance & Invalidation"
+    },
+    {
+      "id": "C_ADVERSARIAL_DEFENSE",
+      "name": "5. Adversarial Speedup Defense (Compiler Gate Rejection on Contract Stripping)"
+    }
+  ],
+  "frozen_criteria": {
+    "official_suite_pass_rate": "100.0%",
+    "fuzzing_crash_count": 0,
+    "fuzzing_behavioral_divergences": 0,
+    "over_invalidation_rate": "0.0%",
+    "under_invalidation_rate": "0.0%",
+    "adversarial_rejection_rate": "100.0%"
+  },
+  "repetitions": 10,
+  "metrics": [
+    "official_suite_pass_rate",
+    "fuzzing_pass_rate",
+    "throughput_ops_per_sec",
+    "mean_parse_latency_ns",
+    "peak_memory_kb",
+    "surface_tokens",
+    "incremental_rebuild_ms",
+    "over_invalidation_rate",
+    "adversarial_gate_action",
+    "semantic_to_operational_ratio"
+  ]
+}

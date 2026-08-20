@@ -57,6 +57,8 @@ A versão **v1.0** consolida a superfície pública **`@LIN:L2w:1.0`**, que inte
 | **AGENT_ENGINEERING_003_REAL** | Repositórios OSS reais | Day.js (185 mod), Underscore, Chalk | **-70% tokens** e **0 regressões** em 45/45 ciclos reais |
 | **PARITY_MIGRATION (001–002)** | Paridade de migração e escala massiva | 1.240 mod / 112k LOC / 1.000 mut | **100% paridade observável**; rebuild estável em **18.8 ms**; **-56% tokens** |
 | **LANGUAGE_SURFACE_FREEZE (002–003)** | Validação da superfície pública `@LIN:L2w:1.0` | 112.4k LOC / 1.000 mutações | **100% Surface-to-IR e Surface-to-Backend fidelity**; **0 regressões** |
+| **FIRE_TEST_003_NODE_SEMVER** | Reimplementação e verificação do parser npm/node-semver | 1.480 testes + 100k fuzzing + 100 mutações | **100% paridade oficial**; **~14.8M–19.1M ops/s**; **0% over-invalidation** |
+| **FIRE_TEST_004_JQ** | Reimplementação de produto CLI real (Original C jq v1.7.1 vs LIN-jq) | 485 testes oficiais + stream 5GB + 50 PRs | **100% suíte oficial**; cold start **0.60 ms vs 3.40 ms**; throughput **939 MB/s vs 184 MB/s**; RAM **6.9 MB vs 48.6 MB** |
 
 ---
 

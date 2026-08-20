@@ -198,10 +198,7 @@ let bypassBlockedCount = 0;
 for (const atk of bypassAttacks) {
   const parsed = LinSurfaceParser.parse(atk.bad_source);
   // O verificador estático do LinWorkflowEngine detecta se há efeitos de IO em contratos que não declaram ou tipos ilegais
-  const hasIO = Object.values(parsed.dag.nodes).some(n => n.effects.includes("io"));
-  const declaredPureOnly = atk.bad_source.includes("~effects{pure}") && !atk.bad_source.includes("io");
-  
-  const isIllegal = (declaredPureOnly && hasIO) || atk.bad_source.includes("balance: num{<0}");
+  const isIllegal = !parsed.verification.valid || atk.bad_source.includes("balance: num{<0}");
   if (isIllegal) {
     bypassBlockedCount++;
     console.log(`  [BLOCKED (100%)] ${atk.name} -> Rejeitado estaticamente pelo compilador.`);

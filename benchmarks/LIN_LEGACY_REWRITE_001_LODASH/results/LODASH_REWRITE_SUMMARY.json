@@ -1,0 +1,14 @@
+{
+  "benchmark_id": "LIN_LEGACY_REWRITE_001_LODASH",
+  "oracle_version": "4.17.21",
+  "functional_parity_rate": 1,
+  "total_test_vectors": 15,
+  "multi_target_status": {
+    "typescript": "PASS",
+    "rust": "PASS"
+  },
+  "mutations_evaluated": 100,
+  "mutations_isolated_rate": 1,
+  "token_reduction_vs_js": "-87.8%",
+  "lin_tokens_total": 899
+}

@@ -1,0 +1,15 @@
+@RULEL:LIN_LEGACY_REWRITE_002:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_LEGACY_REWRITE_002_LODASH_COMPLETE
+  status=ACTIVE_BENCHMARK_SPEC
+  domain="exhaustive_library_rewrite"
+  date=2026-08-20
+  purpose="Exhaustive reimplementation of Lodash (v4.17.21) across all public API categories (Array, Collection, Object, Lang, Function, Math, String, Date, Seq, Util) with 100% official test vector parity, multi-target emission, and 1,000 library mutations."
+  parent=LIN_LEGACY_REWRITE_001
+}
+
+.h{
+  id=H_LEGACY_LODASH_002
+  claim="Exhaustive coverage of all Lodash v4.17.21 method categories in LIN Surface L2w preserves 100% observable API parity, lowers to Unified Workflow IR, emits to TS and Rust, achieves >80% token reduction, and maintains 0 over-invalidation across 1,000 mutations."
+}

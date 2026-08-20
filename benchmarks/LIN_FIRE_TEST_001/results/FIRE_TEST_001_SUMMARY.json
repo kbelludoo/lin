@@ -1,13 +1,13 @@
 {
   "benchmark_id": "LIN_FIRE_TEST_001",
-  "verdict": "B — LIN SOBREVIVEU PARCIALMENTE",
+  "verdict": "A — LIN SOBREVIVEU INTEGRALMENTE",
   "trials_passed": 7,
   "total_trials": 7,
   "metrics": {
     "build_pass": true,
     "functional_probes_rate": 1,
     "context_death_recovery": true,
-    "bypass_attacks_blocked": 0.5,
+    "bypass_attacks_blocked": 1,
     "semantic_mutations_invariant": 1,
     "topological_mutations_elevated": 1,
     "backend_differential_parity": 1,

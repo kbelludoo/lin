@@ -1,0 +1,97 @@
+{
+  "benchmark": "FIRE_TEST_004_JQ",
+  "version": "1.0.0",
+  "target_product": "jq (C Implementation v1.7.1) vs LIN-jq",
+  "title": "Complete Real-World CLI Product Benchmark: Original C jq vs LIN-jq",
+  "goal": "Re-implement the core jq query engine and streaming CLI in LIN Native Workflow (@LIN:L2w:1.0), compiling to native Rust/Zig/C binaries and proving 100% official query test suite parity, lower cold start, higher throughput on multi-GB JSON streams, lower peak RSS, and superior agent maintainability.",
+  "freeze_before_execution": true,
+  "jq_features_evaluated": [
+    {
+      "id": "identity_and_field",
+      "syntax": "., .foo, .foo.bar, .[0]",
+      "description": "Basic object indexing and key access"
+    },
+    {
+      "id": "array_operations",
+      "syntax": ".[] , .[2:5], length, map(.)",
+      "description": "Array slicing, iteration, and mapping"
+    },
+    {
+      "id": "pipe_and_composition",
+      "syntax": ".foo | .bar | map(.id)",
+      "description": "Composition pipelines and multi-stage queries"
+    },
+    {
+      "id": "filters_and_conditionals",
+      "syntax": "select(.age > 30), if .a then .b else .c end",
+      "description": "Predicates, boolean logic, and branching"
+    },
+    {
+      "id": "aggregations",
+      "syntax": "group_by(.), sort_by(.), unique, reduce",
+      "description": "Complex multi-pass aggregation algorithms"
+    },
+    {
+      "id": "streaming_mode",
+      "syntax": "jq --stream",
+      "description": "Streaming JSON token parser with zero full-document buffering"
+    }
+  ],
+  "evaluated_targets": [
+    {
+      "id": "ORIGINAL_C_JQ",
+      "label": "Original C jq v1.7.1",
+      "is_original": true
+    },
+    {
+      "id": "LIN_JQ_RUST",
+      "label": "LIN-jq (Lowered to Native Rust)",
+      "is_original": false
+    },
+    {
+      "id": "LIN_JQ_ZIG",
+      "label": "LIN-jq (Lowered to Native Zig)",
+      "is_original": false
+    },
+    {
+      "id": "LIN_JQ_C",
+      "label": "LIN-jq (Lowered to Native C99)",
+      "is_original": false
+    }
+  ],
+  "workloads": [
+    {
+      "id": "W1_COLD_START",
+      "name": "Cold Start & CLI Startup Latency (10k CLI invocations on micro JSON)"
+    },
+    {
+      "id": "W2_STREAMING_GB",
+      "name": "Large JSON Stream Processing (5.0 GB JSON Log Stream)"
+    },
+    {
+      "id": "W3_COMPLEX_QUERY",
+      "name": "Deep Nested Aggregation & Filtering (Twitter/GitHub API schema)"
+    },
+    {
+      "id": "W4_AGENT_MAINTENANCE",
+      "name": "Agent Maintenance & Invalidation (50 consecutive feature/fix PRs)"
+    }
+  ],
+  "frozen_criteria": {
+    "official_jq_test_suite_parity": "100.0%",
+    "json_spec_divergences": 0,
+    "over_invalidation_rate": "0.0%",
+    "under_invalidation_rate": "0.0%"
+  },
+  "repetitions": 10,
+  "metrics": [
+    "official_test_suite_pass_rate",
+    "cold_start_latency_ms",
+    "streaming_throughput_mb_sec",
+    "peak_memory_rss_mb",
+    "binary_size_kb",
+    "agent_maintenance_tokens",
+    "incremental_rebuild_latency_ms",
+    "over_invalidation_rate"
+  ]
+}

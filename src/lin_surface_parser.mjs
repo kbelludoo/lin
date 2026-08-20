@@ -10,8 +10,10 @@ export class LinSurfaceParser {
     let entryNode = null;
     let prevNodeId = null;
 
-    // Detectar declaração global ou local de efeitos
-    const hasGlobalPure = sourceText.includes("~effects{pure}") && !sourceText.includes("io") && !sourceText.includes("async");
+    // Detectar declaração formal de efeitos no cabeçalho (~effects{...})
+    const effectsMatch = sourceText.match(/~effects\{([^\}]+)\}/);
+    const declaredEffects = effectsMatch ? effectsMatch[1].split(",").map(e => e.trim()) : ["pure"];
+    const isDeclaredPureOnly = declaredEffects.includes("pure") && !declaredEffects.includes("io") && !declaredEffects.includes("async");
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i].trim();
@@ -61,17 +63,17 @@ export class LinSurfaceParser {
 
             const isIO = actionExpr.includes("http_") || actionExpr.includes("memory_") || actionExpr.includes("fs_");
             
-            // VERIFICAÇÃO ESTRITA DE INVARIANTE DE EFEITO:
-            // Se o módulo declarou ~effects{pure} estrito, qualquer expressão de corpo que execute IO é uma VIOLAÇÃO FORMAL!
-            const effects = isIO ? ["io", "async"] : ["pure"];
+            // Se o módulo declarou ~effects{pure} estrito, qualquer expressão de corpo com IO viola o contrato formal!
+            const nodeEffects = isIO ? ["io", "async"] : ["pure"];
+            const violatesPure = (isDeclaredPureOnly && isIO);
 
             workflowNodes[nodeId] = {
               id: nodeId,
               unit_name: unitName,
               inputs: [{ name: "in", type: "any" }],
               outputs: [{ name: "out", type: "any" }],
-              effects,
-              body_ast: { raw_expr: actionExpr, isIO, violatesPure: (hasGlobalPure && isIO) },
+              effects: nodeEffects,
+              body_ast: { raw_expr: actionExpr, isIO, violatesPure },
               control_op: controlOp,
               control_config: controlConfig
             };
@@ -99,7 +101,7 @@ export class LinSurfaceParser {
 
     const verification = LinWorkflowEngine.verifyWorkflow(dag);
     
-    // Adicionar verificação de escalada de efeito
+    // Adicionar verificação estrita de violação de efeito
     for (const [nid, node] of Object.entries(dag.nodes)) {
       if (node.body_ast && node.body_ast.violatesPure) {
         verification.valid = false;

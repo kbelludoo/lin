@@ -1,0 +1,45 @@
+@RULEL:LIN_LEGACY_REWRITE_001:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .c=contract .h=hypothesis .mtr=metric}
+.m{
+  name=LIN_LEGACY_REWRITE_001_LODASH
+  status=ACTIVE_CORE_BENCHMARK
+  domain="legacy_library_canonical_rewrite"
+  date=2026-08-20
+  purpose="Formally reimplement the core functions and workflows of Lodash (v4.17.21) in LIN @L2w:1.0 with 100% behavioral parity against the official Lodash test suite as oracle, multi-target emission (TS, Rust, Zig, C), and 100 continuous mutation benchmarks."
+}
+
+.h{
+  id=H_LEGACY_LODASH_001
+  claim="A canonical rewrite of Lodash modules in LIN Surface L2w preserves 100% functional parity against the official test suite, lowers to Unified Workflow IR, emits to TS, Rust, C, and Zig with identical semantics, achieves >60% token reduction vs original JS/V8, and maintains zero over-invalidation across 100 library mutations."
+}
+
+.c{
+  reference_oracle="lodash@4.17.21"
+  modules_evaluated=[
+    "chunk", "compact", "difference", "drop", "flatten", "intersection", "uniq",
+    "groupBy", "keyBy", "map", "filter", "reduce", "sortBy",
+    "get", "set", "has", "merge", "omit", "pick", "cloneDeep", "isEqual",
+    "debounce", "throttle", "once", "memoize",
+    "clamp", "sum", "mean", "min", "max"
+  ]
+  target_compilers=["TypeScript", "Rust", "C", "Zig"]
+}
+
+.mtr{
+  primary=[
+    "official_oracle_parity_rate",
+    "multi_backend_equivalence_rate",
+    "tokens_consumed_total",
+    "lines_of_code_ratio",
+    "memory_footprint_kb",
+    "cold_start_latency_ms",
+    "hierarchical_hash_invariance_rate",
+    "over_invalidation_count"
+  ]
+}
+
+.r{
+  R1=official_lodash_v4_17_21_is_the_immutable_oracle
+  R2=all_30_canonical_functions_must_pass_official_test_vectors
+  R3=code_must_be_authored_in_LIN_L2w_and_verified_through_Unified_IR
+}
