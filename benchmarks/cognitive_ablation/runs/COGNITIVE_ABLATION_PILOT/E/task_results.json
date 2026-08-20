@@ -1,0 +1,212 @@
+[
+  {
+    "task_id": "T001",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 259,
+    "total_latency_ms": 2559,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "3b93c93d5914990e",
+        "candidate_code": "!solve(input){\n    ?(input == \"RED\"){ ^\"GREEN\" }\n    ?(input == \"GREEN\"){ ^\"YELLOW\" }\n    ?(input == \"YELLOW\"){ ^\"RED\" }\n    :{ ^\"ERROR\" }\n}",
+        "tokens": 259,
+        "latency_ms": 2559,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  },
+  {
+    "task_id": "T007",
+    "outcome": "FF",
+    "attempts_count": 3,
+    "total_tokens": 1027,
+    "total_latency_ms": 13333,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "86342f2f9414a21d",
+        "candidate_code": "!solve(input){ \n    var result = [];\n    function flatten(arr) {\n        #(i=0; i<arr.length; i++){\n            if(Array.isArray(arr[i])){\n                flatten(arr[i]);\n            } else {\n                result.push(arr[i]);\n            }\n        }\n    }\n    flatten(input);\n    return ^result;\n}",
+        "tokens": 256,
+        "latency_ms": 3257,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": false,
+        "trauma": {
+          "trauma_id": "TR_ORACLE_b61c8431",
+          "candidate_hash": "86342f2f9414a21d",
+          "attempt": 1,
+          "stage": "RUNTIME_ERROR",
+          "violation_class": "ORACLE_ASSERTION_FAIL",
+          "location": "oracle",
+          "constraint_rule": "RULE_ORACLE_PASS",
+          "invariant_broken": "ORACLE_SPEC_MISMATCH",
+          "remedy_hint": "Unexpected token 'return'"
+        }
+      },
+      {
+        "attempt": 2,
+        "candidate_hash": "d5e97dafbcd398d1",
+        "candidate_code": "!solve(input){\n  var result = [];\n  #(i=0; i<input.length; i++){\n    if(?(typeof input[i] == \"object\") && !(input[i] instanceof Array)){\n      ?(input[i] != null){\n        result.push(input[i]);\n      }\n    } else if(?(input[i] instanceof Array)){\n      var flattened = solve(input[i]);\n      result = result.concat(flattened);\n    } else {\n      result.push(input[i]);\n    }\n  }\n  ^result;\n}",
+        "tokens": 386,
+        "latency_ms": 5030,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": false,
+        "trauma": {
+          "trauma_id": "TR_ORACLE_c66a3ea4",
+          "candidate_hash": "d5e97dafbcd398d1",
+          "attempt": 2,
+          "stage": "RUNTIME_ERROR",
+          "violation_class": "ORACLE_ASSERTION_FAIL",
+          "location": "oracle",
+          "constraint_rule": "RULE_ORACLE_PASS",
+          "invariant_broken": "ORACLE_SPEC_MISMATCH",
+          "remedy_hint": "Unexpected token '?'"
+        }
+      },
+      {
+        "attempt": 3,
+        "candidate_hash": "d5e97dafbcd398d1",
+        "candidate_code": "!solve(input){\n  var result = [];\n  #(i=0; i<input.length; i++){\n    if(?(typeof input[i] == \"object\") && !(input[i] instanceof Array)){\n      ?(input[i] != null){\n        result.push(input[i]);\n      }\n    } else if(?(input[i] instanceof Array)){\n      var flattened = solve(input[i]);\n      result = result.concat(flattened);\n    } else {\n      result.push(input[i]);\n    }\n  }\n  ^result;\n}",
+        "tokens": 385,
+        "latency_ms": 5046,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": false,
+        "trauma": {
+          "trauma_id": "TR_ORACLE_ed584b61",
+          "candidate_hash": "d5e97dafbcd398d1",
+          "attempt": 3,
+          "stage": "RUNTIME_ERROR",
+          "violation_class": "ORACLE_ASSERTION_FAIL",
+          "location": "oracle",
+          "constraint_rule": "RULE_ORACLE_PASS",
+          "invariant_broken": "ORACLE_SPEC_MISMATCH",
+          "remedy_hint": "Unexpected token '?'"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "T013",
+    "outcome": "FF",
+    "attempts_count": 3,
+    "total_tokens": 1058,
+    "total_latency_ms": 14716,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "202a5ffb384b12ae",
+        "candidate_code": "!solve(input){ \n    let sorted = [];\n    #(i=0; i<input.length; i++){\n        let min = input[i];\n        let minIndex = i;\n        #(j=i+1; j<input.length; j++){\n            ?(input[j] < min){\n                min = input[j];\n                minIndex = j;\n            }\n        }\n        sorted.push(min);\n        input[minIndex] = Infinity;\n    }\n    return sorted;\n}",
+        "tokens": 277,
+        "latency_ms": 4388,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": false,
+        "trauma": {
+          "trauma_id": "TR_ORACLE_28e4d428",
+          "candidate_hash": "202a5ffb384b12ae",
+          "attempt": 1,
+          "stage": "RUNTIME_ERROR",
+          "violation_class": "ORACLE_ASSERTION_FAIL",
+          "location": "oracle",
+          "constraint_rule": "RULE_ORACLE_PASS",
+          "invariant_broken": "ORACLE_SPEC_MISMATCH",
+          "remedy_hint": "Falha no caso de teste: {\"input\":[null,null,null,null],\"expected\":[1,2,3,4]}"
+        }
+      },
+      {
+        "attempt": 2,
+        "candidate_hash": "242df7c97c88e33e",
+        "candidate_code": "!solve(input){ \n  let sorted = [];\n  #(i=0; i<input.length; i++){\n    #(j=0; j<sorted.length; j++){\n      if(input[i] < sorted[j]){\n        #(k=sorted.length; k>j; k--){\n          sorted[k] = sorted[k-1];\n        }\n        sorted[j] = input[i];\n        break;\n      }\n    }\n    if(j == sorted.length){\n      sorted.push(input[i]);\n    }\n  }\n  ^sorted;\n}",
+        "tokens": 395,
+        "latency_ms": 5071,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": false,
+        "trauma": {
+          "trauma_id": "TR_ORACLE_1abc8fd5",
+          "candidate_hash": "242df7c97c88e33e",
+          "attempt": 2,
+          "stage": "RUNTIME_ERROR",
+          "violation_class": "ORACLE_ASSERTION_FAIL",
+          "location": "oracle",
+          "constraint_rule": "RULE_ORACLE_PASS",
+          "invariant_broken": "ORACLE_SPEC_MISMATCH",
+          "remedy_hint": "j is not defined"
+        }
+      },
+      {
+        "attempt": 3,
+        "candidate_hash": "b15f1e71c0df0b96",
+        "candidate_code": "!solve(input){  \n  var output = [];  \n  #(i=0; i<input.length; i++){  \n    output.push(input[i]);  \n  }  \n  #(i=0; i<output.length-1; i++){  \n    #(j=i+1; j<output.length; j++){  \n      ?(output[i] > output[j]){  \n        var temp = output[i];  \n        output[i] = output[j];  \n        output[j] = temp;  \n      }  \n    }  \n  }  \n  ^output;  \n}",
+        "tokens": 386,
+        "latency_ms": 5257,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": false,
+        "trauma": {
+          "trauma_id": "TR_ORACLE_ea82dee4",
+          "candidate_hash": "b15f1e71c0df0b96",
+          "attempt": 3,
+          "stage": "RUNTIME_ERROR",
+          "violation_class": "ORACLE_ASSERTION_FAIL",
+          "location": "oracle",
+          "constraint_rule": "RULE_ORACLE_PASS",
+          "invariant_broken": "ORACLE_SPEC_MISMATCH",
+          "remedy_hint": "Falha no caso de teste: {\"input\":[null,null,null,null],\"expected\":[1,2,3,4]}"
+        }
+      }
+    ]
+  },
+  {
+    "task_id": "T019",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 327,
+    "total_latency_ms": 5777,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "d01acb593bc6cd54",
+        "candidate_code": "!solve(input){ \n    let arr = input.arr; \n    let target = input.target; \n    let left = 0; \n    let right = arr.length - 1; \n    while (left <= right) { \n        let mid = Math.floor((left + right) / 2); \n        if (arr[mid] === target) { \n            return mid; \n        } else if (arr[mid] < target) { \n            left = mid + 1; \n        } else { \n            right = mid - 1; \n        } \n    } \n    return -1; \n}",
+        "tokens": 327,
+        "latency_ms": 5777,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  },
+  {
+    "task_id": "T025",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 306,
+    "total_latency_ms": 5190,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "1c76135430b77072",
+        "candidate_code": "!solve(input){\n  var min = input[0];\n  var max = input[0];\n  var sum = 0;\n  var len = input.length;\n  \n  #(i=0; i<len; i++){\n    if(input[i] < min){\n      min = input[i];\n    }\n    if(input[i] > max){\n      max = input[i];\n    }\n    sum += input[i];\n  }\n  \n  var avg = sum / len;\n  \n  ^{ min: min, max: max, sum: sum, avg: avg }\n}",
+        "tokens": 306,
+        "latency_ms": 5190,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,8 @@
+{
+  "repair_attempts": 10,
+  "repair_successes": 3,
+  "repair_failures": 7,
+  "rules_applied": {
+    "REMOVE_REDUNDANT_RETURN_BEFORE_LIN_RETURN_SIGIL": 5
+  }
+}

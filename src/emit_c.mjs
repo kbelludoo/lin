@@ -49,9 +49,13 @@ function emitStmts(stmts, indent) {
   return lines;
 }
 
-function cTypeFor(id) {
+function cTypeFor(id, paramRaw) {
+  const s = String(paramRaw || id || '');
+  if (/:string\b/i.test(s) || /:str\b/i.test(s)) return 'const char *';
+  if (/:bool\b/i.test(s) || /^(is_|has_|active|valid|flag)/i.test(s)) return 'bool';
+  if (/:num\b/i.test(s) || /:int\b/i.test(s)) return 'long long';
+  if (isStringishId(id) || /^(str|fmt|s$|ch|pad|key|name|tag|user|badge|msg)/i.test(String(id || '').replace(/_+$/, ''))) return 'const char *';
   if (isNumishId(id)) return 'long long';
-  if (isStringishId(id) || /^(str|fmt|s|key|name)/i.test(String(id || '').replace(/_+$/, ''))) return 'const char *';
   return 'long long';
 }
 
@@ -69,6 +73,7 @@ export function emitC(liaText, opts = {}) {
     'static void _lia_set(long long o, const char *k) { (void)o; (void)k; }',
     'static int _lia_isfinite(long long x) { (void)x; return 1; }',
     'static int _lia_isnan(long long x) { (void)x; return 0; }',
+    'static long long _lia_round(long long x) { return x; }',
     'static char *_lia_cat_c(const char *a, const char *b) {',
     '  const char *x = a ? a : "";',
     '  const char *y = b ? b : "";',
@@ -113,18 +118,28 @@ export function emitC(liaText, opts = {}) {
     }
     const assigned = collectAssignedIds(stmts);
     const paramList = params.length
-      ? params.map((p) => `${cTypeFor(p)} ${safeEmitId(p)}`).join(', ')
+      ? params.map((p, idx) => {
+          const rawP = (fn.params || '').split(',')[idx] || p;
+          return `${cTypeFor(p, rawP)} ${safeEmitId(p)}`;
+        }).join(', ')
       : 'void';
     const locals = assigned.filter((id) => !params.includes(id));
     const decls = locals.map((id) => {
-      const t = cTypeFor(id);
+      let t = cTypeFor(id);
+      for (const st of stmts) {
+        if (st.type === 'assign' && st.id === id) {
+          if (/_lia_cat|_msg|_badge|str|"/.test(String(st.expr || ''))) t = 'const char *';
+        }
+      }
       return `  ${t} ${id} = ${t.includes('char') ? 'NULL' : '0'};`;
     });
     const cacheStub = /\bcache\b/.test(fn.body) ? ['  const char *cache[64] = {0};'] : [];
     const bodyLines = [...cacheStub, ...decls, ...emitNilDefaults(defaults, 'c'), ...emitStmts(stmts, 1)];
-    const retIsStr = /asprintf|_lia_sprintf|bytes_to_string/.test(fn.name + fn.body)
+    const retIsStr = /asprintf|_lia_sprintf|bytes_to_string|_msg|_badge|greet|format|classify/i.test(fn.name + fn.body)
       || fn.name.includes('to_string') || fn.name.includes('ToString')
-      || /leftPad|pad|join|trim/i.test(fn.name);
+      || /leftPad|pad|join|trim|badge|format|greet|access|classify/i.test(fn.name)
+      || /return\s+["'`]/.test(fn.body)
+      || /\^["'`]/.test(fn.body);
     const ret = retIsStr ? 'const char *' : 'long long';
     parts.push(`${ret} ${cName}(${paramList}) {\n${bodyLines.join('\n')}\n}`);
   }

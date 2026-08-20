@@ -1,0 +1,17 @@
+{
+  "total_tasks": 5,
+  "initial_pass_p1": 3,
+  "initial_fail_f1": 2,
+  "recovered_pass_pr": 1,
+  "final_fail_ff": 1,
+  "pass_at_1": 0.6,
+  "pass_at_k": 0.8,
+  "recovery_success_rate": 0.5,
+  "avg_tokens_per_pass": 358.25,
+  "avg_attempts_per_pass": 1.25,
+  "error_repetition_rate": 0,
+  "counters": {
+    "repeated_error_count": 0,
+    "total_retry_failures": 0
+  }
+}

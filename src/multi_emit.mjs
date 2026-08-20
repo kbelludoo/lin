@@ -13,6 +13,8 @@ import { emitGo } from './emit_go.mjs';
 import { emitRust } from './emit_rust.mjs';
 import { emitC } from './emit_c.mjs';
 import { emitJava } from './emit_java.mjs';
+import { emitZig } from './emit_zig.mjs';
+import { emitCs } from './emit_cs.mjs';
 import { TARGETS, DEFAULT_EMIT_TARGET, defaultOutPath, STUB_TARGETS, REAL_TARGETS } from './emit_shared.mjs';
 
 export { TARGETS, DEFAULT_EMIT_TARGET, defaultOutPath, REAL_TARGETS };
@@ -40,6 +42,8 @@ export function compileLia(liaText, opts = {}) {
   else if (target === 'go') result = emitGo(liaText, opts);
   else if (target === 'c') result = emitC(liaText, opts);
   else if (target === 'java') result = emitJava(liaText, opts);
+  else if (target === 'zig') result = emitZig(liaText, opts);
+  else if (target === 'cs' || target === 'csharp') result = emitCs(liaText, opts);
   else result = emitRust(liaText, opts);
   if (formalReport) result = { ...result, formalReport };
   return result;

@@ -70,7 +70,10 @@ function emitStmts(stmts, indent, types, retType) {
       lines.push(`${pad}while ${rewriteExpr(st.cond, 'rust')} {`);
       lines.push(...emitStmts(st.body, indent + 1, types, retType));
       if (stepInc) lines.push(`${pad}    ${stepInc[1]} += 1;`);
-      else lines.push(`${pad}    ${rewriteExpr(st.step, 'rust')};`);
+      else if (/^[A-Za-z_][\w]*\s*=/.test(st.step)) {
+        const sm = st.step.match(/^([A-Za-z_][\w]*)\s*=\s*(.+)$/);
+        lines.push(assignOpLine(sm[1], '=', sm[2], 'rust', `${pad}    `, types));
+      } else lines.push(`${pad}    ${rewriteExpr(st.step, 'rust')};`);
       lines.push(`${pad}}`);
     } else if (st.type === 'while') {
       const inc = splitPrefixIncCond(st.cond);
@@ -106,9 +109,14 @@ function emitStmts(stmts, indent, types, retType) {
   return lines;
 }
 
-/** Clean a LIN type annotation for Rust: map int/bool and strip refinement braces (int{!=0} -> i64). */
+/** Clean a LIN type annotation for Rust: map int/bool/num/str and strip refinement braces (int{!=0} -> i64). */
 function cleanRustType(rawT) {
-  return String(rawT || '').replace(/\{[^}]*\}/g, '').replace(/\bint\b/g, 'i64').replace(/\bbool\b/g, 'bool').trim();
+  return String(rawT || '')
+    .replace(/\{[^}]*\}/g, '')
+    .replace(/\b(num|int)\b/g, 'i64')
+    .replace(/\b(string|str)\b/g, 'impl ToString')
+    .replace(/\bbool\b/g, 'bool')
+    .trim();
 }
 
 function rustType(id, inferred) {
@@ -243,7 +251,7 @@ export function emitRust(liaText, opts = {}) {
     const name = rustFnName(fn.name);
     // Extract generic params from fn.generics like "<T>" or "<T,U>" if present
     const genDecl = fn.generics ? fn.generics.slice(1, -1) : null; // "T" or "T,U"
-    const rawNames = rawParamNames(fn.params);
+    const rawNames = (fn.params || '').split(',').map(s => s.trim());
     const { names: params } = parseParamList(fn.params);
     const cleanParamNames = params.map((p) => safeEmitId(String(p).split(':')[0].trim()));
     // Build Rust generic param declaration for function signature
@@ -253,6 +261,8 @@ export function emitRust(liaText, opts = {}) {
       const cleanName = cleanParamNames[i];
       if (orig.includes(':')) {
         const typePart = cleanRustType(orig.split(':')[1].trim());
+        if (typePart === 'i64' || typePart === 'int') return `mut ${cleanName}: i64`;
+        if (typePart === 'bool') return `${cleanName}: bool`;
         return `${cleanName}: ${typePart}`;
       }
       if (genDecl && genDecl.split(',').map(g=>g.trim()).includes(fn.returnType)) {
@@ -266,7 +276,13 @@ export function emitRust(liaText, opts = {}) {
     const coerce = [];
     for (let i = 0; i < params.length; i++) {
       const orig = rawNames[i] || params[i];
-      if (orig.includes(':')) continue;
+      if (orig.includes(':')) {
+        const typePart = cleanRustType(orig.split(':')[1].trim());
+        if (typePart.includes('ToString') || typePart.includes('str') || typePart.includes('String')) {
+          coerce.push(`    let mut ${cleanParamNames[i]} = ${cleanParamNames[i]}.to_string();`);
+        }
+        continue;
+      }
       if (genDecl && genDecl.split(',').map(g=>g.trim()).includes(fn.returnType)) continue;
       if (!(isNumishId(orig) && !/^ms$/i.test(orig)) && !isBoolishId(orig)) {
         coerce.push(`    let mut ${cleanParamNames[i]} = ${cleanParamNames[i]}.to_string();`);

@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, isStringishId, isBoolishId, parseParamList, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 
 function emitStmts(stmts, indent) {
@@ -11,22 +11,22 @@ function emitStmts(stmts, indent) {
   const lines = [];
   for (const st of stmts) {
     if (st.type === 'assign') {
-      lines.push(assignOpLine(st.id, st.op, st.expr, 'java', pad));
+      lines.push(assignOpLine(st.id, st.op, st.expr, 'cs', pad));
     } else if (st.type === 'return') {
-      lines.push(`${pad}return ${rewriteExpr(st.expr, 'java')};`);
+      lines.push(`${pad}return ${rewriteExpr(st.expr, 'cs')};`);
     } else if (st.type === 'throw') {
-      lines.push(emitThrowLine(st.expr, 'java', pad, rewriteExpr));
+      lines.push(emitThrowLine(st.expr, 'cs', pad, rewriteExpr));
     } else if (st.type === 'expr') {
       if (/^break\b/.test(st.expr.trim())) lines.push(`${pad}break;`);
-      else if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'java', pad, rewriteExpr));
+      else if (/^throw\b/.test(st.expr.trim())) lines.push(emitThrowLine(st.expr, 'cs', pad, rewriteExpr));
       else if (/^[A-Za-z_][\w]*$/.test(st.expr.trim())) continue;
-      else if (isNoopExpr(st.expr) || isNoopExpr(rewriteExpr(st.expr, 'java'))) continue;
-      else lines.push(`${pad}${rewriteExpr(st.expr, 'java')};`);
+      else if (isNoopExpr(st.expr) || isNoopExpr(rewriteExpr(st.expr, 'cs'))) continue;
+      else lines.push(`${pad}${rewriteExpr(st.expr, 'cs')};`);
     } else if (st.type === 'if') {
-      lines.push(`${pad}if (${emitCond(st.cond, 'java')}) {`);
+      lines.push(`${pad}if (${emitCond(st.cond, 'cs')}) {`);
       lines.push(...emitStmts(st.then, indent + 1));
       for (const e of st.elseIf || []) {
-        lines.push(`${pad}} else if (${emitCond(e.cond, 'java')}) {`);
+        lines.push(`${pad}} else if (${emitCond(e.cond, 'cs')}) {`);
         lines.push(...emitStmts(e.body, indent + 1));
       }
       if (st.else) {
@@ -36,17 +36,52 @@ function emitStmts(stmts, indent) {
       lines.push(`${pad}}`);
     } else if (st.type === 'for') {
       lines.push(
-        `${pad}for (${rewriteExpr(st.init, 'java')}; ${emitCond(st.cond, 'java')}; ${rewriteExpr(st.step, 'java')}) {`,
+        `${pad}for (${rewriteExpr(st.init, 'cs')}; ${emitCond(st.cond, 'cs')}; ${rewriteExpr(st.step, 'cs')}) {`,
       );
       lines.push(...emitStmts(st.body, indent + 1));
       lines.push(`${pad}}`);
     } else if (st.type === 'while') {
-      lines.push(`${pad}while (${emitCond(st.cond, 'java')}) {`);
+      lines.push(`${pad}while (${emitCond(st.cond, 'cs')}) {`);
       lines.push(...emitStmts(st.body, indent + 1));
       lines.push(`${pad}}`);
     }
   }
   return lines;
+}
+
+function csType(id, inferred, orig) {
+  const s = String(orig || id || '');
+  if (/:num\b|:int\b/i.test(s)) return 'long';
+  if (/:bool\b/i.test(s)) return 'bool';
+  if (/:string\b|:str\b/i.test(s)) return 'string';
+  if (isBoolishId(id)) return 'bool';
+  if (isNumishId(id)) return 'long';
+  if (isStringishId(id)) return 'string';
+  if (inferred && inferred.get(id) === 'int') return 'long';
+  if (inferred && inferred.get(id) === 'bool') return 'bool';
+  if (inferred && inferred.get(id) === 'string') return 'string';
+  return 'object';
+}
+
+function csRetType(fn, stmts) {
+  if (isBoolFnName(fn.name)) return 'bool';
+  const inf = inferTypes(stmts);
+  const rets = [];
+  const walk = (list) => {
+    for (const st of list || []) {
+      if (st.type === 'return') rets.push(String(st.expr || '').trim());
+      if (st.then) walk(st.then);
+      if (st.else) walk(st.else);
+      if (st.body) walk(st.body);
+      for (const e of st.elseIf || []) walk(e.body);
+    }
+  };
+  walk(stmts);
+  if (!rets.length) return 'object';
+  if (rets.every((t) => /^(true|false)$/.test(t) || /(==|!=|<=|>=|<|>)/.test(t))) return 'bool';
+  if (rets.every((t) => /^-?\d+$/.test(t) || inf.get(t) === 'int' || isNumishId(t))) return 'long';
+  if (rets.every((t) => /^["']/.test(t) || inf.get(t) === 'string' || isStringishId(t) || /_lia_cat|_lia_str/.test(t))) return 'string';
+  return 'object';
 }
 
 export function emitCs(liaText, opts = {}) {
@@ -64,7 +99,7 @@ export function emitCs(liaText, opts = {}) {
     '    public static bool _lia_isfinite(object x) => true;',
     '    public static bool _lia_empty(object s) => s == null || string.IsNullOrEmpty(s.ToString());',
     '    public static long _lia_abs(object x) { try { return Math.Abs(Convert.ToInt64(x)); } catch { return 0; } }',
-    '    public static long _lia_round(object x) => _lia_abs(x);',
+    '    public static long _lia_round(object x) => _lia_num(x);',
     '    public static string _lia_str(object x) => x?.ToString() ?? "";',
     '    public static string _lia_at(object s, object i) { string t = _lia_str(s); int n = (int)_lia_num(i); return (n < 0 || n >= t.Length) ? "" : t.Substring(n, 1); }',
     '    public static long _lia_num(object x) { try { return Convert.ToInt64(x); } catch { return 0; } }',
@@ -85,9 +120,10 @@ export function emitCs(liaText, opts = {}) {
   ];
 
   for (const fn of prog.fns) {
+    const rawNames = (fn.params || '').split(',').map(s => s.trim());
     const { names: params } = parseParamList(fn.params);
     const csName = safeEmitId(fn.name);
-    if (opts.stubRuntime !== false || isJsRuntimeOnly(fn.body, fn.name)) {
+    if (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false) {
       parts.push(`    public static object ${csName}() => throw new NotSupportedException("JS-runtime-only");`);
       continue;
     }
@@ -96,12 +132,20 @@ export function emitCs(liaText, opts = {}) {
       parts.push(`    public static object ${csName}() => throw new NotSupportedException("JS-runtime-only");`);
       continue;
     }
-    const paramList = params.map((p) => `object ${safeEmitId(p)} = null`).join(', ');
-    parts.push(`    public static object ${csName}(${paramList}) {`);
+    const inferred = inferTypes(stmts);
+    const paramList = params.map((p, i) => `${csType(p, inferred, rawNames[i])} ${safeEmitId(p)}`).join(', ');
+    const ret = csRetType(fn, stmts);
+    parts.push(`    public static ${ret} ${csName}(${paramList}) {`);
     const assigned = collectAssignedIds(stmts).filter((id) => !params.includes(id) && id !== 'cache').map(safeEmitId);
-    for (const id of assigned) parts.push(`        object ${id} = null;`);
+    for (const id of assigned) {
+      const t = csType(id, inferred);
+      const init = t === 'long' ? '0L' : t === 'bool' ? 'false' : t === 'string' ? '""' : 'null';
+      parts.push(`        ${t} ${id} = ${init};`);
+    }
     parts.push(...emitStmts(stmts, 2));
-    parts.push('        return null;');
+    if (!/\breturn\b/.test(emitStmts(stmts, 2).join('\n'))) {
+      parts.push(ret === 'bool' ? '        return false;' : ret === 'long' ? '        return 0L;' : ret === 'string' ? '        return "";' : '        return null;');
+    }
     parts.push('    }');
   }
 

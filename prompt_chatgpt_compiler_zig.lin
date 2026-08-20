@@ -1,0 +1,10 @@
+@LIN:L1c:0.2
+^schema_once ^ops=chat+compiler
+~G{?=if #=for ^=ret :else}
+!ask(){
+  ?(topic==null){
+    ^return "Com base em /home/k/Downloads/lin-master, crie um plano passo a passo para implementar um compilador LIN que emite Zig. Inclua: lexer, parser, semantic analysis, canonical IR, Zig emitter, exemplo mínimo e testes.";
+  }
+  ^return "continue";
+}
+=ex{ask}

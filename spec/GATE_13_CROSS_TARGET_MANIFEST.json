@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0.0",
+  "name": "GATE_13_CROSS_TARGET_ZIG_INVARIANCE_MANIFEST",
+  "generated_at": "2026-08-19T20:55:00-03:00",
+  "experiment": {
+    "title": "Cross-Target Backend Transition Invariance (JS -> Zig)",
+    "thesis": "Semantic identity, contracts, and DAG invalidation remain strictly invariant under execution backend transition",
+    "states": {
+      "E0": "LIN -> Target JS (Baseline)",
+      "E1": "LIN -> Target Zig (Experimental Multi-Emit)",
+      "E2": "LIN -> Target Zig (Default Target Promotion)"
+    },
+    "invariants_verified": [
+      "H_source(E0) == H_source(E1) == H_source(E2)",
+      "H_contract(E0) == H_contract(E1) == H_contract(E2)",
+      "DAG(E0) == DAG(E1) == DAG(E2)",
+      "Observable(JS) == Observable(Zig)",
+      "nucleus_untouched == true",
+      "FN == 0 (100% Soundness)",
+      "FP == 0 (100% Precision)"
+    ]
+  },
+  "corpus_size": 5,
+  "mutation_trials": 6,
+  "results": {
+    "identity_invariance_rate": "100.00%",
+    "cross_target_parity_rate": "100.00%",
+    "soundness_recall": "100.00%",
+    "precision": "100.00%",
+    "under_invalidation": "0.00%",
+    "over_invalidation": "0.00%",
+    "accuracy": "100.00%",
+    "nucleus_audit": "PASSED_UNTOUCHED"
+  }
+}

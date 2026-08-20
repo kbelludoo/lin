@@ -3,7 +3,10 @@
  */
 function transpile(code) {
   let clean = code.replace(/@LIN:[^\n]+\n/g, '').replace(/=ex\{[^\}]+\}/g, '').trim();
-  clean = clean.replace(/!([a-zA-Z0-9_]+)\(([^)]*)\)\s*\{/g, 'function $1($2){');
+  const assigned = [...new Set([...clean.matchAll(/(?:^|[;{\n])\s*([A-Za-z_$][\w$]*)\s*=/g)].map(m => m[1]))]
+    .filter(id => !['return', 'if', 'for', 'else', 'function', 'var', 'let', 'const'].includes(id));
+  const varDecl = assigned.length > 0 ? `var ${assigned.join(',')};` : '';
+  clean = clean.replace(/!([a-zA-Z0-9_]+)\(([^)]*)\)\s*\{/g, `function $1($2){${varDecl}`);
   clean = clean.replace(/\^([^;\n\}]+)/g, 'return $1');
 
   let out = '';

@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, safeEmitId, emitNameMap, isBoolFnName } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, splitPrefixIncCond, emitCond, assignOpLine, isNumishId, isStringishId, isBoolishId, inferTypes, parseParamList, emitNilDefaults, isNoopExpr, collectFreeHostIds, emitFreeHostDecls, safeEmitId, emitNameMap, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine, rewriteSiblingCalls } from './emit_rewrite.mjs';
 import { rawParamNames, rewriteSafeParamIds } from './emit_safe_ids_load.mjs';
 import { isQualityFnSet, wantSafeCompareMain, formatQualityMain } from './emit_entry_main_load.mjs';
@@ -64,20 +64,43 @@ function emitStmts(stmts, indent, types) {
   return lines;
 }
 
+function goRetType(fn, stmts) {
+  if (isBoolFnName(fn.name)) return 'bool';
+  const inf = inferTypes(stmts);
+  const rets = [];
+  const walk = (list) => {
+    for (const st of list || []) {
+      if (st.type === 'return') rets.push(String(st.expr || '').trim());
+      if (st.then) walk(st.then);
+      if (st.else) walk(st.else);
+      if (st.body) walk(st.body);
+      for (const e of st.elseIf || []) walk(e.body);
+    }
+  };
+  walk(stmts);
+  if (!rets.length) return 'interface{}';
+  if (rets.every((t) => /^(true|false)$/.test(t) || /(==|!=|<=|>=|<|>)/.test(t))) return 'bool';
+  if (rets.every((t) => /^-?\d+$/.test(t) || inf.get(t) === 'int' || isNumishId(t))) return 'int64';
+  if (rets.every((t) => /^["']/.test(t) || inf.get(t) === 'string' || isStringishId(t) || /_lia_cat/.test(t))) return 'string';
+  return 'interface{}';
+}
+
 function goType(id, types, body) {
   if (/^(match|unit|matchUnit|value|options)$/i.test(id)) return 'interface{}';
   if (types && types.has(id)) {
     const t = types.get(id);
-    if (t === 'int') return 'int';
+    if (t === 'int') return 'int64';
     if (t === 'bool') return 'bool';
+    if (t === 'string') return 'string';
     return 'interface{}';
   }
   const b = String(body || '');
-  if (new RegExp(`\\b${id}\\b\\s*=\\s*[-+]?\\d+`).test(b)) return 'int';
-  if (new RegExp(`\\b${id}\\b\\s*(\\|=|\\^=|-=)`).test(b)) return 'int';
-  if (/Abs$|^(n|ms)$/i.test(id)) return 'int';
-  if (/mask|step|cutoff|index|accepted|target|offset|poolNext|poolOffset|alphabetLen|charCodes/i.test(id)) return 'int';
-  return isNumishId(id) ? 'int' : 'interface{}';
+  if (new RegExp(`\\b${id}\\b\\s*=\\s*[-+]?\\d+`).test(b)) return 'int64';
+  if (new RegExp(`\\b${id}\\b\\s*(\\|=|\\^=|-=)`).test(b)) return 'int64';
+  if (/Abs$|^(n|ms)$/i.test(id)) return 'int64';
+  if (/mask|step|cutoff|index|accepted|target|offset|poolNext|poolOffset|alphabetLen|charCodes/i.test(id)) return 'int64';
+  if (isStringishId(id)) return 'string';
+  return isNumishId(id) ? 'int64' : 'interface{}';
 }
 
 function goDeclLocals(locals, types, body) {
@@ -95,9 +118,23 @@ export function emitGo(liaText, opts = {}) {
   }
   const names = emitNameMap(prog.fns);
   for (const fn of prog.fns) {
+    const rawNames = (fn.params || '').split(',').map(s => s.trim());
     const { names: params, defaults } = parseParamList(fn.params);
     const goName = names[fn.name];
-    const paramList = params.map((p) => `${safeEmitId(p)} interface{}`).join(', ');
+    const paramList = params.map((p, i) => {
+      const orig = rawNames[i] || p;
+      const cleanName = safeEmitId(p);
+      if (orig.includes(':')) {
+        const typePart = orig.split(':')[1].trim();
+        if (/^(num|int)/i.test(typePart)) return `${cleanName} int64`;
+        if (/^(bool)/i.test(typePart)) return `${cleanName} bool`;
+        if (/^(string|str)/i.test(typePart)) return `${cleanName} string`;
+      }
+      if (isNumishId(orig)) return `${cleanName} int64`;
+      if (isBoolishId(orig)) return `${cleanName} bool`;
+      if (isStringishId(orig)) return `${cleanName} string`;
+      return `${cleanName} interface{}`;
+    }).join(', ');
     const bodySrc = rewriteSafeParamIds(rewriteSiblingCalls(fn.body, names), rawParamNames(fn.params));
     if (fileHosty || (isJsRuntimeOnly(fn.body, fn.name) && opts.stubRuntime !== false)) {
       const keep = params.map((p) => `\t_ = ${safeEmitId(p)}`).join('\n');
@@ -122,9 +159,9 @@ export function emitGo(liaText, opts = {}) {
     const declLocals = locals.filter((id) => id !== 'cache' && !freeHostIds.includes(id));
     const keepUnused = declLocals.map((id) => `\t_ = ${id}`);
     const emitted = emitStmts(stmts, 1, inferredTypes);
-    const retType = isBoolFnName(fn.name) ? 'bool' : 'interface{}';
+    const retType = goRetType(fn, stmts);
     if (!/\breturn\b/.test(emitted.join('\n'))) {
-      emitted.push(retType === 'bool' ? '\treturn false' : '\treturn nil');
+      emitted.push(retType === 'bool' ? '\treturn false' : retType === 'int64' ? '\treturn 0' : retType === 'string' ? '\treturn ""' : '\treturn nil');
     }
     const bodyLines = [...cacheStub, ...freeHost, ...emitNilDefaults(defaults, 'go'), ...goDeclLocals(declLocals, inferredTypes, fn.body), ...keepUnused, ...emitted];
     parts.push(`func ${goName}(${paramList}) ${retType} {\n${bodyLines.join('\n')}\n}`);
@@ -149,37 +186,37 @@ func _lia_typeof(x interface{}) string {
 func _lia_at(s interface{}, i interface{}) string {
 	str := _lia_str(s)
 	n := _lia_num(i)
-	if n < 0 || n >= len(str) { return "" }
+	if n < 0 || n >= int64(len(str)) { return "" }
 	return str[n:n+1]
 }
-func _lia_code_at(s interface{}, i interface{}) int {
+func _lia_code_at(s interface{}, i interface{}) int64 {
 	str := _lia_str(s)
 	n := _lia_num(i)
-	if n < 0 || n >= len(str) { return 0 }
-	return int(str[n])
+	if n < 0 || n >= int64(len(str)) { return 0 }
+	return int64(str[n])
 }
 func _lia_isfinite(x interface{}) bool { return true }
 func _lia_isnan(x interface{}) bool { return false }
 func _lia_falsy(x interface{}) bool {
-	if x == nil || x == false || x == 0 || x == "" { return true }
+	if x == nil || x == false || x == int64(0) || x == 0 || x == "" { return true }
 	return false
 }
-func _lia_len(x interface{}) int {
+func _lia_len(x interface{}) int64 {
 	switch v := x.(type) {
 	case string:
-		return len(v)
+		return int64(len(v))
 	default:
 		return 0
 	}
 }
-func _lia_num(x interface{}) int {
+func _lia_num(x interface{}) int64 {
 	switch v := x.(type) {
 	case int:
-		return v
+		return int64(v)
 	case int64:
-		return int(v)
+		return v
 	case float64:
-		return int(v)
+		return int64(v)
 	default:
 		return 0
 	}
@@ -188,6 +225,10 @@ func _lia_obj(_ ...interface{}) interface{} { return nil }
 func _lia_or(a interface{}, b interface{}) interface{} {
 	if _lia_falsy(a) { return b }
 	return a
+}
+func _lia_or_str(a string, b string) string {
+	if a != "" { return a }
+	return b
 }
 func _lia_cat(a interface{}, b interface{}) string { return _lia_str(a) + _lia_str(b) }
 func _lia_str(x interface{}) string {
@@ -211,12 +252,12 @@ func _lia_str(x interface{}) string {
 		return ""
 	}
 }
-func _lia_abs(x interface{}) int {
+func _lia_abs(x interface{}) int64 {
 	n := _lia_num(x)
 	if n < 0 { return -n }
 	return n
 }
-func _lia_round(x interface{}) int { return _lia_num(x) }
+func _lia_round(x interface{}) int64 { return _lia_num(x) }
 func _lia_get(_ interface{}, _ string) interface{} { return nil }
 func _lia_includes(_ interface{}, _ interface{}) bool { return false }
 func _lia_re_exec(_ interface{}) string { return "" }

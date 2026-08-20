@@ -1,0 +1,50 @@
+{
+  "protocol": "LIN_WAVE1_TRANSFER_AUDIT_V1",
+  "frozen_at": "2026-08-19T21:38:30-03:00",
+  "hypothesis": "H_TRANSFER-01",
+  "domain": "D_int [-2^53+1, 2^53-1] & Multi-byte UTF-8 & Nested Conditionals & Bounded Loops & Parameter Mutation Isolation",
+  "corpus_size": {
+    "modules": 6,
+    "trials_per_target": 26
+  },
+  "targets_certified": {
+    "c": {
+      "compiler": "/usr/bin/gcc",
+      "flags": ["-O2"],
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED"
+    },
+    "rust": {
+      "compiler": "/home/k/.cargo/bin/rustc",
+      "flags": ["-O"],
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED"
+    },
+    "go": {
+      "compiler": "/home/k/.local/bin/go",
+      "flags": ["build"],
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED"
+    },
+    "zig": {
+      "mode": "invariance_and_native_execution",
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED"
+    }
+  },
+  "aggregate_metrics": {
+    "wave1_soundness_rate": 1.0000,
+    "cross_target_regressions": 0,
+    "unfiltered_false_positives": 0,
+    "unfiltered_false_negatives": 0,
+    "nucleus_untouched": true
+  }
+}

@@ -678,3 +678,15 @@
 @E{t="2026-08-18T05:03:42.968Z" kind=improve_lin_from_clone slug=dayjs harvest="positive_transfer:ok×292" autogen="no_fails" candidate="CLONE_dayjs_msy76flj.rulel" nucleus=untouched}
 
 @E{t="2026-08-19T00:03:16.313Z" kind=improve_lin_from_clone slug=underscore harvest="positive_transfer:ok×168" autogen="no_fails" candidate="CLONE_underscore_mszbvwt4.rulel" nucleus=untouched}
+
+@E{t="2026-08-19T23:30:19.012Z" kind=improve ok=true path=self_repair_smoke}
+
+@E{t="2026-08-19T23:33:19.740Z" kind=evolve_epoch ok=true promote=none mutate=candidates_only}
+
+@E{t="2026-08-19T23:35:58.595Z" kind=improve ok=true path=self_repair_smoke}
+
+@E{t="2026-08-19T23:38:36.441Z" kind=evolve_epoch ok=true promote=none mutate=candidates_only}
+
+@E{t="2026-08-19T23:38:48.677Z" kind=improve_lin_from_clone slug=ecc harvest="positive_transfer:ok×50" autogen="no_fails" candidate="CLONE_ecc_mt0qgb1h.rulel" nucleus=untouched}
+
+@E{t="2026-08-19T23:39:11.145Z" kind=improve_lin_from_clone slug=ecc harvest="positive_transfer:ok×42" autogen="no_fails" candidate="CLONE_ecc_mt0qgsdl.rulel" nucleus=untouched}

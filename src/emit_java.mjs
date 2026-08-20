@@ -3,7 +3,7 @@
  */
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
+import { isJsRuntimeOnly, rewriteExpr, emitCond, assignOpLine, isNumishId, isStringishId, isBoolishId, parseParamList, emitNilDefaults, inferTypes, rewriteFnValues, isNoopExpr, safeEmitId, collectFreeHostIds, emitFreeHostDecls, isBoolFnName } from './emit_shared.mjs';
 import { emitThrowLine } from './emit_rewrite.mjs';
 import { rawParamNames, rewriteSafeParamIds } from './emit_safe_ids_load.mjs';
 import { isQualityFnSet, formatQualityMain } from './emit_entry_main_load.mjs';
@@ -51,14 +51,39 @@ function emitStmts(stmts, indent) {
   return lines;
 }
 
-function javaType(id, inferred) {
-  if (/Plural$/i.test(id) || /^is[A-Z]/.test(id)) return 'boolean';
-  if (/^(value|options|ms|str|alphabet|size|defaultSize|ch|pad)$/i.test(id)) return 'Object';
+function javaType(id, inferred, orig) {
+  const s = String(orig || id || '');
+  if (/:num\b|:int\b/i.test(s)) return 'long';
+  if (/:bool\b/i.test(s)) return 'boolean';
+  if (/:string\b|:str\b/i.test(s)) return 'String';
+  if (isBoolishId(id)) return 'boolean';
+  if (isNumishId(id)) return 'long';
+  if (isStringishId(id)) return 'String';
   if (inferred && inferred.get(id) === 'int') return 'long';
   if (inferred && inferred.get(id) === 'bool') return 'boolean';
-  if (isNumishId(id) || /^(len|n|i|idx|count|num|bytes|val|msAbs)$/i.test(id) || /Abs$/i.test(id)) return 'long';
-  if (/mask|step|cutoff|index|accepted|target|offset|poolNext|poolOffset|alphabetLen/i.test(id)) return 'long';
-  return 'String';
+  if (inferred && inferred.get(id) === 'string') return 'String';
+  return 'Object';
+}
+
+function javaRetType(fn, stmts) {
+  if (isBoolFnName(fn.name)) return 'boolean';
+  const inf = inferTypes(stmts);
+  const rets = [];
+  const walk = (list) => {
+    for (const st of list || []) {
+      if (st.type === 'return') rets.push(String(st.expr || '').trim());
+      if (st.then) walk(st.then);
+      if (st.else) walk(st.else);
+      if (st.body) walk(st.body);
+      for (const e of st.elseIf || []) walk(e.body);
+    }
+  };
+  walk(stmts);
+  if (!rets.length) return 'Object';
+  if (rets.every((t) => /^(true|false)$/.test(t) || /(==|!=|<=|>=|<|>)/.test(t))) return 'boolean';
+  if (rets.every((t) => /^-?\d+$/.test(t) || inf.get(t) === 'int' || isNumishId(t))) return 'long';
+  if (rets.every((t) => /^["']/.test(t) || inf.get(t) === 'string' || isStringishId(t) || /_lia_cat|_lia_str/.test(t))) return 'String';
+  return 'Object';
 }
 
 export function emitJava(liaText, opts = {}) {
@@ -73,7 +98,7 @@ export function emitJava(liaText, opts = {}) {
     '  static boolean _lia_isfinite(Object x) { return true; }',
     '  static boolean _lia_empty(Object s) { return s == null || String.valueOf(s).isEmpty(); }',
     '  static long _lia_abs(Object x) { try { return Math.abs(Long.parseLong(String.valueOf(x))); } catch (Exception e) { return 0L; } }',
-    '  static long _lia_round(Object x) { return _lia_abs(x); }',
+    '  static long _lia_round(Object x) { return _lia_num(x); }',
     '  static String _lia_str(Object x) { return String.valueOf(x); }',
     '  static String _lia_at(Object s, Object i) { String t = String.valueOf(s); int n = (int)_lia_num(i); if (n < 0 || n >= t.length()) return ""; return t.substring(n, n+1); }',
     '  static long _lia_num(Object x) { try { return Long.parseLong(String.valueOf(x)); } catch (Exception e) { return 0L; } }',
@@ -101,6 +126,7 @@ export function emitJava(liaText, opts = {}) {
   }
   const usedJava = new Set();
   for (const fn of prog.fns) {
+    const rawNames = (fn.params || '').split(',').map(s => s.trim());
     const { names: params, defaults } = parseParamList(fn.params);
     let jName = safeEmitId(fn.name);
     if (fileHosty) jName = `lin${jName}`;
@@ -121,16 +147,16 @@ export function emitJava(liaText, opts = {}) {
     }
     const inferred = inferTypes(stmts);
     const assigned = collectAssignedIds(stmts).filter((id) => !params.includes(id) && id !== 'cache').map(safeEmitId);
-    const paramList = params.map((p) => `${javaType(p, inferred)} ${safeEmitId(p)}`).join(', ');
+    const paramList = params.map((p, i) => `${javaType(p, inferred, rawNames[i])} ${safeEmitId(p)}`).join(', ');
     const decls = assigned.map((id) => {
       const t = javaType(id, inferred);
-      const init = t === 'long' ? '0' : t === 'boolean' ? 'false' : 'null';
+      const init = t === 'long' ? '0L' : t === 'boolean' ? 'false' : 'null';
       return `    ${t} ${id} = ${init};`;
     });
     const emitted = emitStmts(stmts, 2);
-    const ret = isBoolFnName(fn.name) ? 'boolean' : 'Object';
+    const ret = javaRetType(fn, stmts);
     if (!/\breturn\b/.test(emitted.join('\n'))) {
-      emitted.push(ret === 'boolean' ? '    return false;' : '    return null;');
+      emitted.push(ret === 'boolean' ? '    return false;' : ret === 'long' ? '    return 0L;' : ret === 'String' ? '    return "";' : '    return null;');
     }
     const freeHost = emitFreeHostDecls(collectFreeHostIds(fn.body, params, prog.fns.map((f) => f.name)), 'java');
     const bodyLines = [...decls, ...freeHost, ...emitNilDefaults(defaults, 'java'), ...emitted];

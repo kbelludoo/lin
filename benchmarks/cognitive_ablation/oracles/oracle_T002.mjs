@@ -124,12 +124,11 @@ export async function oracle(task, candidateResult) {
       ${jsSource}
       return solve(input);
     `);
-
     for (const tc of task.test_cases) {
-      const input = tc.input;
+      const input = JSON.parse(JSON.stringify(tc.input));
       const testPassed = (() => {
         
-      const res = fn(input);
+      const res = fn(JSON.parse(JSON.stringify(input)));
       const expected = [...input.buffer, input.item].slice(-3);
       return JSON.stringify(res) === JSON.stringify(expected);
     

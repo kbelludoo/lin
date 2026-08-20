@@ -72,8 +72,8 @@ export function parseStmts(body) {
         if (s[j] === ';') {
           j = skipWs(s, j + 1);
         }
-        if (s.startsWith(':(', j)) {
-          const op = j + 1;
+        if (s.startsWith(':(', j) || (s[j] === ':' && s[skipWs(s, j + 1)] === '(')) {
+          const op = s.indexOf('(', j);
           const cp = findMatching(s, op, '(', ')');
           const c2 = s.slice(op + 1, cp);
           let k = skipWs(s, cp + 1);
@@ -96,6 +96,13 @@ export function parseStmts(body) {
         }
         if (s.startsWith('else', j) && !/[A-Za-z0-9_$]/.test(s[j + 4] || '')) {
           let k = skipWs(s, j + 4);
+          if (s[k] === '{') {
+            const b = parseBlockBody(s, k);
+            elseStmts = b.stmts;
+            j = b.end;
+          }
+        } else if (s[j] === ':') {
+          let k = skipWs(s, j + 1);
           if (s[k] === '{') {
             const b = parseBlockBody(s, k);
             elseStmts = b.stmts;

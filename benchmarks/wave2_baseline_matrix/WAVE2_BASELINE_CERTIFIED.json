@@ -1,0 +1,66 @@
+{
+  "protocol": "LIN_WAVE2_TRANSFER_AUDIT_V1",
+  "frozen_at": "2026-08-19T21:45:15-03:00",
+  "hypothesis": "H_TRANSFER-01",
+  "domain": "D_int [-2^53+1, 2^53-1] & Multi-byte UTF-8 & Nested Conditionals & Bounded Loops & Parameter Mutation Isolation",
+  "corpus_size": {
+    "modules": 6,
+    "trials_per_target": 26
+  },
+  "targets_certified": {
+    "c": {
+      "wave": 1,
+      "compiler": "/usr/bin/gcc",
+      "flags": ["-O2"],
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED",
+      "regression": false
+    },
+    "rust": {
+      "wave": 1,
+      "compiler": "/home/k/.cargo/bin/rustc",
+      "flags": ["-O"],
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED",
+      "regression": false
+    },
+    "go": {
+      "wave": 1,
+      "compiler": "/home/k/.local/bin/go",
+      "flags": ["build"],
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED",
+      "regression": false
+    },
+    "zig": {
+      "wave": 1,
+      "mode": "invariance_and_native_execution",
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED",
+      "regression": false
+    },
+    "java": {
+      "wave": 2,
+      "compiler": "/home/k/.local/bin/javac + java",
+      "trials": 26,
+      "passed": 26,
+      "score": 1.0000,
+      "status": "CERTIFIED",
+      "regression": false
+    }
+  },
+  "aggregate_metrics": {
+    "total_certified_targets": 5,
+    "wave1_retroactive_regression": 0,
+    "wave2_soundness_rate": 1.0000,
+    "nucleus_untouched": true
+  }
+}

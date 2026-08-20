@@ -17,7 +17,7 @@ Place it in a single file so it can be syntax-checked by the toolchain.
 `
 
 function langLabel(lang) {
-  return { py: 'Python', ts: 'TypeScript', rust: 'Rust' }[lang]
+  return { py: 'Python', ts: 'TypeScript', rust: 'Rust', lin: 'LIN / LIA' }[lang] || lang
 }
 
 export const TASKS = {

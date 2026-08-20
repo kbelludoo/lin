@@ -89,7 +89,7 @@ function stmtToLin(stmt, indent) {
   // Return statement
   if (trimmed.startsWith('return ')) {
     const expr = trimmed.slice(7).replace(/;$/, '').trim();
-    return [`${pad}^${exprToLin(expr)}`];
+    return [`${pad}^${exprToLin(expr)};`];
   }
 
   // Variable declaration: const/let/var x = expr;
@@ -98,9 +98,17 @@ function stmtToLin(stmt, indent) {
   if (varMatch) {
     const lhs = varMatch[1].trim();
     const expr = exprToLin(varMatch[2].replace(/;$/, '').trim());
+    if (lhs.startsWith('{') && lhs.endsWith('}')) {
+      const fields = lhs.slice(1, -1).split(',').map(x => x.trim()).filter(Boolean);
+      return fields.map(f => `${pad}${f} = ${expr}.${f};`);
+    }
+    if (lhs.startsWith('[') && lhs.endsWith(']')) {
+      const elems = lhs.slice(1, -1).split(',').map(x => x.trim()).filter(Boolean);
+      return elems.map((e, idx) => `${pad}${e} = ${expr}[${idx}];`);
+    }
     // Strip type annotations from LHS if present
     const cleanLhs = lhs.replace(/:\s*[\w\[\]|<>,\s]+/g, '').trim();
-    return [`${pad}${cleanLhs} = ${expr}`];
+    return [`${pad}${cleanLhs} = ${expr};`];
   }
 
   // Assignment: x = expr;
@@ -108,7 +116,7 @@ function stmtToLin(stmt, indent) {
   if (assignMatch && !trimmed.startsWith('if') && !trimmed.startsWith('for')) {
     const name = assignMatch[1];
     const expr = exprToLin(assignMatch[2].replace(/;$/, '').trim());
-    return [`${pad}${name} = ${expr}`];
+    return [`${pad}${name} = ${expr};`];
   }
 
   // If statement
@@ -117,19 +125,69 @@ function stmtToLin(stmt, indent) {
   }
 
   // For loop
-  const forMatch = trimmed.match(/^for\s*\(([^;]+);([^;]+);([^)]+)\)\s*\{([\s\S]*)\}\s*$/);
+  const forMatch = trimmed.match(/^for\s*\(([^;]+);([^;]+);([^)]+)\)\s*\{/);
   if (forMatch) {
     const init = forMatch[1].trim();
     const cond = forMatch[2].trim();
     const incr = forMatch[3].trim();
-    const body = forMatch[4].trim();
-    const bodyLin = blockToLin(body, indent + 1);
-    return [`${pad}#(${init};${cond};${incr}){`, ...bodyLin, `${pad}}`];
+    const openBraceIdx = forMatch[0].length - 1;
+    const bodyEnd = findMatchingBrace(trimmed, openBraceIdx);
+    if (bodyEnd >= 0) {
+      const body = trimmed.slice(openBraceIdx + 1, bodyEnd).trim();
+      const bodyLin = blockToLin(body, indent + 1);
+      return [`${pad}#(${init};${cond};${incr}){`, ...bodyLin, `${pad}}`];
+    }
   }
 
-  // Generic statement — pass through as-is (with semicolon stripped)
+  // Generic statement — pass through as-is (with semicolon)
   const clean = trimmed.replace(/;$/, '').trim();
-  return [`${pad}${clean}`];
+  return [`${pad}${clean};`];
+}
+
+function findMatchingBrace(text, openBraceIdx) {
+  let depth = 0;
+  let inStr = null;
+  for (let i = openBraceIdx; i < text.length; i++) {
+    const c = text[i];
+    if (inStr) {
+      if (c === '\\') { i++; continue; }
+      if (c === inStr) inStr = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') {
+      inStr = c;
+      continue;
+    }
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
+}
+
+function findMatchingParen(text, openParenIdx) {
+  let depth = 0;
+  let inStr = null;
+  for (let i = openParenIdx; i < text.length; i++) {
+    const c = text[i];
+    if (inStr) {
+      if (c === '\\') { i++; continue; }
+      if (c === inStr) inStr = null;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === '`') {
+      inStr = c;
+      continue;
+    }
+    if (c === '(') depth++;
+    else if (c === ')') {
+      depth--;
+      if (depth === 0) return i;
+    }
+  }
+  return -1;
 }
 
 /**
@@ -140,32 +198,24 @@ function convertIfChain(code, indent) {
   const pad = '  '.repeat(indent);
   const result = [];
 
-  // Find the if condition: match up to the first '{'
-  const condMatch = code.match(/^if\s*\(([^)]+)\)\s*\{/);
-  if (!condMatch) {
+  const ifPrefix = code.match(/^if\s*\(/);
+  if (!ifPrefix) {
     return [`${pad}${code}`];
   }
 
-  const cond = condMatch[1].trim();
-  const afterCond = code.slice(condMatch[0].length);
+  const openParenIdx = ifPrefix[0].length - 1;
+  const closeParenIdx = findMatchingParen(code, openParenIdx);
+  if (closeParenIdx < 0) return [`${pad}${code}`];
 
-  // Find the matching closing brace for the if body
-  let depth = 1;
-  let bodyEnd = -1;
-  for (let i = 0; i < afterCond.length; i++) {
-    if (afterCond[i] === '{') depth++;
-    else if (afterCond[i] === '}') {
-      depth--;
-      if (depth === 0) { bodyEnd = i; break; }
-    }
-  }
+  const cond = code.slice(openParenIdx + 1, closeParenIdx).trim();
+  const openBraceIdx = code.indexOf('{', closeParenIdx);
+  if (openBraceIdx < 0) return [`${pad}${code}`];
 
-  if (bodyEnd < 0) {
-    return [`${pad}${code}`];
-  }
+  const bodyEnd = findMatchingBrace(code, openBraceIdx);
+  if (bodyEnd < 0) return [`${pad}${code}`];
 
-  const body = afterCond.slice(0, bodyEnd).trim();
-  const rest = afterCond.slice(bodyEnd + 1).trim();
+  const body = code.slice(openBraceIdx + 1, bodyEnd).trim();
+  const rest = code.slice(bodyEnd + 1).trim();
 
   // Convert if body
   const bodyLin = blockToLin(body, indent + 1);
@@ -175,73 +225,38 @@ function convertIfChain(code, indent) {
 
   // Handle else if / else
   if (rest) {
-    const elseIfMatch = rest.match(/^else\s+if\s*\(([^)]+)\)\s*\{/);
+    const elseIfPrefix = rest.match(/^else\s+if\s*\(/);
     const elseMatch = rest.match(/^else\s*\{/);
 
-    if (elseIfMatch) {
-      const eicond = elseIfMatch[1].trim();
-      const eirest = rest.slice(elseIfMatch[0].length);
+    if (elseIfPrefix) {
+      const eiOpenParen = elseIfPrefix[0].length - 1;
+      const eiCloseParen = findMatchingParen(rest, eiOpenParen);
+      if (eiCloseParen >= 0) {
+        const eicond = rest.slice(eiOpenParen + 1, eiCloseParen).trim();
+        const eiOpenBrace = rest.indexOf('{', eiCloseParen);
+        if (eiOpenBrace >= 0) {
+          const eiBodyEnd = findMatchingBrace(rest, eiOpenBrace);
+          if (eiBodyEnd >= 0) {
+            const eibody = rest.slice(eiOpenBrace + 1, eiBodyEnd).trim();
+            const eirest = rest.slice(eiBodyEnd + 1).trim();
 
-      // Find matching } for else-if body
-      let edepth = 1;
-      let eibodyEnd = -1;
-      for (let i = 0; i < eirest.length; i++) {
-        if (eirest[i] === '{') edepth++;
-        else if (eirest[i] === '}') {
-          edepth--;
-          if (edepth === 0) { eibodyEnd = i; break; }
-        }
-      }
+            const eibodyLin = blockToLin(eibody, indent + 1);
+            result.push(`${pad}:(${eicond}){`);
+            result.push(...eibodyLin);
+            result.push(`${pad}}`);
 
-      if (eibodyEnd >= 0) {
-        const eibody = eirest.slice(0, eibodyEnd).trim();
-        const eirest2 = eirest.slice(eibodyEnd + 1).trim();
-
-        const eibodyLin = blockToLin(eibody, indent + 1);
-        result.push(`${pad}:(${eicond}){`);
-        result.push(...eibodyLin);
-        result.push(`${pad}}`);
-
-        // Handle further else if / else
-        if (eirest2) {
-          const furtherResult = convertIfChain(`if (false) {} else ${eirest2}`, indent);
-          // Extract just the else part
-          if (furtherResult.length > 0) {
-            const elsePart = furtherResult.find(l => l.includes(':(') || l.includes(':{'));
-            if (elsePart) {
-              // Already handled
-            } else {
-              // Convert the else block
-              const elseIf2 = eirest2.match(/^else\s+if\s*\(([^)]+)\)\s*\{([\s\S]*)\}\s*$/);
-              const else2 = eirest2.match(/^else\s*\{([\s\S]*)\}\s*$/);
-
-              if (elseIf2) {
-                result.push(...convertIfChain(`if (${elseIf2[1]}) {${elseIf2[2]}}`, indent));
-              } else if (else2) {
-                const elseBodyLin = blockToLin(else2[1].trim(), indent + 1);
-                result.push(`${pad}:{`);
-                result.push(...elseBodyLin);
-                result.push(`${pad}}`);
-              }
+            if (eirest) {
+              result.push(...convertIfChain(`if (false) {} ${eirest}`, indent).slice(3));
             }
           }
         }
       }
     } else if (elseMatch) {
-      const elseBody = rest.slice(elseMatch[0].length);
-      // Find matching } for else body
-      let depth2 = 1;
-      let elseEnd = -1;
-      for (let i = 0; i < elseBody.length; i++) {
-        if (elseBody[i] === '{') depth2++;
-        else if (elseBody[i] === '}') {
-          depth2--;
-          if (depth2 === 0) { elseEnd = i; break; }
-        }
-      }
+      const elseOpenBrace = elseMatch[0].length - 1;
+      const elseEnd = findMatchingBrace(rest, elseOpenBrace);
 
       if (elseEnd >= 0) {
-        const elseContent = elseBody.slice(0, elseEnd).trim();
+        const elseContent = rest.slice(elseOpenBrace + 1, elseEnd).trim();
         const elseBodyLin = blockToLin(elseContent, indent + 1);
         result.push(`${pad}:{`);
         result.push(...elseBodyLin);
@@ -302,6 +317,10 @@ function splitStatements(block) {
       braceDepth--;
       current += c;
       if (braceDepth === 0) {
+        const rest = block.slice(i + 1).trim();
+        if (rest.startsWith('else') || rest.startsWith('=')) {
+          continue;
+        }
         const trimmed = current.trim();
         if (trimmed) stmts.push(trimmed);
         current = '';

@@ -69,8 +69,16 @@ export class CognitiveBenchmarkRunner {
         continue;
       }
 
-      // 3. Verificador passou -> Executa o Oracle Independente
-      const oracleRes = await activeOracle(task, candidateRes);
+      // 3. Verificador passou -> Executa o Oracle Independente com isolamento seguro
+      let oracleRes;
+      try {
+        oracleRes = await Promise.race([
+          activeOracle(task, candidateRes),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('EXECUTION_TIMEOUT')), 3000))
+        ]);
+      } catch (err) {
+        oracleRes = { passed: false, hint: err.message || 'Execution error' };
+      }
       attemptLog.oracle_passed = oracleRes.passed;
 
       if (oracleRes.passed) {
@@ -115,9 +123,12 @@ export class CognitiveBenchmarkRunner {
     const taskResults = [];
     const timestamp = new Date().toISOString();
 
-    for (const task of tasks) {
+    for (let i = 0; i < tasks.length; i++) {
+      const task = tasks[i];
+      process.stdout.write(`  [${i + 1}/${tasks.length}] Task ${task.id}... `);
       const oracleFn = oracles[task.id] || null;
       const res = await this.runTask(task, oracleFn);
+      console.log(`Outcome: ${res.outcome} (attempts: ${res.attempts_count})`);
       taskResults.push(res);
     }
 

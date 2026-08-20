@@ -1,0 +1,24 @@
+fn add(a: Int, b: Int) -> Int {
+  return a + b
+}
+
+fn square(x: Int) -> Int {
+  return x * x
+}
+
+fn isPositive(n: Int) -> Bool {
+  if (n > 0) {
+    return true
+  }
+  return false
+}
+
+fn loopSum(n: Int) -> Int {
+  var i = 0
+  var total = 0
+  while (i < n) {
+    total = total + i
+    i = i + 1
+  }
+  return total
+}

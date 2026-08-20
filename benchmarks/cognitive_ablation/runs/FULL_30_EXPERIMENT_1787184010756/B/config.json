@@ -1,0 +1,31 @@
+{
+  "system_id": "B",
+  "system_name": "JS Baseline (Zero-Shot)",
+  "prompt_mode": "NATURAL_JS",
+  "feedback_mode": "NONE",
+  "max_attempts": 1,
+  "enable_repair": false,
+  "repair_stats": {
+    "repair_attempts": 0,
+    "repair_successes": 0,
+    "repair_failures": 0,
+    "rules_applied": {}
+  },
+  "model_metadata": {
+    "provider": "ollama",
+    "model": "qwen2.5-coder:7b",
+    "digest": "unknown",
+    "details": {
+      "parent_model": "",
+      "format": "gguf",
+      "family": "qwen2",
+      "families": [
+        "qwen2"
+      ],
+      "parameter_size": "7.6B",
+      "quantization_level": "Q4_K_M"
+    },
+    "parameters": ""
+  },
+  "manifest_sha256": "d3951769e4f9d210657a93659deee8b3ccc611e2f0f309373bc8fa358bec3061"
+}

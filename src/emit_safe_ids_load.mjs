@@ -13,7 +13,7 @@ import { safeEmitId } from './emit_shared.mjs';
 const LIN = path.join(path.dirname(fileURLToPath(import.meta.url)), 'emit_safe_ids.lin');
 const lin = fs.readFileSync(LIN, 'utf8');
 const { js } = compileLiaToJs(lin, { exportMode: 'multiple' });
-const tmp = path.join(os.tmpdir(), 'lin_emit_safe_ids.cjs');
+const tmp = path.join(os.tmpdir(), `lin_emit_safe_ids_${process.pid}_${Date.now()}_${Math.random().toString(36).slice(2)}.cjs`);
 fs.writeFileSync(tmp, js, 'utf8');
 const mod = createRequire(import.meta.url)(tmp);
 try { fs.rmSync(tmp, { force: true }); } catch { /* ignore */ }

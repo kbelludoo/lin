@@ -1,0 +1,102 @@
+[
+  {
+    "task_id": "T001",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 190,
+    "total_latency_ms": 16776,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "244bc97f4e7cd452",
+        "candidate_code": "function solve(input) {\n    switch (input) {\n        case \"RED\":\n            return \"GREEN\";\n        case \"GREEN\":\n            return \"YELLOW\";\n        case \"YELLOW\":\n            return \"RED\";\n        default:\n            return \"ERROR\";\n    }\n}",
+        "tokens": 190,
+        "latency_ms": 16776,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  },
+  {
+    "task_id": "T007",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 195,
+    "total_latency_ms": 3453,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "edaf5778074d5dce",
+        "candidate_code": "function solve(input) {\n    let result = [];\n\n    function flatten(arr) {\n        for (let i = 0; i < arr.length; i++) {\n            if (Array.isArray(arr[i])) {\n                flatten(arr[i]);\n            } else {\n                result.push(arr[i]);\n            }\n        }\n    }\n\n    flatten(input);\n    return result;\n}",
+        "tokens": 195,
+        "latency_ms": 3453,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  },
+  {
+    "task_id": "T013",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 182,
+    "total_latency_ms": 3324,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "b476ceab1e098828",
+        "candidate_code": "function solve(input) {\n    // Create a copy of the input array to avoid modifying the original array\n    let sortedArray = [...input];\n    // Sort the copied array in ascending order\n    sortedArray.sort((a, b) => a - b);\n    // Return the sorted array\n    return sortedArray;\n}",
+        "tokens": 182,
+        "latency_ms": 3324,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  },
+  {
+    "task_id": "T019",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 247,
+    "total_latency_ms": 5178,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "e276a5be9ff518a3",
+        "candidate_code": "function solve(input) {\n    let arr = input.arr;\n    let target = input.target;\n    let left = 0;\n    let right = arr.length - 1;\n\n    while (left <= right) {\n        let mid = Math.floor((left + right) / 2);\n\n        if (arr[mid] === target) {\n            return mid;\n        } else if (arr[mid] < target) {\n            left = mid + 1;\n        } else {\n            right = mid - 1;\n        }\n    }\n\n    return -1;\n}",
+        "tokens": 247,
+        "latency_ms": 5178,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  },
+  {
+    "task_id": "T025",
+    "outcome": "P1",
+    "attempts_count": 1,
+    "total_tokens": 238,
+    "total_latency_ms": 4895,
+    "attempts": [
+      {
+        "attempt": 1,
+        "candidate_hash": "a86c323d6125bda7",
+        "candidate_code": "function solve(input) {\n    let min = input[0];\n    let max = input[0];\n    let sum = 0;\n\n    for (let i = 0; i < input.length; i++) {\n        if (input[i] < min) {\n            min = input[i];\n        }\n        if (input[i] > max) {\n            max = input[i];\n        }\n        sum += input[i];\n    }\n\n    const avg = sum / input.length;\n\n    return { min, max, sum, avg };\n}",
+        "tokens": 238,
+        "latency_ms": 4895,
+        "verifier_passed": true,
+        "verifier_stage": "VERIFY_OK",
+        "violation_class": null,
+        "oracle_passed": true
+      }
+    ]
+  }
+]
