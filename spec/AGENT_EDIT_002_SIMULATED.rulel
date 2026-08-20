@@ -1,0 +1,11 @@
+@RULEL:AGENT_EDIT_002_SIMULATED:1.1.0
+~M{.name="AGENT_EDIT_002_SIMULATED" .type="TOOL_INTERFACE_OBSERVABILITY_BENCHMARK" .status="TOOL_INTERFACE_VALIDATED_LLM_AGENCY_UNTESTED"}
+.doc{
+  note="AGENT_EDIT_002 validou a instrumentação observável da interface de ferramentas (view_file / replace_file_content) e a integridade de diffs no filesystem com agente determinístico simulado."
+  limitation="A tomada de decisão por um modelo de linguagem real (LLM) não foi testada neste protocolo porque simulateAgentBehavior() utilizava lógica predefinida. Substituído por AGENT_EDIT_003_REAL_LLM."
+}
+.invariants{
+  tool_interface_tested=true
+  llm_agency_tested=false
+  diff_telemetry_tested=true
+}
