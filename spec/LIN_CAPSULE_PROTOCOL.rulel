@@ -1,0 +1,49 @@
+@RULEL:LIN_CAPSULE_PROTOCOL:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .p=path .g=gate .w=when .x=steps .c=core}
+.m{repo="kbelludoo/lin" name="LIN Capsule Protocol" version=1.0.0 form=RULEL_in_md goal=portable_verifiable_executable_memory_artifact}
+.w{CAPSULE=pack!unpack!verify!split!join!lower PROTOCOL="LIN_CAPSULE"}
+.r{
+  R_HEADER="@capsule:v1"
+  R_MANIFEST=manifest_json_base64url
+  R_CHUNKS=multi_disk_sequential_integrity
+  R_HASHES=H_semantic!H_workflow!H_artifact!H_part
+  R_RECOVERY=reconstruct→verify_artifact_sha256→verify_semantic_hash→lower_target
+}
+.f{
+  tampered_payload
+  forged_semantic_hash
+  missing_chunks
+  reordered_chunks
+  unsupported_compression
+  unsupported_protocol_version
+}
+.a{
+  compression=brotli|deflate|gzip|raw
+  encoding=base64url
+  artifact=linobj|lin_source
+  target=portable|js|ts|py|go|rust|zig|wasm
+}
+.g{
+  pass=artifact_sha256_match AND semantic_hash_match AND all_chunks_verified AND invariant_check_ok
+}
+.c{
+  nucleus=manifest_integrity!hash_hierarchy!chunk_checksum_gate
+}
+.x{
+  1=build_linobj
+  2=extract_canonical_manifest
+  3=compress_payload
+  4=encode_base64url
+  5=split_into_chunks
+  6=reconstruct_from_parts
+  7=verify_hashes
+  8=lower_to_target
+}
+.p{
+  spec="spec/LIN_CAPSULE_PROTOCOL.rulel"
+  protocol="src/lin_capsule_protocol.mjs"
+  encoder="src/lin_capsule_encoder.mjs"
+  decoder="src/lin_capsule_decoder.mjs"
+  test="tests/lin_capsule_roundtrip.test.mjs"
+  bench="benchmarks/LIN_CAPSULE_001/benchmark.mjs"
+}
