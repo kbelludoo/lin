@@ -1,49 +1,17 @@
 {
   "protocol": "AGENT_EDIT_001",
+  "status": "POST_EDIT_PIPELINE_VALIDATED_AGENCY_UNTESTED",
+  "scientific_note": "Demonstrates post-edit pipeline integrity (filesystem -> parse -> compile -> oracle). Autonomous model agency is tested in AGENT_EDIT_002_REAL_AGENT.",
   "task": "Troque FIFO por Elevator em !dispatch_next.",
-  "timestamp": "2026-08-20T23:17:21.133Z",
+  "timestamp": "2026-08-20T20:17:21.000Z",
   "total_trials": 30,
   "metrics": {
     "discovery_success": 30,
-    "edit_success": 30,
+    "pipeline_edit_application": 30,
     "build_success": 30,
     "benchmark_success": 30,
-    "p_discovery": 1,
-    "p_edit_given_discovery": 1,
-    "p_build_given_edit": 1,
-    "p_runtime_given_build": 1,
-    "p_complete_cycle": 1
-  },
-  "sample_events": [
-    {
-      "type": "DISCOVERY_SUCCESS",
-      "target": "!dispatch_next",
-      "line": 2
-    },
-    {
-      "type": "EDIT_ATTEMPT",
-      "task": "Troque FIFO por Elevator em !dispatch_next."
-    },
-    {
-      "type": "EDIT_OBSERVED",
-      "bytes_modified": 199
-    },
-    {
-      "type": "PATCH_MATCH",
-      "exact": true
-    },
-    {
-      "type": "BUILD_SUCCESS",
-      "target": "js",
-      "bytes": 281
-    },
-    {
-      "type": "BENCHMARK_SUCCESS",
-      "trials_passed": 5
-    },
-    {
-      "type": "DECISION",
-      "outcome": "PASS"
-    }
-  ]
+    "p_discovery": 1.0,
+    "p_pipeline_valid": 1.0,
+    "p_agency_tested": 0.0
+  }
 }

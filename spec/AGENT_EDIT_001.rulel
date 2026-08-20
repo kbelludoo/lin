@@ -1,0 +1,12 @@
+@RULEL:AGENT_EDIT_001:1.1.0
+~M{.name="AGENT_EDIT_001" .type="PIPELINE_VALIDATION_POST_EDIT" .status="POST_EDIT_PIPELINE_VALIDATED_AGENCY_UNTESTED"}
+.doc{
+  note="AGENT_EDIT_001 validou estritamente o pipeline pós-edição determinístico (filesystem observation -> parse -> build -> runtime oracle) sob 30 snapshots limpos."
+  limitation="A agência autônoma do modelo não foi testada neste protocolo porque o harness instanciou o patch diretamente. Substituído por AGENT_EDIT_002_REAL_AGENT."
+}
+.invariants{
+  d_tested=true
+  e_agency_tested=false
+  b_pipeline_tested=true
+  r_oracle_tested=true
+}

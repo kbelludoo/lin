@@ -1,0 +1,28 @@
+{
+  "protocol": "AGENT_EDIT_002_REAL_AGENT",
+  "agent_type": "REASONING_AGENT",
+  "harness_direct_write": false,
+  "timestamp": "2026-08-20T23:19:15.785Z",
+  "total_snapshots": 30,
+  "metrics": {
+    "discovery_success": 30,
+    "edit_observed": 30,
+    "build_success": 30,
+    "benchmark_success": 30,
+    "p_discovery": 1,
+    "p_edit_given_discovery": 1,
+    "p_build_given_edit": 1,
+    "p_runtime_given_build": 1,
+    "p_complete_cycle": 1
+  },
+  "sample_telemetry": {
+    "before_sha": "c18b86b660d1d894",
+    "after_sha": "14b00136fce1be24",
+    "diff_sha": "caeac16fd561fbf0",
+    "files_changed": true,
+    "lines_added": 0,
+    "lines_removed": 0,
+    "target_symbol": "!dispatch_next",
+    "tool_calls": 2
+  }
+}

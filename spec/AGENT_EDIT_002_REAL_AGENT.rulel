@@ -1,0 +1,21 @@
+@RULEL:AGENT_EDIT_002_REAL_AGENT:1.0.0
+~M{.name="AGENT_EDIT_002_REAL_AGENT" .type="AUTONOMOUS_AGENCY_EDIT_BENCHMARK" .status="PROTOCOL_FROZEN"}
+.doc{
+  objective="Medir agência autônoma de edição e ciclo completo D -> E -> B -> R sem gabarito no prompt e sem pré-edição pelo harness."
+}
+.invariants{
+  zero_harness_write_on_source=true
+  isolated_clean_snapshots=30
+  oracle_independent_eval=true
+  telemetry=[before_sha, after_sha, diff_sha, files_changed, lines_added, lines_removed, target_symbol]
+  formula="P(Complete) = P(D) * P(E|D) * P(B|E) * P(R|B)"
+}
+.oracle_contract{
+  input_trials=[
+    { input: [1, 2, 5], expected: 1 },
+    { input: [1, 5, 2], expected: -1 },
+    { input: [1, 4, 4], expected: 1 },
+    { input: [0, 2, 5], expected: 0 },
+    { input: [0, 5, 2], expected: 0 }
+  ]
+}
