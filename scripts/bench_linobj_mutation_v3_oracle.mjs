@@ -55,20 +55,8 @@ const symbolUsage = {
   leaf_consumer: { mid_stats: ['avg'] },
 };
 
-const MUTATOR_POOL = [
-  { name: 'formatting', isSemanticIntent: false, apply: (s) => s.replace(/\+/g, ' + ').replace(/=/g, ' = ').replace(/\n/g, '\n\n  ') },
-  { name: 'comment', isSemanticIntent: false, apply: (s, seed) => `/* block comment ${seed} */\n` + s.replace(/\{/g, '{\n  // line comment\n') },
-  { name: 'reorder_exports', isSemanticIntent: false, apply: (s) => s.replace(/=ex\{([^}]+)\}/, (_, l) => `=ex{${l.split(',').map(x => x.trim()).reverse().join(',')}}`) },
-  { name: 'rename_local', isSemanticIntent: false, apply: (s) => s.replace(/\bres\b/g, 'res_renamed').replace(/\bm\b/g, 'm_renamed').replace(/\bval\b/g, 'val_renamed') },
-  { name: 'alter_parameter', isSemanticIntent: true, apply: (s) => s.replace(/!([A-Za-z0-9_]+)\(([^)]*)\)/, (_, n, p) => `!${n}(${p}${p ? ',' : ''}_extra)`) },
-  { name: 'alter_type', isSemanticIntent: true, apply: (s) => s.replace(/!([A-Za-z0-9_]+)\(([^)]*)\)/, (_, n, p) => `!${n}(${p.split(',').map(x => x + ':string').join(',')})`) },
-  { name: 'alter_effect', isSemanticIntent: true, apply: (s) => s.replace(/\{/, '{\n  console.log("io_audit");') },
-  { name: 'alter_refinement', isSemanticIntent: true, apply: (s) => s.includes('/2') ? s.replace(/\/2\)/, '/0)') : s + '\n// noop_ref' },
-  { name: 'alter_exported_symbol', isSemanticIntent: true, apply: (s) => s.match(/\{[^}]*\^([a-zA-Z0-9_+*/\-()]+)/) ? s.replace(/(\^([a-zA-Z0-9_+*/\-()]+))/, '$1+99') : s },
-  { name: 'alias_reexport', isSemanticIntent: true, apply: (s) => s.includes(' as ') ? s.replace(/add as sum/, 'sub as sum').replace(/calcMean as avg/, 'identity as avg') : s },
-  { name: 'dependency_edge', isSemanticIntent: false, apply: (s, seed) => s + `\n// edge annotation ${seed}` },
-  { name: 'body_semantics', isSemanticIntent: true, apply: (s) => s.includes('+') ? s.replace(/\+/, '-') : s.replace(/\*/, '+') }
-];
+import { getMutatorPool } from '../src/lin_mutation_generator_load.mjs';
+const MUTATOR_POOL = getMutatorPool();
 
 /**
  * INDEPENDENT EXTERNAL ORACLE

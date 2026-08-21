@@ -57,20 +57,8 @@ const symbolUsage = {
   leaf_consumer: { mid_stats: ['avg'] },
 };
 
-const MUTATOR_POOL = [
-  { name: 'formatting', apply: (s) => s.replace(/\+/g, ' + ').replace(/=/g, ' = ').replace(/\n/g, '\n\n  ') },
-  { name: 'comment', apply: (s, seed) => `/* block comment ${seed} */\n` + s.replace(/\{/g, '{\n  // line comment\n') },
-  { name: 'reorder_exports', apply: (s) => s.replace(/=ex\{([^}]+)\}/, (_, l) => `=ex{${l.split(',').map(x => x.trim()).reverse().join(',')}}`) },
-  { name: 'rename_local', apply: (s) => s.replace(/\bres\b/g, 'res_renamed').replace(/\bm\b/g, 'm_renamed').replace(/\bval\b/g, 'val_renamed') },
-  { name: 'alter_parameter', apply: (s) => s.replace(/!([A-Za-z0-9_]+)\(([^)]*)\)/, (_, n, p) => `!${n}(${p}${p ? ',' : ''}_extra)`) },
-  { name: 'alter_type', apply: (s) => s.replace(/!([A-Za-z0-9_]+)\(([^)]*)\)/, (_, n, p) => `!${n}(${p.split(',').map(x => x + ':string').join(',')})`) },
-  { name: 'alter_effect', apply: (s) => s.replace(/!([A-Za-z0-9_]+)\(([^)]*)\)\s*\{/, '!$1($2){\n  console.log("io_audit");') },
-  { name: 'alter_refinement', apply: (s) => s.includes('/2') ? s.replace(/\/2\)/, '/0)') : s + '\n// noop_ref' },
-  { name: 'alter_exported_symbol', apply: (s) => s.includes('^a+b') ? s.replace(/\^a\+b/, '^a+b+99') : s.replace(/\^val/, '^val+99') },
-  { name: 'alias_reexport', apply: (s) => s.includes(' as ') ? s.replace(/add as sum/, 'sub as sum').replace(/calcMean as avg/, 'identity as avg') : s },
-  { name: 'dependency_edge', apply: (s, seed) => s + `\n// edge annotation ${seed}` },
-  { name: 'body_semantics', apply: (s) => s.includes('+') ? s.replace(/\+/, '-') : s.replace(/\*/, '+') }
-];
+import { getMutatorPool } from '../src/lin_mutation_generator_load.mjs';
+const MUTATOR_POOL = getMutatorPool();
 
 /**
  * DEEP ADVERSARIAL ORACLE

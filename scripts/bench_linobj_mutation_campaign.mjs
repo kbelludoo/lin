@@ -42,6 +42,20 @@ import {
   lowerLinobj
 } from '../src/linobj.mjs';
 import { emitAilFromSource } from '../src/emitter.mjs';
+import {
+  mutateFormatting,
+  mutateComment,
+  mutateReorderExports,
+  mutateRenameLocal,
+  mutateAlterParameter,
+  mutateAlterType,
+  mutateAlterEffect,
+  mutateAlterRefinement,
+  mutateAlterExportedSymbol,
+  mutateAliasReexport,
+  mutateDependencyEdge,
+  mutateBodySemantics
+} from '../src/lin_mutation_generator_load.mjs';
 
 const SAMPLE_MODULES = [
   {
@@ -101,101 +115,75 @@ function generateMutation(cls, modules, seed) {
 
     switch (cls) {
       case 'formatting': {
-        mutatedSrc = src.replace(/\+/g, ' + ').replace(/=/g, ' = ').replace(/\n/g, '\n\n  ');
+        mutatedSrc = mutateFormatting(src);
         isSemantic = false;
         desc = `Injected whitespace & indents into ${candidate.id}`;
         break;
       }
       case 'comment': {
-        mutatedSrc = `/* Auto-generated comment ${seed} */\n` + src.replace(/\{/g, '{\n  // line comment\n');
+        mutatedSrc = mutateComment(src, seed);
         isSemantic = false;
         desc = `Injected comments into ${candidate.id}`;
         break;
       }
       case 'reorder_exports': {
-        if (src.includes(',') && src.includes('=ex{')) {
-          mutatedSrc = src.replace(/=ex\{([^}]+)\}/, (_, list) => {
-            const parts = list.split(',').map(s => s.trim()).reverse();
-            return `=ex{${parts.join(',')}}`;
-          });
-          isSemantic = false;
-          desc = `Reordered exports in ${candidate.id}`;
-        }
+        mutatedSrc = mutateReorderExports(src);
+        isSemantic = false;
+        desc = `Reordered exports in ${candidate.id}`;
         break;
       }
       case 'rename_local': {
-        if (src.includes('s=') || src.includes('m=')) {
-          mutatedSrc = src.replace(/\bs\b/g, 's_renamed').replace(/\bm\b/g, 'm_renamed');
-          isSemantic = false;
-          desc = `Alpha-renamed local vars in ${candidate.id}`;
-        }
+        mutatedSrc = mutateRenameLocal(src);
+        isSemantic = false;
+        desc = `Alpha-renamed local vars in ${candidate.id}`;
         break;
       }
       case 'alter_parameter': {
-        const fnMatch = src.match(/!([A-Za-z0-9_]+)\(([^)]*)\)/);
-        if (fnMatch) {
-          mutatedSrc = src.replace(fnMatch[0], `!${fnMatch[1]}(${fnMatch[2]}${fnMatch[2] ? ',' : ''}_extra)`);
-          isSemantic = true;
-          desc = `Added parameter to ${fnMatch[1]} in ${candidate.id}`;
-        }
+        mutatedSrc = mutateAlterParameter(src);
+        isSemantic = true;
+        desc = `Added parameter in ${candidate.id}`;
         break;
       }
       case 'alter_type': {
-        const fnMatch = src.match(/!([A-Za-z0-9_]+)\(([A-Za-z0-9_,]+)\)/);
-        if (fnMatch) {
-          const typedParams = fnMatch[2].split(',').map(p => `${p}:string`).join(',');
-          mutatedSrc = src.replace(fnMatch[0], `!${fnMatch[1]}(${typedParams})`);
-          isSemantic = true;
-          desc = `Changed types in ${fnMatch[1]} in ${candidate.id}`;
-        }
+        mutatedSrc = mutateAlterType(src);
+        isSemantic = true;
+        desc = `Altered types in ${candidate.id}`;
         break;
       }
       case 'alter_effect': {
-        const fnBodyMatch = src.match(/!([A-Za-z0-9_]+)\([^)]*\)\{/);
-        if (fnBodyMatch) {
-          mutatedSrc = src.replace(fnBodyMatch[0], `${fnBodyMatch[0]}console.log("io_effect");`);
-          isSemantic = true;
-          desc = `Injected IO effect into ${candidate.id}`;
-        }
+        mutatedSrc = mutateAlterEffect(src);
+        isSemantic = true;
+        desc = `Injected side-effect into ${candidate.id}`;
         break;
       }
       case 'alter_refinement': {
-        if (src.includes('/')) {
-          mutatedSrc = src.replace(/\/2\)/, '/0)');
-          isSemantic = true;
-          desc = `Altered divisor to 0 in ${candidate.id}`;
-        }
+        mutatedSrc = mutateAlterRefinement(src);
+        isSemantic = true;
+        desc = `Altered refinement/division proof in ${candidate.id}`;
         break;
       }
       case 'alter_exported_symbol': {
-        const retMatch = src.match(/\{[^}]*\^([a-zA-Z0-9_+*/\-()]+)/);
-        if (retMatch) {
-          mutatedSrc = src.replace(retMatch[0], retMatch[0] + '+99');
-          isSemantic = true;
-          desc = `Altered return expression in ${candidate.id}`;
-        }
+        mutatedSrc = mutateAlterExportedSymbol(src);
+        isSemantic = true;
+        desc = `Mutated active exported logic in ${candidate.id}`;
         break;
       }
       case 'alias_reexport': {
-        if (src.includes(' as ')) {
-          mutatedSrc = src.replace(/add as sum/, 'sub as sum');
-          isSemantic = true;
-          desc = `Altered alias target in ${candidate.id}`;
-        }
+        mutatedSrc = mutateAliasReexport(src);
+        isSemantic = true;
+        desc = `Altered alias mapping in ${candidate.id}`;
         break;
       }
       case 'dependency_edge': {
-        mutatedSrc = src + `\n// non-functional annotation ${seed}`;
+        mutatedSrc = mutateDependencyEdge(src, seed);
         isSemantic = false;
-        desc = `Added non-functional comment in ${candidate.id}`;
+        desc = `Added inert edge metadata to ${candidate.id}`;
         break;
       }
       case 'body_semantics': {
-        if (src.includes('+') || src.includes('*') || src.includes('-')) {
-          mutatedSrc = src.includes('+') ? src.replace(/\+/, '-') : src.replace(/\*/, '+');
-          isSemantic = true;
-          desc = `Inverted operator in ${candidate.id}`;
-        }
+        mutatedSrc = mutateBodySemantics(src);
+        isSemantic = true;
+        desc = `Inverted arithmetic operator in ${candidate.id}`;
         break;
       }
     }
