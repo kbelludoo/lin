@@ -1,0 +1,40 @@
+@RULEL:LIN_GATE_10K_MUTATION_RIGOROUS:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-21 why=prove_10k_ast_equivalence_and_10k_ast_runtime_mutation_testing_with_strict_accounting}
+.d{
+  P0=agent_native_first
+  purpose=evaluate_10000_arbitrary_asts_and_test_runtime_mutants_against_the_full_10k_corpus
+  accounting_fields=["programs_generated", "valid_oracle", "lin_executed", "matches", "mismatches", "parse_failures", "runtime_failures"]
+  mutation_eval_corpus=10000_generated_asts
+}
+
+.t{
+  H_RIGOROUS_10K="A single unified generator creates 10,000 deterministic ASTs without semantic shims, achieves exact parity against the JS reference, and detects 100% of discrete runtime mutants (M1 through M4) when executed across the entire 10,000 AST corpus."
+}
+
+.c{mutants=[
+  "M1: Arithmetic corruption (+ -> - in numeric eval)",
+  "M2: Short-circuit logic inversion in && (!is_truthy -> is_truthy)",
+  "M3: Boundary corruption in comparison (< -> <=)",
+  "M4: Loop step perturbation (i++ -> i+=2)"
+]}
+
+.i{
+  STRICT_METRIC_DENOMINATOR="behavior_eq = matches / valid_oracle (with valid_oracle == 10000)"
+  EVALUATE_MUTANTS_ON_FULL_10K="Mutants are tested directly against the 10,000 AST benchmark"
+  NO_EMITTER_SHIMS="LIN and JS emissions strictly mirror exact language semantics"
+}
+
+.g{
+  GATE_RIGOROUS_10K=valid_oracle_eq_10000 AND matches_eq_10000 AND mutation_score_4_of_4
+}
+
+.r{
+  R_CLEAN_AST_SEMANTICS="Ensure AST generator generates operations within domain without artificial JS math transforms"
+  R_MUTATION_ACCOUNTING="Record which of the 10,000 programs killed each mutant"
+}
+
+.p{
+  spec=spec/LIN_GATE_10K_MUTATION_RIGOROUS.rulel
+  runner=tests/lin_rigorous_10k_and_mutation_runner.mjs
+}
