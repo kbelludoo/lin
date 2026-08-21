@@ -113,14 +113,39 @@ function compileReturnSigils(s) {
   let i = 0;
   while (i < s.length) {
     const c = s[i];
+    if (c === '"' || c === "'" || c === '`') {
+      const end = skipQuote(s, i);
+      out += s.slice(i, end);
+      i = end;
+      continue;
+    }
     if (c !== '^') {
       out += c;
       i++;
       continue;
     }
-    const prev = out.trimEnd().slice(-1) || '';
+    // Check backwards from out, stripping only horizontal whitespace
+    let k = out.length - 1;
+    while (k >= 0 && (out[k] === ' ' || out[k] === '\t' || out[k] === '\r')) k--;
+    let prevOk = false;
+    if (k < 0) {
+      prevOk = true;
+    } else {
+      const prevCh = out[k];
+      if (prevCh === '\n' || prevCh === ';' || prevCh === '{' || prevCh === '}' || prevCh === ',' || prevCh === ':') {
+        prevOk = true;
+      } else if (out.slice(0, k + 1).endsWith('*/')) {
+        const commentStart = out.lastIndexOf('/*', k);
+        if (commentStart >= 0) {
+          let beforeComment = commentStart - 1;
+          while (beforeComment >= 0 && /\s/.test(out[beforeComment])) beforeComment--;
+          if (beforeComment < 0 || /[;{}\n,:]/.test(out[beforeComment])) {
+            prevOk = true;
+          }
+        }
+      }
+    }
     const next = s[i + 1] || '';
-      const prevOk = !prev || /[;{}\n,:]/.test(prev);
     const nextOk = /[A-Za-z_$0-9(\[\-+!'"`{]/.test(next);
     if (prevOk && nextOk) {
       out += 'return ';

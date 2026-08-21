@@ -8,14 +8,27 @@ import { emitBanner, isJsRuntimeOnly, rewriteExpr, parseParamList, inferTypes, i
 function tsType(id, inferred) {
   if (inferred && inferred.get(id) === 'int') return 'number';
   if (inferred && inferred.get(id) === 'bool') return 'boolean';
+  if (inferred && inferred.get(id) === 'string') return 'string';
   if (isNumishId(id)) return 'number';
   return 'unknown';
 }
 
-function tsReturnType(fnName, inferred) {
+function tsReturnType(fnName, inferred, fn) {
+  if (fn && fn.returnType) {
+    const rt = fn.returnType.trim();
+    if (rt === 'int' || rt === 'number' || rt === 'i32' || rt === 'i64' || rt === 'f64') return 'number';
+    if (rt === 'bool' || rt === 'boolean') return 'boolean';
+    if (rt === 'string' || rt === 'str') return 'string';
+    if (rt === 'void') return 'void';
+    return rt;
+  }
   if (/^is|^has|^can|Even$|^empty$|^startsWith$/.test(fnName)) return 'boolean';
-  if (inferred && inferred.get('__return') === 'int') return 'number';
-  if (inferred && inferred.get('__return') === 'bool') return 'boolean';
+  const retT = inferred?.get('__return');
+  if (retT === 'int') return 'number';
+  if (retT === 'bool') return 'boolean';
+  if (retT === 'string') return 'string';
+  if (retT === 'void') return 'void';
+  if (retT === 'array') return 'unknown[]';
   return 'any';
 }
 import { emitThrowLine } from './emit_rewrite.mjs';
@@ -94,7 +107,7 @@ export function emitTs(liaText, opts = {}) {
     const bodyLines = [];
     if (locals.length) bodyLines.push(`  let ${locals.join(', ')};`);
     bodyLines.push(...emitStmts(stmts, 1));
-    const retType = tsReturnType(fn.name, inferred);
+    const retType = tsReturnType(fn.name, inferred, fn);
     parts.push(`export function ${fn.name}(${paramList}): ${retType} {\n${bodyLines.join('\n')}\n}`);
   }
   return { code: parts.join('\n'), program: prog, target: 'ts' };

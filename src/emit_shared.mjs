@@ -285,6 +285,24 @@ export function inferTypes(stmts) {
             changed = true;
           }
         }
+      } else if (st.type === 'return') {
+        let rhs = String(st.expr || '').trim();
+        if (rhs.startsWith('return ') || rhs.startsWith('return\t')) rhs = rhs.slice(6).trim();
+        let t = null;
+        if (/~\(|=>/.test(rhs)) t = 'string';
+        else if (/\.to_string\s*\(\)|String\s*\(|"[^"]*"|'[^']*'/.test(rhs)) t = 'string';
+        else if (/\/.+\/[gimsuy]*|\b_lia_re_exec\b/.test(rhs)) t = 'string';
+        else if (/^(true|false)$/.test(rhs)) t = 'bool';
+        else if (/===|!==|==|!=|<=|>=|<|>|&&|\|\||is_empty/.test(rhs)) t = 'bool';
+        else if (/\b(length|len|is_empty|Math\.abs|Math\.round|_lia_abs|_lia_round|_lia_num|parseFloat)\b/.test(rhs)) t = 'int';
+        else if (/^\d+$/.test(rhs) || /^\d+\.\d+$/.test(rhs)) t = 'int';
+        else if (/^[A-Za-z_][\w]*$/.test(rhs) && types.has(rhs)) t = types.get(rhs);
+        else if (/[a-zA-Z_$][\w$]*\s*[+\-*/%&|^]\s*[a-zA-Z_$0-9]/.test(rhs)) t = 'int';
+        else if (/^\[.*\]$/.test(rhs)) t = 'array';
+        if (t && types.get('__return') !== t) {
+          types.set('__return', t);
+          changed = true;
+        }
       }
     }
     if (!changed) break;

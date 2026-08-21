@@ -1,6 +1,6 @@
 
 import importlib.util, sys
-spec = importlib.util.spec_from_file_location("sc", r"C:\\Users\\kbell\\OneDrive\\Documents\\lia\\examples\\.multi_emit_out\\safe_compare.py")
+spec = importlib.util.spec_from_file_location("sc", r"/home/k/Downloads/lin-master/examples/.multi_emit_out/safe_compare.py")
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
 assert m.safe_compare("ab","ab") is True

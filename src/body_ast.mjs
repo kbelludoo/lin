@@ -214,7 +214,11 @@ export function parseStmts(body) {
         else if ((c === '?' || c === '#' || c === '^') && depth === 0 && j > i + 1) break;
         j++;
       }
-      out.push({ type: 'return', expr: s.slice(i + 1, j).trim() });
+      let retExpr = s.slice(i + 1, j).trim();
+      if (retExpr.startsWith('return ') || retExpr.startsWith('return\t')) {
+        retExpr = retExpr.slice(6).trim();
+      }
+      out.push({ type: 'return', expr: retExpr });
       i = j < s.length && s[j] === ';' ? j + 1 : j;
       continue;
     }
