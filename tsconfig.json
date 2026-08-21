@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "strict": false,
+    "allowJs": true,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "rootDir": "./src",
+    "outDir": "./types",
+    "types": ["node"]
+  },
+  "include": [
+    "src/compiler.mjs",
+    "src/linobj.mjs",
+    "src/lin_capsule_protocol.mjs",
+    "src/lin_capsule_encoder.mjs",
+    "src/lin_capsule_decoder.mjs",
+    "src/multi_emit.mjs",
+    "src/emit_shared.mjs",
+    "src/formal_gate.mjs",
+    "src/target_selector.mjs"
+  ]
+}

@@ -41,7 +41,9 @@
     "clone-lia": "node bin/lin.mjs clone-lin",
     "example:safe": "node bin/lin.mjs compile examples/safe-compare.lia --target js -o examples/safe-compare.compiled.js",
     "bench:capsule": "node benchmarks/LIN_CAPSULE_001/benchmark.mjs",
-    "bench:capsule:context_death": "node benchmarks/LIN_CAPSULE_002_CONTEXT_DEATH/benchmark.mjs"
+    "bench:capsule:context_death": "node benchmarks/LIN_CAPSULE_002_CONTEXT_DEATH/benchmark.mjs",
+    "typecheck": "tsc --noEmit",
+    "build:types": "tsc"
   },
   "keywords": [
     "lin",
@@ -65,6 +67,7 @@
     "node": ">=18"
   },
   "devDependencies": {
+    "@types/node": "^26.2.0",
     "typescript": "^7.0.2"
   },
   "dependencies": {

@@ -1,265 +1,142 @@
-/**
- * LIN Capsule Decoder & Verifier
- * Reconstructs, validates, verifies hashes, and unpacks .linobj from capsule volumes.
- */
-import zlib from 'node:zlib';
-import {
-  CAPSULE_PROTOCOL_NAME,
-  CAPSULE_VERSION,
-  CAPSULE_HEADER_PREFIX,
-  SUPPORTED_COMPRESSIONS,
-  computeSha256,
-  fromBase64Url
-} from './lin_capsule_protocol.mjs';
-import { computeModuleSemanticHash } from './linobj.mjs';
+import { PROTOCOL_VERSION, canonicalJson, sha256, decompressPayload } from './lin_capsule_protocol.mjs';
 
 /**
- * Decompresses raw buffer based on compression type.
+ * Validates and decodes a LIN Capsule payload from fragmented parts.
+ * Enforces GATE A (Integrity) and GATE B (Rehydration & Contract Checking).
+ * Never executes code or lowering (Gate C is decoupled).
+ * 
+ * @param {Array<Object>} parts - The fragmented capsule parts
+ * @param {Object} policy - Host environment security policy for Gate B
+ * @param {Array<string>} policy.allowed_effects - Allowed effect tokens
+ * @param {Array<string>} policy.authorized_capabilities - Explicitly authorized capability tokens
+ * @returns {Object} { ok: boolean, linobj?: Object, error?: string, gate?: string }
  */
-export function decompressData(buf, compression = 'brotli') {
-  if (compression === 'brotli') {
-    return zlib.brotliDecompressSync(buf);
-  }
-  if (compression === 'deflate') {
-    return zlib.inflateSync(buf);
-  }
-  if (compression === 'gzip') {
-    return zlib.gunzipSync(buf);
-  }
-  if (compression === 'raw') {
-    return buf;
-  }
-  throw new Error(`Unsupported decompression algorithm: ${compression}`);
-}
-
-/**
- * Joins multi-part capsule volumes into a verified, canonical reconstructed payload.
- *
- * @param {Array<string>} partStrings - Array of formatted @capsule:v1 parts
- * @returns {Object} { manifest, payloadBase64Url, manifestBase64Url }
- */
-export function joinCapsule(partStrings) {
-  if (!Array.isArray(partStrings) || partStrings.length === 0) {
-    throw new Error('No capsule parts provided');
+export function decodeCapsule(parts, policy = {}) {
+  // -------------------------------------------------------------
+  // GATE A: INTEGRITY
+  // -------------------------------------------------------------
+  if (!Array.isArray(parts) || parts.length === 0) {
+    return { ok: false, gate: 'GATE_A', error: 'CAPSULE_HEADER_VALID: parts must be a non-empty array' };
   }
 
-  let expectedManifestBase64 = null;
-  let manifest = null;
-  let totalParts = -1;
-  const collectedChunks = [];
+  const expectedCount = parts[0].part_count;
+  const expectedPayloadHash = parts[0].payload_hash;
+  const expectedSemanticHash = parts[0].semantic_hash;
+  const protocol = parts[0].protocol;
 
-  for (let i = 0; i < partStrings.length; i++) {
-    const raw = String(partStrings[i]).trim();
-    if (!raw.startsWith(CAPSULE_HEADER_PREFIX + ':')) {
-      throw new Error(`Invalid capsule part prefix: ${raw.slice(0, 20)}`);
-    }
-
-    const rest = raw.slice(CAPSULE_HEADER_PREFIX.length + 1);
-    const tokens = rest.split(':');
-
-    if (tokens.length < 3) {
-      throw new Error(`Malformed multi-part capsule chunk format at index ${i}`);
-    }
-
-    const manifestBase64 = tokens[0];
-    const partTag = tokens[1]; // e.g. "[1/3]"
-    const chunkData = tokens.slice(2).join(':');
-
-    // Verify manifest consistency across parts
-    if (expectedManifestBase64 === null) {
-      expectedManifestBase64 = manifestBase64;
-      try {
-        const manifestJson = fromBase64Url(manifestBase64).toString('utf8');
-        manifest = JSON.parse(manifestJson);
-      } catch (err) {
-        throw new Error(`Corrupted capsule manifest JSON: ${err.message}`);
-      }
-
-      if (manifest.protocol !== CAPSULE_PROTOCOL_NAME) {
-        throw new Error(`Unsupported protocol: ${manifest.protocol}`);
-      }
-      if (manifest.version !== CAPSULE_VERSION) {
-        throw new Error(`Unsupported protocol version: ${manifest.version}`);
-      }
-      if (!SUPPORTED_COMPRESSIONS.includes(manifest.compression)) {
-        throw new Error(`Unsupported compression: ${manifest.compression}`);
-      }
-      totalParts = manifest.parts;
-    } else if (expectedManifestBase64 !== manifestBase64) {
-      throw new Error(`Manifest mismatch between chunk ${i} and chunk 0`);
-    }
-
-    // Parse part index "[k/N]"
-    const match = partTag.match(/^\[(\d+)\/(\d+)\]$/);
-    if (!match) {
-      throw new Error(`Invalid part tag format: ${partTag}`);
-    }
-    const partIndex = parseInt(match[1], 10);
-    const declaredTotal = parseInt(match[2], 10);
-
-    if (declaredTotal !== totalParts) {
-      throw new Error(`Part total discrepancy: declared ${declaredTotal}, manifest expected ${totalParts}`);
-    }
-    if (partIndex < 1 || partIndex > totalParts) {
-      throw new Error(`Part index out of bounds: ${partIndex} of ${totalParts}`);
-    }
-
-    // Validate chunk SHA-256 against manifest checksums if present
-    if (manifest.part_checksums && manifest.part_checksums[partIndex - 1]) {
-      const actualChunkSha = computeSha256(chunkData);
-      const expectedChunkSha = manifest.part_checksums[partIndex - 1];
-      if (actualChunkSha !== expectedChunkSha) {
-        throw new Error(`Corrupted chunk ${partIndex}: checksum mismatch`);
-      }
-    }
-
-    if (collectedChunks[partIndex - 1] !== undefined) {
-      throw new Error(`Duplicate part received: [${partIndex}/${totalParts}]`);
-    }
-
-    collectedChunks[partIndex - 1] = chunkData;
+  if (protocol !== PROTOCOL_VERSION) {
+    return { ok: false, gate: 'GATE_A', error: `CAPSULE_HEADER_VALID: unsupported protocol ${protocol}` };
   }
 
-  // Verify all parts are present (no missing chunks)
-  if (collectedChunks.length !== totalParts || collectedChunks.some((c) => c === undefined)) {
-    throw new Error(`Incomplete capsule: received ${partStrings.length} of ${totalParts} required parts`);
+  if (parts.length !== expectedCount) {
+    return { ok: false, gate: 'GATE_A', error: `CAPSULE_PART_COUNT_VALID: expected ${expectedCount} parts, got ${parts.length}` };
   }
 
-  const payloadBase64Url = collectedChunks.join('');
-  return {
-    manifest,
-    payloadBase64Url,
-    manifestBase64Url: expectedManifestBase64
+  // Check ordering and per-part hash
+  const orderedChunks = new Array(expectedCount);
+
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+
+    if (typeof part.part_index !== 'number' || part.part_index < 0 || part.part_index >= expectedCount) {
+      return { ok: false, gate: 'GATE_A', error: `CAPSULE_PART_ORDER_VALID: invalid part_index ${part.part_index}` };
+    }
+
+    if (orderedChunks[part.part_index] !== undefined) {
+      return { ok: false, gate: 'GATE_A', error: `CAPSULE_PART_ORDER_VALID: duplicate part_index ${part.part_index}` };
+    }
+
+    // Verify per-part hash
+    const computedPartHash = sha256(part.chunk || '');
+    if (computedPartHash !== part.part_hash) {
+      return { ok: false, gate: 'GATE_A', error: `CAPSULE_PART_HASH_VALID: part ${part.part_index} checksum mismatch` };
+    }
+
+    // Verify consistency across parts
+    if (part.payload_hash !== expectedPayloadHash || part.semantic_hash !== expectedSemanticHash) {
+      return { ok: false, gate: 'GATE_A', error: 'CAPSULE_PAYLOAD_HASH_VALID: header metadata mismatch across parts' };
+    }
+
+    orderedChunks[part.part_index] = part.chunk;
+  }
+
+  // Ensure strict contiguous indexing without gaps
+  for (let i = 0; i < expectedCount; i++) {
+    if (orderedChunks[i] === undefined) {
+      return { ok: false, gate: 'GATE_A', error: `CAPSULE_PART_ORDER_VALID: missing part at index ${i}` };
+    }
+  }
+
+  // Reassemble payload and verify payload hash
+  const reassembledBase64 = orderedChunks.join('');
+  const computedPayloadHash = sha256(reassembledBase64);
+  if (computedPayloadHash !== expectedPayloadHash) {
+    return { ok: false, gate: 'GATE_A', error: 'CAPSULE_PAYLOAD_HASH_VALID: reassembled payload hash mismatch' };
+  }
+
+  // -------------------------------------------------------------
+  // GATE B: REHYDRATION & CONTRACTS
+  // -------------------------------------------------------------
+  let artifact;
+  try {
+    const compressedBuf = Buffer.from(reassembledBase64, 'base64url');
+    const decompressedJson = decompressPayload(compressedBuf, parts[0].compression).toString('utf8');
+    artifact = JSON.parse(decompressedJson);
+  } catch (err) {
+    return { ok: false, gate: 'GATE_B', error: `CAPSULE_IR_VALID: decompression/parse error: ${err.message}` };
+  }
+
+  if (!artifact || typeof artifact !== 'object' || !artifact.ir || !artifact.identity) {
+    return { ok: false, gate: 'GATE_B', error: 'CAPSULE_IR_VALID: malformed artifact structure' };
+  }
+
+  // Verify semantic hash matches canonical IR
+  const canonicalIr = artifact.ir.canonical_ir;
+  const computedSemanticHash = sha256(canonicalJson(canonicalIr));
+  if (computedSemanticHash !== expectedSemanticHash || artifact.identity.semantic_hash !== expectedSemanticHash) {
+    return { ok: false, gate: 'GATE_A', error: 'CAPSULE_SEMANTIC_HASH_VALID: canonical IR hash mismatch' };
+  }
+
+  // Invariant verification
+  const invariants = artifact.contracts?.invariants;
+  if (!invariants || invariants.verified !== true) {
+    return { ok: false, gate: 'GATE_B', error: 'CAPSULE_INVARIANTS_VALID: invariant proof missing or unverified' };
+  }
+
+  // Effect manifest verification against host allowed envelope
+  const declaredEffects = artifact.contracts?.effects || [];
+  const allowedEffects = new Set(policy.allowed_effects || ['io:pure', 'io:stdout']);
+  for (const effect of declaredEffects) {
+    if (!allowedEffects.has(effect)) {
+      return { ok: false, gate: 'GATE_B', error: `CAPSULE_EFFECTS_VALID: effect ${effect} exceeds allowed host envelope` };
+    }
+  }
+
+  // Capability manifest verification against host authorized policy
+  const declaredCaps = artifact.contracts?.capabilities || [];
+  const authorizedCaps = new Set(policy.authorized_capabilities || []);
+  for (const cap of declaredCaps) {
+    if (!authorizedCaps.has(cap)) {
+      return { ok: false, gate: 'GATE_B', error: `CAPSULE_CAPABILITIES_VALID: capability ${cap} denied by local policy` };
+    }
+  }
+
+  // Success: produce fully verified LINOBJ
+  const linobj = {
+    ir: canonicalIr,
+    semantic_hash: artifact.identity.semantic_hash,
+    workflow_hash: artifact.identity.workflow_hash,
+    source_digest: artifact.identity.source_digest,
+    effects: declaredEffects,
+    capabilities: declaredCaps,
+    invariants: invariants,
+    lowering_hints: artifact.ir.lowering_hints || {},
+    provenance: artifact.provenance || {}
   };
-}
 
-/**
- * Unpacks a capsule (either monolithic string, URL fragment, or array of parts) into a validated .linobj.
- *
- * @param {string|Array<string>} input - Raw monolithic capsule, URL string with #, or array of parts
- * @param {Object} options - Verification options
- * @returns {Object} Reconstructed .linobj
- */
-export function unpackCapsule(input, options = {}) {
-  let manifest = null;
-  let payloadBase64Url = null;
-
-  if (Array.isArray(input)) {
-    const joined = joinCapsule(input);
-    manifest = joined.manifest;
-    payloadBase64Url = joined.payloadBase64Url;
-  } else if (typeof input === 'string') {
-    let clean = input.trim();
-    if (clean.startsWith('#')) {
-      clean = clean.slice(1);
-    }
-    if (clean.includes('lin.run/#')) {
-      clean = clean.split('lin.run/#')[1];
-    }
-
-    if (!clean.startsWith(CAPSULE_HEADER_PREFIX + ':')) {
-      throw new Error(`Invalid capsule header prefix: ${clean.slice(0, 20)}`);
-    }
-
-    const rest = clean.slice(CAPSULE_HEADER_PREFIX.length + 1);
-    const tokens = rest.split(':');
-
-    const manifestBase64 = tokens[0];
-    const rawPayload = tokens.slice(1).join(':');
-
-    try {
-      const manifestJson = fromBase64Url(manifestBase64).toString('utf8');
-      manifest = JSON.parse(manifestJson);
-    } catch (err) {
-      throw new Error(`Corrupted capsule manifest JSON: ${err.message}`);
-    }
-
-    if (manifest.protocol !== CAPSULE_PROTOCOL_NAME) {
-      throw new Error(`Unsupported protocol: ${manifest.protocol}`);
-    }
-    if (manifest.version !== CAPSULE_VERSION) {
-      throw new Error(`Unsupported protocol version: ${manifest.version}`);
-    }
-
-    // Handles dot-joined chunks or direct base64url payload
-    payloadBase64Url = rawPayload.replace(/\./g, '');
-
-    // Validate chunk hashes if manifest contains part_checksums
-    if (manifest.part_checksums && manifest.part_checksums.length > 0) {
-      const parts = rawPayload.split('.');
-      if (parts.length === manifest.part_checksums.length) {
-        for (let i = 0; i < parts.length; i++) {
-          const actualSha = computeSha256(parts[i]);
-          if (actualSha !== manifest.part_checksums[i]) {
-            throw new Error(`Tampered payload: chunk ${i + 1} checksum mismatch`);
-          }
-        }
-      }
-    }
-  } else {
-    throw new Error('unpackCapsule requires a string or array of part strings');
-  }
-
-  // 1. Decompress Payload
-  const compressedBuf = fromBase64Url(payloadBase64Url);
-  let decompressedBuf;
-  try {
-    decompressedBuf = decompressData(compressedBuf, manifest.compression);
-  } catch (err) {
-    throw new Error(`Payload decompression failed (${manifest.compression}): ${err.message}`);
-  }
-
-  const artifactJson = decompressedBuf.toString('utf8');
-
-  // 2. Cryptographic Verification: H_artifact (SHA-256)
-  const actualArtifactSha256 = computeSha256(artifactJson);
-  if (manifest.artifact_sha256 && actualArtifactSha256 !== manifest.artifact_sha256) {
-    throw new Error(`Tampered payload: artifact SHA-256 mismatch (expected ${manifest.artifact_sha256}, got ${actualArtifactSha256})`);
-  }
-
-  // 3. Parse Reconstructed .linobj
-  let linobj = null;
-  try {
-    linobj = JSON.parse(artifactJson);
-  } catch (err) {
-    throw new Error(`Corrupted reconstructed artifact JSON: ${err.message}`);
-  }
-
-  // 4. Semantic Verification: H_semantic (Lexical-Invariant AST Hash)
-  if (manifest.semantic_hash && linobj.semantic_hash !== manifest.semantic_hash) {
-    throw new Error(`Forged semantic hash: manifest declared ${manifest.semantic_hash}, artifact has ${linobj.semantic_hash}`);
-  }
-
-  // Deep verification: recompute semantic hash from internal canonical functions if requested
-  if (options.deepSemanticVerify !== false && linobj.canonical_ir) {
-    const fns = linobj.canonical_ir.functions || linobj.canonical_ir.fns || [];
-    const consts = linobj.canonical_ir.consts || {};
-    const exports = linobj.canonical_ir.exports || [];
-    const recomputedHash = computeModuleSemanticHash(fns, consts, exports);
-    if (recomputedHash !== linobj.semantic_hash) {
-      throw new Error(`Semantic hash integrity failure: recomputed ${recomputedHash} vs artifact ${linobj.semantic_hash}`);
-    }
-  }
-
-  return linobj;
-}
-
-/**
- * Validates the cryptographic and semantic integrity of a capsule without throwing exceptions.
- */
-export function verifyCapsule(input, options = {}) {
-  try {
-    const linobj = unpackCapsule(input, options);
-    return {
-      valid: true,
-      semanticHash: linobj.semantic_hash,
-      formatVersion: linobj.format_version,
-      invariantsVerified: linobj.invariant_report?.verified !== false
-    };
-  } catch (err) {
-    return {
-      valid: false,
-      error: err.message
-    };
-  }
+  return {
+    ok: true,
+    gate: 'GATE_B_PASSED',
+    linobj
+  };
 }
