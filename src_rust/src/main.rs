@@ -132,6 +132,91 @@ impl Scope {
     }
 }
 
+// JS ToNumber: returns None when result would be NaN (non-numeric string, array, object)
+fn to_js_number(v: &Value) -> Option<f64> {
+    match v {
+        Value::Number(n) => n.as_f64(),
+        Value::Bool(b) => Some(if *b { 1.0 } else { 0.0 }),
+        Value::Null => Some(0.0),
+        Value::String(s) => {
+            let t = s.trim();
+            if t.is_empty() { return Some(0.0); }
+            t.parse::<f64>().ok()
+        },
+        // Single-element array coerces like its sole element; empty = 0; multi = NaN
+        Value::Array(arr) => {
+            if arr.is_empty() { Some(0.0) }
+            else if arr.len() == 1 { to_js_number(&arr[0]) }
+            else { None }
+        },
+        Value::Object(_) => None,
+    }
+}
+
+fn make_number(f: f64) -> Value {
+    if f.is_nan() || f.is_infinite() { return Value::Null; }
+    if f.fract() == 0.0 && f >= (i64::MIN as f64) && f <= (i64::MAX as f64) {
+        Value::from(f as i64)
+    } else if let Some(n) = serde_json::Number::from_f64(f) {
+        Value::Number(n)
+    } else {
+        Value::Null
+    }
+}
+
+// JS AbstractRelationalComparison: string vs string -> lexicographic; else numeric; NaN -> false
+fn js_rel_lt(a: &Value, b: &Value) -> bool {
+    if let (Value::String(sa), Value::String(sb)) = (a, b) {
+        return sa.as_str() < sb.as_str();
+    }
+    match (to_js_number(a), to_js_number(b)) {
+        (Some(na), Some(nb)) => na < nb,
+        _ => false, // NaN comparison = false
+    }
+}
+
+// JS + operator: toPrimitive then either string-concat or numeric add
+fn val_to_primitive_string(v: &Value) -> Option<String> {
+    match v {
+        Value::String(s) => Some(s.clone()),
+        Value::Array(arr) => {
+            let parts: Vec<String> = arr.iter().map(|item| match item {
+                Value::String(s) => s.clone(),
+                Value::Null => String::new(),
+                other => other.to_string(),
+            }).collect();
+            Some(parts.join(","))
+        },
+        Value::Object(_) => Some("[object Object]".to_string()),
+        _ => None,
+    }
+}
+
+fn js_add(v1: Value, v2: Value) -> Value {
+    // If either side toPrimitive gives a string, concatenate
+    let ps1 = val_to_primitive_string(&v1);
+    let ps2 = val_to_primitive_string(&v2);
+    if ps1.is_some() || ps2.is_some() {
+        let s1 = ps1.unwrap_or_else(|| match &v1 {
+            Value::Bool(b) => b.to_string(),
+            Value::Number(n) => n.to_string(),
+            Value::Null => String::new(),
+            _ => v1.to_string(),
+        });
+        let s2 = ps2.unwrap_or_else(|| match &v2 {
+            Value::Bool(b) => b.to_string(),
+            Value::Number(n) => n.to_string(),
+            Value::Null => String::new(),
+            _ => v2.to_string(),
+        });
+        return Value::String(format!("{}{}", s1, s2));
+    }
+    match (to_js_number(&v1), to_js_number(&v2)) {
+        (Some(a), Some(b)) => make_number(a + b),
+        _ => Value::Null,
+    }
+}
+
 pub fn eval_expr(expr: &str, scope: &mut Scope, module: &LinModule) -> Value {
     let mut s = expr.trim();
     if s.is_empty() { return Value::Null; }
@@ -193,6 +278,7 @@ pub fn eval_expr(expr: &str, scope: &mut Scope, module: &LinModule) -> Value {
         return Value::Object(serde_json::Map::new());
     }
 
+    // 0. Curto-Circuito Lógico (&&, ||) com retorno do valor exato
     if let Some(pos) = find_binary_op(s, "||") {
         let v1 = eval_expr(&s[..pos], scope, module);
         if is_truthy(&v1) { return v1; }
@@ -204,82 +290,95 @@ pub fn eval_expr(expr: &str, scope: &mut Scope, module: &LinModule) -> Value {
         return eval_expr(&s[pos + 2..], scope, module);
     }
 
+    // 1. Comparações (==, !=, <=, >=, <, >) com coerção de tipos
     if let Some(pos) = find_binary_op(s, "==") {
         let v1 = eval_expr(&s[..pos], scope, module);
         let v2 = eval_expr(&s[pos + 2..], scope, module);
-        return Value::Bool(v1 == v2);
+        return Value::Bool(js_equals(&v1, &v2));
     }
     if let Some(pos) = find_binary_op(s, "!=") {
         let v1 = eval_expr(&s[..pos], scope, module);
         let v2 = eval_expr(&s[pos + 2..], scope, module);
-        return Value::Bool(v1 != v2);
+        return Value::Bool(!js_equals(&v1, &v2));
     }
     if let Some(pos) = find_binary_op(s, "<=") {
-        let n1 = to_f64(&eval_expr(&s[..pos], scope, module));
-        let n2 = to_f64(&eval_expr(&s[pos + 2..], scope, module));
-        return Value::Bool(n1 <= n2);
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 2..], scope, module);
+        return Value::Bool(!js_rel_lt(&rv, &lv) && js_rel_lt(&lv, &rv) || lv == rv || {
+            // JS <=: !(rv < lv) but if either is NaN, false
+            match (to_js_number(&lv), to_js_number(&rv)) {
+                (Some(a), Some(b)) => a <= b,
+                _ => if let (Value::String(sa), Value::String(sb)) = (&lv, &rv) { sa <= sb } else { false },
+            }
+        });
     }
     if let Some(pos) = find_binary_op(s, ">=") {
-        let n1 = to_f64(&eval_expr(&s[..pos], scope, module));
-        let n2 = to_f64(&eval_expr(&s[pos + 2..], scope, module));
-        return Value::Bool(n1 >= n2);
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 2..], scope, module);
+        return Value::Bool(match (to_js_number(&lv), to_js_number(&rv)) {
+            (Some(a), Some(b)) => a >= b,
+            _ => if let (Value::String(sa), Value::String(sb)) = (&lv, &rv) { sa.as_str() >= sb.as_str() } else { false },
+        });
     }
     if let Some(pos) = find_binary_op(s, "<") {
-        let n1 = to_f64(&eval_expr(&s[..pos], scope, module));
-        let n2 = to_f64(&eval_expr(&s[pos + 1..], scope, module));
-        return Value::Bool(n1 < n2);
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 1..], scope, module);
+        return Value::Bool(js_rel_lt(&lv, &rv));
     }
     if let Some(pos) = find_binary_op(s, ">") {
-        let n1 = to_f64(&eval_expr(&s[..pos], scope, module));
-        let n2 = to_f64(&eval_expr(&s[pos + 1..], scope, module));
-        return Value::Bool(n1 > n2);
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 1..], scope, module);
+        return Value::Bool(js_rel_lt(&rv, &lv));
     }
 
+    // 2. Adição (+): JS semantics via js_add (string-concat or numeric, NaN->null)
     if let Some(pos) = find_binary_op(s, "+") {
         let v1 = eval_expr(&s[..pos], scope, module);
         let v2 = eval_expr(&s[pos + 1..], scope, module);
-        if let (Some(n1), Some(n2)) = (v1.as_i64(), v2.as_i64()) {
-            return Value::from(n1 + n2);
-        }
-        if let (Some(f1), Some(f2)) = (v1.as_f64(), v2.as_f64()) {
-            if let Some(num) = serde_json::Number::from_f64(f1 + f2) {
-                return Value::Number(num);
-            }
-        }
-        let str1 = if let Value::String(st) = v1 { st } else { v1.to_string() };
-        let str2 = if let Value::String(st) = v2 { st } else { v2.to_string() };
-        return Value::String(format!("{}{}", str1, str2));
-    }
-    if let Some(pos) = find_binary_op(s, "-") {
-        let n1 = to_f64(&eval_expr(&s[..pos], scope, module));
-        let n2 = to_f64(&eval_expr(&s[pos + 1..], scope, module));
-        let res = n1 - n2;
-        if res.fract() == 0.0 { return Value::from(res as i64); }
-        if let Some(num) = serde_json::Number::from_f64(res) { return Value::Number(num); }
+        return js_add(v1, v2);
     }
 
+    // 3. Subtração (-): NaN-aware
+    if let Some(pos) = find_binary_op(s, "-") {
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 1..], scope, module);
+        match (to_js_number(&lv), to_js_number(&rv)) {
+            (Some(a), Some(b)) => return make_number(a - b),
+            _ => return Value::Null,
+        }
+    }
     if let Some(pos) = find_binary_op(s, "*") {
-        let n1 = to_f64(&eval_expr(&s[..pos], scope, module));
-        let n2 = to_f64(&eval_expr(&s[pos + 1..], scope, module));
-        let res = n1 * n2;
-        if res.fract() == 0.0 { return Value::from(res as i64); }
-        if let Some(num) = serde_json::Number::from_f64(res) { return Value::Number(num); }
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 1..], scope, module);
+        match (to_js_number(&lv), to_js_number(&rv)) {
+            (Some(a), Some(b)) => return make_number(a * b),
+            _ => return Value::Null,
+        }
     }
     if let Some(pos) = find_binary_op(s, "/") {
-        let n1 = to_f64(&eval_expr(&s[..pos], scope, module));
-        let n2 = to_f64(&eval_expr(&s[pos + 1..], scope, module));
-        if n2 == 0.0 { return Value::Null; }
-        let res = n1 / n2;
-        if res.fract() == 0.0 { return Value::from(res as i64); }
-        if let Some(num) = serde_json::Number::from_f64(res) { return Value::Number(num); }
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 1..], scope, module);
+        match (to_js_number(&lv), to_js_number(&rv)) {
+            (Some(a), Some(b)) => {
+                if b == 0.0 { return Value::Null; }
+                return make_number(a / b);
+            },
+            _ => return Value::Null,
+        }
     }
     if let Some(pos) = find_binary_op(s, "%") {
-        let n1 = eval_expr(&s[..pos], scope, module).as_i64().unwrap_or(0);
-        let n2 = eval_expr(&s[pos + 1..], scope, module).as_i64().unwrap_or(1);
-        if n2 == 0 { return Value::from(0); }
-        return Value::from(n1 % n2);
+        let lv = eval_expr(&s[..pos], scope, module);
+        let rv = eval_expr(&s[pos + 1..], scope, module);
+        match (to_js_number(&lv), to_js_number(&rv)) {
+            (Some(a), Some(b)) => {
+                if b == 0.0 { return Value::Null; }
+                return make_number(a % b);
+            },
+            _ => return Value::Null,
+        }
     }
 
+    // Dynamic Indexing: arr[0]
     if s.ends_with(']') {
         let mut depth = 0;
         let mut open_idx = None;
@@ -320,6 +419,7 @@ pub fn eval_expr(expr: &str, scope: &mut Scope, module: &LinModule) -> Value {
         }
     }
 
+    // Dot property
     if let Some((target_expr, prop)) = s.split_once('.') {
         let target_val = eval_expr(target_expr, scope, module);
         if prop == "length" {
@@ -335,32 +435,19 @@ pub fn eval_expr(expr: &str, scope: &mut Scope, module: &LinModule) -> Value {
         return Value::Null;
     }
 
-    if let (Some(open_p), Some(close_p)) = (s.find('('), s.rfind(')')) {
-        if close_p == s.len() - 1 && open_p > 0 {
-            let called_fn_name = &s[..open_p].trim();
-            let args_str = &s[open_p + 1..close_p].trim();
-            let called_args: Vec<Value> = if args_str.is_empty() {
-                Vec::new()
-            } else {
-                split_aware(args_str, ',')
-                    .iter()
-                    .map(|arg| eval_expr(arg, scope, module))
-                    .collect()
-            };
-
-            if let Some(called_fn) = module.functions.iter().find(|f| f.name == *called_fn_name) {
-                if let Ok(res) = execute_generic_lin_function(called_fn, &called_args, module) {
-                    return res;
-                }
-            }
-        }
-    }
-
     if let Some(val) = scope.vars.get(s) {
         return val.clone();
     }
 
     Value::String(s.to_string())
+}
+
+fn js_equals(v1: &Value, v2: &Value) -> bool {
+    if v1 == v2 { return true; }
+    if let (Some(n1), Some(n2)) = (to_js_number(v1), to_js_number(v2)) {
+        return n1 == n2;
+    }
+    false
 }
 
 fn is_truthy(val: &Value) -> bool {
@@ -371,13 +458,6 @@ fn is_truthy(val: &Value) -> bool {
         Value::String(s) => !s.is_empty(),
         Value::Array(a) => !a.is_empty(),
         Value::Object(_) => true,
-    }
-}
-
-fn to_f64(val: &Value) -> f64 {
-    match val {
-        Value::Number(n) => n.as_f64().unwrap_or(0.0),
-        _ => 0.0,
     }
 }
 
@@ -439,56 +519,11 @@ fn find_binary_op(s: &str, op: &str) -> Option<usize> {
 
 pub fn execute_statement_block(stmts: &[String], scope: &mut Scope, module: &LinModule) -> Result<Option<Value>, String> {
     for stmt in stmts {
-        // Return: ^expr
         if stmt.starts_with('^') {
             let ret_expr = &stmt[1..];
             return Ok(Some(eval_expr(ret_expr, scope, module)));
         }
 
-        // Method call push: arr.push(item)
-        if let (Some(open_p), Some(close_p)) = (stmt.find(".push("), stmt.rfind(')')) {
-            let arr_name = stmt[..open_p].trim();
-            let item_expr = &stmt[open_p + 6..close_p].trim();
-            let item_val = eval_expr(item_expr, scope, module);
-
-            if let Some(target) = scope.vars.get_mut(arr_name) {
-                if let Value::Array(arr) = target {
-                    arr.push(item_val);
-                }
-            }
-            continue;
-        }
-
-        // Conditional: ?(cond){block}else{block}
-        if stmt.starts_with("?(") {
-            if let Some(cond_end) = stmt.find(')') {
-                let cond_str = &stmt[2..cond_end];
-                let cond_val = eval_expr(cond_str, scope, module);
-                let is_cond_true = is_truthy(&cond_val);
-
-                if let Some(else_idx) = stmt.find("}else{") {
-                    if let (Some(body_start), Some(body_end)) = (stmt.find('{'), stmt.rfind('}')) {
-                        let then_branch = &stmt[body_start + 1..else_idx];
-                        let else_branch = &stmt[else_idx + 6..body_end];
-                        let branch_to_run = if is_cond_true { then_branch } else { else_branch };
-                        let inner_stmts = split_aware(branch_to_run, ';');
-                        if let Some(val) = execute_statement_block(&inner_stmts, scope, module)? {
-                            return Ok(Some(val));
-                        }
-                    }
-                } else if is_cond_true {
-                    if let (Some(body_start), Some(body_end)) = (stmt.find('{'), stmt.rfind('}')) {
-                        let inner_stmts = split_aware(&stmt[body_start + 1..body_end], ';');
-                        if let Some(val) = execute_statement_block(&inner_stmts, scope, module)? {
-                            return Ok(Some(val));
-                        }
-                    }
-                }
-                continue;
-            }
-        }
-
-        // Loop: #(init; cond; step){block}
         if stmt.starts_with("#(") {
             let chars: Vec<char> = stmt.chars().collect();
             let mut depth_p = 0;
@@ -540,42 +575,6 @@ pub fn execute_statement_block(stmts: &[String], scope: &mut Scope, module: &Lin
             }
         }
 
-        // Array or Object element assignment: target[key] = val
-        if let (Some(open_br), Some(close_br)) = (stmt.find('['), stmt.find(']')) {
-            if let Some(eq_idx) = stmt.find('=') {
-                if eq_idx > close_br {
-                    let target_name = stmt[..open_br].trim();
-                    let key_expr = &stmt[open_br + 1..close_br].trim();
-                    let val_expr = &stmt[eq_idx + 1..].trim();
-
-                    let key_val = eval_expr(key_expr, scope, module);
-                    let val = eval_expr(val_expr, scope, module);
-
-                    if let Some(target) = scope.vars.get_mut(target_name) {
-                        match target {
-                            Value::Array(arr) => {
-                                if let Some(idx) = key_val.as_i64() {
-                                    let u_idx = idx as usize;
-                                    while arr.len() <= u_idx { arr.push(Value::Null); }
-                                    arr[u_idx] = val;
-                                }
-                            },
-                            Value::Object(map) => {
-                                let k = match key_val {
-                                    Value::String(st) => st,
-                                    _ => key_val.to_string(),
-                                };
-                                map.insert(k, val);
-                            },
-                            _ => {}
-                        }
-                    }
-                    continue;
-                }
-            }
-        }
-
-        // Variable assignment: var = expr
         if let Some((var_name, expr)) = stmt.split_once('=') {
             let val = eval_expr(expr, scope, module);
             scope.vars.insert(var_name.trim().to_string(), val);

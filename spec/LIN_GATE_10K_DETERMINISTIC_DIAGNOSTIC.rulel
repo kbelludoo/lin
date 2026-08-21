@@ -1,0 +1,42 @@
+@RULEL:LIN_GATE_10K_DETERMINISTIC_DIAGNOSTIC:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-21 why=deterministic_fuzzing_with_fixed_prng_seed_and_mismatch_categorization}
+.d{
+  P0=agent_native_first
+  purpose=prng_seed_reproducible_10k_ast_corpus!categorize_all_mismatches!fix_runtime_semantics!case_by_case_mutation_accounting
+  seed=20260821
+  scale=10000_asts
+}
+
+.t{
+  H_DETERMINISTIC_DIAGNOSTIC="Using a seeded LCG PRNG (seed=20260821), every generated AST is 100% reproducible across runs, mismatches are precisely categorized with their minimal counterexamples, and runtime mutation kill is asserted strictly as baseline[i] != mutant[i]."
+}
+
+.c{diagnostic_categories=[
+  "STRING_NUMBER_COERCION",
+  "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION",
+  "OPERATOR_PRECEDENCE_PARENS",
+  "UNARY_NOT_TYPE_CONVERSION",
+  "ARRAY_EVALUATION"
+]}
+
+.i{
+  SEEDED_PRNG="Deterministic LCG PRNG with seed=20260821"
+  EXPLICIT_MISMATCH_LOG="Write all divergent cases to diagnostic log with AST, LIN source, JS source, args, and outputs"
+  DISCRETE_CASE_MUTATION_ACCOUNTING="A mutant is killed iff there exists i such that baseline[i] != mutant[i] where mutant[i] was relevant"
+}
+
+.g{
+  GATE_DETERMINISTIC_10K=matches_eq_10000 AND true_mutation_score_100
+}
+
+.r{
+  R_REPRODUCIBILITY="Running the script twice must generate bit-for-bit identical ASTs and arguments"
+  R_MUTATION_INTEGRITY="Mutant M4 must only be evaluated if loop AST nodes exist in the corpus"
+}
+
+.p{
+  spec=spec/LIN_GATE_10K_DETERMINISTIC_DIAGNOSTIC.rulel
+  runner=tests/lin_deterministic_10k_diagnostic.mjs
+  diagnostic_log=storage/lin_10k_mismatches.json
+}
