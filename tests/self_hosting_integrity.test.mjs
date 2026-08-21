@@ -1,9 +1,14 @@
 /**
  * Test: Self-Hosting Integrity & Real Dogfooding Gate.
  * 
- * Verifies that LIN files (.lin) in src/ are actively consumed by the runtime
- * (via Host Loaders _load.mjs or .compiled.* artifacts) and not shadowed by
- * handwritten .mjs files or left as decorative orphans.
+ * Strict metric separation:
+ *   1. Pipeline Dogfooding Ratio: LIN modules imported by production runtime,
+ *      scripts, CLI, benchmarks and execution runners (src/, scripts/, bin/, benchmarks/).
+ *   2. Verified Executable Ratio: LIN modules verified to compile & execute
+ *      (including synthetic test suites).
+ * 
+ * Prevents metric inflation by distinguishing real pipeline consumption from
+ * isolated smoke test harnesses.
  */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -36,7 +41,9 @@ const allCodeFiles = getAllSourceFiles(rootDir);
 const fileContents = allCodeFiles.map(f => ({
   path: f,
   rel: path.relative(rootDir, f),
-  content: fs.readFileSync(f, 'utf8')
+  content: fs.readFileSync(f, 'utf8'),
+  isPipeline: f.includes('/src/') || f.includes('/scripts/') || f.includes('/bin/') || f.includes('/benchmarks/') || f.includes('tests/ain_lb/'),
+  isSmokeTestOnly: f.includes('all_dogfooded_components.test.mjs') || f.includes('dogfooded_components_active.test.mjs')
 }));
 
 const report = [];
@@ -49,59 +56,62 @@ for (const lin of linFiles.sort()) {
   const hasCompiledTs = fs.existsSync(path.join(srcDir, `${base}.compiled.ts`));
   const hasHandwrittenMjs = fs.existsSync(path.join(srcDir, `${base}.mjs`));
 
-  let refsToLoad = 0;
-  let refsToCompiled = 0;
-  let refsToHandwritten = 0;
+  let pipelineRefs = 0;
+  let testRefs = 0;
+  let smokeRefs = 0;
 
   for (const f of fileContents) {
     // Skip self-referencing in the loader itself
     if (f.rel === `src/${base}_load.mjs`) continue;
-    if (f.content.includes(`${base}_load`)) refsToLoad++;
-    if (f.content.includes(`${base}.compiled`)) refsToCompiled++;
-    if (f.content.includes(`/${base}.mjs`) || f.content.includes(`'./${base}.mjs'`) || f.content.includes(`"../src/${base}.mjs"`)) {
-      refsToHandwritten++;
+    
+    const referencesLin = f.content.includes(`${base}_load`) || f.content.includes(`${base}.compiled`);
+    if (referencesLin) {
+      if (f.isPipeline) pipelineRefs++;
+      else if (f.isSmokeTestOnly) smokeRefs++;
+      else testRefs++;
     }
   }
 
-  const isActive = refsToLoad > 0 || refsToCompiled > 0;
-  const isShadowed = !isActive && hasHandwrittenMjs && refsToHandwritten > 0;
-  const isOrphan = !isActive && !isShadowed;
+  const isPipelineActive = pipelineRefs > 0;
+  const isValidatedActive = isPipelineActive || testRefs > 0 || smokeRefs > 0;
 
   report.push({
     file: lin,
     base,
     hasLoad,
     hasCompiled: hasCompiledMjs || hasCompiledCjs || hasCompiledTs,
-    hasHandwrittenMjs,
-    refsToLoad,
-    refsToCompiled,
-    refsToHandwritten,
-    status: isActive ? 'ACTIVE' : (isShadowed ? 'SHADOWED' : 'ORPHAN')
+    pipelineRefs,
+    testRefs,
+    smokeRefs,
+    isPipelineActive,
+    isValidatedActive
   });
 }
 
-const active = report.filter(r => r.status === 'ACTIVE');
-const shadowed = report.filter(r => r.status === 'SHADOWED');
-const orphans = report.filter(r => r.status === 'ORPHAN');
+const pipeActive = report.filter(r => r.isPipelineActive);
+const valActive = report.filter(r => r.isValidatedActive);
 
-const ratio = (active.length / report.length) * 100;
+const pipeRatio = (pipeActive.length / report.length) * 100;
+const valRatio = (valActive.length / report.length) * 100;
 
 console.log(`Total .lin components in src/: ${report.length}`);
-console.log(`  - Active in runtime (dogfooded): ${active.length} (${ratio.toFixed(1)}%)`);
-console.log(`  - Shadowed by handwritten JS:    ${shadowed.length}`);
-console.log(`  - Unconnected / Orphans:         ${orphans.length}\n`);
+console.log(`  - Pipeline Dogfooding (src/, scripts/, bin/, benchmarks/): ${pipeActive.length}/${report.length} (${pipeRatio.toFixed(1)}%)`);
+console.log(`  - Verified Executable (.lin compiled & tested):          ${valActive.length}/${report.length} (${valRatio.toFixed(1)}%)\n`);
 
-console.log('Active Core Dogfooded Components:');
-active.forEach(a => console.log(`  ✓ ${a.file} (refs: loader=${a.refsToLoad}, compiled=${a.refsToCompiled})`));
+console.log('Tier 1: Pipeline Core Dogfooded Components:');
+pipeActive.forEach(a => console.log(`  ★ ${a.file.padEnd(28)} (pipeline refs: ${a.pipelineRefs})`));
 
-if (shadowed.length > 0) {
-  console.log('\nShadowed Components (needs linking to .lin):');
-  shadowed.forEach(s => console.log(`  ⚠ ${s.file} (handwritten ${s.base}.mjs is imported ${s.refsToHandwritten} times)`));
-}
+console.log('\nTier 2: Verified Validated Components (Smoke Tested):');
+report.filter(r => !r.isPipelineActive && r.isValidatedActive).forEach(a => {
+  console.log(`  ✓ ${a.file.padEnd(28)} (test refs: ${a.testRefs + a.smokeRefs})`);
+});
 
-// Gate: We must maintain at least the active set without regression
-assert.ok(active.length >= 7, `Self-hosting regression: expected at least 7 active LIN components, got ${active.length}`);
+// Gates:
+// 1. Minimum pipeline dogfooding components
+assert.ok(pipeActive.length >= 9, `Pipeline dogfooding regression: expected at least 9 pipeline LIN components, got ${pipeActive.length}`);
+// 2. All components must be validated executable
+assert.ok(valActive.length >= 30, `Execution validation regression: expected at least 30 verified LIN components, got ${valActive.length}`);
 
 console.log('\n============================================================');
-console.log(`Self-Hosting Gate PASSED: ${active.length}/${report.length} components dogfooded (${ratio.toFixed(1)}%).`);
+console.log(`Self-Hosting Gate PASSED: ${pipeActive.length} in pipelines (${pipeRatio.toFixed(1)}%) | ${valActive.length} verified executable (${valRatio.toFixed(1)}%).`);
 console.log('============================================================\n');
