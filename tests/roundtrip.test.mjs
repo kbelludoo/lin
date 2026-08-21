@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
-import { compileLiaToJs, parseLia } from '../src/compiler.mjs';
+import { compileLiaToJs, parseLia } from '../src/compiler.ts';
 import { LIN_HEADER, LIA_HEADER } from '../src/emitter.mjs';
 import { parseRulel, validateComms } from '../src/rulel_parser.mjs';
 
@@ -18,9 +18,12 @@ assert.equal(LIA_HEADER, LIN_HEADER);
 const { js, program } = compileLiaToJs(src, { exportMode: 'single' });
 assert.equal(program.fns[0].name, 'safeCompare');
 
-const tmp = path.join(root, 'examples', '.tmp_safe.cjs');
-fs.writeFileSync(tmp, js, 'utf8');
-const fn = require(tmp);
+function runJsInMemory(jsCode) {
+  const m = { exports: {} };
+  const fn = new Function('module', 'exports', 'require', 'Buffer', jsCode + '\nreturn module.exports;');
+  return fn(m, m.exports, createRequire(import.meta.url), Buffer);
+}
+const fn = runJsInMemory(js);
 
 assert.equal(fn('ab', 'ab'), true);
 assert.equal(fn('a', 'b'), false);
@@ -33,12 +36,8 @@ for (const [tag, hdr] of [['@LIA:', '@LIA:L1c:0.2'], ['@AIL:', '@AIL:L1c:0.2']])
   const prog = parseLia(legacy);
   assert.equal(prog.header, hdr);
   const { js: jsL } = compileLiaToJs(legacy, { exportMode: 'single' });
-  fs.writeFileSync(tmp, jsL, 'utf8');
-  delete require.cache[require.resolve(tmp)];
-  assert.equal(require(tmp)('ab', 'ab'), true);
+  assert.equal(runJsInMemory(jsL)('ab', 'ab'), true);
 }
-
-fs.unlinkSync(tmp);
 
 // Closure roundtrip: nested function must capture outer variable.
 const closureLia = `${LIN_HEADER}
@@ -47,13 +46,10 @@ const closureLia = `${LIN_HEADER}
 !makeAdd(n){add=~(x){^n+x};^add}
 =ex{makeAdd}`;
 const { js: closureJs } = compileLiaToJs(closureLia, { exportMode: 'single' });
-const closureTmp = path.join(root, 'tests', '.tmp_closure.cjs');
-fs.writeFileSync(closureTmp, closureJs, 'utf8');
-const add5 = require(closureTmp)(5);
+const add5 = runJsInMemory(closureJs)(5);
 assert.equal(typeof add5, 'function');
 assert.equal(add5(10), 15);
 assert.equal(add5(3), 8);
-fs.unlinkSync(closureTmp);
 
 // Effect inference smoke: each fn gets expected effect annotation.
 const effectLia = `${LIN_HEADER}
@@ -73,12 +69,9 @@ assert.ok(effectResult.js.includes('/* effect:Native */'));
 
 // Sandbox smoke: Native fn blocked when only Pure allowed.
 const sandboxResult = compileLiaToJs(effectLia, { exportMode: 'multiple', sandbox: ['Pure'] });
-const sandboxTmp = path.join(root, 'tests', '.tmp_sandbox.cjs');
-fs.writeFileSync(sandboxTmp, sandboxResult.js, 'utf8');
-const sandboxMod = require(sandboxTmp);
+const sandboxMod = runJsInMemory(sandboxResult.js);
 assert.equal(sandboxMod.pureAdd(2, 3), 5);
 assert.throws(() => sandboxMod.nativeLen('x'), /LIN_SANDBOX.*Native/);
-fs.unlinkSync(sandboxTmp);
 
 // RULEL parser smoke
 const rulelText = fs.readFileSync(path.join(root, 'spec', 'COMMS_PROTOCOL.rulel'), 'utf8');
