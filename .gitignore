@@ -1,63 +1,36 @@
+```gitignore
 # Compiled and build artifacts
-*.o
-*.obj
 *.pyc
 __pycache__/
 
-# Executables
-test_fib
-test_hello
-lin_crystal/lin_cli
-benchmarks/nim/src/fibonacci
-benchmarks/zig/01_fibonacci
-
-# Build directories
-build/
-dist/
-target/
-*.out
-
 # Dependencies
-node_modules/
-venv/
 .venv/
-.env
-.env.local
-*.env.*
+venv/
+node_modules/
+.mypy_cache/
+.pytest_cache/
 
-# Logs and temporary files
+# Logs and temp files
 *.log
 *.tmp
 *.swp
+
+# Environment
+.env
+.env.local
+*.env.*
 
 # Editors
 .vscode/
 .idea/
 
-# Coverage
+# Coverage reports
 coverage/
 htmlcov/
-.cache
+.coverage
 
-# OS
-.DS_Store
-Thumbs.db
-
-# Clone loop state
-.clone_lin_*.json
-.clone_lin_*.err
-
-# Temp work dirs
-.lin_quality_work/
-.lin_quality_work_ts_test/
-.lin_maturity_work/
-
-# Scratch / ad-hoc
-scratch_audit.mjs
-test_*.mjs
-check_opencode.py
-javac.*
-
-# Rust build
-lin_rust/target/
-lin_rust/Cargo.lock
+# Distribution files
+dist/
+build/
+target/
+```

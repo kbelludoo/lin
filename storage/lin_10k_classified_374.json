@@ -1,0 +1,740 @@
+{
+  "summary": {
+    "SHORT_CIRCUIT_AND_IN_OTHER": 9,
+    "STRING_ARITHMETIC_COERCION": 16,
+    "BOOLEAN_TYPE_MISMATCH": 8,
+    "SHORT_CIRCUIT_AND": 1,
+    "COMPARISON_OPERATOR": 6,
+    "SHORT_CIRCUIT_OR_IN_OTHER": 4,
+    "BOOLEAN_NEGATION": 4,
+    "STRING_NUMBER_COERCION": 1,
+    "OTHER_UNCLASSIFIED": 1
+  },
+  "examples_by_class": {
+    "SHORT_CIRCUIT_AND_IN_OTHER": [
+      {
+        "case_id": 17,
+        "lin_code": "!prog_17(a,b,c){res=((true&&44)-(false*-5));^res}",
+        "args": [
+          16,
+          -2,
+          18
+        ],
+        "js_expected": 44,
+        "lin_actual": 49,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 349,
+        "lin_code": "!prog_349(a,b,c){res=(((a||23)&&23)*(\"str_41\">=[c,50]));^res}",
+        "args": [
+          10,
+          -4,
+          15
+        ],
+        "js_expected": 23,
+        "lin_actual": 0,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 407,
+        "lin_code": "!prog_407(a,b,c){res=(b&&(c<(false*\"str_27\")));^res}",
+        "args": [
+          -5,
+          -2,
+          -2
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 549,
+        "lin_code": "!prog_549(a,b,c){res=((false&&14)-(false--4));^res}",
+        "args": [
+          -7,
+          -2,
+          4
+        ],
+        "js_expected": -4,
+        "lin_actual": 4,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 750,
+        "lin_code": "!prog_750(a,b,c){res=(((\"str_38\"==true)&&(28!=a))>=((c*\"str_22\")<=(!\"str_21\")));^res}",
+        "args": [
+          19,
+          28,
+          -3
+        ],
+        "js_expected": true,
+        "lin_actual": false,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 976,
+        "lin_code": "!prog_976(a,b,c){res=[(\"str_23\"&&\"str_31\"),a,(!a)];^res}",
+        "args": [
+          29,
+          13,
+          22
+        ],
+        "js_expected": [
+          "str_31",
+          29,
+          false
+        ],
+        "lin_actual": [
+          "str_23\"&&\"str_31",
+          29,
+          false
+        ],
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1072,
+        "lin_code": "!prog_1072(a,b,c){res=([(\"str_18\"&&b),(b<\"str_43\")]+((-15>=b)*[\"str_47\",a]));^res}",
+        "args": [
+          22,
+          11,
+          8
+        ],
+        "js_expected": "11,falseNaN",
+        "lin_actual": "11,false",
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1167,
+        "lin_code": "!prog_1167(a,b,c){res=[([\"str_10\",true,false]&&(\"str_35\"+\"str_47\")),(!\"str_31\"),[15,(true!=c),(true||c)]];^res}",
+        "args": [
+          -4,
+          4,
+          -9
+        ],
+        "js_expected": [
+          "str_35str_47",
+          false,
+          [
+            15,
+            true,
+            true
+          ]
+        ],
+        "lin_actual": [
+          "str_35\"+\"str_47",
+          false,
+          [
+            15,
+            true,
+            true
+          ]
+        ],
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1352,
+        "lin_code": "!prog_1352(a,b,c){res=((\"str_46\"-b)>(21&&-3));^res}",
+        "args": [
+          3,
+          16,
+          25
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      }
+    ],
+    "STRING_ARITHMETIC_COERCION": [
+      {
+        "case_id": 92,
+        "lin_code": "!prog_92(a,b,c){res=(!([\"str_37\",false,a]*[\"str_11\"]));^res}",
+        "args": [
+          8,
+          26,
+          0
+        ],
+        "js_expected": true,
+        "lin_actual": false,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 108,
+        "lin_code": "!prog_108(a,b,c){res=(((!43)-(\"str_6\"*false))+([\"str_8\",17,\"str_28\"]+(45!=-14)));^res}",
+        "args": [
+          -4,
+          16,
+          28
+        ],
+        "js_expected": "NaNstr_8,17,str_28true",
+        "lin_actual": "0str_8,17,str_28true",
+        "category": "OTHER"
+      },
+      {
+        "case_id": 234,
+        "lin_code": "!prog_234(a,b,c){res=((!(29<b))-(43+(a*\"str_37\")));^res}",
+        "args": [
+          9,
+          9,
+          7
+        ],
+        "js_expected": null,
+        "lin_actual": -42,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 259,
+        "lin_code": "!prog_259(a,b,c){res=(((\"str_32\"+true)-(\"str_31\"!=a))*(\"str_7\"!=[c]));^res}",
+        "args": [
+          -1,
+          10,
+          0
+        ],
+        "js_expected": null,
+        "lin_actual": 0,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 324,
+        "lin_code": "!prog_324(a,b,c){res=(([b,a]*(c>=\"str_7\"))-((0>=c)!=(!false)));^res}",
+        "args": [
+          25,
+          -8,
+          5
+        ],
+        "js_expected": null,
+        "lin_actual": -1,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 479,
+        "lin_code": "!prog_479(a,b,c){res=[(c+11),(\"str_29\">=\"str_18\"),(c!=\"str_39\")];^res}",
+        "args": [
+          -4,
+          -3,
+          7
+        ],
+        "js_expected": [
+          18,
+          true,
+          true
+        ],
+        "lin_actual": [
+          18,
+          "str_29\">=\"str_18",
+          true
+        ],
+        "category": "OTHER"
+      },
+      {
+        "case_id": 486,
+        "lin_code": "!prog_486(a,b,c){res=([true,[true,false,47],[\"str_37\"]]+a);^res}",
+        "args": [
+          5,
+          0,
+          14
+        ],
+        "js_expected": "true,true,false,47,str_375",
+        "lin_actual": "true,[true,false,47],[\"str_37\"]5",
+        "category": "OTHER"
+      },
+      {
+        "case_id": 562,
+        "lin_code": "!prog_562(a,b,c){res=((!(\"str_31\">\"str_9\"))*[(b+a)]);^res}",
+        "args": [
+          0,
+          22,
+          16
+        ],
+        "js_expected": 22,
+        "lin_actual": 0,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 701,
+        "lin_code": "!prog_701(a,b,c){res=(\"str_28\"+\"str_34\");^res}",
+        "args": [
+          20,
+          23,
+          24
+        ],
+        "js_expected": "str_28str_34",
+        "lin_actual": "str_28\"+\"str_34",
+        "category": "OTHER"
+      },
+      {
+        "case_id": 738,
+        "lin_code": "!prog_738(a,b,c){res=((!(!36))>(false-(\"str_1\"-15)));^res}",
+        "args": [
+          7,
+          15,
+          22
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 739,
+        "lin_code": "!prog_739(a,b,c){res=((\"str_9\">\"str_3\")+[b]);^res}",
+        "args": [
+          30,
+          25,
+          2
+        ],
+        "js_expected": "true25",
+        "lin_actual": "str_9\">\"str_325",
+        "category": "OTHER"
+      },
+      {
+        "case_id": 856,
+        "lin_code": "!prog_856(a,b,c){res=(!((9>=42)>=(c*\"str_6\")));^res}",
+        "args": [
+          12,
+          9,
+          25
+        ],
+        "js_expected": true,
+        "lin_actual": false,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 966,
+        "lin_code": "!prog_966(a,b,c){res=([c,[c,-2,a],(a<=\"str_28\")]+(!b));^res}",
+        "args": [
+          5,
+          -5,
+          8
+        ],
+        "js_expected": "8,8,-2,5,falsefalse",
+        "lin_actual": "8,[8,-2,5],falsefalse",
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1015,
+        "lin_code": "!prog_1015(a,b,c){res=[([-2,\"str_40\"]*[30,\"str_45\",a]),8];^res}",
+        "args": [
+          30,
+          2,
+          6
+        ],
+        "js_expected": [
+          null,
+          8
+        ],
+        "lin_actual": [
+          [
+            -2,
+            null
+          ],
+          8
+        ],
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1192,
+        "lin_code": "!prog_1192(a,b,c){res=(\"str_22\"--5);^res}",
+        "args": [
+          10,
+          2,
+          0
+        ],
+        "js_expected": null,
+        "lin_actual": -5,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1310,
+        "lin_code": "!prog_1310(a,b,c){res=(c*((\"str_45\"==c)--9));^res}",
+        "args": [
+          -5,
+          -2,
+          -2
+        ],
+        "js_expected": -18,
+        "lin_actual": 18,
+        "category": "OTHER"
+      }
+    ],
+    "BOOLEAN_TYPE_MISMATCH": [
+      {
+        "case_id": 160,
+        "lin_code": "!prog_160(a,b,c){res=([c,true,-17]-[50,c,38]);^res}",
+        "args": [
+          10,
+          24,
+          15
+        ],
+        "js_expected": null,
+        "lin_actual": [
+          15,
+          true,
+          null
+        ],
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      },
+      {
+        "case_id": 287,
+        "lin_code": "!prog_287(a,b,c){res=(\"str_28\">\"str_38\");^res}",
+        "args": [
+          10,
+          13,
+          10
+        ],
+        "js_expected": false,
+        "lin_actual": "str_28\">\"str_38",
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      },
+      {
+        "case_id": 492,
+        "lin_code": "!prog_492(a,b,c){res=([19,false]<[b,a,-3]);^res}",
+        "args": [
+          10,
+          -9,
+          -1
+        ],
+        "js_expected": false,
+        "lin_actual": [
+          19,
+          false
+        ],
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      },
+      {
+        "case_id": 496,
+        "lin_code": "!prog_496(a,b,c){res=(\"str_19\">\"str_21\");^res}",
+        "args": [
+          -8,
+          10,
+          30
+        ],
+        "js_expected": false,
+        "lin_actual": "str_19\">\"str_21",
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      },
+      {
+        "case_id": 551,
+        "lin_code": "!prog_551(a,b,c){res=((\"str_24\"!=\"str_10\")*c);^res}",
+        "args": [
+          0,
+          -3,
+          1
+        ],
+        "js_expected": 1,
+        "lin_actual": null,
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      },
+      {
+        "case_id": 854,
+        "lin_code": "!prog_854(a,b,c){res=(\"str_28\"==\"str_10\");^res}",
+        "args": [
+          30,
+          0,
+          10
+        ],
+        "js_expected": false,
+        "lin_actual": "str_28\"==\"str_10",
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      },
+      {
+        "case_id": 1273,
+        "lin_code": "!prog_1273(a,b,c){res=([(false-false),(a-true)]+[c,(b*true)]);^res}",
+        "args": [
+          20,
+          -4,
+          30
+        ],
+        "js_expected": "0,1930,-4",
+        "lin_actual": [
+          0,
+          "(a-true)][c,(b*true)"
+        ],
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      },
+      {
+        "case_id": 1274,
+        "lin_code": "!prog_1274(a,b,c){res=([[48,48,\"str_15\"]]>[(!a)]);^res}",
+        "args": [
+          8,
+          -10,
+          25
+        ],
+        "js_expected": false,
+        "lin_actual": [
+          false
+        ],
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      }
+    ],
+    "SHORT_CIRCUIT_AND": [
+      {
+        "case_id": 167,
+        "lin_code": "!prog_167(a,b,c){res=(23&&([\"str_4\",false,\"str_38\"]-[18]));^res}",
+        "args": [
+          2,
+          -8,
+          10
+        ],
+        "js_expected": null,
+        "lin_actual": [
+          "str_4",
+          false,
+          null
+        ],
+        "category": "BOOLEAN_SHORT_CIRCUIT_VALUE_PROPAGATION"
+      }
+    ],
+    "COMPARISON_OPERATOR": [
+      {
+        "case_id": 317,
+        "lin_code": "!prog_317(a,b,c){res=([true]*(42>=a));^res}",
+        "args": [
+          20,
+          -7,
+          -9
+        ],
+        "js_expected": null,
+        "lin_actual": 1,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 756,
+        "lin_code": "!prog_756(a,b,c){res=([(29<42)]>=(2!=(c--10)));^res}",
+        "args": [
+          6,
+          1,
+          5
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 858,
+        "lin_code": "!prog_858(a,b,c){res=((true<50)!=[true]);^res}",
+        "args": [
+          28,
+          25,
+          3
+        ],
+        "js_expected": true,
+        "lin_actual": false,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 890,
+        "lin_code": "!prog_890(a,b,c){res=((!2)>=([-9,true,true]*true));^res}",
+        "args": [
+          11,
+          22,
+          -4
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 968,
+        "lin_code": "!prog_968(a,b,c){res=(((13*true)-[b,a])<=((true>=-11)==[b]));^res}",
+        "args": [
+          15,
+          -6,
+          14
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1034,
+        "lin_code": "!prog_1034(a,b,c){res=[a,(a*-6),(true>=c)];^res}",
+        "args": [
+          13,
+          13,
+          12
+        ],
+        "js_expected": [
+          13,
+          -78,
+          false
+        ],
+        "lin_actual": [
+          13,
+          -6,
+          false
+        ],
+        "category": "OTHER"
+      }
+    ],
+    "SHORT_CIRCUIT_OR_IN_OTHER": [
+      {
+        "case_id": 403,
+        "lin_code": "!prog_403(a,b,c){res=(((!36)||(!a))--12);^res}",
+        "args": [
+          7,
+          -6,
+          20
+        ],
+        "js_expected": 12,
+        "lin_actual": -12,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 512,
+        "lin_code": "!prog_512(a,b,c){res=(b>=((\"str_24\"||b)-(a<=b)));^res}",
+        "args": [
+          18,
+          12,
+          -9
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 838,
+        "lin_code": "!prog_838(a,b,c){res=([(b*b),(!\"str_12\"),(\"str_3\"+a)]>([13,b]||(35||b)));^res}",
+        "args": [
+          13,
+          17,
+          27
+        ],
+        "js_expected": true,
+        "lin_actual": false,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1191,
+        "lin_code": "!prog_1191(a,b,c){res=[([a,\"str_8\",c]||49),(-2==(b>=b)),(!(\"str_30\"-\"str_45\"))];^res}",
+        "args": [
+          24,
+          17,
+          1
+        ],
+        "js_expected": [
+          [
+            24,
+            "str_8",
+            1
+          ],
+          false,
+          true
+        ],
+        "lin_actual": [
+          [
+            24,
+            "str_8",
+            1
+          ],
+          false,
+          false
+        ],
+        "category": "OTHER"
+      }
+    ],
+    "BOOLEAN_NEGATION": [
+      {
+        "case_id": 424,
+        "lin_code": "!prog_424(a,b,c){res=[(\"str_25\">[a,6])];^res}",
+        "args": [
+          -1,
+          -4,
+          8
+        ],
+        "js_expected": [
+          true
+        ],
+        "lin_actual": [
+          false
+        ],
+        "category": "OTHER"
+      },
+      {
+        "case_id": 508,
+        "lin_code": "!prog_508(a,b,c){res=[b,([a,b,8]<=[29,\"str_35\"])];^res}",
+        "args": [
+          6,
+          18,
+          12
+        ],
+        "js_expected": [
+          18,
+          false
+        ],
+        "lin_actual": [
+          18,
+          [
+            6,
+            18,
+            true
+          ]
+        ],
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1036,
+        "lin_code": "!prog_1036(a,b,c){res=(!(!(\"str_48\"==\"str_47\")));^res}",
+        "args": [
+          27,
+          -4,
+          -5
+        ],
+        "js_expected": false,
+        "lin_actual": true,
+        "category": "OTHER"
+      },
+      {
+        "case_id": 1096,
+        "lin_code": "!prog_1096(a,b,c){res=[(\"str_29\"<\"str_50\"),[\"str_26\",7]];^res}",
+        "args": [
+          13,
+          -9,
+          5
+        ],
+        "js_expected": [
+          true,
+          [
+            "str_26",
+            7
+          ]
+        ],
+        "lin_actual": [
+          "str_29\"<\"str_50",
+          [
+            "str_26",
+            7
+          ]
+        ],
+        "category": "OTHER"
+      }
+    ],
+    "STRING_NUMBER_COERCION": [
+      {
+        "case_id": 937,
+        "lin_code": "!prog_937(a,b,c){res=(\"str_5\"-\"str_37\");^res}",
+        "args": [
+          10,
+          -10,
+          17
+        ],
+        "js_expected": null,
+        "lin_actual": "str_5\"-\"str_37",
+        "category": "STRING_NUMBER_COERCION"
+      }
+    ],
+    "OTHER_UNCLASSIFIED": [
+      {
+        "case_id": 1145,
+        "lin_code": "!prog_1145(a,b,c){res=(b*-16);^res}",
+        "args": [
+          14,
+          27,
+          13
+        ],
+        "js_expected": -432,
+        "lin_actual": -16,
+        "category": "OTHER"
+      }
+    ]
+  }
+}

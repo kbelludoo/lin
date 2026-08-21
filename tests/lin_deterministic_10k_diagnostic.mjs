@@ -182,16 +182,15 @@ for (let batch = 0; batch < 10; batch++) {
       }
       categories[category] = (categories[category] || 0) + 1;
 
-      if (mismatches.length < 50) {
-        mismatches.push({
-          case_id: i + 1,
-          lin_code: prog.linCode,
-          args,
-          js_expected: jsResult,
-          lin_actual: linResult,
-          category
-        });
-      }
+      // LOG ALL MISMATCHES, NOT JUST SAMPLES
+      mismatches.push({
+        case_id: i + 1,
+        lin_code: prog.linCode,
+        args,
+        js_expected: jsResult,
+        lin_actual: linResult,
+        category
+      });
     }
   }
 
