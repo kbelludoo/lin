@@ -11,25 +11,31 @@ import { fileURLToPath } from 'node:url';
 import { compileLiaToJs } from '../src/compiler.mjs';
 import { emitAilFromSource } from '../src/emitter.mjs';
 
-const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const LIN = path.join(ROOT, 'src', 'lin_auto_generate.lin');
-const linSrc = fs.readFileSync(LIN, 'utf8');
-const { js } = compileLiaToJs(linSrc, { exportMode: 'multiple' });
-const tmp = path.join(os.tmpdir(), 'lin_auto_generate.cjs');
-fs.writeFileSync(tmp, js, 'utf8');
-const mod = createRequire(import.meta.url)(tmp);
-try { fs.rmSync(tmp, { force: true }); } catch { /* ignore */ }
+import {
+  failClass,
+  isStubLin,
+  neverPassIfStub,
+  gateFrom,
+  linHeader,
+  safeIdent,
+  wrapCandidate,
+  proposeCandidate,
+  rowSummary,
+  summarizeRows
+} from '../src/lin_auto_generate_load.mjs';
 
-export const failClass = mod.failClass;
-export const isStubLin = mod.isStubLin;
-export const neverPassIfStub = mod.neverPassIfStub;
-export const gateFrom = mod.gateFrom;
-export const linHeader = mod.linHeader;
-export const safeIdent = mod.safeIdent;
-export const wrapCandidate = mod.wrapCandidate;
-export const proposeCandidate = mod.proposeCandidate;
-export const rowSummary = mod.rowSummary;
-export const summarizeRows = mod.summarizeRows;
+export {
+  failClass,
+  isStubLin,
+  neverPassIfStub,
+  gateFrom,
+  linHeader,
+  safeIdent,
+  wrapCandidate,
+  proposeCandidate,
+  rowSummary,
+  summarizeRows
+};
 
 function paramsOf(fail) {
   if (Array.isArray(fail.params)) return fail.params.join(',');

@@ -582,6 +582,13 @@ function rewriteLinElse(s) {
           continue;
         }
       }
+      if (s[j] === '?') {
+        j++;
+        while (j < s.length && /\s/.test(s[j])) j++;
+      } else if (s.slice(j, j + 2) === 'if') {
+        j += 2;
+        while (j < s.length && /\s/.test(s[j])) j++;
+      }
       if (s[j] === '(') {
         const closeParen = findMatching(s, j, '(', ')');
         if (closeParen >= 0) {
@@ -1047,6 +1054,7 @@ export function compileLiaToJs(liaText, opts = {}) {
     js = wrapSandbox(js, prog, opts.sandbox);
   }
   const lossy = opts.lossy === true || /\blossy\s*=\s*true\b/.test(String(liaText || ''));
+  if (opts.debugPrint) console.log("--- DEBUG COMPILED JS ---\n" + js);
   assertJsParse(js, { lossy });
   return { js, program: prog };
 }

@@ -1,19 +1,8 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import { createRequire } from 'node:module';
-import { fileURLToPath } from 'node:url';
-import { compileLiaToJs } from '../src/compiler.mjs';
+import { getSuggest } from '../src/lin_suggest_load.mjs';
+import { getAgentIr } from '../src/lin_agent_ir_load.mjs';
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const linPath = path.join(root, 'src', 'lin_suggest.lin');
-const lin = fs.readFileSync(linPath, 'utf8');
-const { js } = compileLiaToJs(lin, { exportMode: 'multiple' });
-const tmp = path.join(os.tmpdir(), 'lin_suggest_test.cjs');
-fs.writeFileSync(tmp, js, 'utf8');
-const mod = createRequire(import.meta.url)(tmp);
-try { fs.rmSync(tmp, { force: true }); } catch { /* ignore */ }
+const mod = getSuggest();
 
 assert.equal(mod.suggestCount(), 8);
 assert.equal(mod.suggestIds(), 'S001|S002|S003|S004|S005|S006|S007|S008');
@@ -58,6 +47,7 @@ assert.equal(mod.mechAt(2).mechanism, 'ast_as_data_declarative_transform');
 assert.equal(mod.mechAt(3).mechanism, 'types_that_carry_meaning');
 assert.equal(mod.mechAt(4).mechanism, 'safe_execution_ownership_no_ub');
 assert.equal(mod.mechAt(5).mechanism, 'scientific_math_first_class');
+
 const intent = mod.intentShape();
 assert.ok('objective' in intent && 'constraints' in intent);
 assert.ok('allowed_changes' in intent && 'forbidden' in intent);
@@ -67,12 +57,7 @@ assert.equal(mod.agreeAgentLangs(), 1);
 assert.equal(mod.agentIrPath(), 'src/lin_agent_ir.lin');
 assert.match(mod.archThree(), /LIN_Agent_IR/);
 
-const irLin = fs.readFileSync(path.join(root, 'src', 'lin_agent_ir.lin'), 'utf8');
-const irJs = compileLiaToJs(irLin, { exportMode: 'multiple' }).js;
-const irTmp = path.join(os.tmpdir(), 'lin_agent_ir_test.cjs');
-fs.writeFileSync(irTmp, irJs, 'utf8');
-const ir = createRequire(import.meta.url)(irTmp);
-try { fs.rmSync(irTmp, { force: true }); } catch { /* ignore */ }
+const ir = getAgentIr();
 
 assert.equal(ir.agreeAgentLangs(), 1);
 assert.equal(ir.forbidShrink(), 1);
@@ -134,5 +119,14 @@ assert.match(ir.notLegacyPipe(), /not code->AST->IR/);
 assert.match(ir.advantageHave(), /content_hash/);
 assert.equal(ir.ingestPath(), 'src/lin_agent_ir_ingest.lin');
 assert.equal(ir.priorityPath(), 'src/lin_priority.lin');
+
+import { priCount, priById } from '../src/lin_priority_load.mjs';
+import { coreHostLang, coreBanner } from '../src/lin_core_phase1_load.mjs';
+
+assert.equal(priCount(), 6);
+const p0 = priById('P0');
+assert.equal(p0.status, 'SLICE1_DONE');
+assert.equal(coreHostLang(), 'rust');
+assert.match(coreBanner(), /phase=ast_parser/);
 
 console.log('ok lin_suggest');
