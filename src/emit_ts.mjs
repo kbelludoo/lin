@@ -29,7 +29,7 @@ function tsReturnType(fnName, inferred, fn) {
   if (retT === 'string') return 'string';
   if (retT === 'void') return 'void';
   if (retT === 'array') return 'unknown[]';
-  return 'any';
+  return 'unknown';
 }
 import { emitThrowLine } from './emit_rewrite.mjs';
 
