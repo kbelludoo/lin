@@ -1,0 +1,1062 @@
+[
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_01_LZ4_PIPELINE",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6872,
+    "completion_tokens": 3909,
+    "total_tokens": 10781,
+    "duration_ms": 26425,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": false,
+      "decoder": true,
+      "spec": false
+    },
+    "error": "Failed cross-component LZ4 pipeline verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_02_CHUNK_WINDOW_SYNC",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6862,
+    "completion_tokens": 4719,
+    "total_tokens": 11581,
+    "duration_ms": 30619,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": true,
+      "decoder": true,
+      "spec": false
+    },
+    "error": "Failed cross-component chunk synchronization"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_03_GATE_D_RESOURCE_BOUNDS",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6855,
+    "completion_tokens": 7187,
+    "total_tokens": 14042,
+    "duration_ms": 47020,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": true,
+      "spec": false
+    },
+    "error": "Failed Gate D cross-component verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_04_STREAMING_CHUNK_PROTOCOL",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6850,
+    "completion_tokens": 5559,
+    "total_tokens": 12409,
+    "duration_ms": 39193,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "encoder": false,
+      "spec": false
+    },
+    "error": "Failed streaming chunk pipeline verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_05_EFFECT_SANDBOX_ENFORCEMENT",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6854,
+    "completion_tokens": 4864,
+    "total_tokens": 11718,
+    "duration_ms": 31031,
+    "patch_valid": false,
+    "oracle_pass": false,
+    "error": "Malformed patch"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_06_PROTOCOL_UPGRADE_NEGOTIATION",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6868,
+    "completion_tokens": 6174,
+    "total_tokens": 13042,
+    "duration_ms": 42230,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": false,
+      "decoder": false,
+      "spec": false
+    },
+    "error": "Failed protocol upgrade negotiation"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_07_MERKLE_TREE_PAYLOAD_PROOF",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6853,
+    "completion_tokens": 3480,
+    "total_tokens": 10333,
+    "duration_ms": 25346,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "decoder": false,
+      "spec": false
+    },
+    "error": "Failed Merkle proof cross-verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_08_FAIL_CLOSED_ERROR_REGISTRATION",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6855,
+    "completion_tokens": 7129,
+    "total_tokens": 13984,
+    "duration_ms": 50954,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": false,
+      "spec": false
+    },
+    "error": "Failed typed error taxonomy registration"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_09_WASM_TARGET_PROVENANCE_SYNC",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6856,
+    "completion_tokens": 4474,
+    "total_tokens": 11330,
+    "duration_ms": 30529,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "decoder": false,
+      "provenance": false
+    },
+    "error": "Failed WASM lowering target cross-verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_10_CANONICAL_SIGNING_PIPELINE",
+    "group": "CONTROL",
+    "budget": 16384,
+    "prompt_tokens": 6858,
+    "completion_tokens": 1570,
+    "total_tokens": 8428,
+    "duration_ms": 12321,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "encoder": false,
+      "spec": false
+    },
+    "error": "Failed canonical signing pipeline verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_01_LZ4_PIPELINE",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 637,
+    "completion_tokens": 2111,
+    "total_tokens": 2748,
+    "duration_ms": 14208,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": false,
+      "decoder": true,
+      "spec": false
+    },
+    "error": "Failed cross-component LZ4 pipeline verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_01_LZ4_PIPELINE",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 630,
+    "completion_tokens": 7831,
+    "total_tokens": 8461,
+    "duration_ms": 51448,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "encoder": false,
+      "decoder": true,
+      "spec": false
+    },
+    "error": "Failed cross-component LZ4 pipeline verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_02_CHUNK_WINDOW_SYNC",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 627,
+    "completion_tokens": 1202,
+    "total_tokens": 1829,
+    "duration_ms": 9308,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": true,
+      "decoder": true,
+      "spec": false
+    },
+    "error": "Failed cross-component chunk synchronization"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_02_CHUNK_WINDOW_SYNC",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 620,
+    "completion_tokens": 1398,
+    "total_tokens": 2018,
+    "duration_ms": 12913,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": true,
+      "decoder": true,
+      "spec": false
+    },
+    "error": "Failed cross-component chunk synchronization"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_03_GATE_D_RESOURCE_BOUNDS",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 620,
+    "completion_tokens": 3853,
+    "total_tokens": 4473,
+    "duration_ms": 31513,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": false,
+      "spec": false
+    },
+    "error": "Failed Gate D cross-component verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_03_GATE_D_RESOURCE_BOUNDS",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 613,
+    "completion_tokens": 10425,
+    "total_tokens": 11038,
+    "duration_ms": 53810,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": true,
+      "spec": false
+    },
+    "error": "Failed Gate D cross-component verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_04_STREAMING_CHUNK_PROTOCOL",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 615,
+    "completion_tokens": 5558,
+    "total_tokens": 6173,
+    "duration_ms": 34821,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "encoder": false,
+      "spec": false
+    },
+    "error": "Failed streaming chunk pipeline verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_04_STREAMING_CHUNK_PROTOCOL",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 608,
+    "completion_tokens": 5487,
+    "total_tokens": 6095,
+    "duration_ms": 36653,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "encoder": false,
+      "spec": false
+    },
+    "error": "Failed streaming chunk pipeline verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_05_EFFECT_SANDBOX_ENFORCEMENT",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 619,
+    "completion_tokens": 2892,
+    "total_tokens": 3511,
+    "duration_ms": 17734,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": true,
+      "spec": false
+    },
+    "error": "Failed effect sandbox enforcement"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_05_EFFECT_SANDBOX_ENFORCEMENT",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 612,
+    "completion_tokens": 6938,
+    "total_tokens": 7550,
+    "duration_ms": 37297,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": true,
+      "spec": false
+    },
+    "error": "Failed effect sandbox enforcement"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_06_PROTOCOL_UPGRADE_NEGOTIATION",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 633,
+    "completion_tokens": 3890,
+    "total_tokens": 4523,
+    "duration_ms": 23677,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": false,
+      "decoder": false,
+      "spec": false
+    },
+    "error": "Failed protocol upgrade negotiation"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_06_PROTOCOL_UPGRADE_NEGOTIATION",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 626,
+    "completion_tokens": 3745,
+    "total_tokens": 4371,
+    "duration_ms": 28220,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": true,
+      "encoder": false,
+      "decoder": false,
+      "spec": false
+    },
+    "error": "Failed protocol upgrade negotiation"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_07_MERKLE_TREE_PAYLOAD_PROOF",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 618,
+    "completion_tokens": 2778,
+    "total_tokens": 3396,
+    "duration_ms": 16626,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "decoder": false,
+      "spec": false
+    },
+    "error": "Failed Merkle proof cross-verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_07_MERKLE_TREE_PAYLOAD_PROOF",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 611,
+    "completion_tokens": 2476,
+    "total_tokens": 3087,
+    "duration_ms": 15476,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "protocol": false,
+      "decoder": false,
+      "spec": false
+    },
+    "error": "Failed Merkle proof cross-verification"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_08_FAIL_CLOSED_ERROR_REGISTRATION",
+    "group": "RAW",
+    "budget": 1024,
+    "prompt_tokens": 620,
+    "completion_tokens": 4226,
+    "total_tokens": 4846,
+    "duration_ms": 31617,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": false,
+      "spec": false
+    },
+    "error": "Failed typed error taxonomy registration"
+  },
+  {
+    "status": "EXECUTED_LIVE",
+    "task_id": "DIST_08_FAIL_CLOSED_ERROR_REGISTRATION",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "prompt_tokens": 613,
+    "completion_tokens": 7762,
+    "total_tokens": 8375,
+    "duration_ms": 105756,
+    "patch_valid": true,
+    "oracle_pass": false,
+    "evidence": {
+      "decoder": false,
+      "protocol": false,
+      "spec": false
+    },
+    "error": "Failed typed error taxonomy registration"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 1024,
+    "duration_ms": 249035,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 1024,
+    "duration_ms": 7,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 1024,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 7,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 7,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 9,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 7,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 7,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 2048,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 2048,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 13,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 4096,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 8192,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 8,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 6,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 4,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "RAW",
+    "budget": 16384,
+    "duration_ms": 9,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  },
+  {
+    "status": "HTTP_ERROR",
+    "group": "CAPSULE",
+    "budget": 16384,
+    "duration_ms": 5,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+  }
+]

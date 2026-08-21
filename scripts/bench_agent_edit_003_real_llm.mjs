@@ -1,20 +1,25 @@
 /**
- * AGENT_EDIT_003_REAL_LLM: Genuine LLM Autonomous Agency Benchmark
+ * AGENT_EDIT_003_REAL_LLM: Genuine Local LLM Autonomous Agency Benchmark
+ *
+ * Model: qwen2.5-coder:7b (via Ollama local host)
+ * Task:
+ * "Workload profile indicates excessive random seek distance. Inspect profile and source, reduce seek distance below 150000 while preserving public contract and syntax rules."
  *
  * Invariants:
  * 1. ZERO solution knowledge in prompt (no mention of Elevator, targetBlock or replacementBlock).
  * 2. ZERO decision logic in harness (no simulateAgentBehavior with pre-set strings).
- * 3. LLM interacts strictly via tool-calling:
- *    - view_file(filePath)
+ * 3. Local LLM agent receives standard function calling / tools:
+ *    - view_file(relPath)
  *    - read_profile()
- *    - replace_file_content(filePath, oldContent, newContent)
- *    - run_build()
- *    - run_benchmark()
+ *    - replace_file_content(relPath, oldString, newString)
+ *    - run_build(relPath)
+ *    - run_benchmark(relPath)
  * 4. External Independent Oracle audits filesystem state, buildability, and contract preservation.
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import http from 'node:http';
 import { compileLiaToJs } from '../src/compiler.mjs';
 
 const BENCH_DIR = path.resolve('.tmp/agent_edit_003_bench');
@@ -78,10 +83,11 @@ class RealAgentToolEnvironment {
   }
 
   // Tool 1: view_file
-  view_file(relPath) {
-    const full = path.join(this.workDir, relPath);
-    this.toolLog.push({ tool: 'view_file', path: relPath, timestamp: Date.now() });
-    if (!fs.existsSync(full)) return { error: `File not found: ${relPath}` };
+  view_file({ relPath }) {
+    const p = relPath || 'source.lin';
+    const full = path.join(this.workDir, p);
+    this.toolLog.push({ tool: 'view_file', path: p, timestamp: Date.now() });
+    if (!fs.existsSync(full)) return { error: `File not found: ${p}` };
     return { content: fs.readFileSync(full, 'utf8') };
   }
 
@@ -92,16 +98,17 @@ class RealAgentToolEnvironment {
   }
 
   // Tool 3: replace_file_content
-  replace_file_content(relPath, oldString, newString) {
-    const full = path.join(this.workDir, relPath);
+  replace_file_content({ relPath, oldString, newString }) {
+    const p = relPath || 'source.lin';
+    const full = path.join(this.workDir, p);
     this.toolLog.push({
       tool: 'replace_file_content',
-      path: relPath,
+      path: p,
       old_length: oldString?.length,
       new_length: newString?.length,
       timestamp: Date.now()
     });
-    if (!fs.existsSync(full)) return { error: `File not found: ${relPath}` };
+    if (!fs.existsSync(full)) return { success: false, error: `File not found: ${p}` };
     const content = fs.readFileSync(full, 'utf8');
     if (!content.includes(oldString)) {
       return { success: false, error: 'Target oldString not found in file content.' };
@@ -112,9 +119,10 @@ class RealAgentToolEnvironment {
   }
 
   // Tool 4: run_build
-  run_build(relPath) {
-    const full = path.join(this.workDir, relPath);
-    this.toolLog.push({ tool: 'run_build', path: relPath, timestamp: Date.now() });
+  run_build({ relPath }) {
+    const p = relPath || 'source.lin';
+    const full = path.join(this.workDir, p);
+    this.toolLog.push({ tool: 'run_build', path: p, timestamp: Date.now() });
     if (!fs.existsSync(full)) return { success: false, error: 'File not found' };
     const content = fs.readFileSync(full, 'utf8');
     try {
@@ -125,15 +133,15 @@ class RealAgentToolEnvironment {
     }
   }
 
-  // Tool 5: run_benchmark (Real computed metric over 1000 requests)
-  run_benchmark(relPath) {
-    const full = path.join(this.workDir, relPath);
-    this.toolLog.push({ tool: 'run_benchmark', path: relPath, timestamp: Date.now() });
+  // Tool 5: run_benchmark
+  run_benchmark({ relPath }) {
+    const p = relPath || 'source.lin';
+    const full = path.join(this.workDir, p);
+    this.toolLog.push({ tool: 'run_benchmark', path: p, timestamp: Date.now() });
     if (!fs.existsSync(full)) return { success: false, error: 'File not found' };
     const content = fs.readFileSync(full, 'utf8');
     try {
       const res = compileLiaToJs(content);
-      // Realistic discrete workload simulation
       let currentFloor = 0;
       let totalSeek = 0;
       const requests = [
@@ -148,7 +156,6 @@ class RealAgentToolEnvironment {
         totalSeek += Math.abs(nextFloor - currentFloor);
         currentFloor = nextFloor;
       }
-      // Scaled up to 10k request workload
       const estimatedSeek = totalSeek * 10000;
       return {
         success: true,
@@ -162,9 +169,204 @@ class RealAgentToolEnvironment {
 }
 
 /**
- * Executes a single trial of AGENT_EDIT_003
+ * Ollama Local LLM Tool-Calling Client
  */
-export async function runSingleRealLlmTrial(trialId, llmAdapter = null) {
+async function callOllama(messages) {
+  const reqBody = JSON.stringify({
+    model: "qwen2.5-coder:7b",
+    messages,
+    stream: false,
+    options: {
+      temperature: 0.1
+    }
+  });
+
+  return new Promise((resolve, reject) => {
+    const req = http.request({
+      hostname: 'localhost',
+      port: 11434,
+      path: '/api/chat',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(reqBody)
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        try {
+          resolve(JSON.parse(data));
+        } catch (e) {
+          reject(e);
+        }
+      });
+    });
+    req.on('error', reject);
+    req.write(reqBody);
+    req.end();
+  });
+}
+
+const TOOLS_SCHEMA = [
+  {
+    type: "function",
+    function: {
+      name: "view_file",
+      description: "Read content of a source file",
+      parameters: {
+        type: "object",
+        properties: {
+          relPath: { type: "string", description: "Relative path to file, e.g. source.lin" }
+        },
+        required: ["relPath"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "read_profile",
+      description: "Read performance profiling and metrics of the current workload",
+      parameters: { type: "object", properties: {} }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "replace_file_content",
+      description: "Replace exact target substring in file with new content",
+      parameters: {
+        type: "object",
+        properties: {
+          relPath: { type: "string", description: "Relative path to file" },
+          oldString: { type: "string", description: "Exact target substring to replace" },
+          newString: { type: "string", description: "New replacement string" }
+        },
+        required: ["relPath", "oldString", "newString"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "run_build",
+      description: "Compile and syntax check the LIN source file",
+      parameters: {
+        type: "object",
+        properties: {
+          relPath: { type: "string", description: "Relative path to file" }
+        },
+        required: ["relPath"]
+      }
+    }
+  },
+  {
+    type: "function",
+    function: {
+      name: "run_benchmark",
+      description: "Run performance simulation against current workload",
+      parameters: {
+        type: "object",
+        properties: {
+          relPath: { type: "string", description: "Relative path to file" }
+        },
+        required: ["relPath"]
+      }
+    }
+  }
+];
+
+/**
+ * Local LLM Agent Execution Loop (Multi-turn tool calling)
+ */
+async function executeLocalLlmAgent(env, maxTurns = 5) {
+  const messages = [
+    {
+      role: "system",
+      content: `You are an autonomous systems optimization engineer.
+You have access to tools:
+- view_file(relPath: string)
+- read_profile()
+- replace_file_content(relPath: string, oldString: string, newString: string)
+- run_build(relPath: string)
+- run_benchmark(relPath: string)
+
+To call a tool, respond with:
+{"name": "tool_name", "arguments": { ... }}`
+    },
+    {
+      role: "user",
+      content: "Workload profile indicates excessive random seek distance. Use your tools to inspect source.lin and profile, optimize the dispatch logic so that random seek distance is reduced below 150000, while preserving the function interface and valid LIN syntax. Modify source.lin using replace_file_content."
+    }
+  ];
+
+  for (let turn = 1; turn <= maxTurns; turn++) {
+    try {
+      const response = await callOllama(messages);
+      const msg = response?.message;
+      if (!msg) break;
+
+      messages.push(msg);
+
+      let calls = msg.tool_calls || [];
+      if (calls.length === 0 && msg.content) {
+        // 1. Check markdown code blocks
+        const blocks = msg.content.match(/```(?:json)?\s*([\s\S]*?)\s*```/g) || [];
+        for (const b of blocks) {
+          const clean = b.replace(/```(?:json)?|```/g, '').trim();
+          try {
+            const parsed = JSON.parse(clean);
+            const toolName = parsed.name || parsed.tool;
+            if (toolName) calls.push({ function: { name: toolName, arguments: parsed.arguments || {} } });
+          } catch {}
+        }
+        // 2. Check raw JSON objects if no code block matched
+        if (calls.length === 0) {
+          const matches = msg.content.match(/\{[\s\S]*?(?:"name"|"tool")[\s\S]*?"arguments"[\s\S]*?\}/g) || [];
+          for (const m of matches) {
+            try {
+              const parsed = JSON.parse(m);
+              const toolName = parsed.name || parsed.tool;
+              if (toolName) calls.push({ function: { name: toolName, arguments: parsed.arguments || {} } });
+            } catch {}
+          }
+        }
+      }
+
+      if (calls.length === 0) {
+        // Model provided final text answer without further tool calls
+        break;
+      }
+
+      for (const call of calls) {
+        const fnName = call.function?.name;
+        const args = call.function?.arguments || {};
+        let result = null;
+
+        if (fnName === 'view_file') result = env.view_file(args);
+        else if (fnName === 'read_profile') result = env.read_profile();
+        else if (fnName === 'replace_file_content') result = env.replace_file_content(args);
+        else if (fnName === 'run_build') result = env.run_build(args);
+        else if (fnName === 'run_benchmark') result = env.run_benchmark(args);
+        else result = { error: `Unknown tool: ${fnName}` };
+
+        messages.push({
+          role: "tool",
+          content: JSON.stringify(result)
+        });
+      }
+    } catch (e) {
+      console.error(`Turn ${turn} LLM invocation error:`, e.message);
+      break;
+    }
+  }
+}
+
+/**
+ * Run a single real trial with Local LLM (qwen2.5-coder:7b)
+ */
+export async function runSingleRealLlmTrial(trialId) {
   const trialDir = path.join(BENCH_DIR, `trial_${String(trialId).padStart(3, '0')}`);
   fs.mkdirSync(trialDir, { recursive: true });
 
@@ -173,15 +375,8 @@ export async function runSingleRealLlmTrial(trialId, llmAdapter = null) {
 
   const env = new RealAgentToolEnvironment(trialDir, 'source.lin', beforeContent, WORKLOAD_PROFILE);
 
-  // If external LLM adapter is provided, invoke model with tools
-  if (llmAdapter && typeof llmAdapter.execute === 'function') {
-    const prompt = {
-      task: "Workload profile indicates excessive random seek distance. Reduce seek distance below 150000 while preserving public contract and syntax rules.",
-      tools: ["view_file", "read_profile", "replace_file_content", "run_build", "run_benchmark"],
-      entry_file: "source.lin"
-    };
-    await llmAdapter.execute(prompt, env);
-  }
+  // Run Real LLM Agent Loop
+  await executeLocalLlmAgent(env);
 
   // Independent Post-Action Evaluation by External Oracle (Zero harness decision logic)
   const afterContent = fs.existsSync(env.filePath) ? fs.readFileSync(env.filePath, 'utf8') : '';
@@ -189,8 +384,6 @@ export async function runSingleRealLlmTrial(trialId, llmAdapter = null) {
   const filesChanged = (afterSha !== beforeSha);
   const diffSha = filesChanged ? sha256(`${beforeSha}->${afterSha}`) : 'none';
 
-  // Rigorous Discovery Verification: Must have viewed file AND targeted !dispatch_next in actions
-  const profileRead = env.toolLog.some(t => t.tool === 'read_profile');
   const sourceInspected = env.toolLog.some(t => t.tool === 'view_file');
   const targetSymbolReferenced = env.toolLog.some(t =>
     t.tool === 'replace_file_content' || t.tool === 'run_build' || t.tool === 'run_benchmark'
@@ -248,7 +441,7 @@ export async function runSingleRealLlmTrial(trialId, llmAdapter = null) {
       diff_sha: diffSha.slice(0, 16),
       files_changed: filesChanged,
       tool_calls_count: env.toolLog.length,
-      tool_log: env.toolLog
+      tool_sequence: env.toolLog.map(t => t.tool)
     },
     stages: {
       discovery_success: discoverySuccess,
@@ -261,39 +454,79 @@ export async function runSingleRealLlmTrial(trialId, llmAdapter = null) {
   };
 }
 
-export async function runAgentEdit003HarnessAudit() {
-  console.log('=== AGENT_EDIT_003_REAL_LLM: Harness Instrumentation Audit ===\n');
+export async function runFullLlmBenchmark30() {
+  console.log('=== Running AGENT_EDIT_003_REAL_LLM: 30 Clean Snapshots with Local LLM (qwen2.5-coder:7b) ===\n');
 
-  // Verify that an idle/uncalled environment produces clean 0s with zero falsification
-  const idleTrial = await runSingleRealLlmTrial(1, null);
+  const trials = [];
+  let dCount = 0;
+  let eCount = 0;
+  let bCount = 0;
+  let rCount = 0;
 
-  console.log('Harness Baseline (Zero Model Injection):');
-  console.log(`  Discovery: ${idleTrial.stages.discovery_success}`);
-  console.log(`  Edit Observed: ${idleTrial.stages.edit_observed}`);
-  console.log(`  Build: ${idleTrial.stages.build_success}`);
-  console.log(`  Benchmark: ${idleTrial.stages.benchmark_success}`);
-  console.log(`  Complete Cycle: ${idleTrial.stages.complete_cycle}\n`);
+  for (let i = 1; i <= 30; i++) {
+    process.stdout.write(`Executing Snapshot [${String(i).padStart(2, '0')}/30]... `);
+    const t = await runSingleRealLlmTrial(i);
+    trials.push(t);
+    if (t.stages.discovery_success) dCount++;
+    if (t.stages.edit_observed) eCount++;
+    if (t.stages.build_success) bCount++;
+    if (t.stages.benchmark_success) rCount++;
+    console.log(`D:${t.stages.discovery_success ? '✔' : '❌'} E:${t.stages.edit_observed ? '✔' : '❌'} B:${t.stages.build_success ? '✔' : '❌'} R:${t.stages.benchmark_success ? '✔' : '❌'} -> Cycle: ${t.stages.complete_cycle ? 'PASS ✅' : 'FAIL ❌'} (Tools: ${t.telemetry.tool_calls_count})`);
+  }
 
-  console.log('✔ Verified: Harness contains ZERO pre-mutation and ZERO pre-edit leakage.\n');
+  const pD = dCount / 30;
+  const pE_given_D = dCount > 0 ? (eCount / dCount) : 0;
+  const pB_given_E = eCount > 0 ? (bCount / eCount) : 0;
+  const pR_given_B = bCount > 0 ? (rCount / bCount) : 0;
+  const pComplete = pD * pE_given_D * pB_given_E * pR_given_B;
+
+  console.log('\n======================================================================');
+  console.log('       AGENT_EDIT_003_REAL_LLM TELEMETRY & PROBABILITY MATRIX         ');
+  console.log('======================================================================');
+  console.log(`Total Snapshots:                     30`);
+  console.log(`Discovery Successes  (D):           ${String(dCount).padStart(2)} / 30  (P(D) = ${(pD * 100).toFixed(1)}%)`);
+  console.log(`Edit Observed        (E):           ${String(eCount).padStart(2)} / 30  (P(E|D) = ${(pE_given_D * 100).toFixed(1)}%)`);
+  console.log(`Build Successes      (B):           ${String(bCount).padStart(2)} / 30  (P(B|E) = ${(pB_given_E * 100).toFixed(1)}%)`);
+  console.log(`Benchmark Successes  (R):           ${String(rCount).padStart(2)} / 30  (P(R|B) = ${(pR_given_B * 100).toFixed(1)}%)`);
+  console.log('----------------------------------------------------------------------');
+  console.log(`P(Ciclo Completo) = P(D) * P(E|D) * P(B|E) * P(R|B): ${(pComplete * 100).toFixed(1)}%`);
+  console.log('======================================================================\n');
 
   const artifactDir = path.resolve('benchmarks/agent_edit_003');
   fs.mkdirSync(artifactDir, { recursive: true });
-  const artifactPath = path.join(artifactDir, 'AGENT_EDIT_003_SPEC_FROZEN.json');
+  const artifactPath = path.join(artifactDir, 'AGENT_EDIT_003_RESULTS_REAL_LLM.json');
 
   const artifactData = {
     protocol: 'AGENT_EDIT_003_REAL_LLM',
-    status: 'PROTOCOL_FROZEN_AWAITING_LLM_RUN',
-    harness_pre_edit_leakage: false,
-    prompt_solution_leakage: false,
-    timestamp: new Date().toISOString()
+    model: 'qwen2.5-coder:7b (Ollama local)',
+    harness_direct_write: false,
+    timestamp: new Date().toISOString(),
+    total_snapshots: 30,
+    metrics: {
+      discovery_success: dCount,
+      edit_observed: eCount,
+      build_success: bCount,
+      benchmark_success: rCount,
+      p_discovery: pD,
+      p_edit_given_discovery: pE_given_D,
+      p_build_given_edit: pB_given_E,
+      p_runtime_given_build: pR_given_B,
+      p_complete_cycle: pComplete
+    },
+    trials_telemetry: trials.map(t => ({
+      trialId: t.trialId,
+      telemetry: t.telemetry,
+      stages: t.stages,
+      buildError: t.buildError
+    }))
   };
 
   fs.writeFileSync(artifactPath, JSON.stringify(artifactData, null, 2), 'utf8');
-  console.log(`Specification and Protocol Artifact Frozen: ${artifactPath}\n`);
+  console.log(`Artifact saved: ${artifactPath}`);
 
   return artifactData;
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  runAgentEdit003HarnessAudit();
+  runFullLlmBenchmark30();
 }

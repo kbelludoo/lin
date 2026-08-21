@@ -1,0 +1,77 @@
+@RULEL:LIN_SEMANTIC_SUFFICIENCY_UNDER_CONTEXT_DEATH:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-20 why=formalize_semantic_sufficiency_and_context_budget_frontier_benchmarks}
+.d{
+  P0=agent_native_first
+  purpose=represent!persist!project!evolve_under_budget!verify!execute
+  history_independence=conversation_history_tokens_eq_0
+  formal_thesis=semantic_sufficiency_under_context_death
+  empirical_caution=do_not_claim_automated_full_repo_compression_from_manual_ir
+}
+
+.t{
+  SEMANTIC_SUFFICIENCY_THESIS="Given a software system S and an evolution task T, there exists a canonical semantic projection C(S) where |C(S)| << |S|, such that an autonomous agent with zero conversational history can generate a semantic mutation T(S) that satisfies all baseline invariants and new contracts with equal or higher accuracy than operating over the full dispersed source tree S."
+}
+
+.c{benchmark_corpus_dimensions={
+  target_repository: "LIN Core Codebase (AGENTS.md, LIN_CORE_ARCH, protocol, encoder, decoder, gates)",
+  corpus_task_diversity: [
+    "TASK_01_COMPRESSION_ALGORITHM: Add lz4 compression support",
+    "TASK_02_INTEGRITY_INVARIANT: Add payload checksum verification rule",
+    "TASK_03_GATE_EXTENSION: Introduce Gate D (runtime resource constraints)",
+    "TASK_04_CAPABILITY_POLICY: Add strict network capability whitelist",
+    "TASK_05_CHUNK_FORMAT: Evolve presentation badge format without breaking 0-based indices",
+    "TASK_06_PROTOCOL_VERSIONING: Support backward compatibility negotiation",
+    "TASK_07_ERROR_HANDLING: Formalize fail-closed invariant violation error schemas",
+    "TASK_08_CANONICAL_ORDERING: Implement strict lexicographical key sorting in contracts",
+    "TASK_09_TARGET_PROVENANCE: Record empirical Zig target evidence ID",
+    "TASK_10_EFFECT_ISOLATION: Restrict buffer allocation to pure IO boundaries"
+  ],
+  context_budget_frontier: [1024, 2048, 4096, 8192, 16384]
+}}
+
+.c{evaluation_metrics=[
+  "context_tokens_prompt",
+  "completion_tokens_generation",
+  "total_tokens",
+  "latency_seconds",
+  "patch_validity_rate",
+  "semantic_correctness_rate",
+  "invariant_regression_rate",
+  "context_budget_saturation_point"
+]}
+
+.i{
+  COGNITIVE_REHYDRATION_ZERO_HISTORY="Agent operates with zero conversational history from previous sessions"
+  BASELINE_INVARIANTS_PRESERVED="All existing contracts and specifications remain valid post-mutation"
+  TASK_CONTRACTS_SATISFIED="All task-specific extensions pass the independent Gate C oracle"
+}
+
+.g{
+  GATE_A_INTEGRITY=CAPSULE_PART_HASH_VALID AND CAPSULE_PAYLOAD_HASH_VALID AND CAPSULE_SEMANTIC_HASH_VALID
+  GATE_B_REHYDRATION=GATE_A_INTEGRITY AND CAPSULE_IR_VALID AND CAPSULE_INVARIANTS_VALID AND CAPSULE_EFFECTS_VALID AND CAPSULE_CAPABILITIES_VALID
+  GATE_C_ORACLE=BASELINE_INVARIANTS_PRESERVED AND TASK_CONTRACTS_SATISFIED
+}
+
+.r{
+  R_FORMAL_CLAIM_BOUNDARY="Current results prove semantic sufficiency for the tested LIN subsystem projection, NOT universal automated repo-wide AST reduction"
+  R_BUDGET_FRONTIER_TESTING="Vary context window limits (1k -> 16k) to determine the exact failure cliff of Raw Tree vs Capsule"
+  R_LATENCY_REPORTING="Report latencies in fractional seconds (e.g. 26.6s vs 3.4s) across repeated multi-trial runs without overclaiming causality"
+}
+
+.f{
+  claim_automated_repo_compression_without_automated_ast_extractor
+  report_single_run_latency_as_universal_speedup
+  alter_raw_data_or_established_trial_results
+  allow_invariant_regressions_in_oracle_pass
+}
+
+.w{
+  LIN_SEMANTIC_SUFFICIENCY=10_diverse_tasks→multi_budget_frontier→raw_vs_capsule→oracle_eval→sufficiency_frontier_map
+}
+
+.p{
+  spec=spec/LIN_SEMANTIC_SUFFICIENCY_UNDER_CONTEXT_DEATH.rulel
+  benchmark_harness=tests/lin_capsule_semantic_sufficiency_corpus.mjs
+  frontier_evaluator=tests/lin_capsule_budget_frontier.mjs
+}

@@ -1,0 +1,64 @@
+@RULEL:LIN_DISTRIBUTED_DEPENDENCY_FRONTIER:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-20 why=evaluate_distributed_cross_file_dependencies_under_context_limits}
+.d{
+  P0=agent_native_first
+  purpose=represent!persist!project!evolve_under_distributed_constraints!verify!execute
+  history_independence=conversation_history_tokens_eq_0
+  dependency_distribution=tasks_strictly_require_information_scattered_across_multiple_distinct_files
+  context_budget_relevance_allocator=top_down_relevance_heuristic_under_budget_constraint
+}
+
+.c{task_design_rule={
+  cross_file_dependency_contract: "Every task T MUST require at least 3 distinct file contracts simultaneously (e.g., protocol format + encoder packing + decoder gate enforcement + spec invariants). If any file is omitted, the task MUST fail closed in the oracle."
+}}
+
+.c{evaluation_dimensions={
+  full_corpus_size: 10,
+  context_budgets: [1024, 2048, 4096, 8192, 16384],
+  groups: ["GROUP_A_RAW_DISTRIBUTED", "GROUP_B_CAPSULE_PROJECTION"]
+}}
+
+.c{evaluation_metrics=[
+  "budget_tokens",
+  "actual_prompt_tokens",
+  "oracle_pass_rate",
+  "failure_cliff_boundary",
+  "cross_component_invariants_preserved",
+  "cognitive_instability_investigation"
+]}
+
+.i{
+  CROSS_FILE_DEPENDENCY_ENFORCED="Oracle verifies preservation of distributed properties spanning protocol, encoder, and decoder"
+  FAIL_CLOSED_ON_MISSING_DISTRIBUTED_INFO="Oracle rejects mutations that violate unobserved component constraints"
+  SEMANTIC_CAPSULE_COHERENCE="Capsule unifies distributed constraints into a single coherent IR graph"
+}
+
+.g{
+  GATE_A_INTEGRITY=CAPSULE_PART_HASH_VALID AND CAPSULE_PAYLOAD_HASH_VALID AND CAPSULE_SEMANTIC_HASH_VALID
+  GATE_B_REHYDRATION=GATE_A_INTEGRITY AND CAPSULE_IR_VALID AND CAPSULE_INVARIANTS_VALID
+  GATE_C_DISTRIBUTED_ORACLE=CROSS_FILE_DEPENDENCY_ENFORCED AND FAIL_CLOSED_ON_MISSING_DISTRIBUTED_INFO
+}
+
+.r{
+  R_CROSS_FILE_MANDATE="Tasks must be impossible to solve completely using a single file snippet"
+  R_REPORT_ACCURACY="Explicitly declare actual tasks evaluated (e.g. 4 vs 10) and acknowledge absence of failure cliff when observed"
+  R_INVESTIGATE_ANOMALIES="Analyse cognitive failures in Capsule (e.g. TASK_05) without discarding negative trials"
+}
+
+.f{
+  use_single_file_sufficient_tasks
+  claim_failure_cliff_without_empirical_cliff_data
+  truncate_prompts_randomly_without_relevance_model
+  hide_or_discard_capsule_failures
+}
+
+.w{
+  LIN_DISTRIBUTED_FRONTIER=10_distributed_tasks→budget_allocation→live_llm_eval→cross_file_oracle→frontier_report
+}
+
+.p{
+  spec=spec/LIN_DISTRIBUTED_DEPENDENCY_FRONTIER.rulel
+  corpus=tests/lin_capsule_distributed_corpus.mjs
+  runner=tests/lin_capsule_distributed_runner.mjs
+}

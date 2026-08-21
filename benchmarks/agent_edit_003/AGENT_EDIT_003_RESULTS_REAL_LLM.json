@@ -1,0 +1,728 @@
+{
+  "protocol": "AGENT_EDIT_003_REAL_LLM",
+  "model": "qwen2.5-coder:7b (Ollama local)",
+  "harness_direct_write": false,
+  "timestamp": "2026-08-21T02:53:17.465Z",
+  "total_snapshots": 30,
+  "metrics": {
+    "discovery_success": 24,
+    "edit_observed": 14,
+    "build_success": 9,
+    "benchmark_success": 0,
+    "p_discovery": 0.8,
+    "p_edit_given_discovery": 0.5833333333333334,
+    "p_build_given_edit": 0.6428571428571429,
+    "p_runtime_given_build": 0,
+    "p_complete_cycle": 0
+  },
+  "trials_telemetry": [
+    {
+      "trialId": 1,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "d752c66de94d25ee",
+        "diff_sha": "61634b1816674a4b",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 2,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 11,
+        "tool_sequence": [
+          "view_file",
+          "read_profile",
+          "replace_file_content",
+          "view_file",
+          "replace_file_content",
+          "view_file",
+          "replace_file_content",
+          "view_file",
+          "replace_file_content",
+          "view_file",
+          "replace_file_content"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 3,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 4,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "d752c66de94d25ee",
+        "diff_sha": "61634b1816674a4b",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 5,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 6,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 1,
+        "tool_sequence": [
+          "view_file"
+        ]
+      },
+      "stages": {
+        "discovery_success": false,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 7,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 8,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "e2e6355a6ec73ed7",
+        "diff_sha": "78863e4a09c5edb2",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 9,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "341a6515d4aafb5d",
+        "diff_sha": "584393e01407d541",
+        "files_changed": true,
+        "tool_calls_count": 13,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build",
+          "run_benchmark",
+          "replace_file_content",
+          "run_build",
+          "run_benchmark",
+          "replace_file_content",
+          "run_build",
+          "run_benchmark",
+          "replace_file_content",
+          "run_build",
+          "run_benchmark"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_NDc8ZR/emit.cjs:4\nif(queue > 0){return 1;}:(^0)\n                        ^\n\nSyntaxError: Unexpected token ':'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at checkSyntax (node:internal/main/check_syntax:76:3"
+    },
+    {
+      "trialId": 10,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "405c6305c237b824",
+        "diff_sha": "ef02489a748b5831",
+        "files_changed": true,
+        "tool_calls_count": 4,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build",
+          "run_benchmark"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 11,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 12,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "read_profile"
+        ]
+      },
+      "stages": {
+        "discovery_success": false,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 13,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "00ff70aca0df868e",
+        "diff_sha": "0e1a53093643bfe3",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 14,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "0d7b6975608c7619",
+        "diff_sha": "8dd9c85009f7278f",
+        "files_changed": true,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_4VBQ3C/emit.cjs:4\nif(target_floor - current_floor < current_floor - queue[0]){return 1;}:(^0)\n                                                                      ^\n\nSyntaxError: Unexpected token ':'\n    at wrapSafe (node:i"
+    },
+    {
+      "trialId": 15,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 19,
+        "tool_sequence": [
+          "read_profile",
+          "replace_file_content",
+          "read_profile",
+          "view_file",
+          "view_file",
+          "replace_file_content",
+          "read_profile",
+          "view_file",
+          "view_file",
+          "replace_file_content",
+          "read_profile",
+          "view_file",
+          "view_file",
+          "replace_file_content",
+          "read_profile",
+          "view_file",
+          "view_file",
+          "replace_file_content",
+          "read_profile"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 16,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "20da39e4051d2606",
+        "diff_sha": "d62394c5e13e4aeb",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_nwTfMS/emit.cjs:4\nif(target_floor - current_floor < 5){return 1;}:(^0)\n                                               ^\n\nSyntaxError: Unexpected token ':'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at che"
+    },
+    {
+      "trialId": 17,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "e198eee93723ddc8",
+        "diff_sha": "87d9f84776a9f7f0",
+        "files_changed": true,
+        "tool_calls_count": 4,
+        "tool_sequence": [
+          "view_file",
+          "read_profile",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_f778FZ/emit.cjs:4\nif(queue[0] > current_floor){return 1;}:(^0)\n                                       ^\n\nSyntaxError: Unexpected token ':'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at checkSyntax (node:i"
+    },
+    {
+      "trialId": 18,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 19,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 1,
+        "tool_sequence": [
+          "view_file"
+        ]
+      },
+      "stages": {
+        "discovery_success": false,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 20,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 6,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "view_file",
+          "view_file",
+          "view_file",
+          "view_file"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 21,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "7f6b962bc0194afa",
+        "diff_sha": "3ab4dfe1193cc0b9",
+        "files_changed": true,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": "LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_oNdAdk/emit.cjs:8\n:return 0\n^\n\nSyntaxError: Unexpected token ':'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at checkSyntax (node:internal/main/check_syntax:76:3)\n\nNode.js v24.19.0"
+    },
+    {
+      "trialId": 22,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 1,
+        "tool_sequence": [
+          "view_file"
+        ]
+      },
+      "stages": {
+        "discovery_success": false,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 23,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 1,
+        "tool_sequence": [
+          "view_file"
+        ]
+      },
+      "stages": {
+        "discovery_success": false,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 24,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "00ff70aca0df868e",
+        "diff_sha": "0e1a53093643bfe3",
+        "files_changed": true,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 25,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "5683d6c34d5f2922",
+        "diff_sha": "14fe337b01d73eeb",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 26,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 1,
+        "tool_sequence": [
+          "view_file"
+        ]
+      },
+      "stages": {
+        "discovery_success": false,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 27,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 28,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "91958196795c361b",
+        "diff_sha": "bc8e3e8c70198c68",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 29,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "c18b86b660d1d894",
+        "diff_sha": "none",
+        "files_changed": false,
+        "tool_calls_count": 2,
+        "tool_sequence": [
+          "view_file",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": false,
+        "build_success": false,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    },
+    {
+      "trialId": 30,
+      "telemetry": {
+        "before_sha": "c18b86b660d1d894",
+        "after_sha": "d752c66de94d25ee",
+        "diff_sha": "61634b1816674a4b",
+        "files_changed": true,
+        "tool_calls_count": 3,
+        "tool_sequence": [
+          "view_file",
+          "replace_file_content",
+          "run_build"
+        ]
+      },
+      "stages": {
+        "discovery_success": true,
+        "edit_observed": true,
+        "build_success": true,
+        "benchmark_success": false,
+        "complete_cycle": false
+      },
+      "buildError": null
+    }
+  ]
+}

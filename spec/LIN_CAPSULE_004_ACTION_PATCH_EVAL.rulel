@@ -1,0 +1,71 @@
+@RULEL:LIN_CAPSULE_004_ACTION_PATCH_EVAL:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-20 why=evaluate_action_delta_patching_vs_full_ast_reserialization_under_zero_history}
+.d{
+  P0=agent_native_first
+  purpose=represent!persist!project!act_via_patch!verify!execute
+  separation_of_concerns=action_intent_vs_full_document_reserialization
+  history_independence=conversation_history_tokens_eq_0
+  telemetry_rule=provider_usage_external_harness
+  controlled_variable=identical_model_temperature_evaluator_multi_trial
+}
+
+.c{action_patch_schema={
+  action_type: "add_function | modify_contracts | extend_state_machine",
+  target_path: "json_pointer_path",
+  payload: "delta_mutation_object"
+}}
+
+.c{experiment_matrix={
+  control_group_A: "Agent B receives RAW multi-files only -> emits action delta patch",
+  treatment_group_B: "Agent B receives VERIFIED SEMANTIC PROJECTION -> emits action delta patch",
+  multi_trial: "5 trials per task (15 trials per group = 30 total trials)",
+  independent_oracle: "Harness applies agent action patch to base artifact and runs Gate C oracle"
+}}
+
+.c{evaluation_metrics=[
+  "prompt_tokens (provider reported)",
+  "completion_tokens (provider reported)",
+  "total_tokens (provider reported)",
+  "duration_ms (external latency)",
+  "first_pass_patch_valid (% syntactically and structurally valid patches)",
+  "oracle_pass_rate (% final mutated systems passing behavioral oracle)",
+  "mean_repair_rounds"
+]}
+
+.i{
+  COGNITIVE_REHYDRATION_ZERO_HISTORY="Agent B operates with zero conversation history tokens from Agent A"
+  SEMANTIC_PROJECTION_PURITY="Scenario B LLM sees verified canonical IR and contracts; never Base64 wire chunks"
+  ACTION_PATCH_VALID="Agent emits a valid structured mutation delta, not full JSON rewrite"
+  ORACLE_INDEPENDENCE="Oracle evaluates the post-mutation artifact without guiding the agent"
+}
+
+.g{
+  GATE_A_INTEGRITY=CAPSULE_PART_HASH_VALID AND CAPSULE_PAYLOAD_HASH_VALID AND CAPSULE_SEMANTIC_HASH_VALID
+  GATE_B_REHYDRATION=GATE_A_INTEGRITY AND CAPSULE_IR_VALID AND CAPSULE_INVARIANTS_VALID AND CAPSULE_EFFECTS_VALID AND CAPSULE_CAPABILITIES_VALID
+  GATE_ACTION=GATE_B_REHYDRATION AND ACTION_PATCH_VALID
+  GATE_C_EXECUTION=GATE_ACTION AND oracle_pass_rate_confirmed
+}
+
+.r{
+  R_ACTION_PATCHING="Measure decision and mutation intent via structured patch, decoupling from full JSON serialization friction"
+  R_MULTI_TRIAL_STATISTICS="Execute 5 trials per task to obtain statistically sound distributions"
+  R_OBJECTIVE_RECORDING="Record prompt overhead, completion reduction, and correctness with equal scientific weight"
+}
+
+.f{
+  require_full_document_reserialization
+  claim_cognitive_superiority_without_oracle_pass
+  hardcode_solutions_in_harness
+  expose_base64_wire_format
+}
+
+.w{
+  LIN_CAPSULE_004=transport_capsule→rehydrate_gate_a_b→project_view→emit_action_patch→apply_patch→gate_c_oracle
+}
+
+.p{
+  spec=spec/LIN_CAPSULE_004_ACTION_PATCH_EVAL.rulel
+  adapter=tests/lin_capsule_patch_adapter.mjs
+  eval_harness=tests/lin_capsule_multi_trial_eval.mjs
+}

@@ -1,0 +1,75 @@
+@RULEL:LIN_DISTRIBUTED_SEMANTIC_REPAIR:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-20 why=evaluate_closed_loop_semantic_repair_under_zero_history}
+.d{
+  P0=agent_native_first
+  purpose=represent!persist!diagnose!repair_closed_loop!verify!execute
+  history_independence=conversation_history_tokens_eq_0
+  blind_evaluation=hidden_gold_patch_and_independent_oracle_isolated_from_runner
+  formal_hypothesis=H_DIST_REPAIR_semantic_feedback_enables_cross_component_convergence
+}
+
+.t{
+  H_DIST_REPAIR="If a semantic container explicitly models cross-component contracts and invariants, a closed-loop cycle (Agent -> Patch -> Oracle Evidence Diagnostic -> Agent Repair) will enable the agent to systematically converge to cross-component completeness without revealing solution values."
+}
+
+.c{repair_protocol={
+  max_repair_rounds: 3,
+  diagnostic_payload: {
+    pass: false,
+    evidence: {
+      component_A: "satisfied | unsatisfied",
+      component_B: "satisfied | unsatisfied",
+      component_C: "satisfied | unsatisfied"
+    },
+    error_summary: "string"
+  },
+  repair_prompt_rule: "Feedback conveys ONLY component-level satisfaction state, NEVER expected field names or values."
+}}
+
+.c{evaluation_matrix={
+  tasks: 10,
+  groups: ["RAW_TREE_REPAIR", "CAPSULE_REPAIR", "CONTROL_REPAIR"],
+  metrics: [
+    "pass_rate_round_0 (initial zero-shot)",
+    "pass_rate_round_1 (first semantic feedback)",
+    "pass_rate_round_2 (second semantic feedback)",
+    "pass_rate_round_3 (final convergence)",
+    "mean_repair_rounds_to_success",
+    "token_cost_per_repaired_task"
+  ]
+}}
+
+.i{
+  ZERO_LEAKAGE_DIAGNOSTIC="Oracle feedback contains only boolean satisfaction per component, zero code or schema hints"
+  INDEPENDENT_HIDDEN_ORACLE="Gold patch and oracle logic are isolated from agent prompt space"
+  SEMANTIC_CONVERGENCE_MEASURABLE="Measure delta in pass rate between Round 0 and Round N"
+}
+
+.g{
+  GATE_A_INTEGRITY=CAPSULE_PART_HASH_VALID AND CAPSULE_PAYLOAD_HASH_VALID AND CAPSULE_SEMANTIC_HASH_VALID
+  GATE_B_REHYDRATION=GATE_A_INTEGRITY AND CAPSULE_IR_VALID AND CAPSULE_INVARIANTS_VALID
+  GATE_REPAIR_ORACLE=ZERO_LEAKAGE_DIAGNOSTIC AND all_components_satisfied
+}
+
+.r{
+  R_BLIND_EVAL="Gold patches must remain in isolated oracle module, inaccessible during prompt construction"
+  R_FEEDBACK_PURITY="Diagnostics reveal only which component contract failed, never how to fix it"
+  R_RECORD_CONVERGENCE_CURVE="Record pass rate progression at Round 0, 1, 2, and 3 for RAW vs CAPSULE vs CONTROL"
+}
+
+.f{
+  leak_gold_patch_or_field_names_in_repair_feedback
+  count_repair_rounds_beyond_budget_limit
+  modify_oracle_criteria_during_repair_loop
+}
+
+.w{
+  LIN_SEMANTIC_REPAIR=generate_r0→oracle_eval→if_fail_send_diagnostic→repair_r1..r3→measure_convergence
+}
+
+.p{
+  spec=spec/LIN_DISTRIBUTED_SEMANTIC_REPAIR.rulel
+  corpus=tests/lin_capsule_distributed_corpus.mjs
+  repair_runner=tests/lin_capsule_semantic_repair_runner.mjs
+}

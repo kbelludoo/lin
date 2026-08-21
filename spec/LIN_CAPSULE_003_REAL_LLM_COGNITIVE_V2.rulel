@@ -1,0 +1,81 @@
+@RULEL:LIN_CAPSULE_003_REAL_LLM_COGNITIVE_V2:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-20 why=evaluate_decoded_semantic_projection_vs_raw_tree_under_zero_history}
+.d{
+  P0=agent_native_first
+  purpose=represent!persist!project!evolve!verify!execute
+  separation_of_concerns=transport_encoding_vs_agent_semantic_projection
+  history_independence=conversation_history_tokens_eq_0
+  telemetry_rule=provider_usage_and_external_harness
+  controlled_variable=identical_model_temperature_and_evaluator
+}
+
+.c{architectural_separation={
+  transport_layer: "Wire Capsule (chunks, Base64, checksums, compression) -> storage/transport",
+  semantic_projection_layer: "Verified LINOBJ (semantic_hash, effects, invariants, canonical IR) -> LLM Agent",
+  raw_tree_layer: "Dispersed source files, configs, and boilerplate -> LLM Agent"
+}}
+
+.c{experiment_matrix={
+  control_group_A: "Agent B receives RAW multi-files only (no conversation history)",
+  treatment_group_B: "Agent B receives VERIFIED SEMANTIC PROJECTION (rehydrated from Capsule Gate A/B, zero source files)",
+  identical_task: "Evolve system with new feature while preserving all original invariant contracts",
+  independent_oracle: "Gate C compilation and behavioral test suite outside agent context"
+}}
+
+.c{evaluation_metrics=[
+  "prompt_tokens (provider reported)",
+  "completion_tokens (provider reported)",
+  "total_tokens (provider reported)",
+  "duration_ms (external latency)",
+  "first_pass_success (oracle pass on 1st completion)",
+  "oracle_pass (semantic and contract conformance)",
+  "transport_capsule_bytes (wire footprint on storage/network)"
+]}
+
+.i{
+  COGNITIVE_REHYDRATION_ZERO_HISTORY="Agent B operates with zero conversation history tokens from Agent A"
+  SEMANTIC_PROJECTION_PURITY="Scenario B LLM sees verified canonical IR, manifests, and invariants; never raw wire Base64 chunks"
+  TASK_CONTINUATION_VALID="Agent B successfully applies modification to canonical IR"
+  INVARIANT_PRESERVATION_VALID="Modified IR satisfies existing invariants plus new task constraints"
+  GATE_C_ORACLE_PASSED="Modified system lowers to local target and passes independent behavioral oracle"
+}
+
+.g{
+  GATE_A_INTEGRITY=CAPSULE_PART_HASH_VALID AND CAPSULE_PAYLOAD_HASH_VALID AND CAPSULE_SEMANTIC_HASH_VALID
+  GATE_B_REHYDRATION=GATE_A_INTEGRITY AND CAPSULE_IR_VALID AND CAPSULE_INVARIANTS_VALID AND CAPSULE_EFFECTS_VALID AND CAPSULE_CAPABILITIES_VALID
+  GATE_COGNITIVE=GATE_B_REHYDRATION AND COGNITIVE_REHYDRATION_ZERO_HISTORY AND TASK_CONTINUATION_VALID
+  GATE_C_EXECUTION=GATE_COGNITIVE AND INVARIANT_PRESERVATION_VALID AND GATE_C_ORACLE_PASSED
+}
+
+.r{
+  R_TRANSPORT_VS_PROJECTION="Wire Capsule handles transport and integrity (Gate A/B). Agent receives verified semantic projection."
+  R_ZERO_WIRE_EXPOSURE="Never expose raw cryptographic Base64 chunks to LLM cognitive prompt."
+  R_OUTPUT_ROBUSTNESS="Agent prompt must clearly delineate the target output schema to prevent parsing failures."
+}
+
+.f{
+  expose_base64_wire_format_to_agent_prompt
+  rely_on_agent_self_reported_tokens
+  leak_agent_a_history_to_scenario_b
+  alter_interpretation_rules_post_hoc
+  hardcode_solutions_in_harness
+}
+
+.w{
+  LIN_CAPSULE_003=transport_capsule→gate_a_b_verify→project_semantic_view→llm_evolve→gate_c_oracle
+}
+
+.x{
+  1=PACK_AND_TRANSMIT { Construct wire capsule with cryptographic verification }
+  2=REHYDRATE_AND_PROJECT { Rehydrate via Gate A & B; project verified semantic LINOBJ for Agent B }
+  3=PROMPT_EVALUATION { Feed Group A (Raw Tree) vs Group B (Semantic Projection) to LLM under controlled prompt }
+  4=CAPTURE_TELEMETRY { External harness records provider tokens, latency, first-pass, and oracle result }
+  5=EMIT_COMPARISON_MATRIX { Report empirical comparison of dispersed code vs canonical semantic density }
+}
+
+.p{
+  spec=spec/LIN_CAPSULE_003_REAL_LLM_COGNITIVE_V2.rulel
+  adapter=tests/lin_capsule_real_llm_adapter.mjs
+  eval_harness=tests/lin_capsule_comparative_eval.mjs
+}

@@ -1,0 +1,63 @@
+@RULEL:lin-NEURAL-SPEC:1.0.0
+~R{.m=meta .t=tensor .a=arch .f=forward .c=cognitive .g=gate}
+
+.m{
+  name="LIN Neural IR"
+  version="1.0.0"
+  goal="Represent Transformer architectures and symbolic cognitive loops in unified LIN format"
+}
+
+.t{
+  // Operações Tensoriais Nativas
+  embed     = !embed(tokens, weight_table)
+  rmsnorm   = !rmsnorm(x, weight, eps)
+  matmul    = !matmul(A, B)
+  softmax   = !softmax(scores)
+  rope      = !rope(Q, K, pos, dim)
+  attention = !attention(Q, K, V, n_heads, d_k)
+  swiglu    = !swiglu(x, w_gate, w_up, w_down)
+  sample    = !sample_top_p(logits, temp, top_p)
+}
+
+.a{
+  // Hiperparâmetros do Modelo Transformer em LIN
+  dim        = 128
+  n_heads    = 4
+  n_layers   = 2
+  vocab_size = 256
+  d_k        = 32 // dim / n_heads
+}
+
+.f{
+  // Grafo de Forward Pass
+  !forward(token_ids, weights) {
+    $x = @t.embed(token_ids, weights.wte)
+    #(l = 0; l < a.n_layers; l++) {
+      $w = weights.layers[l]
+      $norm1 = @t.rmsnorm(x, w.attn_norm, 1e-5)
+      $attn = @t.attention(norm1, w.wq, w.wk, w.wv, w.wo, a.n_heads)
+      $x = x + attn
+      $norm2 = @t.rmsnorm(x, w.ffn_norm, 1e-5)
+      $ffn = @t.swiglu(norm2, w.w_gate, w.w_up, w.w_down)
+      $x = x + ffn
+    }
+    $final_norm = @t.rmsnorm(x, weights.final_norm, 1e-5)
+    $logits = @t.matmul(final_norm, weights.lm_head)
+    ^@t.sample(logits, 0.0, 0.9)
+  }
+}
+
+.c{
+  // Loop Cognitivo Neuro-Simbólico LIN
+  !cognitive_step(task, memory) {
+    $prompt = .build_context(task, memory.traumas)
+    $candidate = @neural.generate(prompt)
+    $check = .verify_gate(candidate, task.invariants)
+    ?(check.passed) {
+      ^.emit_success(candidate)
+    } : {
+      memory.record_trauma(check.trauma)
+      ^!cognitive_step(task, memory)
+    }
+  }
+}

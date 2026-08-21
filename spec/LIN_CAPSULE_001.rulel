@@ -1,0 +1,102 @@
+@RULEL:LIN_CAPSULE_001:1.1.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-20 why=portable_verifiable_semantic_container_for_context_death_recovery}
+.d{
+  P0=agent_native_first
+  purpose=represent!persist!rehydrate!verify!execute
+  history_independence=context_history_tokens_eq_0
+  rehydration_complexity=O_size_of_capsule
+  provenance_rule=known_good_targets_is_historical_evidence_not_prior_authorization
+  source_digest_role=source_provenance_not_semantic_identity
+}
+
+.c{capsule_schema={
+  protocol: "LIN_CAPSULE/1.0",
+  identity: {
+    semantic_hash: "sha256:canonical_ir_and_content_identity",
+    workflow_hash: "sha256:workflow_topological_ir_digest",
+    source_digest: "sha256:raw_source_provenance_only"
+  },
+  contracts: {
+    effects: ["effect_manifest_tokens"],
+    capabilities: ["capability_manifest_tokens"],
+    invariants: ["invariant_report_and_refinement_rules"]
+  },
+  ir: {
+    canonical_ir: "LIN_Unified_IR_AST",
+    lowering_hints: "target_lowering_preferences"
+  },
+  provenance: {
+    known_good_targets: "empirical_target_benchmarks_and_evidence",
+    oracle_gate: "last_known_oracle_status",
+    benchmark_provenance: "environment_and_execution_metrics"
+  },
+  payload: {
+    compression: "brotli|gzip|zstd|none",
+    encoding: "base64|raw_json",
+    part_count: "int",
+    part_index: "int_0_based",
+    parts: "array_of_chunk_payloads"
+  }
+}}
+
+.i{
+  CAPSULE_HEADER_VALID="Protocol version supported and metadata fields present"
+  CAPSULE_PART_COUNT_VALID="Declared part_count equals received parts length"
+  CAPSULE_PART_ORDER_VALID="Part indices strictly contiguous from 0 to part_count - 1 (presentation may use [1/N])"
+  CAPSULE_PART_HASH_VALID="Each individual part checksum matches declared hash"
+  CAPSULE_PAYLOAD_HASH_VALID="Reassembled payload content hash matches payload digest"
+  CAPSULE_SEMANTIC_HASH_VALID="Canonical IR semantic_hash strictly matches identity.semantic_hash"
+  CAPSULE_IR_VALID="Canonical IR conforms strictly to LIN Unified IR schema"
+  CAPSULE_INVARIANTS_VALID="Invariant report and refinement contracts proven or guarded"
+  CAPSULE_EFFECTS_VALID="Declared effects bounded by recipient agent host security envelope"
+  CAPSULE_CAPABILITIES_VALID="Declared capabilities explicitly compared and authorized against recipient local policy"
+}
+
+.g{
+  GATE_A_INTEGRITY=CAPSULE_HEADER_VALID AND CAPSULE_PART_COUNT_VALID AND CAPSULE_PART_ORDER_VALID AND CAPSULE_PART_HASH_VALID AND CAPSULE_PAYLOAD_HASH_VALID AND CAPSULE_SEMANTIC_HASH_VALID
+  GATE_B_REHYDRATION=GATE_A_INTEGRITY AND CAPSULE_IR_VALID AND CAPSULE_INVARIANTS_VALID AND CAPSULE_EFFECTS_VALID AND CAPSULE_CAPABILITIES_VALID
+  GATE_C_EXECUTION=GATE_B_REHYDRATION AND local_target_reevaluated AND lowered_and_compiled AND independent_oracle_behavior_equivalent
+}
+
+.r{
+  R_ZERO_CONTEXT="Agent B rehydrates state with 0 history tokens from Agent A conversation"
+  R_HASH_INTEGRITY_ONLY="semantic_hash verifies identity and canonical AST integrity, NOT execution safety"
+  R_SAFETY_GATES="Safety verified exclusively by Gate B contracts: invariants, effects, and explicit local capability policy"
+  R_EMPIRICAL_PROVENANCE="known_good_targets represents historical benchmark evidence, never automatic target selection in receiver"
+  R_ORACLE_INDEPENDENCE="Gate C execution must be validated by independent behavioral oracle in local environment"
+}
+
+.f{
+  blind_authorization_from_provenance
+  automatic_target_selection_from_known_good_targets
+  bypass_gate_a_or_gate_b
+  rely_on_agent_conversation_history
+  treat_semantic_hash_as_complete_safety_proof
+  treat_source_digest_as_semantic_identity
+  unbounded_effect_escalation
+  unauthorized_capability_grant
+  missing_or_out_of_order_parts
+}
+
+.w{
+  LIN_CAPSULE_001=pack_linobj→fragment→adversarial_tests→context_death_test→gate_a→gate_b→gate_c
+}
+
+.x{
+  1=PROTOCOL { implement deterministic schema, serialization, chunking, and hashing in protocol.mjs }
+  2=ENCODER { implement linobj -> canonical IR, contracts, provenance, payload compressor in encoder.mjs }
+  3=DECODER { implement reassembly, Gate A verification, Gate B contract checking in decoder.mjs }
+  4=ROUNDTRIP_ADVERSARIAL { test corrupt chunk, missing chunk, swapped chunk, forged semantic hash, forged IR, escalated effect, unauthorized capability, false invariant }
+  5=CONTEXT_DEATH { wipe session, deliver Capsule only to Agent B, verify 0 history tokens and O(size) rehydration }
+  6=EXECUTION_GATE_C { evaluate local environment, lower IR, compile native target, and verify against independent oracle }
+}
+
+.p{
+  spec=spec/LIN_CAPSULE_001.rulel
+  protocol=src/lin_capsule_protocol.mjs
+  encoder=src/lin_capsule_encoder.mjs
+  decoder=src/lin_capsule_decoder.mjs
+  test_adversarial=tests/lin_capsule_roundtrip.test.mjs
+  test_context_death=tests/lin_capsule_context_death.test.mjs
+}

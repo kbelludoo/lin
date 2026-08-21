@@ -1,0 +1,110 @@
+{
+  "benchmark": "LIN_CAPSULE_003_REAL_LLM_COGNITIVE",
+  "timestamp": "2026-08-21T00:21:33.900Z",
+  "model": "qwen2.5-coder:7b",
+  "total_trials": 6,
+  "summary": {
+    "condition_A_raw_tree": {
+      "trials_count": 3,
+      "avg_prompt_tokens": 259.3,
+      "avg_completion_tokens": 121.3,
+      "avg_duration_ms": 208673.9,
+      "first_pass_rate": "0.0%",
+      "oracle_pass_rate": "0.0%"
+    },
+    "condition_B_capsule_only": {
+      "trials_count": 3,
+      "avg_prompt_tokens": 516,
+      "avg_completion_tokens": 119,
+      "avg_duration_ms": 172819.8,
+      "first_pass_rate": "0.0%",
+      "oracle_pass_rate": "0.0%"
+    }
+  },
+  "trials": [
+    {
+      "scenario_id": "scen_01_vip_fee_waiver",
+      "condition": "CONDITION_A_RAW_TREE",
+      "run": 1,
+      "seed": 1001,
+      "prompt_tokens": 319,
+      "completion_tokens": 166,
+      "total_tokens": 485,
+      "duration_ms": 230175.72,
+      "compile_pass": false,
+      "oracle_pass": false,
+      "first_pass_success": false,
+      "error": "Compile error: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_j8FgCR/emit.cjs:10\nlet fee = if(isVip){\n          ^^\n\nSyntaxError: Unexpected token 'if'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at checkSyntax (node:internal/main/check_syntax:76:3)\n\nNode.js v24.19.0"
+    },
+    {
+      "scenario_id": "scen_01_vip_fee_waiver",
+      "condition": "CONDITION_B_CAPSULE_ONLY",
+      "run": 1,
+      "seed": 1001,
+      "prompt_tokens": 702,
+      "completion_tokens": 160,
+      "total_tokens": 862,
+      "duration_ms": 252688.52,
+      "compile_pass": false,
+      "oracle_pass": false,
+      "first_pass_success": false,
+      "error": "Compile error: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_xN6f4D/emit.cjs:10\nlet fee = if(isVip){ 0 ;} else { 5 };\n          ^^\n\nSyntaxError: Unexpected token 'if'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at checkSyntax (node:internal/main/check_syntax:76:3)\n\n"
+    },
+    {
+      "scenario_id": "scen_02_rate_limiter",
+      "condition": "CONDITION_A_RAW_TREE",
+      "run": 1,
+      "seed": 1001,
+      "prompt_tokens": 243,
+      "completion_tokens": 114,
+      "total_tokens": 357,
+      "duration_ms": 219511.07,
+      "compile_pass": true,
+      "oracle_pass": false,
+      "first_pass_success": false,
+      "error": "Export check_limit not found"
+    },
+    {
+      "scenario_id": "scen_02_rate_limiter",
+      "condition": "CONDITION_B_CAPSULE_ONLY",
+      "run": 1,
+      "seed": 1001,
+      "prompt_tokens": 458,
+      "completion_tokens": 100,
+      "total_tokens": 558,
+      "duration_ms": 131554.06,
+      "compile_pass": true,
+      "oracle_pass": false,
+      "first_pass_success": false,
+      "error": "Export check_limit not found"
+    },
+    {
+      "scenario_id": "scen_03_inventory_discount",
+      "condition": "CONDITION_A_RAW_TREE",
+      "run": 1,
+      "seed": 1001,
+      "prompt_tokens": 216,
+      "completion_tokens": 84,
+      "total_tokens": 300,
+      "duration_ms": 176334.81,
+      "compile_pass": false,
+      "oracle_pass": false,
+      "first_pass_success": false,
+      "error": "Compile error: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_44HafP/emit.cjs:3\nreturn qty * if ^qty >= 10 then ^unitPrice - 2 else ^unitPrice\n             ^^\n\nSyntaxError: Unexpected token 'if'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at checkSyntax (node:interna"
+    },
+    {
+      "scenario_id": "scen_03_inventory_discount",
+      "condition": "CONDITION_B_CAPSULE_ONLY",
+      "run": 1,
+      "seed": 1001,
+      "prompt_tokens": 388,
+      "completion_tokens": 97,
+      "total_tokens": 485,
+      "duration_ms": 134216.82,
+      "compile_pass": false,
+      "oracle_pass": false,
+      "first_pass_success": false,
+      "error": "Compile error: LIN_EMIT_JS_SYNTAX: /tmp/lin_js_chk_yXNisQ/emit.cjs:3\nreturn if qty >= 10 {\n       ^^\n\nSyntaxError: Unexpected token 'if'\n    at wrapSafe (node:internal/modules/cjs/loader:1804:18)\n    at checkSyntax (node:internal/main/check_syntax:76:3)\n\nNode.js v24.19.0"
+    }
+  ]
+}

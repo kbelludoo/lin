@@ -1,0 +1,77 @@
+@RULEL:LIN_CAPSULE_002_REAL_AGENT_CONTEXT_DEATH:1.3.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-20 why=measure_real_llm_cognitive_rehydration_and_task_continuation_under_zero_history}
+.d{
+  P0=agent_native_first
+  purpose=represent!persist!cognitive_rehydrate!evolve!verify!execute
+  history_independence=conversation_history_tokens_eq_0
+  telemetry_rule=measure_tokens_via_external_harness_not_agent_self_report
+  isolation_rule=scenario_b_receiver_has_zero_source_files_zero_git_zero_logs
+  controlled_variable_rule=identical_task_identical_model_identical_evaluator
+  scope_limitation=minimal_cognitive_rehydration_not_full_repository_engineering
+  task_type_clarification=task_continuation_efficiency_not_blind_algorithmic_discovery
+}
+
+.c{scope_boundaries={
+  test_domain: "Cognitive rehydration and representation efficiency under zero history",
+  out_of_scope: "Full-repo toolchain manipulation, PR generation, multi-file editing (deferred to LIN_CAPSULE_003)",
+  task_nature: "Task continuation (problem requirements explicit; measures cognitive friction to act)"
+}}
+
+.c{experiment_matrix={
+  control_group_A: "Agent B receives RAW multi-files only (no conversation history, full source tree)",
+  treatment_group_B: "Agent B receives LIN Capsule only (no conversation history, 0 source files, 0 git, 0 logs)",
+  identical_task: "Evolve system with new feature while preserving all original invariant contracts",
+  independent_oracle: "Gate C compilation and behavioral test suite outside agent context"
+}}
+
+.c{evaluation_metrics=[
+  "prompt_tokens (provider reported)",
+  "completion_tokens (provider reported)",
+  "total_tokens (provider reported)",
+  "duration_ms (external harness latency)",
+  "first_pass_success (oracle pass on 1st completion)",
+  "oracle_pass (semantic and contract conformance)",
+  "capsule_bytes (raw transported footprint)"
+]}
+
+.i{
+  COGNITIVE_REHYDRATION_ZERO_HISTORY="Agent B operates with zero conversation history tokens from Agent A"
+  STRICT_SANDBOX_ISOLATION="Scenario B workspace contains ONLY the capsule payload string"
+  TASK_CONTINUATION_VALID="Agent B successfully applies modification to canonical IR"
+  INVARIANT_PRESERVATION_VALID="Modified IR satisfies existing invariants plus new task constraints"
+  GATE_C_ORACLE_PASSED="Modified system lowers to local target and passes independent behavioral oracle"
+}
+
+.g{
+  GATE_A_INTEGRITY=CAPSULE_PART_HASH_VALID AND CAPSULE_PAYLOAD_HASH_VALID AND CAPSULE_SEMANTIC_HASH_VALID
+  GATE_B_REHYDRATION=GATE_A_INTEGRITY AND CAPSULE_IR_VALID AND CAPSULE_INVARIANTS_VALID AND CAPSULE_EFFECTS_VALID AND CAPSULE_CAPABILITIES_VALID
+  GATE_COGNITIVE=GATE_B_REHYDRATION AND COGNITIVE_REHYDRATION_ZERO_HISTORY AND TASK_CONTINUATION_VALID
+  GATE_C_EXECUTION=GATE_COGNITIVE AND INVARIANT_PRESERVATION_VALID AND GATE_C_ORACLE_PASSED
+}
+
+.r{
+  R_EXTERNAL_TELEMETRY="Token counts, latency, and turns MUST be measured by the test harness, never self-reported by the agent"
+  R_ISOLATION_PURITY="Scenario B must fail closed if any source file or repository artifact is leaked into the workspace"
+  R_CONTROLLED_EXPERIMENT="Model version, prompt template, temperature, and evaluation oracle must remain strictly constant across groups"
+  R_OBJECTIVE_ACCEPTANCE="Results (savings, parity, or overhead) must be accepted as observed empirical facts"
+}
+
+.f{
+  rely_on_agent_self_reported_tokens
+  leak_agent_a_history_or_sources_to_scenario_b
+  vary_llm_model_or_task_between_groups
+  claim_autonomous_discovery_when_prompt_contains_continuation_spec
+  alter_interpretation_rules_post_hoc
+  bypass_gate_c_oracle
+}
+
+.w{
+  LIN_CAPSULE_002=agent_a_generate→pack_capsule→context_death→spawn_isolated_agent_b→evolve→gate_c_oracle→harness_telemetry_compare
+}
+
+.p{
+  spec=spec/LIN_CAPSULE_002_REAL_AGENT_CONTEXT_DEATH.rulel
+  adapter=tests/lin_capsule_real_llm_adapter.mjs
+  eval_harness=tests/lin_capsule_comparative_eval.mjs
+}
