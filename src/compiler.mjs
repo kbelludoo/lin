@@ -118,7 +118,7 @@ function compileReturnSigils(s) {
       i++;
       continue;
     }
-    const prev = out.length ? out[out.length - 1] : '';
+    const prev = out.trimEnd().slice(-1) || '';
     const next = s[i + 1] || '';
       const prevOk = !prev || /[;{}\n,:]/.test(prev);
     const nextOk = /[A-Za-z_$0-9(\[\-+!'"`{]/.test(next);
