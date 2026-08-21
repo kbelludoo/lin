@@ -18,7 +18,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import { parseLia } from './compiler.mjs';
 import { parseStmts, tryParseStmts, collectAssignedIds } from './body_ast.mjs';
-import { contentHash, canonicalize } from './content_hash.mjs';
+import { contentHash, canonicalize } from './content_hash_load.mjs';
 import { runFormalGate, collectIdentifiers, detectEffects } from './formal_gate.mjs';
 import { assertDivProof } from './lin_refine_div_load.mjs';
 import { compileLia } from './multi_emit.mjs';

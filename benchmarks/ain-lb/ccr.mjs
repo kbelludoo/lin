@@ -3,7 +3,7 @@ import { createProvider } from './provider.mjs'
 import { check } from './langcheck.mjs'
 import { createRequire } from 'node:module'
 import { parseLia } from '../../src/compiler.mjs'
-import { buildContentRegistry, contentHash } from '../../src/content_hash.mjs'
+import { buildContentRegistry, contentHash } from '../../src/content_hash_load.mjs'
 
 const gate = createRequire(import.meta.url)('../../src/lin_semantic_gate.compiled.cjs')
 

@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { getClr } from '../../src/lin_ain_lb_clr_load.mjs';
-import { contentHash } from '../../src/content_hash.mjs';
+import { contentHash } from '../../src/content_hash_load.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const fixtureDir = path.join(root, 'tests', 'ain_lb', 'fixtures', 'clr002');

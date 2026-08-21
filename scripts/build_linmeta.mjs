@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { parseLia } from '../src/compiler.mjs';
-import { contentHash } from '../src/content_hash.mjs';
+import { contentHash } from '../src/content_hash_load.mjs';
 
 function extractValue(text, name) {
   const match = text.match(new RegExp(`!${name}\\(\\)\\{\\^'([^']*)'\\}`));

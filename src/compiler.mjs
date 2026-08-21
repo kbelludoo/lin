@@ -119,6 +119,31 @@ function compileReturnSigils(s) {
       i = end;
       continue;
     }
+    if (c === '/' && i + 1 < s.length && s[i + 1] === '/') {
+      const end = s.indexOf('\n', i);
+      const nextIdx = end < 0 ? s.length : end + 1;
+      out += s.slice(i, nextIdx);
+      i = nextIdx;
+      continue;
+    }
+    if (c === '/' && i + 1 < s.length && s[i + 1] === '*') {
+      const end = s.indexOf('*/', i + 2);
+      const nextIdx = end < 0 ? s.length : end + 2;
+      out += s.slice(i, nextIdx);
+      i = nextIdx;
+      continue;
+    }
+    if (c === '/' && i + 1 < s.length && s[i + 1] !== '/' && s[i + 1] !== '*') {
+      let k = i - 1;
+      while (k >= 0 && /\s/.test(s[k])) k--;
+      const prev = k < 0 ? '' : s[k];
+      if (!prev || /[=(:,;!?{[&|^~+\-*%<>]/.test(prev)) {
+        const end = skipRegexLit(s, i);
+        out += s.slice(i, end);
+        i = end;
+        continue;
+      }
+    }
     if (c !== '^') {
       out += c;
       i++;
@@ -388,6 +413,48 @@ function compileMatchToJs(targetExpr, inner) {
   return parts.join('');
 }
 
+function maskLiterals(s) {
+  const table = [];
+  let out = '';
+  let i = 0;
+  while (i < s.length) {
+    const c = s[i];
+    if (c === '"' || c === "'" || c === '`') {
+      const end = skipQuote(s, i);
+      const placeholder = `\u0000LIT_${table.length}\u0000`;
+      table.push(s.slice(i, end));
+      out += placeholder;
+      i = end;
+      continue;
+    }
+    if (c === '/' && i + 1 < s.length && s[i + 1] !== '/' && s[i + 1] !== '*') {
+      let k = i - 1;
+      while (k >= 0 && /\s/.test(s[k])) k--;
+      const prev = k < 0 ? '' : s[k];
+      if (!prev || /[=(:,;!?{[&|^~+\-*%<>]/.test(prev)) {
+        const end = skipRegexLit(s, i);
+        const placeholder = `\u0000LIT_${table.length}\u0000`;
+        table.push(s.slice(i, end));
+        out += placeholder;
+        i = end;
+        continue;
+      }
+    }
+    out += c;
+    i++;
+  }
+  return {
+    masked: out,
+    unmask: (str) => {
+      let res = str;
+      for (let idx = 0; idx < table.length; idx++) {
+        res = res.replaceAll(`\u0000LIT_${idx}\u0000`, () => table[idx]);
+      }
+      return res;
+    }
+  };
+}
+
 function compileBody(body) {
   let s = String(body || '');
   s = s.replace(/([A-Za-z_$][\w$]*)::([A-Za-z_$][\w$]*)/g, '$1.$2');
@@ -398,20 +465,23 @@ function compileBody(body) {
   s = rewriteSigilBlocks(s, '#', 'for');
   s = compileReturnSigils(s);
   s = s.replace(/([^;{}(\[,:?])while\s*\(/g, '$1;while(');
-  // protect existing ===/!== then expand LIN ==/!=
-  s = s.replace(/!==/g, '\u0000NE\u0000').replace(/===/g, '\u0000EQ\u0000');
-  s = s.replace(/==(?![\s]*(?:null|undefined)\b)/g, '===');
-  s = s.replace(/!=(?![\s]*(?:null|undefined)\b)/g, '!==');
-  s = s.replace(/\u0000NE\u0000/g, '!==').replace(/\u0000EQ\u0000/g, '===');
-  s = s.replace(/;+/g, ';');
-  s = s.replace(/;else\b/g, 'else');
-  s = s.replace(/#\(/g, 'for(');
-  s = insertCtrlSeps(s);
-  s = s.replace(/\?\(([^()]+)\)\{/g, 'if($1){');
-  s = s.replace(/([^;{}:\s])\s+(case\s|default\s*:)/g, '$1;$2');
-  s = s.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
-  if (s && !/[;{}]\s*$/.test(s)) s += ';';
-  return s;
+  
+  // Protect string and regex literals before operator normalization
+  const { masked, unmask } = maskLiterals(s);
+  let m = masked;
+  m = m.replace(/!==/g, '\u0000NE\u0000').replace(/===/g, '\u0000EQ\u0000');
+  m = m.replace(/==(?![s]*(?:null|undefined)\b)/g, '===');
+  m = m.replace(/!=(?![s]*(?:null|undefined)\b)/g, '!==');
+  m = m.replace(/\u0000NE\u0000/g, '!==').replace(/\u0000EQ\u0000/g, '===');
+  m = m.replace(/;+/g, ';');
+  m = m.replace(/;else\b/g, 'else');
+  m = m.replace(/#\(/g, 'for(');
+  m = insertCtrlSeps(m);
+  m = m.replace(/\?\(([^()]+)\)\{/g, 'if($1){');
+  m = m.replace(/([^;{}:\s])\s+(case\s|default\s*:)/g, '$1;$2');
+  m = m.replace(/\b(let|const|var)\s+([A-Za-z_$][\w$]*)\s*:\s*[^=;{]+?=/g, '$1 $2=');
+  if (m && !/[;{}]\s*$/.test(m)) m += ';';
+  return unmask(m);
 }
 
 function rewriteSigilBlocks(s, sigil, keyword) {
@@ -785,49 +855,15 @@ export function parseLia(liaText) {
         }
       }
       
-      let openBraces = 0;
-      let quote = null;
-      let started = false;
-      for (let k = firstBrace; k < fullFnText.length; k++) {
-        const ch = fullFnText[k];
-        if (quote) {
-          if (ch === '\\') { k++; continue; }
-          if (ch === quote) quote = null;
-          continue;
-        }
-        if (ch === '"' || ch === "'") { quote = ch; continue; }
-        if (ch === '{') {
-          openBraces++;
-          started = true;
-        } else if (ch === '}') {
-          openBraces--;
-        }
-      }
-      
-      while ((!started || openBraces > 0) && i + 1 < lines.length) {
+      let closeBrace = findMatching(fullFnText, firstBrace, '{', '}');
+      while (closeBrace < 0 && i + 1 < lines.length) {
         i++;
-        const nextLine = lines[i];
-        fullFnText += '\n' + nextLine;
-        for (let k = 0; k < nextLine.length; k++) {
-          const ch = nextLine[k];
-          if (quote) {
-            if (ch === '\\') { k++; continue; }
-            if (ch === quote) quote = null;
-            continue;
-          }
-          if (ch === '"' || ch === "'") { quote = ch; continue; }
-          if (ch === '{') {
-            openBraces++;
-            started = true;
-          } else if (ch === '}') {
-            openBraces--;
-          }
-        }
+        fullFnText += '\n' + lines[i];
+        closeBrace = findMatching(fullFnText, firstBrace, '{', '}');
       }
       
-      const lastBrace = fullFnText.lastIndexOf('}');
-      const body = firstBrace >= 0 && lastBrace > firstBrace
-        ? fullFnText.slice(firstBrace + 1, lastBrace)
+      const body = firstBrace >= 0 && closeBrace > firstBrace
+        ? fullFnText.slice(firstBrace + 1, closeBrace)
         : '';
       
       meta.fns.push({ name: fnName, generics, params: stripTypeAnn(paramsRaw), rawParams: paramsRaw, returnType, body });

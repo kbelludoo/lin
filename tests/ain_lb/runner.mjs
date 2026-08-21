@@ -9,7 +9,7 @@ import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { getClr } from '../../src/lin_ain_lb_clr_load.mjs';
 import { validateAgentIr } from '../../src/lin_agent_ir_ingest_load.mjs';
-import { contentHash, semanticEquals } from '../../src/content_hash.mjs';
+import { contentHash, semanticEquals } from '../../src/content_hash_load.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const bin = path.join(root, 'bin', 'lin.mjs');
