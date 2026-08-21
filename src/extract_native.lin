@@ -1,0 +1,5 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=extract_native
+~G{?=if #=for ^=ret :else}
+!extract_native(){^0}
+=ex{extract_native}
