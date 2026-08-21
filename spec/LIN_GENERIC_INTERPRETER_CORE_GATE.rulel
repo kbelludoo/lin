@@ -1,0 +1,61 @@
+@RULEL:LIN_GENERIC_INTERPRETER_CORE_GATE:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-21 why=prove_general_lin_language_execution_across_16_language_constructs_without_hardcoded_functions}
+.d{
+  P0=agent_native_first
+  purpose=evaluate_pure_lin_ast_in_memory
+  zero_hardcoded_functions=runtime_must_never_match_function_names
+  full_language_coverage=test_all_16_core_language_constructs_differentially_against_node
+}
+
+.t{
+  H_GENERIC_LIN_GATE="The generic LIN AST interpreter in Rust implements the complete LIN semantic specification (T01 arithmetic through T16 error handling, including nested loops, object property access, array manipulation, and intra-module function calls) with behavior_eq = 1.0 against Node.js reference evaluation."
+}
+
+.c{test_matrix_16_constructs=[
+  "T01_ARITHMETIC: compound expressions with parentheses and precedence",
+  "T02_PRECEDENCE: operator precedence (* before +, && before ||)",
+  "T03_COMPARISON: strict equality, inequality, boundary conditions",
+  "T04_IF_ELSE: conditional branch sigils with else fallback",
+  "T05_LOOPS: for-loop sigil #(init; cond; step) with accumulation",
+  "T06_ARRAYS: array literals, push, length, map-like iteration",
+  "T07_INDEXING: dynamic array index reading and writing",
+  "T08_OBJECTS: object literals and key-value mapping",
+  "T09_PROP_ACCESS: dot notation and dynamic bracket property access",
+  "T10_FUNCTIONS: multi-parameter binding and lexical scoping",
+  "T11_INTRA_CALLS: functions calling other functions in the same module",
+  "T12_EARLY_RETURN_LOOP: early return ^ from deep loop nesting",
+  "T13_BLOCK_NESTING: nested blocks with semicolon preservation",
+  "T14_STRINGS_UNICODE: string slicing, concat, Unicode and UTF-16 surrogates",
+  "T15_NULL_UNDEFINED: null coalescence and falsy evaluation",
+  "T16_ERRORS_FAIL_CLOSED: error propagation and invalid argument handling"
+]}
+
+.i{
+  ZERO_HARDCODED_OPCODES="Zero function-name matching in main.rs"
+  DIFFERENTIAL_PARITY_16_16="All 16 construct suites pass differentially against reference evaluation"
+}
+
+.g{
+  GATE_GENERIC_LIN_INTERPRETER=all_16_constructs_pass AND zero_hardcoded_dispatch
+}
+
+.r{
+  R_GENERIC_EVAL="Execute .lin files containing pure sigils and expression trees"
+  R_NO_FUNCTION_SPECIALIZATION="Adding a new function to .lin must work without recompiling Rust runtime"
+}
+
+.f{
+  hardcode_function_names_in_rust
+  reimplement_test_logic_in_js_harness
+}
+
+.w{
+  LIN_GATE_RUN=write_16_lin_constructs→upgrade_generic_evaluator→run_differential_16→verify_behavior_eq
+}
+
+.p{
+  spec=spec/LIN_GENERIC_INTERPRETER_CORE_GATE.rulel
+  lin_suite=tests/generic_suite/lin_language_constructs.lin
+  runner=tests/lin_generic_interpreter_gate_runner.mjs
+}

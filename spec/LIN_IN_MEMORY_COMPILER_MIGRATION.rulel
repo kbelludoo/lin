@@ -1,0 +1,59 @@
+@RULEL:LIN_IN_MEMORY_COMPILER_MIGRATION:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant}
+.m{lang=LIN status=ARCH repo="C:/Users/k/Documents/lia" date=2026-08-21 why=eliminate_disk_artifacts_and_bootstrap_mjs_via_in_memory_lin_runtime}
+.d{
+  P0=agent_native_first
+  purpose=represent!compile_in_memory!execute_in_memory!verify_zero_disk
+  zero_disk_artifacts=no_intermediate_mjs_or_ts_saved_to_filesystem
+  memory_pipeline=source_lin_to_ram_ast_to_target_eval
+  canonical_single_source=all_repo_code_in_lin_and_rulel_only
+}
+
+.c{migration_phases={
+  phase_1_backup: "Preserve all legacy bootstrap tools in ../lin_legacy_bootstrap_backup/ [COMPLETED]",
+  phase_2_canonical_lin: "Write 100% of compiler, emitter, verifier, and capsule logic in src/*.lin",
+  phase_3_in_memory_engine: "Implement in-memory compile & eval pipeline (RAM AST -> Target buffer -> execute)",
+  phase_4_cleanup: "Retain bin/lin.mjs solely as zero-dependency entrypoint launcher for in-memory VM"
+}}
+
+.i{
+  ZERO_DISK_COMPILATION_WRITES="Compilation never writes .compiled.mjs or .compiled.ts to disk"
+  SEMANTIC_INTEGRITY_PRESERVED="In-memory execution produces bit-identical semantic hash and behavior"
+  CANONICAL_SOURCE_IS_LIN="No hand-written JS/TS logic allowed outside the single minimal launcher entrypoint"
+}
+
+.g{
+  GATE_MIGRATION_SOURCE=all_src_modules_have_canonical_lin_source
+  GATE_IN_MEMORY_EXEC=in_memory_compiler_evaluates_without_fs_writes
+  GATE_BEHAVIORAL_PARITY=all_suite_tests_pass_in_memory
+}
+
+.r{
+  R_PURE_LIN_REPO="Repository source tree must be composed exclusively of .lin, .rulel, and .md files"
+  R_MEMORY_PIPELINE="Compile operations stream directly into memory buffers/evaluators"
+  R_LEGACY_ISOLATION="Legacy bootstrap scripts stay isolated in external backup directory"
+}
+
+.f{
+  write_compiled_files_to_src_directory
+  write_handcrafted_js_ts_submodules
+  regress_behavior_eq_during_in_memory_switch
+}
+
+.w{
+  LIN_IN_MEMORY_MIGRATION=backup_legacy→convert_all_mjs_to_lin→build_in_memory_evaluator→verify_zero_disk
+}
+
+.x{
+  1=CANONICAL_LIN_CORE { Convert remaining compiler and emitter modules into canonical .lin source }
+  2=IN_MEMORY_RUNNER { Implement in-memory compile-and-execute VM engine without disk I/O }
+  3=VALIDATE_PARITY { Run full test suite purely through in-memory pipeline }
+  4=PURGE_DISK_LEFTOVERS { Ensure src/ contains only .lin files }
+}
+
+.p{
+  spec=spec/LIN_IN_MEMORY_COMPILER_MIGRATION.rulel
+  backup=../lin_legacy_bootstrap_backup/
+  runtime=src/semantic_runtime.lin
+  entrypoint=bin/lin.mjs
+}

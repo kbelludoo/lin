@@ -1,0 +1,11 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_capsule_encoder
+~G{?=if #=for ^=ret :else}
+
+!encodeCapsuleManifest(ir,effects,capabilities,invariants,provenance){contracts={effects:effects||[],capabilities:capabilities||[],invariants:invariants||{verified:true,rules:[]}};irSection={canonical_ir:ir||{}};provSection={known_good_targets:provenance||{}};manifest={protocol:'LIN_CAPSULE/1.0',contracts:contracts,ir:irSection,provenance:provSection};^manifest}
+
+!buildChunkMetadata(partIndex,partCount,chunkPayload,partHash,payloadHash,semanticHash,compression){^({protocol:'LIN_CAPSULE/1.0',part_index:partIndex,part_count:partCount,display_badge:'['+(partIndex+1)+'/'+partCount+']',part_hash:partHash,payload_hash:payloadHash,semantic_hash:semanticHash,compression:compression||'none',encoding:'base64url',chunk:chunkPayload})}
+
+!splitIntoChunks(payloadStr,chunkSize){size=chunkSize||500;chunks=[];offset=0;len=payloadStr.length;#(;offset<len;){chunks.push(payloadStr.slice(offset,offset+size));offset=offset+size};?(chunks.length==0){chunks.push('')};^chunks}
+
+=ex{encodeCapsuleManifest,buildChunkMetadata,splitIntoChunks}

@@ -1,0 +1,13 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=data_pipeline
+~G{?=if #=for ^=ret :else}
+
+!countFrequencies(arr){freq={};#(i=0;i<arr.length;i++){item=String(arr[i]);?(freq[item]!=null){freq[item]=freq[item]+1}else{freq[item]=1}};^freq}
+
+!binarySearch(sortedArr,target){low=0;high=sortedArr.length-1;#(;low<=high;){mid=Math.floor((low+high)/2);?(sortedArr[mid]==target){^mid};?(sortedArr[mid]<target){low=mid+1}else{high=mid-1}};^-1}
+
+!luhnChecksum(cardNumStr){s=String(cardNumStr||'');?(s.length==0){^false};sum=0;shouldDouble=false;#(i=s.length-1;i>=0;i--){digit=Number(s.charAt(i));?(isNaN(digit)){^false};?(shouldDouble){digit=digit*2;?(digit>9){digit=digit-9}};sum=sum+digit;shouldDouble=!shouldDouble};^(sum%10==0)}
+
+!simpleHash(str){s=String(str||'');hash=5381;#(i=0;i<s.length;i++){hash=((hash*33)+s.charCodeAt(i))&0xFFFFFFFF};^hash}
+
+=ex{countFrequencies,binarySearch,luhnChecksum,simpleHash}

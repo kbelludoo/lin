@@ -1,0 +1,53 @@
+@RULEL:LIN_FUZZ_COMPOSITIONAL_GATE_1000:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-21 why=prove_generic_interpreter_compositional_robustness_across_1000_fuzzed_programs}
+.d{
+  P0=agent_native_first
+  purpose=generate_1000_composed_lin_programs!execute_differentially_against_node_ast!zero_hardcoded_functions
+  scale=1000_generated_lin_programs
+  complexity_dimensions=["nested_expressions", "nested_arrays_and_objects", "multi_level_conditionals", "nested_loops", "escaped_strings", "float_and_int_numbers", "logical_and_or_not"]
+}
+
+.t{
+  H_COMPOSITIONAL_FUZZ="A recursive tokenizing generic LIN AST interpreter handles arbitrary compositional combinations of 16 constructs (nested commas, strings with escaped quotes, logical operators, and multi-level loops) with behavior_eq = 1.0 against a JavaScript reference evaluator across 1,000 generated programs."
+}
+
+.c{fuzz_categories=[
+  "F01: Nested commas in arrays [[1, 2], [3, [4, 5]]]",
+  "F02: Function calls with nested array arguments fn([1, 2], { a: 3 })",
+  "F03: Escaped strings containing semicolons, braces, and parens",
+  "F04: Compound boolean logic (a > 10 && b < 20 || !c)",
+  "F05: Array property mutation (arr[i] = val, push semantics)",
+  "F06: Multi-branch conditionals with nested loops and early returns",
+  "F07: Arithmetic expressions with float and negative numbers"
+]}
+
+.i{
+  ZERO_NOMINAL_DISPATCH="No function names hardcoded in Rust main.rs"
+  TOKENIZER_ROBUST_COMMAS="Commas inside brackets or strings do not split arguments or array elements"
+  DIFFERENTIAL_PARITY_1000="1000/1000 fuzzed programs match JS reference evaluation"
+}
+
+.g{
+  GATE_COMPOSITIONAL_1000=pass_rate_eq_1000_of_1000
+}
+
+.r{
+  R_RECURSIVE_TOKENIZER="Use bracket-aware and string-aware splitters for all commas and semicolons"
+  R_PARITY_VERIFICATION="Every fuzzed program is executed via ./bin/lin_rust call <file> <fn> <args> and asserted against JS reference"
+}
+
+.f{
+  use_naive_split_on_commas_or_semicolons
+  hardcode_fuzzed_function_names
+}
+
+.w{
+  LIN_COMPOSITIONAL_RUN=upgrade_tokenizer_to_full_lexer→build_1000_fuzz_generator→run_1000_differential_tests→record_score
+}
+
+.p{
+  spec=spec/LIN_FUZZ_COMPOSITIONAL_GATE_1000.rulel
+  runtime=bin/lin_rust
+  generator=tests/lin_compositional_fuzz_generator.mjs
+}

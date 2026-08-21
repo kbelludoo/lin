@@ -1,0 +1,21 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=cheerio_dom
+~G{?=if #=for ^=ret :else}
+
+!parseHtmlTree(htmlStr){^({protocol:'LIN_DOM/1.0',raw:htmlStr})}
+
+!querySelectorAll(domTree,selector){^({query:selector,root:domTree})}
+
+!getAttr(node,attrName){attrs=node.attrs||{};^(attrs[attrName]||null)}
+
+!setAttr(node,attrName,attrVal){?(node.attrs==null){node.attrs={}};node.attrs[attrName]=String(attrVal);^node}
+
+!getText(node){?(node==null){^''};?(node.type=='text'){^node.text};text='';kids=node.children||[];#(i=0;i<kids.length;i++){text=text+getText(kids[i])};^text}
+
+!addClass(node,className){attrs=node.attrs||{};cur=attrs['class']||'';classes=cur.split(' ').filter(Boolean);?(classes.indexOf(className)<0){classes.push(className)};attrs['class']=classes.join(' ');node.attrs=attrs;^node}
+
+!removeClass(node,className){attrs=node.attrs||{};cur=attrs['class']||'';classes=cur.split(' ').filter(Boolean);filtered=classes.filter(function(c){return c!==className});attrs['class']=filtered.join(' ');node.attrs=attrs;^node}
+
+!renderHtml(domTree){^('<!DOCTYPE html><html><body>rendered_by_lin_dom</body></html>')}
+
+=ex{parseHtmlTree,querySelectorAll,getAttr,setAttr,getText,addClass,removeClass,renderHtml}

@@ -1,0 +1,9 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=target_selector
+~G{?=if #=for ^=ret :else}
+
+!rankTargetsForProfile(profile,availableTargets){targets=availableTargets||['rust','zig','c','go','ts','js','py','wasm'];scores={};#(i=0;i<targets.length;i++){t=targets[i];s=100;?(profile=='performance'){?(t=='rust'||t=='zig'||t=='c'){s=s+50};?(t=='go'||t=='wasm'){s=s+30}};?(profile=='ai_data'){?(t=='py'||t=='julia'){s=s+60};?(t=='rust'){s=s+20}};?(profile=='web_edge'){?(t=='ts'||t=='js'||t=='wasm'){s=s+60}};scores[t]=s};^scores}
+
+!selectBestTarget(profile,availableTargets){ranked=rankTargetsForProfile(profile,availableTargets);keys=Object.keys(ranked);best=keys[0]||'ts';maxScore=ranked[best]||0;#(i=1;i<keys.length;i++){k=keys[i];?(ranked[k]>maxScore){maxScore=ranked[k];best=k}};^best}
+
+=ex{rankTargetsForProfile,selectBestTarget}

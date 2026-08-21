@@ -1,0 +1,54 @@
+@RULEL:LIN_CLONE_REAL_RUNTIME_EQUIVALENCE:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-21 why=prove_real_runtime_differential_equivalence_without_harness_mocks}
+.d{
+  P0=agent_native_first
+  purpose=clone_repo!rewrite_to_lin!execute_in_real_native_runtime!differential_fuzz!mutation_verify
+  zero_harness_duplication=harness_calls_real_lin_native_runtime_binary_never_reimplements_logic_in_js
+  differential_scale=40_000_random_test_vectors
+  mutation_power_check=100_percent_mutation_detection
+}
+
+.t{
+  H_CLONE_REAL_RUNTIME="LIN canonical modules (.lin) executed directly by the native Rust in-memory runtime produce bit-identical behavioral equivalence (behavior_eq = 1.0) against the original target repository across 40,000 differential fuzz cases, and reject 100% of injected code mutations."
+}
+
+.c{test_suite_phases={
+  CLONE_EQ_001_REAL_RUNTIME: "Execute .lin via ./bin/lin_rust eval --call <fn> <args_json> and compare vs Node.js original",
+  CLONE_EQ_002_40K_DIFFERENTIAL: "40,000 randomized test cases (10k countFrequencies, 10k binarySearch, 10k luhnChecksum, 10k simpleHash)",
+  CLONE_EQ_003_MUTATION_TESTING: "Inject systematic mutations (< to <=, + to -, 33 to 32, 5381 to 5382, etc.) and verify 100% rejection",
+  CLONE_EQ_004_ISOLATION: "Delete original repository completely, prove LIN module executes standalone in RAM"
+}}
+
+.i{
+  ZERO_MOCK_EXECUTION="The harness communicates strictly via IPC JSON with bin/lin_rust"
+  BEHAVIORAL_PARITY_EXACT="behavior_eq = 1.0 on all valid domain inputs"
+  MUTATION_SENSITIVITY_STRICT="Mutation score = 100%"
+}
+
+.g{
+  GATE_REAL_RUNTIME=ZERO_MOCK_EXECUTION AND all_differential_fuzz_passed
+  GATE_MUTATION=mutation_kill_rate_eq_100
+}
+
+.r{
+  R_REAL_IPC="No JavaScript helper may contain the algorithm logic; calls must invoke bin/lin_rust"
+  R_MUTATION_COVERAGE="Mutants must cover arithmetic, boundary comparisons, loop increments and return constants"
+}
+
+.f{
+  reimplement_lin_algorithm_in_javascript_harness
+  pass_on_unexecuted_or_unreachable_mutants
+}
+
+.w{
+  LIN_CLONE_EQUIVALENCE=clone_repo→rewrite_lin→eval_real_rust_runtime→differential_40k→mutation_test→prove_isolation
+}
+
+.p{
+  spec=spec/LIN_CLONE_REAL_RUNTIME_EQUIVALENCE.rulel
+  runtime=bin/lin_rust
+  original=tests/clone_validation/original_repo/data_pipeline.js
+  lin_target=tests/clone_validation/lin_repo/data_pipeline.lin
+  runner=tests/lin_clone_real_runtime_fuzzer.mjs
+}

@@ -1,0 +1,13 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=emit_shared
+~G{?=if #=for ^=ret :else}
+
+!defaultEmitTarget(){^'ts'}
+
+!allSupportedTargets(){^['ts','js','py','go','rust','c','java','zig','cs','kotlin','swift','cpp','haskell','elixir','lua','julia','wasm']}
+
+!isTargetSupported(targetName){targets=allSupportedTargets();#(i=0;i<targets.length;i++){?(targets[i]==targetName){^true}};^false}
+
+!formatTargetScore(targetName,passCount,skipCount,failCount){^(targetName+':P'+String(passCount||0)+'/S'+String(skipCount||0)+'/F'+String(failCount||0))}
+
+=ex{defaultEmitTarget,allSupportedTargets,isTargetSupported,formatTargetScore}

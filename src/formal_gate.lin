@@ -1,0 +1,17 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=formal_gate
+~G{?=if #=for ^=ret :else}
+
+!symbolResolvedInvariant(){^'INV_SYMBOL_RESOLVED'}
+
+!effectBoundedInvariant(){^'INV_EFFECT_BOUNDED'}
+
+!refinementSoundInvariant(){^'INV_REFINEMENT_SOUND'}
+
+!exhaustiveMatchInvariant(){^'INV_EXHAUSTIVE_MATCH'}
+
+!verifyEffectSubset(inferredEffects,allowedCapabilities){allowedMap={};#(i=0;i<allowedCapabilities.length;i++){allowedMap[allowedCapabilities[i]]=1};#(j=0;j<inferredEffects.length;j++){eff=inferredEffects[j];?(eff!='pure'&&allowedMap[eff]!=1){^({pass:false,violation:eff})}};^({pass:true})}
+
+!runGateAudit(fnList,allowedCapabilities){violations=[];#(i=0;i<fnList.length;i++){fn=fnList[i];res=verifyEffectSubset(fn.effects||[],allowedCapabilities||[]);?(res.pass!=true){violations.push({fn:fn.name,violation:res.violation})}};^({pass:violations.length==0,violations:violations})}
+
+=ex{symbolResolvedInvariant,effectBoundedInvariant,refinementSoundInvariant,exhaustiveMatchInvariant,verifyEffectSubset,runGateAudit}

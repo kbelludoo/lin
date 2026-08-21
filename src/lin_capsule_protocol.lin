@@ -1,0 +1,15 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_capsule_protocol
+~G{?=if #=for ^=ret :else}
+
+!protocolVersion(){^'LIN_CAPSULE/1.0'}
+
+!canonicalSortKeys(obj){?(obj==null||typeof obj!='object'){^obj};?(Array.isArray(obj)){out=[];#(i=0;i<obj.length;i++){out.push(canonicalSortKeys(obj[i]))};^out};keys=Object.keys(obj).sort();sorted={};#(k=0;k<keys.length;k++){key=keys[k];sorted[key]=canonicalSortKeys(obj[key])};^sorted}
+
+!validatePartOrdering(parts,expectedCount){?(parts==null||parts.length!=expectedCount){^false};seen={};#(i=0;i<parts.length;i++){p=parts[i];?(p.part_index<0||p.part_index>=expectedCount){^false};?(seen[p.part_index]==1){^false};seen[p.part_index]=1};^true}
+
+!checkEffectBoundaries(declaredEffects,allowedEffects){allowedMap={};#(i=0;i<allowedEffects.length;i++){allowedMap[allowedEffects[i]]=1};#(j=0;j<declaredEffects.length;j++){eff=declaredEffects[j];?(allowedMap[eff]!=1){^({valid:false,violation:eff})}};^({valid:true})}
+
+!checkCapabilityPolicy(declaredCaps,authorizedCaps){authMap={};#(i=0;i<authorizedCaps.length;i++){authMap[authorizedCaps[i]]=1};#(j=0;j<declaredCaps.length;j++){cap=declaredCaps[j];?(authMap[cap]!=1){^({valid:false,denied:cap})}};^({valid:true})}
+
+=ex{protocolVersion,canonicalSortKeys,validatePartOrdering,checkEffectBoundaries,checkCapabilityPolicy}

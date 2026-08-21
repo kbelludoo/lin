@@ -1,0 +1,37 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_constructs
+~G{?=if #=for ^=ret :else}
+
+!t01_arithmetic(a,b,c){^(a+b*c)}
+
+!t02_precedence(a,b,c,d){^(a*b+c*d)}
+
+!t03_comparison(a,b){?(a==b){^'EQ'};?(a<b){^'LT'};^'GT'}
+
+!t04_if_else(val){?(val>10){^'HIGH'}else{^'LOW'}}
+
+!t05_loops(n){sum=0;#(i=1;i<=n;i++){sum=sum+i};^sum}
+
+!t06_arrays(a,b,c){arr=[a,b,c];^arr.length}
+
+!t07_indexing(arr,idx){^arr[idx]}
+
+!t08_objects(k,v){obj={};obj[k]=v;^obj}
+
+!t09_prop_access(obj,propName){^obj[propName]}
+
+!t10_helper_double(x){^(x*2)}
+
+!t11_intra_calls(x,y){d1=t10_helper_double(x);d2=t10_helper_double(y);^(d1+d2)}
+
+!t12_early_return_loop(arr,target){#(i=0;i<arr.length;i++){?(arr[i]==target){^i}};^-1}
+
+!t13_block_nesting(x){res=0;?(x>0){#(i=0;i<x;i++){?(i%2==0){res=res+i}}};^res}
+
+!t14_strings_unicode(prefix,emoji){^(prefix+'_'+emoji)}
+
+!t15_null_undefined(val){?(val==null){^'IS_NULL'};^'VALID'}
+
+!t16_errors_fail_closed(x){?(x<=0){^'ERR_INVALID_ARG'};^(100/x)}
+
+=ex{t01_arithmetic,t02_precedence,t03_comparison,t04_if_else,t05_loops,t06_arrays,t07_indexing,t08_objects,t09_prop_access,t10_helper_double,t11_intra_calls,t12_early_return_loop,t13_block_nesting,t14_strings_unicode,t15_null_undefined,t16_errors_fail_closed}

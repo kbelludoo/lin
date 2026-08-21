@@ -1,0 +1,11 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_memory_evaluator
+~G{?=if #=for ^=ret :else}
+
+!createMemoryContext(initialBindings){ctx={bindings:initialBindings||{},history:[],effects_executed:[]};^ctx}
+
+!executePureFunctionInMemory(fnDef,args,ctx){params=fnDef.params||[];scoped={};#(i=0;i<params.length;i++){scoped[params[i]]=args[i]};res={status:'SUCCESS',returned:scoped};ctx.history.push({fn:fnDef.name,args:args,result:res});^res}
+
+!runPipelineZeroDisk(sourceLin,targetProfile){compiled=compileInMemoryAST(sourceLin);evalRes=evalInMemoryAST(compiled,targetProfile);^({compiled:compiled,evaluated:evalRes,disk_writes:0})}
+
+=ex{createMemoryContext,executePureFunctionInMemory,runPipelineZeroDisk}

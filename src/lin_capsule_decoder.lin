@@ -1,0 +1,9 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_capsule_decoder
+~G{?=if #=for ^=ret :else}
+
+!validateGateA(parts,expectedCount,expectedPayloadHash,expectedSemanticHash){?(parts==null||parts.length!=expectedCount){^({ok:false,gate:'GATE_A',error:'part_count_mismatch'})};ordered=[];#(i=0;i<expectedCount;i++){ordered.push(null)};#(j=0;j<parts.length;j++){p=parts[j];?(p.part_index<0||p.part_index>=expectedCount){^({ok:false,gate:'GATE_A',error:'invalid_part_index'})};?(ordered[p.part_index]!=null){^({ok:false,gate:'GATE_A',error:'duplicate_part_index'})};?(p.payload_hash!=expectedPayloadHash||p.semantic_hash!=expectedSemanticHash){^({ok:false,gate:'GATE_A',error:'metadata_hash_mismatch'})};ordered[p.part_index]=p.chunk};#(k=0;k<expectedCount;k++){?(ordered[k]==null){^({ok:false,gate:'GATE_A',error:'missing_part_gap'})}};^({ok:true,gate:'GATE_A_PASSED',assembled:ordered.join('')})}
+
+!validateGateB(artifact,allowedEffects,authorizedCaps){?(artifact==null||artifact.ir==null){^({ok:false,gate:'GATE_B',error:'malformed_ir'})};invs=artifact.contracts.invariants;?(invs==null||invs.verified!=true){^({ok:false,gate:'GATE_B',error:'unverified_invariants'})};effMap={};#(i=0;i<allowedEffects.length;i++){effMap[allowedEffects[i]]=1};decEffs=artifact.contracts.effects||[];#(e=0;e<decEffs.length;e++){?(effMap[decEffs[e]]!=1){^({ok:false,gate:'GATE_B',error:'effect_envelope_exceeded:'+decEffs[e]})}};capMap={};#(c=0;c<authorizedCaps.length;c++){capMap[authorizedCaps[c]]=1};decCaps=artifact.contracts.capabilities||[];#(k=0;k<decCaps.length;k++){?(capMap[decCaps[k]]!=1){^({ok:false,gate:'GATE_B',error:'unauthorized_capability:'+decCaps[k]})}};^({ok:true,gate:'GATE_B_PASSED',linobj:{ir:artifact.ir.canonical_ir,contracts:artifact.contracts,provenance:artifact.provenance}})}
+
+=ex{validateGateA,validateGateB}

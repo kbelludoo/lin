@@ -1,0 +1,45 @@
+@RULEL:LIN_GATE_COMPOSITIONAL_10K:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-21 why=prove_deep_generative_fuzzing_and_runtime_mutation_testing_across_10000_arbitrary_asts}
+.d{
+  P0=agent_native_first
+  purpose=generate_10000_arbitrary_ast_trees!dual_emission_lin_and_js_from_single_ir!evaluate_differentially!mutation_testing_of_rust_runtime
+  scale=10000_random_asts
+  depth_levels=[1, 2, 3, 4, 5]
+}
+
+.t{
+  H_GENERATIVE_10K="A single unified AST generator emitting both canonical LIN and JavaScript reference code proves behavior_eq = 1.0 across 10,000 deep arbitrary ASTs, and the test suite achieves 100% mutation kill score against adversarial mutations in the Rust runtime itself."
+}
+
+.c{metrics=[
+  "programs_generated: 10000",
+  "programs_executed: 10000",
+  "exact_matches: 10000",
+  "parse_failures: 0",
+  "runtime_failures: 0",
+  "semantic_mismatches: 0",
+  "max_ast_depth: 5",
+  "runtime_mutation_kill_rate: 1.0"
+]}
+
+.i{
+  SINGLE_IR_DERIVATION="LIN code and JS reference are generated from the exact same Abstract Syntax Tree (no manual JS rewrite)"
+  ZERO_NOMINAL_DISPATCH="Zero function names hardcoded in Rust runtime"
+  RUNTIME_MUTATION_SENSITIVITY="Corrupting operators/logic in Rust runtime causes immediate test failure"
+}
+
+.g{
+  GATE_COMPOSITIONAL_10K=exact_matches_eq_10000 AND mutation_score_100_percent
+}
+
+.r{
+  R_DEEP_AST_GEN="Recursively build expressions with binary ops, array nests, object maps, logic gates, and early returns"
+  R_MUTATION_OF_RUNTIME="Mutate lin_rust (+ -> -, && -> ||, truthiness inverted) and prove oracle detects the fault"
+}
+
+.p{
+  spec=spec/LIN_GATE_COMPOSITIONAL_10K.rulel
+  generator=tests/lin_deep_ast_10k_fuzzer.mjs
+  runtime_mutation=tests/lin_runtime_mutation_test.mjs
+}

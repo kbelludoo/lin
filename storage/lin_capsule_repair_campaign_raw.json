@@ -2,211 +2,1324 @@
   {
     "task_id": "DIST_01_LZ4_PIPELINE",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 1,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 6366,
+    "completion_tokens": 22142,
+    "duration_ms": 159922,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_02_CHUNK_WINDOW_SYNC",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 3856,
+    "completion_tokens": 26945,
+    "duration_ms": 164696,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_03_GATE_D_RESOURCE_BOUNDS",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 4170,
+    "completion_tokens": 26329,
+    "duration_ms": 293751,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_04_STREAMING_CHUNK_PROTOCOL",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 3611,
+    "completion_tokens": 19317,
+    "duration_ms": 188874,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_05_EFFECT_SANDBOX_ENFORCEMENT",
     "group": "CAPSULE",
-    "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "status": "INFRA_ERROR",
+    "http_status": 502,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 15s)\"}}",
+    "round_aborted": 2,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_06_PROTOCOL_UPGRADE_NEGOTIATION",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 5550,
+    "completion_tokens": 23824,
+    "duration_ms": 159995,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_07_MERKLE_TREE_PAYLOAD_PROOF",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 7588,
+    "completion_tokens": 19284,
+    "duration_ms": 157124,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_08_FAIL_CLOSED_ERROR_REGISTRATION",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 5378,
+    "completion_tokens": 19520,
+    "duration_ms": 190022,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_09_WASM_TARGET_PROVENANCE_SYNC",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 4958,
+    "completion_tokens": 29750,
+    "duration_ms": 212491,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_10_CANONICAL_SIGNING_PIPELINE",
     "group": "CAPSULE",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 4831,
+    "completion_tokens": 20125,
+    "duration_ms": 205106,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_01_LZ4_PIPELINE",
     "group": "RAW",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 21149,
+    "completion_tokens": 22728,
+    "duration_ms": 413828,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_02_CHUNK_WINDOW_SYNC",
     "group": "RAW",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 19379,
+    "completion_tokens": 20315,
+    "duration_ms": 389421,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_03_GATE_D_RESOURCE_BOUNDS",
     "group": "RAW",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 20825,
+    "completion_tokens": 23167,
+    "duration_ms": 307644,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_04_STREAMING_CHUNK_PROTOCOL",
     "group": "RAW",
-    "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "status": "INFRA_ERROR",
+    "http_status": 502,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 15s)\"}}",
+    "round_aborted": 3,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_05_EFFECT_SANDBOX_ENFORCEMENT",
     "group": "RAW",
-    "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "status": "INFRA_ERROR",
+    "http_status": 502,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 15s)\"}}",
+    "round_aborted": 1,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_06_PROTOCOL_UPGRADE_NEGOTIATION",
     "group": "RAW",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 22497,
+    "completion_tokens": 24187,
+    "duration_ms": 171046,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_07_MERKLE_TREE_PAYLOAD_PROOF",
     "group": "RAW",
-    "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "status": "INFRA_ERROR",
+    "http_status": 502,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 15s)\"}}",
+    "round_aborted": 0,
+    "round_trace": []
   },
   {
     "task_id": "DIST_08_FAIL_CLOSED_ERROR_REGISTRATION",
     "group": "RAW",
-    "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "status": "INFRA_ERROR",
+    "http_status": 502,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}",
+    "round_aborted": 0,
+    "round_trace": []
   },
   {
     "task_id": "DIST_09_WASM_TARGET_PROVENANCE_SYNC",
     "group": "RAW",
-    "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "status": "INFRA_ERROR",
+    "http_status": 502,
+    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 15s)\"}}",
+    "round_aborted": 0,
+    "round_trace": []
   },
   {
     "task_id": "DIST_10_CANONICAL_SIGNING_PIPELINE",
     "group": "RAW",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 19571,
+    "completion_tokens": 15389,
+    "duration_ms": 127856,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_01_LZ4_PIPELINE",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 30469,
+    "completion_tokens": 20774,
+    "duration_ms": 140698,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "decoder": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_02_CHUNK_WINDOW_SYNC",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 28787,
+    "completion_tokens": 19071,
+    "duration_ms": 461658,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": true,
+          "decoder": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_03_GATE_D_RESOURCE_BOUNDS",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 29341,
+    "completion_tokens": 21717,
+    "duration_ms": 220139,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_04_STREAMING_CHUNK_PROTOCOL",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 32672,
+    "completion_tokens": 25531,
+    "duration_ms": 184808,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_05_EFFECT_SANDBOX_ENFORCEMENT",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 28469,
+    "completion_tokens": 26650,
+    "duration_ms": 557436,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": true,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_06_PROTOCOL_UPGRADE_NEGOTIATION",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 30433,
+    "completion_tokens": 15783,
+    "duration_ms": 133197,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": true,
+          "encoder": false,
+          "decoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_07_MERKLE_TREE_PAYLOAD_PROOF",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 37133,
+    "completion_tokens": 27727,
+    "duration_ms": 270894,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_08_FAIL_CLOSED_ERROR_REGISTRATION",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 34316,
+    "completion_tokens": 24551,
+    "duration_ms": 228158,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "decoder": false,
+          "protocol": false,
+          "spec": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_09_WASM_TARGET_PROVENANCE_SYNC",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 28577,
+    "completion_tokens": 16543,
+    "duration_ms": 127823,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "decoder": false,
+          "provenance": false
+        }
+      }
+    ]
   },
   {
     "task_id": "DIST_10_CANONICAL_SIGNING_PIPELINE",
     "group": "CONTROL",
+    "status": "VALID_EVALUATION",
     "final_pass": false,
-    "rounds_used": 0,
-    "error": "{\"error\":{\"message\":\"[kilo-gateway/kilo-auto/free] [502]: fetch connect timeout (reset after 30s)\"}}"
+    "round_passed": null,
+    "rounds_used": 3,
+    "prompt_tokens": 29503,
+    "completion_tokens": 9743,
+    "duration_ms": 90107,
+    "round_trace": [
+      {
+        "round": 0,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 1,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 2,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      },
+      {
+        "round": 3,
+        "outcome": "ORACLE_FAIL",
+        "evidence": {
+          "protocol": false,
+          "encoder": false,
+          "spec": false
+        }
+      }
+    ]
   }
 ]

@@ -1,0 +1,9 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=multi_emit
+~G{?=if #=for ^=ret :else}
+
+!dispatchTargetEmission(targetName,astObj){t=String(targetName||'ts').toLowerCase();?(t=='ts'||t=='js'||t=='rust'||t=='zig'||t=='c'||t=='go'||t=='wasm'){^({ok:true,status:'EMITTED_IN_MEMORY',target:t,functions:astObj.functions||[]})};^({ok:false,error:'unsupported_target:'+t})}
+
+!formatEmissionOutput(emitRes){?(emitRes.ok!=true){^('/* Error: '+emitRes.error+' */')};lines=[];lines.push('// Emitted from LIN Unified IR -> '+emitRes.target);fns=emitRes.functions||[];#(i=0;i<fns.length;i++){f=fns[i];lines.push('// function: '+f.name)};^lines.join('\n')}
+
+=ex{dispatchTargetEmission,formatEmissionOutput}

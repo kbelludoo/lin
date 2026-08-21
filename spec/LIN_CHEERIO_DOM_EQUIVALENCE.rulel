@@ -1,0 +1,55 @@
+@RULEL:LIN_CHEERIO_DOM_EQUIVALENCE:1.0.0
+~R{.m=meta .r=rule .f=forbid .a=allow .g=gate .w=when .c=contract .x=steps .p=path .s=score .d=design_principle .i=invariant .t=thesis}
+.m{lang=LIN status=SPEC repo="C:/Users/k/Documents/lia" date=2026-08-21 why=prove_cheerio_dom_engine_in_pure_lin_and_native_memory_runtime}
+.d{
+  P0=agent_native_first
+  purpose=dom_parsing!css_selectors!tree_traversal!mutation!serialization
+  zero_mock_execution=cheerio_core_in_lin_executed_by_lin_rust_runtime_compared_against_real_cheerio_js
+  structural_domain=["nested_html_trees", "tag_class_id_selectors", "attr_manipulation", "text_extraction", "html_rendering"]
+}
+
+.t{
+  H_CHEERIO_LIN_EQUIVALENCE="A declarative LIN DOM parsing and traversal engine executed in-memory by lin_rust produces identical DOM trees, query selection results, attribute mutations, and HTML serialization against real Cheerio.js across complex HTML fixtures and edge cases."
+}
+
+.c{dom_engine_operations=[
+  "parseHtmlTree(htmlStr) -> DOM AST",
+  "querySelector(domAst, selector) -> NodeList",
+  "querySelectorAll(domAst, selector) -> NodeList",
+  "getAttr(node, attrName) -> string|null",
+  "setAttr(node, attrName, attrValue) -> node",
+  "getText(node) -> string",
+  "renderHtml(domAst) -> string",
+  "addClass(node, className) -> node",
+  "removeClass(node, className) -> node"
+]}
+
+.i{
+  ZERO_HARNESS_MOCK="Harness invokes ./bin/lin_rust call cheerio_dom.lin <op> <args> via IPC"
+  DOM_TREE_PARITY="Output DOM structure and serialization match Cheerio.js bit-for-bit"
+  CSS_SELECTOR_PARITY="Tag, ID (#), Class (.), and Attribute ([k=v]) queries return identical node sets"
+}
+
+.g{
+  GATE_CHEERIO_PARITY=all_fixtures_pass AND behavior_eq_1_0
+}
+
+.r{
+  R_REAL_CHEERIO_COMPARISON="Compare directly with cheerio.load(fixture) on real HTML"
+  R_TREE_INTEGRITY="Preserve parent, children, siblings, and attributes"
+}
+
+.f{
+  reimplement_dom_in_js_harness
+  mock_dom_parser
+}
+
+.w{
+  CHEERIO_MIGRATION=write_cheerio_lin→implement_rust_dom_engine→run_differential_fixture_suite→verify_zero_mocks
+}
+
+.p{
+  spec=spec/LIN_CHEERIO_DOM_EQUIVALENCE.rulel
+  lin_source=tests/cheerio_validation/lin_repo/cheerio_dom.lin
+  runner=tests/lin_cheerio_differential_runner.mjs
+}

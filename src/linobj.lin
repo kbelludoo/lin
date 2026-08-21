@@ -1,0 +1,11 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=linobj
+~G{?=if #=for ^=ret :else}
+
+!formatVersion(){^'1.1.0'}
+
+!createModuleCanonicalRepresentation(fns,consts,exports){sortedFns=[];#(i=0;i<fns.length;i++){f=fns[i];sortedFns.push(f.name+'('+String(f.params||'')+'){'+String(f.body||'')+'}' )};sortedFns.sort();sortedExports=Array.isArray(exports)?[...exports].sort():[];repr='V1.1.0:'+sortedFns.join(';')+':'+JSON.stringify(consts||{})+':'+sortedExports.join(',');^repr}
+
+!buildSemanticLinobj(ir,contracts,provenance){obj={format_version:formatVersion(),ir:ir||{},contracts:contracts||{effects:[],capabilities:[],invariants:{verified:true,rules:[]}},provenance:provenance||{},created_at:Date.now()};^obj}
+
+=ex{formatVersion,createModuleCanonicalRepresentation,buildSemanticLinobj}

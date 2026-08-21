@@ -1,0 +1,13 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=lin_core_compiler
+~G{?=if #=for ^=ret :else}
+
+!parseLinHeader(src){lines=String(src||'').split('\n');hdr='';#(i=0;i<lines.length;i++){line=lines[i].trim();?(line.startsWith('@LIN:')||line.startsWith('@RULEL:')){hdr=line;break}};^hdr}
+
+!extractLinFunctions(src){lines=String(src||'').split('\n');fns=[];#(i=0;i<lines.length;i++){line=lines[i].trim();?(line.startsWith('!')){openParen=line.indexOf('(');closeParen=line.indexOf(')');openBrace=line.indexOf('{');?(openParen>1&&closeParen>openParen&&openBrace>closeParen){fnName=line.substring(1,openParen).trim();paramsStr=line.substring(openParen+1,closeParen).trim();params=paramsStr.length>0?paramsStr.split(','):[];fns.push({name:fnName,params:params})}}};^fns}
+
+!compileInMemoryAST(src){hdr=parseLinHeader(src);fns=extractLinFunctions(src);ast={protocol:'LIN_IR/1.0',header:hdr,functions:fns,timestamp:Date.now()};^ast}
+
+!evalInMemoryAST(ast,targetRuntime){?(ast==null||ast.functions==null){^({ok:false,error:'invalid_ast'})};^({ok:true,status:'EVALUATED_IN_MEMORY',target:targetRuntime||'in_memory_vm',function_count:ast.functions.length})}
+
+=ex{parseLinHeader,extractLinFunctions,compileInMemoryAST,evalInMemoryAST}

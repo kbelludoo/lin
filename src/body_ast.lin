@@ -1,0 +1,13 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=body_ast
+~G{?=if #=for ^=ret :else}
+
+!findMatchingDelimiter(s,openIdx,openCh,closeCh){depth=0;str=String(s||'');len=str.length;#(i=openIdx;i<len;i++){ch=str.charAt(i);?(ch==openCh){depth=depth+1};?(ch==closeCh){depth=depth-1;?(depth==0){^i}}};^-1}
+
+!isStatementReturn(stmtStr){trimmed=String(stmtStr||'').trim();^(trimmed.startsWith('^')||trimmed.startsWith('return '))}
+
+!isStatementCondition(stmtStr){trimmed=String(stmtStr||'').trim();^(trimmed.startsWith('?(')||trimmed.startsWith('if(')||trimmed.startsWith('if ('))}
+
+!isStatementLoop(stmtStr){trimmed=String(stmtStr||'').trim();^(trimmed.startsWith('#(')||trimmed.startsWith('for(')||trimmed.startsWith('for ('))}
+
+=ex{findMatchingDelimiter,isStatementReturn,isStatementCondition,isStatementLoop}

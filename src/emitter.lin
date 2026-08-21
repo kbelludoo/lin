@@ -1,0 +1,17 @@
+@LIN:L1c:0.2
+^schema_once ^lossy=true ^ops=emitter
+~G{?=if #=for ^=ret :else}
+
+!linVersion(){^'0.2'}
+
+!linHeader(){^'@LIN:L1c:'+linVersion()}
+
+!grammarHeader(){^'~G{?=if #=for ^=ret :else}'}
+
+!estTokens(s){^Math.ceil(String(s||'').length/4)}
+
+!formatFunction(name,params,body){p=Array.isArray(params)?params.join(','):String(params||'');^('!'+name+'('+p+'){'+String(body||'')+'}' )}
+
+!emitLinModule(header,fns,exports){lines=[];lines.push(header||linHeader());lines.push(grammarHeader());#(i=0;i<fns.length;i++){f=fns[i];lines.push(formatFunction(f.name,f.params,f.body))};?(exports&&exports.length>0){lines.push('=ex{'+exports.join(',')+'}')};^lines.join('\n')}
+
+=ex{linVersion,linHeader,grammarHeader,estTokens,formatFunction,emitLinModule}
